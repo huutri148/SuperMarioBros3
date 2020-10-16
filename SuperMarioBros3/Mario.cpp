@@ -54,42 +54,48 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
 
-			if (dynamic_cast<CGoomba*>(e->obj)) // if e->obj is Goomba 
+			if (e->ny < 0)
 			{
-				CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
-
-				// jump on top >> kill Goomba and deflect a bit 
-				if (e->ny < 0)
+				if (dynamic_cast<CGoomba*>(e->obj))
 				{
+					CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
 					if (goomba->GetState() != GOOMBA_STATE_DIE)
 					{
 						goomba->SetState(GOOMBA_STATE_DIE);
 						vy = -MARIO_JUMP_DEFLECT_SPEED;
 					}
 				}
-				else if (e->nx != 0)
+				
+					
+				}
+			else if (e->nx != 0)
+			{
+				// if is enimies
+				if (untouchable == 0)
 				{
-					if (untouchable == 0)
+					if (goomba->GetState() != GOOMBA_STATE_DIE)
 					{
-						if (goomba->GetState() != GOOMBA_STATE_DIE)
+						if (form > MARIO_SMALL_FORM)
 						{
-							if (level > MARIO_LEVEL_SMALL)
-							{
-								level = MARIO_LEVEL_SMALL;
-								StartUntouchable();
-							}
-							else
-								SetState(MARIO_STATE_DIE);
+							form -= 1;
+							StartUntouchable();
 						}
+						else
+							SetState(MARIO_STATE_DIE);
 					}
 				}
 			}
-		}
-	}
 
+			}
+			
+		}
 	// clean up collision events
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 }
+
+
+	
+
 
 void CMario::Render()
 {
@@ -97,7 +103,7 @@ void CMario::Render()
 	if (state == MARIO_STATE_DIE)
 		ani = MARIO_ANI_DIE;
 	else
-		if (level == MARIO_LEVEL_BIG)
+		if (form == MARIO_BIG_FORM)
 		{
 			if (vx == 0)
 			{
@@ -108,7 +114,7 @@ void CMario::Render()
 				ani = MARIO_ANI_BIG_WALKING_RIGHT;
 			else ani = MARIO_ANI_BIG_WALKING_LEFT;
 		}
-		else if (level == MARIO_LEVEL_SMALL)
+		else if (form == MARIO_SMALL_FORM)
 		{
 			if (vx == 0)
 			{
@@ -119,6 +125,43 @@ void CMario::Render()
 				ani = MARIO_ANI_SMALL_WALKING_RIGHT;
 			else ani = MARIO_ANI_SMALL_WALKING_LEFT;
 		}
+		else if (form == MARIO_FIRE_FORM)
+		{
+			if (vx == 0)
+			{
+				if (nx > 0) ani = MARIO_ANI_FIRE_IDLE_RIGHT;
+				else ani = MARIO_ANI_FIRE_IDLE_LEFT;
+			}
+			else if (vx > 0)
+				ani = MARIO_ANI_FIRE_WALKING_RIGHT;
+			else
+				ani = MARIO_ANI_FIRE_WALKING_LEFT;
+		}
+		else if (form == MARIO_FIRE_FORM)
+		{
+			if (vx == 0)
+			{
+				if (nx > 0) ani = MARIO_ANI_FIRE_IDLE_RIGHT;
+				else ani = MARIO_ANI_FIRE_IDLE_LEFT;
+			}
+			else if (vx > 0)
+				ani = MARIO_ANI_FIRE_WALKING_RIGHT;
+			else
+				ani = MARIO_ANI_FIRE_WALKING_LEFT;
+		}
+		else if (form == MARIO_RACCOON_FORM)
+		{
+			if (vx == 0)
+			{
+				if (nx > 0) ani = MARIO_ANI_RACCOON_IDLE_RIGHT;
+				else ani = MARIO_ANI_RACCOON_IDLE_LEFT;
+			}
+			else if (vx > 0)
+				ani = MARIO_ANI_RACCOON_WALKING_RIGHT;
+			else
+				ani = MARIO_ANI_RACCOON_WALKING_LEFT;
+		}
+
 
 	int alpha = 255;
 	if (untouchable) alpha = 128;
@@ -157,15 +200,30 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 	left = x;
 	top = y;
 
-	if (level == MARIO_LEVEL_BIG)
+	if (form == MARIO_BIG_FORM)
 	{
 		right = x + MARIO_BIG_BBOX_WIDTH;
 		bottom = y + MARIO_BIG_BBOX_HEIGHT;
 	}
-	else
+	else if (form == MARIO_SMALL_FORM)
 	{
 		right = x + MARIO_SMALL_BBOX_WIDTH;
 		bottom = y + MARIO_SMALL_BBOX_HEIGHT;
 	}
+	else if (form == MARIO_FIRE_FORM)
+	{
+		right = x + MARIO_FIRE_BBOX_WIDTH;
+		bottom = y + MARIO_FIRE_BBOX_HEIGHT;
+	}
+	else if (form == MARIO_RACCOON_FORM)
+	{
+		right = x + MARIO_RACCOON_BBOX_WIDTH;
+		bottom = y + MARIO_RACCOON_BBOX_HEIGHT;
+	}
 }
+
+void CMario::UpForm()
+{
+	form = MARIO_RACCOON_FORM;
+	}
 

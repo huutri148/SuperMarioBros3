@@ -10,11 +10,12 @@
 #include "Mario.h"
 #include "Brick.h"
 #include "Goomba.h"
+#include "KoopaTroopa.h"
 
-#define WINDOW_CLASS_NAME L"SampleWindow"
-#define MAIN_WINDOW_TITLE L"04 - Collision"
+#define WINDOW_CLASS_NAME L"SuperMarioBros3"
+#define MAIN_WINDOW_TITLE L"Super Mario Bros 3"
 
-#define BACKGROUND_COLOR D3DCOLOR_XRGB(255, 255, 200)
+#define BACKGROUND_COLOR D3DCOLOR_XRGB(181, 236, 243)
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 240
 
@@ -28,9 +29,9 @@ CGame* game;
 
 CMario* mario;
 CGoomba* goomba;
-
+CKoopaTroopa* koopatroopa;
 vector<LPGAMEOBJECT> objects;
-
+float x, y;
 class CSampleKeyHander : public CKeyEventHandler
 {
 	virtual void KeyState(BYTE* states);
@@ -50,9 +51,16 @@ void CSampleKeyHander::OnKeyDown(int KeyCode)
 		break;
 	case DIK_A: // reset
 		mario->SetState(MARIO_STATE_IDLE);
-		mario->SetLevel(MARIO_LEVEL_BIG);
+		mario->SetLevel(MARIO_BIG_FORM);
 		mario->SetPosition(50.0f, 0.0f);
 		mario->SetSpeed(0, 0);
+		break;
+	case DIK_Q:
+		mario->UpForm();
+		break;
+	case DIK_L:
+		mario->GetPosition(x, y);
+		DebugOut(L"Position: x: %f, y :%f", x, y);
 		break;
 	}
 }
@@ -132,18 +140,43 @@ void LoadResources()
 	sprites->Add(10032, 155, 0, 170, 15, texMario);			// walk
 	sprites->Add(10033, 125, 0, 139, 15, texMario);			// 
 
+	//Fire
+	sprites->Add(10041, 246, 394, 260, 421, texMario);// idle right
+	sprites->Add(10042, 275, 394, 291, 421, texMario);//walk right
+	sprites->Add(10043, 305, 395, 321, 421, texMario);
 
+	sprites->Add(10051, 186, 394, 200, 421, texMario);//idle left
+	sprites->Add(10052, 155, 394, 171, 421, texMario);//walk left
+	sprites->Add(10053, 125, 395, 141, 421, texMario);
+
+	//RACCOON 
+	sprites->Add(10061, 243, 634, 264, 662, texMario); //idle right
+	sprites->Add(10062, 272, 634, 294, 662, texMario); //walk right
+	sprites->Add(10063, 303, 634, 324, 662, texMario); 
+
+
+	sprites->Add(10071, 182, 634, 203, 662, texMario);//idle left
+	sprites->Add(10072, 152, 634, 174, 662, texMario); //walk left
+	sprites->Add(10073, 122, 634, 143, 662, texMario); 
+
+	//brick
 	LPDIRECT3DTEXTURE9 texMisc = textures->Get(ID_TEX_MISC);
 	sprites->Add(20001, 408, 225, 424, 241, texMisc);
-
-	LPDIRECT3DTEXTURE9 texEnemy = textures->Get(ID_TEX_ENEMY);
+	//Goomba
+	LPDIRECT3DTEXTURE9 texEnemy = textures->Get(ID_TEX_ENEMY);//walk sprite
 	sprites->Add(30001, 5, 14, 21, 29, texEnemy);
 	sprites->Add(30002, 25, 14, 41, 29, texEnemy);
 
 	sprites->Add(30003, 45, 21, 61, 29, texEnemy); // die sprite
+	
+	//KoopaTroopa
+	sprites->Add(40001, 6, 130, 22, 156, texEnemy); //walk sprite
+	sprites->Add(40002, 28, 129, 44, 156, texEnemy);
+
+	sprites->Add(40003, 50, 139, 66, 156, texEnemy);//hiding sprite
 
 	LPANIMATION ani;
-
+	// STATE == IDLE
 	ani = new CAnimation(100);	// idle big right
 	ani->Add(10001);
 	animations->Add(400, ani);
@@ -160,6 +193,24 @@ void LoadResources()
 	ani->Add(10031);
 	animations->Add(403, ani);
 
+	ani = new CAnimation(100); // idle fire right
+	ani->Add(10041);
+	animations->Add(404, ani);
+
+	ani = new CAnimation(100); //idle fire left
+	ani->Add(10051);
+	animations->Add(405, ani);
+
+	ani = new CAnimation(100); //idle right  racccoon 
+	ani->Add(10061);
+	animations->Add(406, ani);
+
+	ani = new CAnimation(100);//idle left raccoon
+	ani->Add(10071);
+	animations->Add(407, ani);
+
+
+	// WALKING
 	ani = new CAnimation(100);	// walk right big
 	ani->Add(10001);
 	ani->Add(10002);
@@ -184,6 +235,32 @@ void LoadResources()
 	ani->Add(10033);
 	animations->Add(503, ani);
 
+	ani = new CAnimation(100); //walk right fire
+	ani->Add(10041);
+	ani->Add(10042);
+	ani->Add(10043);
+	animations->Add(504, ani);
+
+
+	ani = new CAnimation(100);//walk left fire
+	ani->Add(10051);
+	ani->Add(10052);
+	ani->Add(10053);
+	animations->Add(505, ani);
+
+	ani = new CAnimation(100);//walk left raccoon
+	ani->Add(10061);
+	ani->Add(10062);
+	ani->Add(10063);
+	animations->Add(506, ani);
+
+	ani = new CAnimation(100);//walk right raccoon
+	ani->Add(10071);
+	ani->Add(10072);
+	ani->Add(10073);
+	animations->Add(507, ani);
+
+
 
 	ani = new CAnimation(100);		// Mario die
 	ani->Add(10099);
@@ -204,16 +281,33 @@ void LoadResources()
 	ani->Add(30003);
 	animations->Add(702, ani);
 
+	ani = new CAnimation(100);		//KoopaTroopa walk
+	ani->Add(40001);
+	ani->Add(40002);
+	animations->Add(801, ani);
+
+	ani = new CAnimation(1000);		//KoopaTroopa dead
+	ani->Add(40003);
+	animations->Add(802, ani);
+
 	mario = new CMario();
 	mario->AddAnimation(400);		// idle right big
 	mario->AddAnimation(401);		// idle left big
 	mario->AddAnimation(402);		// idle right small
 	mario->AddAnimation(403);		// idle left small
+	mario->AddAnimation(404);		//idle right fire
+	mario->AddAnimation(405);		//idle left fire
+	mario->AddAnimation(406);		//idle right raccoon
+	mario->AddAnimation(407);		//idle left raccoon
 
 	mario->AddAnimation(500);		// walk right big
 	mario->AddAnimation(501);		// walk left big
 	mario->AddAnimation(502);		// walk right small
-	mario->AddAnimation(503);		// walk left big
+	mario->AddAnimation(503);		// walk left small
+	mario->AddAnimation(504);		//walk right fire
+	mario->AddAnimation(505);		//walk left fire 
+	mario->AddAnimation(506);		//walk right raccoon
+	mario->AddAnimation(507);		//walk left raccoon
 
 	mario->AddAnimation(599);		// die
 
@@ -229,6 +323,16 @@ void LoadResources()
 		goomba->SetState(GOOMBA_STATE_WALKING);
 		objects.push_back(goomba);
 	}
+	for (int i = 0; i < 4; i++)
+	{
+		koopatroopa = new CKoopaTroopa();
+		koopatroopa->AddAnimation(801);
+		koopatroopa->AddAnimation(802);
+		koopatroopa->SetPosition(300 + i * 60, 125);
+		koopatroopa->SetState(KOOPATROOPA_STATE_WALKING);
+		objects.push_back(koopatroopa);
+	}
+
 
 	for (int i = 0; i < 5; i++)
 	{
