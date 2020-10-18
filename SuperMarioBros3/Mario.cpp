@@ -1,9 +1,9 @@
 #include <algorithm>
 #include "debug.h"
-
+#include "Enemy.h"
 #include "Mario.h"
 #include "Game.h"
-
+#include"KoopaTroopa.h"
 #include "Goomba.h"
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -54,41 +54,37 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
 
-			if (e->ny < 0)
+
+			if (dynamic_cast<Enemy*>(e->obj))
 			{
-				if (dynamic_cast<CGoomba*>(e->obj))
+				Enemy* enemy = dynamic_cast<Enemy*>(e->obj);
+				if (e->ny < 0)
 				{
-					CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
-					if (goomba->GetState() != GOOMBA_STATE_DIE)
+					if (enemy->IsDead() != true)
 					{
-						goomba->SetState(GOOMBA_STATE_DIE);
+						enemy->SetDie();
 						vy = -MARIO_JUMP_DEFLECT_SPEED;
 					}
 				}
-				
-					
-				}
-			else if (e->nx != 0)
-			{
-				// if is enimies
-				if (untouchable == 0)
+				else if (e->nx != 0)
 				{
-					if (goomba->GetState() != GOOMBA_STATE_DIE)
+					if (untouchable == 0)
 					{
-						if (form > MARIO_SMALL_FORM)
+						if (enemy->IsDead() != true)
 						{
-							form -= 1;
-							StartUntouchable();
+							if (form > MARIO_SMALL_FORM)
+							{
+								form -= 1;
+								StartUntouchable();
+							}
+							else
+								SetState(MARIO_STATE_DIE);
 						}
-						else
-							SetState(MARIO_STATE_DIE);
 					}
 				}
 			}
-
-			}
-			
-		}
+		}	
+	}
 	// clean up collision events
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 }

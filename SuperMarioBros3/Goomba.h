@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+#include "Enemy.h"
 
 #define GOOMBA_WALKING_SPEED 0.05f;
 
@@ -13,13 +14,15 @@
 #define GOOMBA_ANI_WALKING 0
 #define GOOMBA_ANI_DIE 1
 
-class CGoomba : public CGameObject
+class CGoomba : public Enemy
 {
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	virtual void Render();
-
+	
 
 public:
 	virtual void SetState(int state);
+	virtual bool IsDead();
+	virtual void SetDie();
 };

@@ -14,7 +14,11 @@ void CKoopaTroopa::GetBoundingBox(float& left, float& top, float& right, float& 
 }
 void CKoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	CGameObject::Update(dt, coObjects);
+	if (this->state == KOOPATROOPA_STATE_HIDING)
+	{
+		return;
+	}
+	Enemy::Update(dt, coObjects);
 	x += dx;
 	y += dy;
 }
@@ -29,15 +33,30 @@ void CKoopaTroopa::Render()
 }
 void CKoopaTroopa::SetState(int state)
 {
-	CGameObject::SetState(state);
+	Enemy::SetState(state);
 	switch (state)
 	{
 	case KOOPATROOPA_STATE_WALKING:
 		vx = -KOOPATROOPA_WALKING_SPEED;
 		break;
 	case KOOPATROOPA_ANI_HIDING:
+		y += KOOPATROOPA_BBOX_HEIGHT_HIDING + 1;
 		vx = 0;
 		vy = 0;
 		break;
 	}
+}
+
+void CKoopaTroopa::SetDie()
+{
+	this->SetState(KOOPATROOPA_STATE_HIDING);
+}
+
+bool CKoopaTroopa::IsDead()
+{
+	if (this->state == KOOPATROOPA_STATE_HIDING)
+	{
+		return true;
+	}
+	return false;
 }

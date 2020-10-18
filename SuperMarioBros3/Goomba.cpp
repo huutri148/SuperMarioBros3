@@ -14,12 +14,12 @@ void CGoomba::GetBoundingBox(float& left, float& top, float& right, float& botto
 
 void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	CGameObject::Update(dt, coObjects);
-
+	if (this->state == GOOMBA_STATE_DIE)
+		return;
+	Enemy::Update(dt, coObjects);
 	//
 	// TO-DO: make sure Goomba can interact with the world and to each of them too!
 	// 
-
 	x += dx;
 	y += dy;
 
@@ -45,7 +45,7 @@ void CGoomba::Render()
 
 void CGoomba::SetState(int state)
 {
-	CGameObject::SetState(state);
+	Enemy::SetState(state);
 	switch (state)
 	{
 	case GOOMBA_STATE_DIE:
@@ -56,4 +56,17 @@ void CGoomba::SetState(int state)
 	case GOOMBA_STATE_WALKING:
 		vx = -GOOMBA_WALKING_SPEED;
 	}
+}
+bool CGoomba::IsDead()
+{
+	if (this->state == GOOMBA_STATE_DIE)
+	{
+		return true;
+	}
+	return false;
+}
+ 
+void CGoomba::SetDie()
+{
+	this->SetState(GOOMBA_STATE_DIE);
 }
