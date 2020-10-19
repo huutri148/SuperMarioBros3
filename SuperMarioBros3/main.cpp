@@ -46,21 +46,23 @@ void CSampleKeyHander::OnKeyDown(int KeyCode)
 	DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);
 	switch (KeyCode)
 	{
-	case DIK_SPACE:
-		mario->SetState(MARIO_STATE_JUMP);
-		break;
-	case DIK_A: // reset
+	//case DIK_SPACE:
+	//	mario->SetState(MARIO_STATE_JUMP);
+	//	break;
+	case DIK_R: // reset
 		mario->SetState(MARIO_STATE_IDLE);
 		mario->SetLevel(MARIO_BIG_FORM);
 		mario->SetPosition(50.0f, 0.0f);
 		mario->SetSpeed(0, 0);
 		break;
-	case DIK_Q:
+	case DIK_U:
 		mario->UpForm();
 		break;
-	case DIK_L:
-		mario->GetPosition(x, y);
-		DebugOut(L"Position: x: %f, y :%f", x, y);
+	case DIK_I:
+		mario->Information();
+		break;
+	case DIK_SPACE:
+		mario->StartJumping();
 		break;
 	}
 }
@@ -68,18 +70,53 @@ void CSampleKeyHander::OnKeyDown(int KeyCode)
 void CSampleKeyHander::OnKeyUp(int KeyCode)
 {
 	DebugOut(L"[INFO] KeyUp: %d\n", KeyCode);
+	switch(KeyCode)
+	{
+	case DIK_SPACE:
+		mario->unJump();
+	}
 }
 
 void CSampleKeyHander::KeyState(BYTE* states)
 {
 	// disable control key when Mario die 
 	if (mario->GetState() == MARIO_STATE_DIE) return;
-	if (game->IsKeyDown(DIK_RIGHT))
-		mario->SetState(MARIO_STATE_WALKING_RIGHT);
-	else if (game->IsKeyDown(DIK_LEFT))
-		mario->SetState(MARIO_STATE_WALKING_LEFT);
+	if (game->IsKeyDown(DIK_D))
+	{
+		if (game->IsKeyDown(DIK_LSHIFT))
+		{
+			mario->SetState(MARIO_STATE_RUNNING_RIGHT);
+			mario->FillUpPowerMelter();
+		}
+		else
+			mario->SetState(MARIO_STATE_WALKING_RIGHT);
+		if (game->IsKeyDown(DIK_A))
+			mario->SetState(MARIO_STATE_BRAKE_RIGHT);
+	}
+
+	else if (game->IsKeyDown(DIK_A))
+	{
+		if (game->IsKeyDown(DIK_LSHIFT))
+		{
+			mario->SetState(MARIO_STATE_RUNNING_LEFT);
+			mario->FillUpPowerMelter();
+		}
+		else
+			mario->SetState(MARIO_STATE_WALKING_LEFT);
+		if (game->IsKeyDown(DIK_B))
+		{
+			mario->SetState(MARIO_STATE_BRAKE_LEFT);
+		}
+	}
+	else if (game->IsKeyDown(DIK_SPACE))
+		mario->Jump();
 	else
+	{
 		mario->SetState(MARIO_STATE_IDLE);
+		mario->LosePowerMelter();
+	}
+		
+
 }
 
 LRESULT CALLBACK WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -121,43 +158,84 @@ void LoadResources()
 	// big
 	sprites->Add(10001, 246, 154, 260, 181, texMario);		// idle right
 
-	sprites->Add(10002, 275, 154, 290, 181, texMario);		// walk
+	sprites->Add(10002, 275, 154, 290, 181, texMario);		// walking right
 	sprites->Add(10003, 304, 154, 321, 181, texMario);
 
+	sprites->Add(10004, 334, 154, 353, 181, texMario);		//Running right
+	sprites->Add(10005, 362, 154, 381, 181, texMario);
+	sprites->Add(10006, 392, 155, 411, 181, texMario);
+	sprites->Add(10007, 425, 154, 441, 182, texMario);		//Brake right
+
+
 	sprites->Add(10011, 186, 154, 200, 181, texMario);		// idle left
-	sprites->Add(10012, 155, 154, 170, 181, texMario);		// walk
+	sprites->Add(10012, 155, 154, 170, 181, texMario);		// walking left
 	sprites->Add(10013, 125, 154, 140, 181, texMario);
 
+	sprites->Add(10014, 93, 154, 112, 181, texMario);		//running left
+	sprites->Add(10015, 65, 154, 84, 181, texMario);
+	sprites->Add(10016, 35, 155, 54, 181, texMario);
+	sprites->Add(10017, 5, 154, 21, 182, texMario);			//brake left
 	sprites->Add(10099, 215, 120, 231, 135, texMario);		// die 
 
 	// small
 	sprites->Add(10021, 247, 0, 259, 15, texMario);			// idle small right
-	sprites->Add(10022, 275, 0, 291, 15, texMario);			// walk 
+	sprites->Add(10022, 275, 0, 291, 15, texMario);			// walking right
 	sprites->Add(10023, 306, 0, 320, 15, texMario);			// 
+
+	sprites->Add(10024, 335, 0, 351, 16, texMario);			//running right
+
+	sprites->Add(10025, 426, 0, 440, 16, texMario);			//brake right
 
 	sprites->Add(10031, 187, 0, 198, 15, texMario);			// idle small left
 
-	sprites->Add(10032, 155, 0, 170, 15, texMario);			// walk
+	sprites->Add(10032, 155, 0, 170, 15, texMario);			// walking left
 	sprites->Add(10033, 125, 0, 139, 15, texMario);			// 
+
+	sprites->Add(10034, 95, 0, 111, 16, texMario);			//running left
+	sprites->Add(10035, 6, 0, 20, 16, texMario);			//brake left
 
 	//Fire
 	sprites->Add(10041, 246, 394, 260, 421, texMario);// idle right
-	sprites->Add(10042, 275, 394, 291, 421, texMario);//walk right
+	sprites->Add(10042, 275, 394, 291, 421, texMario);//walking right
 	sprites->Add(10043, 305, 395, 321, 421, texMario);
 
+	sprites->Add(10044, 334, 394, 353, 421, texMario);//running right
+	sprites->Add(10045, 362, 394, 381, 421, texMario);
+	sprites->Add(10046, 392, 395, 411, 421, texMario);
+
+	sprites->Add(10047, 425, 394, 441, 422, texMario);//brake right
+
+
 	sprites->Add(10051, 186, 394, 200, 421, texMario);//idle left
-	sprites->Add(10052, 155, 394, 171, 421, texMario);//walk left
+	sprites->Add(10052, 155, 394, 171, 421, texMario);//walking left
 	sprites->Add(10053, 125, 395, 141, 421, texMario);
+
+	sprites->Add(10054, 93, 394, 112, 421, texMario);//running left
+	sprites->Add(10055, 65, 394, 84, 421, texMario);
+	sprites->Add(10056, 35, 395, 54, 421, texMario);
+	sprites->Add(10057, 5, 394, 21, 422, texMario);//brake left
 
 	//RACCOON 
 	sprites->Add(10061, 243, 634, 264, 662, texMario); //idle right
-	sprites->Add(10062, 272, 634, 294, 662, texMario); //walk right
+	sprites->Add(10062, 272, 634, 294, 662, texMario); //walking right
 	sprites->Add(10063, 303, 634, 324, 662, texMario); 
+
+	sprites->Add(10064, 331, 634, 355, 662, texMario);//running right
+	sprites->Add(10065, 362, 634, 385, 662, texMario);
+	sprites->Add(10066, 393, 634, 414, 662, texMario);
+
+	sprites->Add(10067, 425, 633, 441, 663, texMario);//brake right
 
 
 	sprites->Add(10071, 182, 634, 203, 662, texMario);//idle left
-	sprites->Add(10072, 152, 634, 174, 662, texMario); //walk left
-	sprites->Add(10073, 122, 634, 143, 662, texMario); 
+	sprites->Add(10072, 152, 634, 174, 662, texMario); //walking left
+	sprites->Add(10073, 122, 634, 143, 662, texMario);
+
+	sprites->Add(10074, 91, 634, 115, 662, texMario);//running left
+	sprites->Add(10075, 61 , 634,84,662, texMario);
+	sprites->Add(10076, 32, 634, 58, 662, texMario);
+
+	sprites->Add(10077, 5, 633, 21, 663, texMario);//brake left
 
 	//brick
 	LPDIRECT3DTEXTURE9 texMisc = textures->Get(ID_TEX_MISC);
@@ -260,35 +338,119 @@ void LoadResources()
 	ani->Add(10073);
 	animations->Add(507, ani);
 
+	ani = new CAnimation(1000);//big right brake
+	ani->Add(10007);
+	animations->Add(650, ani);
+
+	ani = new CAnimation(1000);//big left brake
+	ani->Add(10017);
+	animations->Add(651, ani);
+
+	ani = new CAnimation(100);//small right brake
+	ani->Add(10025);
+	animations->Add(652, ani);
+
+	ani = new CAnimation(100);//small left brake
+	ani->Add(10035);
+	animations->Add(653, ani);
+
+	ani = new CAnimation(100);//fire right brake
+	ani->Add(10047);
+	animations->Add(654, ani);
+
+	ani = new CAnimation(100);//fire left brake
+	ani->Add(10057);
+	animations->Add(655, ani);
+
+	ani = new CAnimation(100);//raccoon right brake
+	ani->Add(10067);
+	animations->Add(656, ani);
+
+	ani = new CAnimation(100);//raccoon left brake
+	ani->Add(10077);
+	animations->Add(657, ani);
+
+
+
 
 
 	ani = new CAnimation(100);		// Mario die
 	ani->Add(10099);
-	animations->Add(599, ani);
+	animations->Add(699, ani);
+
+	ani = new CAnimation(10);  //big running right
+	ani->Add(10004);
+	ani->Add(10005);
+	ani->Add(10006);
+	animations->Add(600, ani);
+
+
+
+	ani = new CAnimation(10); //big running left
+	ani->Add(10014);
+	ani->Add(10015);
+	ani->Add(10016);
+	animations->Add(601, ani);
+
+	ani = new CAnimation(50); //small running right
+	ani->Add(10022);
+	ani->Add(10023);
+	ani->Add(10024);
+	animations->Add(602, ani);
+
+	ani = new CAnimation(50);//small running left
+	ani->Add(10032);
+	ani->Add(10033);
+	ani->Add(10034);
+	animations->Add(603, ani);
+
+	ani = new CAnimation(50);//Fire running right
+	ani->Add(10044);
+	ani->Add(10045);
+	ani->Add(10046);
+	animations->Add(604, ani);
+
+	ani = new CAnimation(50);//Fire running left
+	ani->Add(10054);
+	ani->Add(10055);
+	ani->Add(10056);
+	animations->Add(605, ani);
+
+	ani = new CAnimation(20);//Raccoon running right
+	ani->Add(10064);
+	ani->Add(10065);
+	ani->Add(10066);
+	animations->Add(606, ani);
+
+	ani = new CAnimation(20);//Raccoon running left
+	ani->Add(10074);
+	ani->Add(10075);
+	ani->Add(10076);
+	animations->Add(607, ani);
 
 
 
 	ani = new CAnimation(100);		// brick
 	ani->Add(20001);
-	animations->Add(601, ani);
+	animations->Add(701, ani);
 
 	ani = new CAnimation(300);		// Goomba walk
 	ani->Add(30001);
 	ani->Add(30002);
-	animations->Add(701, ani);
+	animations->Add(801, ani);
 
 	ani = new CAnimation(1000);		// Goomba dead
 	ani->Add(30003);
-	animations->Add(702, ani);
+	animations->Add(802, ani);
 
 	ani = new CAnimation(100);		//KoopaTroopa walk
 	ani->Add(40001);
 	ani->Add(40002);
-	animations->Add(801, ani);
+	animations->Add(901, ani);
 
 	ani = new CAnimation(1000);		//KoopaTroopa dead
 	ani->Add(40003);
-	animations->Add(802, ani);
+	animations->Add(902, ani);
 
 	mario = new CMario();
 	mario->AddAnimation(400);		// idle right big
@@ -309,45 +471,62 @@ void LoadResources()
 	mario->AddAnimation(506);		//walk right raccoon
 	mario->AddAnimation(507);		//walk left raccoon
 
-	mario->AddAnimation(599);		// die
+	mario->AddAnimation(600);		//run right big
+	mario->AddAnimation(601);		//run left big
+	mario->AddAnimation(602);		//run right small
+	mario->AddAnimation(603);		//run left small
+	mario->AddAnimation(604);		//run right fire
+	mario->AddAnimation(605);		//run left fire
+	mario->AddAnimation(606);		//run right raccoon
+	mario->AddAnimation(607);		//run left raccoon
+
+	mario->AddAnimation(650);		//brake right big
+	mario->AddAnimation(651);		//brake left big
+	mario->AddAnimation(652);		//brake right small
+	mario->AddAnimation(653);		//brake left small
+	mario->AddAnimation(654);		//brake right fire
+	mario->AddAnimation(655);		//brake left fire
+	mario->AddAnimation(656);		//brake right raccoon
+	mario->AddAnimation(657);		//brake left raccoon
+
+
+	mario->AddAnimation(699);		// die
 
 	mario->SetPosition(50.0f, 0);
 	objects.push_back(mario);
 	// and Goombas 
-	for (int i = 0; i < 4; i++)
-	{
-		goomba = new CGoomba();
-		goomba->AddAnimation(701);
-		goomba->AddAnimation(702);
-		goomba->SetPosition(200 + i * 60, 135);
-		goomba->SetState(GOOMBA_STATE_WALKING);
-		objects.push_back(goomba);
-	}
-	for (int i = 0; i < 4; i++)
-	{
-		koopatroopa = new CKoopaTroopa();
-		koopatroopa->AddAnimation(801);
-		koopatroopa->AddAnimation(802);
-		koopatroopa->SetPosition(300 + i * 60, 125);
-		koopatroopa->SetState(KOOPATROOPA_STATE_WALKING);
-		objects.push_back(koopatroopa);
-	}
+	//for (int i = 0; i < 4; i++)
+	//{
+	//	goomba = new CGoomba();
+	//	goomba->AddAnimation(801);
+	//	goomba->AddAnimation(802);
+	//	goomba->SetPosition(200 + i * 60, 135);
+	//	goomba->SetState(GOOMBA_STATE_WALKING);
+	//	objects.push_back(goomba);
+	//}
+	////KoopaTroopa
+		//koopatroopa = new CKoopaTroopa();
+		//koopatroopa->AddAnimation(901);
+		//koopatroopa->AddAnimation(902);
+		//koopatroopa->SetPosition(50.0f, 0);
+		//koopatroopa->SetState(KOOPATROOPA_STATE_WALKING);
+		//objects.push_back(koopatroopa);
 
 
 	for (int i = 0; i < 5; i++)
 	{
 		CBrick* brick = new CBrick();
-		brick->AddAnimation(601);
+		brick->AddAnimation(701);
 		brick->SetPosition(100.0f + i * 60.0f, 74.0f);
 		objects.push_back(brick);
 
 		brick = new CBrick();
-		brick->AddAnimation(601);
+		brick->AddAnimation(701);
 		brick->SetPosition(100.0f + i * 60.0f, 90.0f);
 		objects.push_back(brick);
 
 		brick = new CBrick();
-		brick->AddAnimation(601);
+		brick->AddAnimation(701);
 		brick->SetPosition(84.0f + i * 60.0f, 90.0f);
 		objects.push_back(brick);
 	}
@@ -356,7 +535,7 @@ void LoadResources()
 	for (int i = 0; i < 30; i++)
 	{
 		CBrick* brick = new CBrick();
-		brick->AddAnimation(601);
+		brick->AddAnimation(701);
 		brick->SetPosition(0 + i * 16.0f, 150);
 		objects.push_back(brick);
 	}
@@ -364,10 +543,6 @@ void LoadResources()
 
 }
 
-/*
-	Update world status for this frame
-	dt: time period between beginning of last frame and beginning of this frame
-*/
 void Update(DWORD dt)
 {
 	// We know that Mario is the first object in the list hence we won't add him into the colliable object list
@@ -378,7 +553,6 @@ void Update(DWORD dt)
 	{
 		coObjects.push_back(objects[i]);
 	}
-
 	for (int i = 0; i < objects.size(); i++)
 	{
 		objects[i]->Update(dt, &coObjects);

@@ -47,14 +47,15 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		y += min_ty * dy + ny * 0.4f;
 
 		if (nx != 0) vx = 0;
-		if (ny != 0) vy = 0;
+		if (ny != 0)
+		{
+			vy = 0; isInGround = true;
+		}
 
-		// Collision logic with Goombas
+		// Collision logic 
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
-
-
 			if (dynamic_cast<Enemy*>(e->obj))
 			{
 				Enemy* enemy = dynamic_cast<Enemy*>(e->obj);
@@ -63,6 +64,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					if (enemy->IsDead() != true)
 					{
 						enemy->SetDie();
+						isInGround = true;
 						vy = -MARIO_JUMP_DEFLECT_SPEED;
 					}
 				}
@@ -99,6 +101,7 @@ void CMario::Render()
 	if (state == MARIO_STATE_DIE)
 		ani = MARIO_ANI_DIE;
 	else
+	{
 		if (form == MARIO_BIG_FORM)
 		{
 			if (vx == 0)
@@ -107,8 +110,36 @@ void CMario::Render()
 				else ani = MARIO_ANI_BIG_IDLE_LEFT;
 			}
 			else if (vx > 0)
-				ani = MARIO_ANI_BIG_WALKING_RIGHT;
-			else ani = MARIO_ANI_BIG_WALKING_LEFT;
+			{
+				if (nx > 0)
+				{
+					if (power_melter_stack == POWER_METER_FULL)
+					{
+						ani = MARIO_ANI_BIG_RUNNING_RIGHT;
+					}
+					else
+						ani = MARIO_ANI_BIG_WALKING_RIGHT;
+				}
+				else
+				{
+					ani = MARIO_ANI_BIG_BRAKE_RIGHT;
+				}
+			}
+			else
+			{
+				if (nx < 0)
+				{
+					if (power_melter_stack == POWER_METER_FULL)
+						ani = MARIO_ANI_BIG_RUNNING_LEFT;
+					else
+						ani = MARIO_ANI_BIG_WALKING_LEFT;
+				}
+				else
+				{
+					ani = MARIO_ANI_BIG_BRAKE_LEFT;
+				}
+				
+			}
 		}
 		else if (form == MARIO_SMALL_FORM)
 		{
@@ -118,8 +149,35 @@ void CMario::Render()
 				else ani = MARIO_ANI_SMALL_IDLE_LEFT;
 			}
 			else if (vx > 0)
-				ani = MARIO_ANI_SMALL_WALKING_RIGHT;
-			else ani = MARIO_ANI_SMALL_WALKING_LEFT;
+			{
+				if (nx > 0)
+				{
+					if (power_melter_stack == POWER_METER_FULL)
+						ani = MARIO_ANI_SMALL_RUNNING_RIGHT;
+					else
+						ani = MARIO_ANI_SMALL_WALKING_RIGHT;
+				}
+				else
+				{
+					ani = MARIO_ANI_SMALL_BRAKE_RIGHT;
+				}
+				
+			}
+			else
+			{
+				if (nx < 0)
+				{
+					if (power_melter_stack == POWER_METER_FULL)
+						ani = MARIO_ANI_SMALL_RUNNING_LEFT;
+					else
+						ani = MARIO_ANI_SMALL_WALKING_LEFT;
+				}
+				else
+				{
+					ani = MARIO_ANI_SMALL_BRAKE_LEFT;
+				}
+			
+			}
 		}
 		else if (form == MARIO_FIRE_FORM)
 		{
@@ -129,21 +187,33 @@ void CMario::Render()
 				else ani = MARIO_ANI_FIRE_IDLE_LEFT;
 			}
 			else if (vx > 0)
-				ani = MARIO_ANI_FIRE_WALKING_RIGHT;
-			else
-				ani = MARIO_ANI_FIRE_WALKING_LEFT;
-		}
-		else if (form == MARIO_FIRE_FORM)
-		{
-			if (vx == 0)
 			{
-				if (nx > 0) ani = MARIO_ANI_FIRE_IDLE_RIGHT;
-				else ani = MARIO_ANI_FIRE_IDLE_LEFT;
+				if (nx > 0)
+				{
+					if (power_melter_stack == POWER_METER_FULL)
+						ani = MARIO_ANI_FIRE_RUNNING_RIGHT;
+					else
+						ani = MARIO_ANI_FIRE_WALKING_RIGHT;
+				}
+				else
+				{
+					ani = MARIO_ANI_FIRE_BRAKE_RIGHT;
+				}
+				
 			}
-			else if (vx > 0)
-				ani = MARIO_ANI_FIRE_WALKING_RIGHT;
 			else
-				ani = MARIO_ANI_FIRE_WALKING_LEFT;
+			{
+				if (nx < 0)
+				{
+					if (power_melter_stack == POWER_METER_FULL)
+						ani = MARIO_ANI_FIRE_RUNNING_LEFT;
+					else
+						ani = MARIO_ANI_FIRE_WALKING_LEFT;
+				}
+				else
+					ani = MARIO_ANI_FIRE_BRAKE_LEFT;
+				
+			}
 		}
 		else if (form == MARIO_RACCOON_FORM)
 		{
@@ -153,17 +223,44 @@ void CMario::Render()
 				else ani = MARIO_ANI_RACCOON_IDLE_LEFT;
 			}
 			else if (vx > 0)
-				ani = MARIO_ANI_RACCOON_WALKING_RIGHT;
+			{
+				if (nx > 0)
+				{
+					if (power_melter_stack == POWER_METER_FULL)
+						ani = MARIO_ANI_RACCOON_RUNNING_RIGHT;
+					else
+						ani = MARIO_ANI_RACCOON_WALKING_RIGHT;
+				}
+				else
+				{
+					ani = MARIO_ANI_RACCOON_BRAKE_RIGHT;
+				}
+				
+			}
 			else
-				ani = MARIO_ANI_RACCOON_WALKING_LEFT;
+			{
+				if (nx < 0)
+				{
+					if (power_melter_stack == POWER_METER_FULL)
+						ani = MARIO_ANI_RACCOON_RUNNING_LEFT;
+					else
+						ani = MARIO_ANI_RACCOON_WALKING_LEFT;
+				}
+				else
+				{
+					ani = MARIO_ANI_RACCOON_BRAKE_LEFT;
+				}
+				
+			}
+
 		}
+		int alpha = 255;
+		if (untouchable) alpha = 128;
+		animations[ani]->Render(x, y, alpha);
 
-
-	int alpha = 255;
-	if (untouchable) alpha = 128;
-	animations[ani]->Render(x, y, alpha);
-
-	RenderBoundingBox();
+		RenderBoundingBox();
+	}
+	
 }
 
 void CMario::SetState(int state)
@@ -181,12 +278,38 @@ void CMario::SetState(int state)
 		nx = -1;
 		break;
 	case MARIO_STATE_JUMP:
-		vy = -MARIO_JUMP_SPEED_Y;
+		/*if (jump_stack < 8)
+		{*/
+			vy = -MARIO_JUMP_SPEED_Y;
+		/*	jump_stack++;
+		}*/
+	/*	isJump = true;*/
+		break;
 	case MARIO_STATE_IDLE:
 		vx = 0;
+	
 		break;
 	case MARIO_STATE_DIE:
 		vy = -MARIO_DIE_DEFLECT_SPEED;
+		break;
+	case MARIO_STATE_RUNNING_RIGHT:
+		vx = MARIO_WALKING_SPEED + (BUFF_SPEED * power_melter_stack);
+		nx = 1;
+		break;
+	case MARIO_STATE_RUNNING_LEFT:
+		vx =-(MARIO_WALKING_SPEED + (BUFF_SPEED * power_melter_stack));
+		nx = -1; 
+		break;
+	case MARIO_STATE_BRAKE_LEFT:
+		vx = -(MARIO_BRAKE_DEFLECT_SPEED);
+		nx = 1;
+		break;
+	case MARIO_STATE_BRAKE_RIGHT:
+		vx = MARIO_BRAKE_DEFLECT_SPEED;
+		nx = -1;
+		break;
+	case MARIO_STATE_LONG_JUMP:
+		vy = -MARIO_LONG_JUMP_SPEED_Y;
 		break;
 	}
 }
@@ -220,6 +343,86 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 
 void CMario::UpForm()
 {
-	form = MARIO_RACCOON_FORM;
+	float fx, fy;
+	this->GetPosition(fx, fy);
+	if (form < MARIO_RACCOON_FORM)
+	{
+		int level = form + 1;
+		this->SetState(MARIO_STATE_IDLE);
+		this->SetLevel(level);
+		this->SetPosition(fx, 0);
+		this->SetSpeed(0, 0);
 	}
-
+}
+void CMario::Jump()
+{
+	DWORD current = GetTickCount();
+	if (current - long_jump > MARIO_LONG_JUMP_TIME && isInGround == true
+		&& long_jump!= 0 )
+	{
+		this->SetState(MARIO_STATE_LONG_JUMP);
+		isJump == false;
+		long_jump = 0;
+	}
+	
+	
+}
+void CMario::unJump()
+{
+	DWORD current = GetTickCount();
+	if (current - long_jump < MARIO_LONG_JUMP_TIME && this->isInGround == true && isJump == true)
+	{
+		this->SetState(MARIO_STATE_JUMP);
+		DebugOut(L"\nxyz");
+		
+	}
+	else
+	{
+		DebugOut(L"\nisInGround %d", isInGround);
+		DebugOut(L"\nisJump %d", isJump);
+		DebugOut(L"\nC: %d - L: %d", current, long_jump);
+	}
+	isJump = false;
+	long_jump = 0;
+}
+void CMario::FillUpPowerMelter()
+{
+	DWORD current = GetTickCount();
+	if (stack_time_start == 0)
+	{
+		stack_time_start = current;
+	}
+	else
+	{
+		if (current - stack_time_start > 1000 && power_melter_stack < POWER_METER_FULL)
+		{
+			power_melter_stack += 1;
+			stack_time_start = 0;
+			DebugOut(L"Power Meter : %d", power_melter_stack);
+		}	
+	}
+}
+void CMario::LosePowerMelter()
+{
+	if (vx == 0)
+	{
+		DWORD current = GetTickCount();
+		if (stack_time_start == 0)
+		{
+			stack_time_start = current;
+		}
+		else
+		{
+			if (current - stack_time_start > 1000 && power_melter_stack > 0)
+			{
+				power_melter_stack -= 1;
+				stack_time_start = 0;
+			}
+		}
+	}
+}
+void CMario::Information()
+{
+	DebugOut(L"\nX: %d, Y: %d", this->x, this->y);
+	DebugOut(L"\nVx: %f, Vy: %f", this->vx, this->vy);
+}

@@ -1,4 +1,5 @@
 #include "KoopaTroopa.h"
+#include "debug.h"
 
 
 void CKoopaTroopa::GetBoundingBox(float& left, float& top, float& right, float& bottom)
@@ -14,13 +15,39 @@ void CKoopaTroopa::GetBoundingBox(float& left, float& top, float& right, float& 
 }
 void CKoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	if (this->state == KOOPATROOPA_STATE_HIDING)
-	{
-		return;
-	}
 	Enemy::Update(dt, coObjects);
-	x += dx;
-	y += dy;
+		
+	vy += KOOPATROOPA_GRAVITY * dt;
+	vector<LPCOLLISIONEVENT> coEvents;
+	vector<LPCOLLISIONEVENT> coEventsResult;
+
+	coEvents.clear();
+
+	if (state != KOOPATROOPA_STATE_HIDING)
+		CalcPotentialCollisions(coObjects, coEvents);
+	if (coEvents.size() == 0)
+	{
+		x += dx;
+		y += dy;
+	
+	}
+	else
+	{
+		float min_tx, min_ty, nx = 0, ny;
+
+		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny);
+
+		// block 
+		x += min_tx * dx + nx * 0.4f;		// nx*0.4f : need to push out a bit to avoid overlapping next frame
+		y += min_ty * dy + ny * 0.4f;
+
+		if (nx != 0) vx = -KOOPATROOPA_WALKING_SPEED;
+		if (ny != 0) vy = 0;
+	}
+	DebugOut(L"KoopaTroopa Position: X: %f,y: %f", this->x, this->y);
+	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
+	//Enemy::Update(dt, coObjects);
+	
 }
 void CKoopaTroopa::Render()
 {
@@ -38,9 +65,11 @@ void CKoopaTroopa::SetState(int state)
 	{
 	case KOOPATROOPA_STATE_WALKING:
 		vx = -KOOPATROOPA_WALKING_SPEED;
+		nx = -1;
 		break;
-	case KOOPATROOPA_ANI_HIDING:
-		y += KOOPATROOPA_BBOX_HEIGHT_HIDING + 1;
+	case KOOPATROOPA_STATE_HIDING:
+		y += 10;
+		nx = 0;
 		vx = 0;
 		vy = 0;
 		break;
