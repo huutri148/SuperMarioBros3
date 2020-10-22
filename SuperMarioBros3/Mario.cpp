@@ -1,4 +1,4 @@
-#include <algorithm>
+﻿#include <algorithm>
 #include "debug.h"
 #include "Enemy.h"
 #include "Mario.h"
@@ -22,7 +22,10 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	// turn off collision when die 
 	if (state != MARIO_STATE_DIE)
 		CalcPotentialCollisions(coObjects, coEvents);
-
+	/*if (isPickingUp == false)
+	{
+		shell->SetPosition(this->x, this->y);
+	}*/
 	// reset untouchable timer if untouchable time has passed
 	if (GetTickCount() - untouchable_start > MARIO_UNTOUCHABLE_TIME)
 	{
@@ -43,10 +46,14 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny);
 
 		// block 
-		x += min_tx * dx + nx * 0.4f;		// nx*0.4f : need to push out a bit to avoid overlapping next frame
-		y += min_ty * dy + ny * 0.4f;
+		/*if (isPickingUp != false)
+		{*/
+			x += min_tx * dx + nx * 0.4f;		// nx*0.4f : need to push out a bit to avoid overlapping next frame
+			y += min_ty * dy + ny * 0.4f;
+	/*	}*/
+	
 
-		if (nx != 0) vx = 0;
+		if (nx != 0 && isPickingUp == false) vx = 0;
 		if (ny != 0)
 		{
 			vy = 0; isInGround = true;
@@ -56,6 +63,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
+			// xử lí với obj là quái
 			if (dynamic_cast<Enemy*>(e->obj))
 			{
 				Enemy* enemy = dynamic_cast<Enemy*>(e->obj);
@@ -82,11 +90,29 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							else
 								SetState(MARIO_STATE_DIE);
 						}
+						else
+						{
+							if (dynamic_cast<CKoopaTroopa*> (enemy))
+							{
+								if (isPickingUp == true)
+								{
+									dynamic_cast<CKoopaTroopa*>(enemy)->PickUpBy(this);
+								}
+								else
+								{
+									dynamic_cast<CKoopaTroopa*>(enemy)->isPickedUp = false;
+									dynamic_cast<CKoopaTroopa*>(enemy)->IsKicked(this->nx);
+								
+								}
+								
+							}
+						}
 					}
 				}
 			}
 		}	
 	}
+	
 	// clean up collision events
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 }
@@ -117,7 +143,7 @@ void CMario::Render()
 					{
 						ani = MARIO_ANI_BIG_RUNNING_RIGHT;
 					}
-					else
+					else // nếu nx < 0 thì Mario đang phanh
 						ani = MARIO_ANI_BIG_WALKING_RIGHT;
 				}
 				else
@@ -134,7 +160,7 @@ void CMario::Render()
 					else
 						ani = MARIO_ANI_BIG_WALKING_LEFT;
 				}
-				else
+				else // nếu nx > 0 thì Mario đang phanh
 				{
 					ani = MARIO_ANI_BIG_BRAKE_LEFT;
 				}
@@ -176,7 +202,6 @@ void CMario::Render()
 				{
 					ani = MARIO_ANI_SMALL_BRAKE_LEFT;
 				}
-			
 			}
 		}
 		else if (form == MARIO_FIRE_FORM)
@@ -203,14 +228,14 @@ void CMario::Render()
 			}
 			else
 			{
-				if (nx < 0)
+				if (nx < 0) 
 				{
 					if (power_melter_stack == POWER_METER_FULL)
 						ani = MARIO_ANI_FIRE_RUNNING_LEFT;
 					else
 						ani = MARIO_ANI_FIRE_WALKING_LEFT;
 				}
-				else
+				else // nếu nx > 0 thì Mario đang phanh
 					ani = MARIO_ANI_FIRE_BRAKE_LEFT;
 				
 			}
@@ -231,7 +256,7 @@ void CMario::Render()
 					else
 						ani = MARIO_ANI_RACCOON_WALKING_RIGHT;
 				}
-				else
+				else // nếu nx < 0 thì Mario đang phanh
 				{
 					ani = MARIO_ANI_RACCOON_BRAKE_RIGHT;
 				}
@@ -357,12 +382,13 @@ void CMario::UpForm()
 void CMario::Jump()
 {
 	DWORD current = GetTickCount();
-	if (current - long_jump > MARIO_LONG_JUMP_TIME && isInGround == true
-		&& long_jump!= 0 )
+	if (current - long_jump_start > MARIO_LONG_JUMP_TIME
+		&& isInGround == true		// nếu Mario chưa tiếp đất hoặc vật thì ko cho phép nhảy
+		&& long_jump_start!= 0 )	
 	{
 		this->SetState(MARIO_STATE_LONG_JUMP);
 		isJump == false;
-		long_jump = 0;
+		long_jump_start = 0;
 	}
 	
 	
@@ -370,7 +396,9 @@ void CMario::Jump()
 void CMario::unJump()
 {
 	DWORD current = GetTickCount();
-	if (current - long_jump < MARIO_LONG_JUMP_TIME && this->isInGround == true && isJump == true)
+	if (current - long_jump_start < MARIO_LONG_JUMP_TIME	
+		&& this->isInGround == true // nếu Mario chưa tiếp đất hoặc vật thì ko cho phép nhảy
+		&& isJump == true)		//không cho phép nhảy ngắn khi Mario đã nhảy
 	{
 		this->SetState(MARIO_STATE_JUMP);
 		DebugOut(L"\nxyz");
@@ -380,12 +408,12 @@ void CMario::unJump()
 	{
 		DebugOut(L"\nisInGround %d", isInGround);
 		DebugOut(L"\nisJump %d", isJump);
-		DebugOut(L"\nC: %d - L: %d", current, long_jump);
+		DebugOut(L"\nC: %d - L: %d", current, long_jump_start);
 	}
 	isJump = false;
-	long_jump = 0;
+	long_jump_start = 0;
 }
-void CMario::FillUpPowerMelter()
+void CMario::FillUpPowerMelter()// Tăng stack năng lượng của Mario
 {
 	DWORD current = GetTickCount();
 	if (stack_time_start == 0)
@@ -394,7 +422,7 @@ void CMario::FillUpPowerMelter()
 	}
 	else
 	{
-		if (current - stack_time_start > 1000 && power_melter_stack < POWER_METER_FULL)
+		if (current - stack_time_start > STACK_TIME && power_melter_stack < POWER_METER_FULL)
 		{
 			power_melter_stack += 1;
 			stack_time_start = 0;
@@ -402,7 +430,7 @@ void CMario::FillUpPowerMelter()
 		}	
 	}
 }
-void CMario::LosePowerMelter()
+void CMario::LosePowerMelter()// Power Stack sẽ cạn theo thời gian
 {
 	if (vx == 0)
 	{
@@ -413,7 +441,7 @@ void CMario::LosePowerMelter()
 		}
 		else
 		{
-			if (current - stack_time_start > 1000 && power_melter_stack > 0)
+			if (current - stack_time_start >  300 && power_melter_stack > 0)
 			{
 				power_melter_stack -= 1;
 				stack_time_start = 0;
@@ -426,3 +454,9 @@ void CMario::Information()
 	DebugOut(L"\nX: %d, Y: %d", this->x, this->y);
 	DebugOut(L"\nVx: %f, Vy: %f", this->vx, this->vy);
 }
+void CMario::PickUp()
+{
+	isPickingUp = true;
+
+}
+

@@ -64,16 +64,37 @@ void CSampleKeyHander::OnKeyDown(int KeyCode)
 	case DIK_SPACE:
 		mario->StartJumping();
 		break;
+	case DIK_C:
+		koopatroopa = new CKoopaTroopa();
+		koopatroopa->AddAnimation(901);
+		koopatroopa->AddAnimation(902);
+		koopatroopa->SetPosition(295.0f, 0);
+		koopatroopa->SetState(KOOPATROOPA_STATE_WALKING);
+		objects.push_back(koopatroopa);
+		break;
+	case DIK_G:
+		goomba = new CGoomba();
+		goomba->AddAnimation(801);
+		goomba->AddAnimation(802);
+		goomba->SetPosition(400 +  60, 135);
+		goomba->SetState(GOOMBA_STATE_WALKING);
+		objects.push_back(goomba);
+		break;
 	}
 }
 
 void CSampleKeyHander::OnKeyUp(int KeyCode)
 {
-	DebugOut(L"[INFO] KeyUp: %d\n", KeyCode);
 	switch(KeyCode)
 	{
 	case DIK_SPACE:
 		mario->unJump();
+		break;
+	case DIK_B:
+		mario->isPickingUp = false;
+		DebugOut(L"Release B");
+		break;
+	
 	}
 }
 
@@ -103,13 +124,16 @@ void CSampleKeyHander::KeyState(BYTE* states)
 		}
 		else
 			mario->SetState(MARIO_STATE_WALKING_LEFT);
-		if (game->IsKeyDown(DIK_B))
+		if (game->IsKeyDown(DIK_D))
 		{
 			mario->SetState(MARIO_STATE_BRAKE_LEFT);
 		}
 	}
 	else if (game->IsKeyDown(DIK_SPACE))
 		mario->Jump();
+	else if (game->IsKeyDown(DIK_B))
+		mario->PickUp();
+	//	mario->pickUp = true;
 	else
 	{
 		mario->SetState(MARIO_STATE_IDLE);
@@ -505,14 +529,9 @@ void LoadResources()
 	//	objects.push_back(goomba);
 	//}
 	////KoopaTroopa
-		//koopatroopa = new CKoopaTroopa();
-		//koopatroopa->AddAnimation(901);
-		//koopatroopa->AddAnimation(902);
-		//koopatroopa->SetPosition(50.0f, 0);
-		//koopatroopa->SetState(KOOPATROOPA_STATE_WALKING);
-		//objects.push_back(koopatroopa);
-
-
+	koopatroopa = new CKoopaTroopa();
+	koopatroopa->AddAnimation(901);
+	koopatroopa->AddAnimation(902);
 	for (int i = 0; i < 5; i++)
 	{
 		CBrick* brick = new CBrick();
@@ -542,7 +561,6 @@ void LoadResources()
 
 
 }
-
 void Update(DWORD dt)
 {
 	// We know that Mario is the first object in the list hence we won't add him into the colliable object list
@@ -562,6 +580,7 @@ void Update(DWORD dt)
 	// Update camera to follow mario
 	float cx, cy;
 	mario->GetPosition(cx, cy);
+	/*koopatroopa->GetPosition(cx, cy);*/
 
 	cx -= SCREEN_WIDTH / 2;
 	cy -= SCREEN_HEIGHT / 2;

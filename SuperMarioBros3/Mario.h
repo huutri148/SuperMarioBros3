@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "GameObject.h"
 
 #define MARIO_WALKING_SPEED		0.1f 
@@ -9,9 +9,9 @@
 #define MARIO_BRAKE_DEFLECT_SPEED 0.05f
 #define MARIO_GRAVITY			0.002f
 #define MARIO_DIE_DEFLECT_SPEED	 0.5f
-#define BUFF_SPEED		0.05f
-#define POWER_METER_FULL 7
-#define STACK_TIME 3000
+#define BUFF_SPEED		0.02f	// tốc độ tăng lên khi tích stack
+#define POWER_METER_FULL 7		// số stack tối đa#define STACK_TIME 500			//thời gian để tích 1 stack
+#define STACK_TIME 200			//thời gian để tích 1 stack
 
 #define MARIO_STATE_IDLE			0
 #define MARIO_STATE_WALKING_RIGHT	100
@@ -95,10 +95,11 @@ class CMario : public CGameObject
 	DWORD stack_time_start;
 	int power_melter_stack;
 	int jump_stack;
-	DWORD long_jump;
+	DWORD long_jump_start;// pressing jumping time
 	bool isInGround;
 public:
 	bool isJump;
+	bool isPickingUp;
 	CMario() : CGameObject()
 	{
 		form = MARIO_BIG_FORM;
@@ -111,7 +112,7 @@ public:
 	void SetState(int state);
 	void SetLevel(int l) { form = l; }
 	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount(); }
-	void StartJumping() { long_jump = GetTickCount(); isInGround = false; isJump = true; }
+	void StartJumping() { long_jump_start = GetTickCount(); isInGround = false; isJump = true; }
 	void UpForm();
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	void Jump();
@@ -119,4 +120,5 @@ public:
 	void FillUpPowerMelter();
 	void LosePowerMelter(); 
 	void Information();
+	void PickUp();
 };

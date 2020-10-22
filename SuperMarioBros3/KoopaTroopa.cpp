@@ -1,5 +1,6 @@
-#include "KoopaTroopa.h"
+﻿#include "KoopaTroopa.h"
 #include "debug.h"
+#include "Brick.h"
 
 
 void CKoopaTroopa::GetBoundingBox(float& left, float& top, float& right, float& bottom)
@@ -18,35 +19,62 @@ void CKoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	Enemy::Update(dt, coObjects);
 		
 	vy += KOOPATROOPA_GRAVITY * dt;
-	vector<LPCOLLISIONEVENT> coEvents;
+	if (isPickedUp == true)
+	{
+		if (mario->isPickingUp == true)
+		{
+			this->vx = mario->vx;
+			this->vy = mario->vy;
+			this->nx = mario->nx;
+			this->ny = mario->ny;
+		}
+		else
+		{
+			isPickedUp = false;
+			this->SetState(KOOPATROOPA_STATE_HIDING);
+		}
+	
+	}
+		vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
 	coEvents.clear();
-
-	if (state != KOOPATROOPA_STATE_HIDING)
-		CalcPotentialCollisions(coObjects, coEvents);
+	CalcPotentialCollisions(coObjects, coEvents);
 	if (coEvents.size() == 0)
 	{
-		x += dx;
-		y += dy;
-	
+						x += dx;
+				y += dy;
 	}
 	else
 	{
 		float min_tx, min_ty, nx = 0, ny;
-
 		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny);
-
 		// block 
 		x += min_tx * dx + nx * 0.4f;		// nx*0.4f : need to push out a bit to avoid overlapping next frame
 		y += min_ty * dy + ny * 0.4f;
-
-		if (nx != 0) vx = -KOOPATROOPA_WALKING_SPEED;
-		if (ny != 0) vy = 0;
+		if (nx != 0)
+		{
+		}
+		if (ny < 0) vy = 0;
+		for (UINT i = 0; i < coEventsResult.size(); i++)
+		{
+			LPCOLLISIONEVENT e = coEventsResult[i];
+			if (isPickedUp == true)
+			{
+				if (dynamic_cast<Enemy*>(e->obj))
+				{
+					Enemy* enemy = dynamic_cast<Enemy*>(e->obj);
+					if (e->nx != 0)
+					{
+						enemy->SetDie();
+					}
+				}
+			}
+		}
+		
 	}
-	DebugOut(L"KoopaTroopa Position: X: %f,y: %f", this->x, this->y);
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
-	//Enemy::Update(dt, coObjects);
+		//Enemy::Update(dt, coObjects);
 	
 }
 void CKoopaTroopa::Render()
@@ -54,7 +82,7 @@ void CKoopaTroopa::Render()
 	int ani;
 	if (state == KOOPATROOPA_STATE_WALKING)
 		ani = KOOPATROOPA_ANI_WALKING;
-	else
+	else 
 		ani = KOOPATROOPA_ANI_HIDING;
 	animations[ani]->Render(x, y);
 }
@@ -68,11 +96,10 @@ void CKoopaTroopa::SetState(int state)
 		nx = -1;
 		break;
 	case KOOPATROOPA_STATE_HIDING:
-		y += 10;
-		nx = 0;
-		vx = 0;
 		vy = 0;
+		vx = 0;
 		break;
+
 	}
 }
 
@@ -88,4 +115,14 @@ bool CKoopaTroopa::IsDead()
 		return true;
 	}
 	return false;
+}
+void CKoopaTroopa::IsKicked(int nx)
+{
+	this->nx = nx;
+	if (this->nx < 0)
+	{
+		this->vx = -KOOPATROOPA_BUMP_SPEED;
+	}
+	else
+		this->vx = KOOPATROOPA_BUMP_SPEED;
 }

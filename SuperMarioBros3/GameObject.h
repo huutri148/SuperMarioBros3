@@ -47,6 +47,7 @@ public:
 	float vy;
 
 	int nx;
+	int ny;
 
 	int state;
 
