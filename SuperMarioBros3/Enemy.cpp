@@ -2,7 +2,7 @@
 
 Enemy::Enemy()
 {
-
+	
 }
 
 Enemy::~Enemy()
@@ -20,4 +20,9 @@ void Enemy::SetState(int state)
 	CGameObject::SetState(state);
 }
 
+void Enemy::SetEntryPosition(int x, int y)
+{
+	this->entrY = x;
+	this->entrY = y;
+}
 

@@ -19,6 +19,8 @@ void CKoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	Enemy::Update(dt, coObjects);
 		
 	vy += KOOPATROOPA_GRAVITY * dt;
+
+	//Xét nếu đang bị cầm ở dạng shell
 	if (isPickedUp == true)
 	{
 		if (mario->isPickingUp == true)
@@ -28,7 +30,7 @@ void CKoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			this->nx = mario->nx;
 			this->ny = mario->ny;
 		}
-		else
+		else // nếu người chơi nhả nút giữ sẽ trở về Hiding
 		{
 			isPickedUp = false;
 			this->SetState(KOOPATROOPA_STATE_HIDING);
@@ -39,11 +41,12 @@ void CKoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
 	coEvents.clear();
-	CalcPotentialCollisions(coObjects, coEvents);
+	if(state != KOOPATROOPA_STATE_DIE_NX)
+		CalcPotentialCollisions(coObjects, coEvents);
 	if (coEvents.size() == 0)
 	{
-						x += dx;
-				y += dy;
+		x += dx;
+		y += dy;
 	}
 	else
 	{
@@ -56,22 +59,22 @@ void CKoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		{
 		}
 		if (ny < 0) vy = 0;
-		for (UINT i = 0; i < coEventsResult.size(); i++)
+		if (state == KOOPATROOPA_STATE_HIDING )
 		{
-			LPCOLLISIONEVENT e = coEventsResult[i];
-			if (isPickedUp == true)
+			for (UINT i = 0; i < coEventsResult.size(); i++)
 			{
+				LPCOLLISIONEVENT e = coEventsResult[i];
 				if (dynamic_cast<Enemy*>(e->obj))
 				{
 					Enemy* enemy = dynamic_cast<Enemy*>(e->obj);
 					if (e->nx != 0)
 					{
-						enemy->SetDie();
+						enemy->SetDie(true);
+						this->SetState(KOOPATROOPA_STATE_DIE_NX);
 					}
 				}
 			}
 		}
-		
 	}
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 		//Enemy::Update(dt, coObjects);
@@ -99,18 +102,26 @@ void CKoopaTroopa::SetState(int state)
 		vy = 0;
 		vx = 0;
 		break;
+	case KOOPATROOPA_STATE_DIE_NX:
+		vy = -KOOPATROOPA_DIE_DEFLECT_SPEED;
+		vx = 0;
+		break;
 
 	}
 }
 
-void CKoopaTroopa::SetDie()
+void CKoopaTroopa::SetDie(bool n)
 {
-	this->SetState(KOOPATROOPA_STATE_HIDING);
+	// true: nx. false = ny
+	if (n == true)
+		this->SetState(KOOPATROOPA_STATE_DIE_NX);
+	else
+		this->SetState(KOOPATROOPA_STATE_HIDING);
 }
 
 bool CKoopaTroopa::IsDead()
 {
-	if (this->state == KOOPATROOPA_STATE_HIDING)
+	if ( this->state == KOOPATROOPA_STATE_HIDING)
 	{
 		return true;
 	}
@@ -125,4 +136,10 @@ void CKoopaTroopa::IsKicked(int nx)
 	}
 	else
 		this->vx = KOOPATROOPA_BUMP_SPEED;
+}
+bool CKoopaTroopa::IsHiding()
+{
+	if (this->state == KOOPATROOPA_STATE_HIDING)
+		return true;
+	return false;
 }

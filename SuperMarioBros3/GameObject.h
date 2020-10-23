@@ -50,6 +50,7 @@ public:
 	int ny;
 
 	int state;
+	bool isEnable;
 
 	DWORD dt;
 
@@ -58,9 +59,10 @@ public:
 public:
 	void SetPosition(float x, float y) { this->x = x, this->y = y; }
 	void SetSpeed(float vx, float vy) { this->vx = vx, this->vy = vy; }
+	void SetEnable(bool enable) { this->isEnable = enable; }
 	void GetPosition(float& x, float& y) { x = this->x; y = this->y; }
 	void GetSpeed(float& vx, float& vy) { vx = this->vx; vy = this->vy; }
-
+	bool IsEnable() { return this->isEnable; };
 	int GetState() { return this->state; }
 
 	void RenderBoundingBox();

@@ -76,8 +76,8 @@ void CSampleKeyHander::OnKeyDown(int KeyCode)
 		goomba = new CGoomba();
 		goomba->AddAnimation(801);
 		goomba->AddAnimation(802);
-		goomba->SetPosition(400 +  60, 135);
 		goomba->SetState(GOOMBA_STATE_WALKING);
+		goomba->SetPosition(295.0f, 0);
 		objects.push_back(goomba);
 		break;
 	}

@@ -48,6 +48,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		// block 
 		/*if (isPickingUp != false)
 		{*/
+		
 			x += min_tx * dx + nx * 0.4f;		// nx*0.4f : need to push out a bit to avoid overlapping next frame
 			y += min_ty * dy + ny * 0.4f;
 	/*	}*/
@@ -71,13 +72,18 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				{
 					if (enemy->IsDead() != true)
 					{
-						enemy->SetDie();
+						enemy->SetDie(false);
 						isInGround = true;
 						vy = -MARIO_JUMP_DEFLECT_SPEED;
 					}
 				}
+				else if (e->ny > 0)
+				{
+					DebugOut(L"Vai lol luon dau cat moi");
+				}
 				else if (e->nx != 0)
 				{
+					// nếu không trong trạng thái untouchable
 					if (untouchable == 0)
 					{
 						if (enemy->IsDead() != true)
@@ -92,12 +98,15 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						}
 						else
 						{
+							// xử lí với shell
 							if (dynamic_cast<CKoopaTroopa*> (enemy))
 							{
+								// nếu giữ phím B thì có thể nhặt shell
 								if (isPickingUp == true)
 								{
 									dynamic_cast<CKoopaTroopa*>(enemy)->PickUpBy(this);
 								}
+								//bump shell
 								else
 								{
 									dynamic_cast<CKoopaTroopa*>(enemy)->isPickedUp = false;
@@ -130,6 +139,8 @@ void CMario::Render()
 	{
 		if (form == MARIO_BIG_FORM)
 		{
+			
+			// nếu ko có tác động gì
 			if (vx == 0)
 			{
 				if (nx > 0) ani = MARIO_ANI_BIG_IDLE_RIGHT;
@@ -151,7 +162,7 @@ void CMario::Render()
 					ani = MARIO_ANI_BIG_BRAKE_RIGHT;
 				}
 			}
-			else
+			else if (vx < 0)
 			{
 				if (nx < 0)
 				{
