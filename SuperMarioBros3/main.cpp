@@ -1,4 +1,4 @@
-#include <windows.h>
+﻿#include <windows.h>
 #include <d3d9.h>
 #include <d3dx9.h>
 
@@ -90,7 +90,7 @@ void CSampleKeyHander::OnKeyUp(int KeyCode)
 	case DIK_SPACE:
 		mario->unJump();
 		break;
-	case DIK_B:
+	case DIK_LSHIFT:
 		mario->isPickingUp = false;
 		DebugOut(L"Release B");
 		break;
@@ -102,7 +102,7 @@ void CSampleKeyHander::KeyState(BYTE* states)
 {
 	// disable control key when Mario die 
 	if (mario->GetState() == MARIO_STATE_DIE) return;
-	if (game->IsKeyDown(DIK_D))
+	if (game->IsKeyDown(DIK_RIGHT))
 	{
 		if (game->IsKeyDown(DIK_LSHIFT))
 		{
@@ -111,11 +111,11 @@ void CSampleKeyHander::KeyState(BYTE* states)
 		}
 		else
 			mario->SetState(MARIO_STATE_WALKING_RIGHT);
-		if (game->IsKeyDown(DIK_A))
+		if (game->IsKeyDown(DIK_LEFT))
 			mario->SetState(MARIO_STATE_BRAKE_RIGHT);
 	}
 
-	else if (game->IsKeyDown(DIK_A))
+	else if (game->IsKeyDown(DIK_LEFT))
 	{
 		if (game->IsKeyDown(DIK_LSHIFT))
 		{
@@ -124,14 +124,14 @@ void CSampleKeyHander::KeyState(BYTE* states)
 		}
 		else
 			mario->SetState(MARIO_STATE_WALKING_LEFT);
-		if (game->IsKeyDown(DIK_D))
+		if (game->IsKeyDown(DIK_RIGHT))
 		{
 			mario->SetState(MARIO_STATE_BRAKE_LEFT);
 		}
 	}
 	else if (game->IsKeyDown(DIK_SPACE))
 		mario->Jump();
-	else if (game->IsKeyDown(DIK_B))
+	else if (game->IsKeyDown(DIK_LSHIFT))
 		mario->PickUp();
 	//	mario->pickUp = true;
 	else
@@ -190,6 +190,12 @@ void LoadResources()
 	sprites->Add(10006, 392, 155, 411, 181, texMario);
 	sprites->Add(10007, 425, 154, 441, 182, texMario);		//Brake right
 
+	sprites->Add(10008, 396, 275,413, 301, texMario);		//jump right
+	
+	sprites->Add(10009, 423, 274, 444, 301, texMario);		//bump right
+	sprites->Add(11001, 276, 314, 291, 341, texMario);		//hold right
+	sprites->Add(11002, 305, 315, 321, 341, texMario);
+
 
 	sprites->Add(10011, 186, 154, 200, 181, texMario);		// idle left
 	sprites->Add(10012, 155, 154, 170, 181, texMario);		// walking left
@@ -199,16 +205,29 @@ void LoadResources()
 	sprites->Add(10015, 65, 154, 84, 181, texMario);
 	sprites->Add(10016, 35, 155, 54, 181, texMario);
 	sprites->Add(10017, 5, 154, 21, 182, texMario);			//brake left
+
+	sprites->Add(10018, 35, 275, 51, 301, texMario);		// jump left
+	sprites->Add(10019, 5, 80, 21, 96, texMario);			//bupm left
+
+	sprites->Add(11011, 155, 314, 170, 341, texMario);		//hold left
+	sprites->Add(11012, 125, 315, 141, 341, texMario);
+
 	sprites->Add(10099, 215, 120, 231, 135, texMario);		// die 
 
 	// small
 	sprites->Add(10021, 247, 0, 259, 15, texMario);			// idle small right
 	sprites->Add(10022, 275, 0, 291, 15, texMario);			// walking right
 	sprites->Add(10023, 306, 0, 320, 15, texMario);			// 
-
+	
 	sprites->Add(10024, 335, 0, 351, 16, texMario);			//running right
 
 	sprites->Add(10025, 426, 0, 440, 16, texMario);			//brake right
+
+	sprites->Add(10026, 395, 80, 411, 96, texMario);		// jump right
+	sprites->Add(10027, 425, 80, 441, 96, texMario);		//bump right
+
+	sprites->Add(11021, 246, 120, 260, 136, texMario);		//hold right
+	sprites->Add(11022, 276, 120, 291, 136, texMario);
 
 	sprites->Add(10031, 187, 0, 198, 15, texMario);			// idle small left
 
@@ -218,6 +237,11 @@ void LoadResources()
 	sprites->Add(10034, 95, 0, 111, 16, texMario);			//running left
 	sprites->Add(10035, 6, 0, 20, 16, texMario);			//brake left
 
+	sprites->Add(10036, 35, 80, 51, 96, texMario);			//jump left
+	sprites->Add(10037, 5, 80, 21, 96, texMario);			//bump left
+
+	sprites->Add(11031, 186, 120, 200, 136, texMario);		//hold left
+	sprites->Add(11032, 155, 120, 170, 136, texMario);
 	//Fire
 	sprites->Add(10041, 246, 394, 260, 421, texMario);// idle right
 	sprites->Add(10042, 275, 394, 291, 421, texMario);//walking right
@@ -229,6 +253,12 @@ void LoadResources()
 
 	sprites->Add(10047, 425, 394, 441, 422, texMario);//brake right
 
+	sprites->Add(10048, 395, 515, 411, 541, texMario);//jump right
+	sprites->Add(10049, 423, 514, 444, 541, texMario);//bump right
+
+	sprites->Add(11041, 276, 554, 291, 581, texMario);		//hold right
+	sprites->Add(11042, 205, 555, 221, 581, texMario);
+
 
 	sprites->Add(10051, 186, 394, 200, 421, texMario);//idle left
 	sprites->Add(10052, 155, 394, 171, 421, texMario);//walking left
@@ -238,6 +268,12 @@ void LoadResources()
 	sprites->Add(10055, 65, 394, 84, 421, texMario);
 	sprites->Add(10056, 35, 395, 54, 421, texMario);
 	sprites->Add(10057, 5, 394, 21, 422, texMario);//brake left
+
+	sprites->Add(10058, 35, 515, 51, 541, texMario);//jump left
+	sprites->Add(10059, 2, 254, 23, 541, texMario);//bump left
+
+	sprites->Add(11051, 155, 554, 170, 581, texMario);		//hold left
+	sprites->Add(11052, 125, 555, 141, 581, texMario);
 
 	//RACCOON 
 	sprites->Add(10061, 243, 634, 264, 662, texMario); //idle right
@@ -250,6 +286,12 @@ void LoadResources()
 
 	sprites->Add(10067, 425, 633, 441, 663, texMario);//brake right
 
+	sprites->Add(10068, 392, 754, 415, 781, texMario);//jump right
+	sprites->Add(10069, 422, 754, 744, 781, texMario);//bump right
+
+	sprites->Add(11061, 242, 794, 264, 823, texMario);		//hold right
+	sprites->Add(11062, 272, 794, 294, 823, texMario);
+	sprites->Add(11063, 303, 794, 260, 823, texMario);		
 
 	sprites->Add(10071, 182, 634, 203, 662, texMario);//idle left
 	sprites->Add(10072, 152, 634, 174, 662, texMario); //walking left
@@ -260,6 +302,14 @@ void LoadResources()
 	sprites->Add(10076, 32, 634, 58, 662, texMario);
 
 	sprites->Add(10077, 5, 633, 21, 663, texMario);//brake left
+
+	sprites->Add(10078, 31, 754, 54, 781, texMario);//jump left
+	sprites->Add(10079, 2, 754, 26, 781, texMario);//bump left
+
+
+	sprites->Add(11071, 182, 794, 204, 823, texMario);		//hold left
+	sprites->Add(11072, 152, 794, 174, 823, texMario);
+	sprites->Add(11073, 122, 794, 143, 822, texMario);
 
 	//brick
 	LPDIRECT3DTEXTURE9 texMisc = textures->Get(ID_TEX_MISC);
@@ -361,7 +411,7 @@ void LoadResources()
 	ani->Add(10072);
 	ani->Add(10073);
 	animations->Add(507, ani);
-
+	//BRAKE
 	ani = new CAnimation(1000);//big right brake
 	ani->Add(10007);
 	animations->Add(650, ani);
@@ -393,15 +443,122 @@ void LoadResources()
 	ani = new CAnimation(100);//raccoon left brake
 	ani->Add(10077);
 	animations->Add(657, ani);
+	//JUMP
+	ani = new CAnimation(1500);//big right jumping
+	ani->Add(10008);
+	animations->Add(660, ani);
+
+	ani = new CAnimation(1500);//big left jumping
+	ani->Add(10018);
+	animations->Add(661, ani);
+
+	ani = new CAnimation(1500);//small right jumping
+	ani->Add(10026);
+	animations->Add(662, ani);
+
+	ani = new CAnimation(2000);//small left jumping
+	ani->Add(10036);
+	animations->Add(663, ani);
+
+	ani = new CAnimation(1500);//fire jumping right
+	ani->Add(10048);
+	animations->Add(664, ani);
+
+	ani = new CAnimation(1500);//fire left jumping
+	ani->Add(10058);
+	animations->Add(665, ani);
+
+	ani = new CAnimation(1500);//raccoon right jumping
+	ani->Add(10068);
+	animations->Add(666, ani);
+
+	ani = new CAnimation(1500);//raccoon left jumping
+	ani->Add(10078);
+	animations->Add(667, ani);
 
 
+	//bumping
+	ani = new CAnimation(1500); // big right bumping
+	ani->Add(10009);
+	animations->Add(670, ani);
+
+	ani = new CAnimation(1500);// big left bumping
+	ani->Add(10019);
+	animations->Add(671, ani);
+
+	ani = new CAnimation(1500);//small right bumping
+	ani->Add(10027);
+	animations->Add(672, ani);
+
+	ani = new CAnimation(1500);//small left bumping
+	ani->Add(10037);
+	animations->Add(673, ani);
+
+	ani = new CAnimation(1500);//fire right bumping
+	ani->Add(10049);
+	animations->Add(674, ani);
+
+	ani = new CAnimation(1500);//fire left bumping
+	ani->Add(10059);
+	animations->Add(675, ani);
+
+	ani = new CAnimation(1500);//raccoon right bumping
+	ani->Add(10069);
+	animations->Add(676, ani);
+	
+	ani = new CAnimation(1500);//raccoon left bumping
+	ani->Add(10079);
+	animations->Add(677, ani);
+// HOLDING SHELL
+	ani = new CAnimation(100);//Big right hold
+	ani->Add(11001);
+	ani->Add(11002);
+	animations->Add(680, ani);
+
+	ani = new CAnimation(100);//Big left hold
+	ani->Add(11011);
+	ani->Add(11012);
+	animations->Add(681, ani);
+
+	ani = new CAnimation(100);//Small right hold
+	ani->Add(11021);
+	ani->Add(11022);
+	animations->Add(682, ani);
+
+	ani = new CAnimation(100);//small left hold
+	ani->Add(11031);
+	ani->Add(11032);
+	animations->Add(683, ani);
+
+	ani = new CAnimation(100);//fire right hold
+	ani->Add(11041);
+	ani->Add(11042);
+	animations->Add(684, ani);
+
+	ani = new CAnimation(100);//fire left hold
+	ani->Add(11051);
+	ani->Add(11052);
+	animations->Add(685, ani);
+
+	ani = new CAnimation(100);//raccoon right hold
+	ani->Add(11061);
+	ani->Add(11062);
+	ani->Add(11063);
+	animations->Add(686, ani);
+
+	ani = new CAnimation(100);//raccoon left hold
+	ani->Add(11071);
+	ani->Add(11072);
+	ani->Add(11073);
+	animations->Add(687, ani);
+	
 
 
 
 	ani = new CAnimation(100);		// Mario die
 	ani->Add(10099);
 	animations->Add(699, ani);
-
+	//RUNNING
 	ani = new CAnimation(10);  //big running right
 	ani->Add(10004);
 	ani->Add(10005);
@@ -512,6 +669,36 @@ void LoadResources()
 	mario->AddAnimation(655);		//brake left fire
 	mario->AddAnimation(656);		//brake right raccoon
 	mario->AddAnimation(657);		//brake left raccoon
+
+
+	mario->AddAnimation(660);		//big right jumping
+	mario->AddAnimation(661);		//big left jumping
+	mario->AddAnimation(662);		//small right jumping
+	mario->AddAnimation(663);		//small left jumping
+	mario->AddAnimation(664);		//fire right jumping
+	mario->AddAnimation(665);		//fire left jumping
+	mario->AddAnimation(666);		//raccoon right jumping
+	mario->AddAnimation(667);		//raccoon left jumping
+
+
+	mario->AddAnimation(670);		//big right bumping 
+	mario->AddAnimation(671);		//big left bumping
+	mario->AddAnimation(672);		//small right bumping
+	mario->AddAnimation(673);		//small left bumping
+	mario->AddAnimation(674);		//fire right bumping
+	mario->AddAnimation(675);		//fire left bumping
+	mario->AddAnimation(676);		//raccoon right bumping
+	mario->AddAnimation(677);		//raccoon left bumping
+
+	mario->AddAnimation(680);		//big right hold shell
+	mario->AddAnimation(681);		//big left  hold shell
+	mario->AddAnimation(682);		//small right holding shell
+	mario->AddAnimation(683);		//small left holding shell
+	mario->AddAnimation(684);		//fire right holding shell
+	mario->AddAnimation(685);		//fire left holding shell
+	mario->AddAnimation(686);		//raccoon right holding shell
+	mario->AddAnimation(687);		//raccoon left holding shell
+
 
 
 	mario->AddAnimation(699);		// die

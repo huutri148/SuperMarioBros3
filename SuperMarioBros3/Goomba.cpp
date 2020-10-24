@@ -1,15 +1,27 @@
 #include "Goomba.h"
 
-void CGoomba::GetBoundingBox(float& left, float& top, float& right, float& bottom)
+void CGoomba::GetBoundingBox(float& left, float& top, float& right, float& bottom,bool isEnable)
 {
-	left = x;
-	top = y;
-	right = x + GOOMBA_BBOX_WIDTH;
+	if (isEnable == true)
+	{
 
-	if (state == GOOMBA_STATE_DIE)
-		bottom = y + GOOMBA_BBOX_HEIGHT_DIE;
+		left = x;
+		top = y;
+		right = x + GOOMBA_BBOX_WIDTH;
+
+		if (state == GOOMBA_STATE_DIE)
+			bottom = y + GOOMBA_BBOX_HEIGHT_DIE;
+		else
+			bottom = y + GOOMBA_BBOX_HEIGHT;
+	}
+
 	else
-		bottom = y + GOOMBA_BBOX_HEIGHT;
+	{
+	left = 0;
+	top = 0;
+	right = 0;
+	bottom = 0;
+	}
 }
 
 void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -82,20 +94,23 @@ void CGoomba::SetState(int state)
 	case GOOMBA_STATE_DIE_NX:
 		vy = -GOOMBA_DIE_DEFLECT_SPEED;
 		vx = 0;
+		isEnable = false;
 		break;
 	case GOOMBA_STATE_DIE_NY:
 		y += GOOMBA_BBOX_HEIGHT - GOOMBA_BBOX_HEIGHT_DIE +3;
+		isEnable = false;
 		vx = 0;
 		vy = 0;
 		break;
 	case GOOMBA_STATE_INACTIVE:
 		vx = 0;
+		isEnable = false;
 		break;
 	}
 }
 bool CGoomba::IsDead()
 {
-	if (this->state == GOOMBA_STATE_DIE_NY|| this->state == GOOMBA_STATE_DIE_NX)
+	if (this->state == GOOMBA_STATE_DIE_NY|| this->state == GOOMBA_STATE_DIE_NX )
 	{
 		return true;
 	}

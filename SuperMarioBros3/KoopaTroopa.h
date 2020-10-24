@@ -27,7 +27,7 @@ class CKoopaTroopa :public Enemy
 {
 
 	CMario* mario;
-	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
+	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom,bool isEnable);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	virtual void Render();
 public:
@@ -43,6 +43,7 @@ public:
 	CKoopaTroopa() : Enemy()
 	{
 		isPickedUp = false;
+		isEnable = true;
 	}
 	void IsKicked(int nx);
 	bool IsHiding();

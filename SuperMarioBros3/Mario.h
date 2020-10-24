@@ -24,6 +24,7 @@
 #define MARIO_STATE_BRAKE_RIGHT		800
 #define MARIO_STATE_BRAKE_LEFT		900
 #define MARIO_STATE_KICK			1000
+#define MARIO_STATE_PICK_UP			1100
 
 #define MARIO_ANI_BIG_IDLE_RIGHT		0
 #define MARIO_ANI_BIG_IDLE_LEFT			1
@@ -83,9 +84,18 @@
 #define MARIO_ANI_FIRE_KICK_LEFT			45
 #define MARIO_ANI_RACCOON_KICK_RIGHT		46
 #define MARIO_ANI_RACCOON_KICK_LEFT			47
+// cầm 
+#define MARIO_ANI_BIG_PICK_RIGHT			48
+#define MARIO_ANI_BIG_PICK_LEFT				49
+#define MARIO_ANI_SMALL_PICK_RIGHT			50
+#define MARIO_ANI_SMALL_PICK_LEFT			51
+#define MARIO_ANI_FIRE_PICK_RIGHT			52
+#define MARIO_ANI_FIRE_PICK_LEFT			53
+#define MARIO_ANI_RACCOON_PICK_RIGHT		54
+#define MARIO_ANI_RACCOON_PICK_LEFT			55
 
 
-#define MARIO_ANI_DIE						32
+#define MARIO_ANI_DIE						56
 
 #define	MARIO_SMALL_FORM	1
 #define	MARIO_BIG_FORM		2
@@ -135,7 +145,7 @@ public:
 	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount(); }
 	void StartJumping() { long_jump_start = GetTickCount(); isInGround = false; isJump = true; }
 	void UpForm();
-	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
+	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom,bool isEnable);
 	void Jump();
 	void unJump();
 	void FillUpPowerMelter();

@@ -3,16 +3,28 @@
 #include "Brick.h"
 
 
-void CKoopaTroopa::GetBoundingBox(float& left, float& top, float& right, float& bottom)
+void CKoopaTroopa::GetBoundingBox(float& left, float& top, float& right, float& bottom, bool isEnable)
 {
-	left = x;
-	top = y;
-	right = x + KOOPATROOPA_BBOX_WIDTH;
+	if (isEnable == true)
+	{
+		left = x;
+		top = y;
+		right = x + KOOPATROOPA_BBOX_WIDTH;
 
-	if (state == KOOPATROOPA_STATE_HIDING)
-		bottom = y + KOOPATROOPA_BBOX_HEIGHT_HIDING;
+		if (state == KOOPATROOPA_STATE_HIDING)
+			bottom = y + KOOPATROOPA_BBOX_HEIGHT_HIDING;
+		else
+			bottom = y + KOOPATROOPA_BBOX_HEIGHT;
+
+	}
 	else
-		bottom = y + KOOPATROOPA_BBOX_HEIGHT;
+	{
+		left = 0;
+		top = 0;
+		right = 0;
+		bottom = 0;
+	}
+	
 }
 void CKoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
@@ -69,8 +81,11 @@ void CKoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					Enemy* enemy = dynamic_cast<Enemy*>(e->obj);
 					if (e->nx != 0)
 					{
+						if (isPickedUp == true)
+						{
+							this->SetState(KOOPATROOPA_STATE_DIE_NX);
+						}
 						enemy->SetDie(true);
-						this->SetState(KOOPATROOPA_STATE_DIE_NX);
 					}
 				}
 			}
@@ -104,6 +119,7 @@ void CKoopaTroopa::SetState(int state)
 		break;
 	case KOOPATROOPA_STATE_DIE_NX:
 		vy = -KOOPATROOPA_DIE_DEFLECT_SPEED;
+		isEnable = false;
 		vx = 0;
 		break;
 

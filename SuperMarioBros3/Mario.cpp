@@ -79,14 +79,15 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				}
 				else if (e->ny > 0)
 				{
-					DebugOut(L"Vai lol luon dau cat moi");
+					DebugOut(L"Bi quai de");
+
 				}
 				else if (e->nx != 0)
 				{
 					// nếu không trong trạng thái untouchable
 					if (untouchable == 0)
 					{
-						if (enemy->IsDead() != true)
+						if (enemy->IsDead() != true && enemy->IsEnable() == true)
 						{
 							if (form > MARIO_SMALL_FORM)
 							{
@@ -111,7 +112,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 								{
 									dynamic_cast<CKoopaTroopa*>(enemy)->isPickedUp = false;
 									dynamic_cast<CKoopaTroopa*>(enemy)->IsKicked(this->nx);
-								
+									this->SetState(MARIO_STATE_KICK);
 								}
 								
 							}
@@ -145,6 +146,15 @@ void CMario::Render()
 			{
 				if (nx > 0) ani = MARIO_ANI_BIG_IDLE_RIGHT;
 				else ani = MARIO_ANI_BIG_IDLE_LEFT;
+				if (vy < 0)
+				{
+					if (nx < 0)
+					{
+						ani = MARIO_ANI_BIG_JUMP_LEFT;
+					}
+					else
+						ani = MARIO_ANI_BIG_JUMP_RIGHT;
+				}
 			}
 			else if (vx > 0)
 			{
@@ -157,10 +167,16 @@ void CMario::Render()
 					else // nếu nx < 0 thì Mario đang phanh
 						ani = MARIO_ANI_BIG_WALKING_RIGHT;
 				}
-				else
+				else if(nx < 0)
 				{
 					ani = MARIO_ANI_BIG_BRAKE_RIGHT;
 				}
+				if (vy < 0)
+				{
+					ani = MARIO_ANI_BIG_JUMP_RIGHT;
+				}
+				if (this->state == MARIO_STATE_KICK)
+					ani = MARIO_ANI_BIG_KICK_RIGHT;
 			}
 			else if (vx < 0)
 			{
@@ -175,6 +191,12 @@ void CMario::Render()
 				{
 					ani = MARIO_ANI_BIG_BRAKE_LEFT;
 				}
+				if (vy < 0)
+				{
+					ani = MARIO_ANI_BIG_JUMP_LEFT;
+				}
+				if (this->state == MARIO_STATE_KICK)
+					ani = MARIO_ANI_BIG_KICK_LEFT;
 				
 			}
 		}
@@ -184,6 +206,15 @@ void CMario::Render()
 			{
 				if (nx > 0) ani = MARIO_ANI_SMALL_IDLE_RIGHT;
 				else ani = MARIO_ANI_SMALL_IDLE_LEFT;
+				if (vy < 0)
+				{
+					if (nx < 0)
+					{
+						ani = MARIO_ANI_SMALL_JUMP_LEFT;
+					}
+					else
+						ani = MARIO_ANI_SMALL_JUMP_RIGHT;
+				}
 			}
 			else if (vx > 0)
 			{
@@ -198,6 +229,12 @@ void CMario::Render()
 				{
 					ani = MARIO_ANI_SMALL_BRAKE_RIGHT;
 				}
+				if (vy < 0)
+				{
+					ani = MARIO_ANI_SMALL_JUMP_RIGHT;
+				}
+				if (this->state == MARIO_STATE_KICK)
+					ani = MARIO_ANI_SMALL_KICK_RIGHT;
 				
 			}
 			else
@@ -213,6 +250,12 @@ void CMario::Render()
 				{
 					ani = MARIO_ANI_SMALL_BRAKE_LEFT;
 				}
+				if (vy < 0)
+				{
+					ani = MARIO_ANI_SMALL_JUMP_LEFT;
+				}
+				if (this->state == MARIO_STATE_KICK)
+					ani = MARIO_ANI_SMALL_KICK_LEFT;
 			}
 		}
 		else if (form == MARIO_FIRE_FORM)
@@ -221,6 +264,15 @@ void CMario::Render()
 			{
 				if (nx > 0) ani = MARIO_ANI_FIRE_IDLE_RIGHT;
 				else ani = MARIO_ANI_FIRE_IDLE_LEFT;
+				if (vy < 0)
+				{
+					if (nx < 0)
+					{
+						ani = MARIO_ANI_FIRE_JUMP_LEFT;
+					}
+					else
+						ani = MARIO_ANI_FIRE_JUMP_RIGHT;
+				}
 			}
 			else if (vx > 0)
 			{
@@ -235,7 +287,12 @@ void CMario::Render()
 				{
 					ani = MARIO_ANI_FIRE_BRAKE_RIGHT;
 				}
-				
+				if (vy < 0)
+				{
+					ani = MARIO_ANI_FIRE_JUMP_RIGHT;
+				}
+				if (this->state == MARIO_STATE_KICK)
+					ani = MARIO_ANI_FIRE_KICK_RIGHT;
 			}
 			else
 			{
@@ -248,7 +305,12 @@ void CMario::Render()
 				}
 				else // nếu nx > 0 thì Mario đang phanh
 					ani = MARIO_ANI_FIRE_BRAKE_LEFT;
-				
+				if (vy < 0)
+				{
+					ani = MARIO_ANI_FIRE_JUMP_LEFT;
+				}
+				if (this->state == MARIO_STATE_KICK)
+					ani = MARIO_ANI_FIRE_KICK_LEFT;
 			}
 		}
 		else if (form == MARIO_RACCOON_FORM)
@@ -257,6 +319,15 @@ void CMario::Render()
 			{
 				if (nx > 0) ani = MARIO_ANI_RACCOON_IDLE_RIGHT;
 				else ani = MARIO_ANI_RACCOON_IDLE_LEFT;
+				if (vy < 0)
+				{
+					if (nx < 0)
+					{
+						ani = MARIO_ANI_RACCOON_JUMP_LEFT;
+					}
+					else
+						ani = MARIO_ANI_RACCOON_JUMP_RIGHT;
+				}
 			}
 			else if (vx > 0)
 			{
@@ -271,6 +342,12 @@ void CMario::Render()
 				{
 					ani = MARIO_ANI_RACCOON_BRAKE_RIGHT;
 				}
+				if (vy < 0)
+				{
+					ani = MARIO_ANI_RACCOON_JUMP_RIGHT;
+				}
+				if (this->state == MARIO_STATE_KICK)
+					ani = MARIO_ANI_RACCOON_KICK_LEFT;
 				
 			}
 			else
@@ -286,16 +363,23 @@ void CMario::Render()
 				{
 					ani = MARIO_ANI_RACCOON_BRAKE_LEFT;
 				}
+				if(vy < 0)
+				{
+					ani = MARIO_ANI_RACCOON_JUMP_LEFT;
+				}
+				if (this->state == MARIO_STATE_KICK)
+					ani = MARIO_ANI_RACCOON_KICK_LEFT;
 				
 			}
 
 		}
-		int alpha = 255;
-		if (untouchable) alpha = 128;
-		animations[ani]->Render(x, y, alpha);
-
-		RenderBoundingBox();
+	
 	}
+	int alpha = 255;
+	if (untouchable) alpha = 128;
+	animations[ani]->Render(x, y, alpha);
+
+	RenderBoundingBox();
 	
 }
 
@@ -323,7 +407,6 @@ void CMario::SetState(int state)
 		break;
 	case MARIO_STATE_IDLE:
 		vx = 0;
-	
 		break;
 	case MARIO_STATE_DIE:
 		vy = -MARIO_DIE_DEFLECT_SPEED;
@@ -347,10 +430,12 @@ void CMario::SetState(int state)
 	case MARIO_STATE_LONG_JUMP:
 		vy = -MARIO_LONG_JUMP_SPEED_Y;
 		break;
+	case MARIO_STATE_KICK:
+		break;
 	}
 }
 
-void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom)
+void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom,bool isEnable)
 {
 	left = x;
 	top = y;
