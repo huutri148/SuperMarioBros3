@@ -6,7 +6,7 @@
 #include "Game.h"
 #include "GameObject.h"
 #include "Textures.h"
-
+#include"Map.h"
 #include "Mario.h"
 #include "Brick.h"
 #include "Goomba.h"
@@ -24,11 +24,13 @@
 #define ID_TEX_MARIO 0
 #define ID_TEX_ENEMY 10
 #define ID_TEX_MISC 20
+#define ID_TEX_MAP 30
 
 CGame* game;
 
 CMario* mario;
 CGoomba* goomba;
+Map* map;
 CKoopaTroopa* koopatroopa;
 vector<LPGAMEOBJECT> objects;
 float x, y;
@@ -136,8 +138,8 @@ void CSampleKeyHander::KeyState(BYTE* states)
 	//	mario->pickUp = true;
 	else
 	{
-		mario->SetState(MARIO_STATE_IDLE);
-		mario->LosePowerMelter();
+			mario->SetState(MARIO_STATE_IDLE);
+			mario->LosePowerMelter();
 	}
 		
 
@@ -165,12 +167,11 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 void LoadResources()
 {
 	CTextures* textures = CTextures::GetInstance();
-
+	
 	textures->Add(ID_TEX_MARIO, L"textures\\mario.png", D3DCOLOR_XRGB(255, 255, 255));
 	textures->Add(ID_TEX_MISC, L"textures\\misc.png", D3DCOLOR_XRGB(176, 224, 248));
 	textures->Add(ID_TEX_ENEMY, L"textures\\enemies.png", D3DCOLOR_XRGB(3, 26, 110));
-
-
+	textures->Add(ID_TEX_MAP, L"Map\\map1-1_bank.png", D3DCOLOR_XRGB(255, 255, 255));
 	textures->Add(ID_TEX_BBOX, L"textures\\bbox.png", D3DCOLOR_XRGB(255, 255, 255));
 
 
@@ -178,7 +179,10 @@ void LoadResources()
 	CAnimations* animations = CAnimations::GetInstance();
 
 	LPDIRECT3DTEXTURE9 texMario = textures->Get(ID_TEX_MARIO);
-
+	LPDIRECT3DTEXTURE9 texMap = textures->Get(ID_TEX_MAP);
+	map = new Map(30, 11, 11, 178, 45, 117);
+	map->CreateTilesFromTileSet();
+	map->LoadMatrix(L"Map\\map1-1.txt");
 	// big
 	sprites->Add(10001, 246, 154, 260, 181, texMario);		// idle right
 
@@ -703,7 +707,7 @@ void LoadResources()
 
 	mario->AddAnimation(699);		// die
 
-	mario->SetPosition(50.0f, 0);
+	mario->SetPosition(50.0f,-10);
 	objects.push_back(mario);
 	// and Goombas 
 	//for (int i = 0; i < 4; i++)
@@ -738,11 +742,11 @@ void LoadResources()
 	}
 
 
-	for (int i = 0; i < 30; i++)
+	for (int i = 0; i < 3000; i++)
 	{
 		CBrick* brick = new CBrick();
 		brick->AddAnimation(701);
-		brick->SetPosition(0 + i * 16.0f, 150);
+		brick->SetPosition(0 + i * 16.0f,400);
 		objects.push_back(brick);
 	}
 
@@ -772,7 +776,7 @@ void Update(DWORD dt)
 	cx -= SCREEN_WIDTH / 2;
 	cy -= SCREEN_HEIGHT / 2;
 
-	CGame::GetInstance()->SetCamPos(cx, 0.0f /*cy*/);
+	CGame::GetInstance()->SetCamPos(cx, cy);
 }
 
 /*
@@ -790,10 +794,10 @@ void Render()
 		d3ddv->ColorFill(bb, NULL, BACKGROUND_COLOR);
 
 		spriteHandler->Begin(D3DXSPRITE_ALPHABLEND);
-
+		map->Render();
 		for (int i = 0; i < objects.size(); i++)
 			objects[i]->Render();
-
+	
 		spriteHandler->End();
 		d3ddv->EndScene();
 	}
