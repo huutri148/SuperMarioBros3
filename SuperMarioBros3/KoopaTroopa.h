@@ -23,10 +23,10 @@
 
 #define KOOPATROOPA_ANI_WALKING 0
 #define KOOPATROOPA_ANI_HIDING 1
-class CKoopaTroopa :public Enemy
+class KoopaTroopa :public Enemy
 {
 
-	CMario* mario;
+	Mario* mario;
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom,bool isEnable);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	virtual void Render();
@@ -35,12 +35,12 @@ public:
 	virtual void SetState(int state);
 	virtual bool IsDead();
 	virtual void SetDie(bool n);
-	void PickUpBy(CMario* mario) {
+	void PickUpBy(Mario* mario) {
 		isPickedUp = true;
 		this->mario = mario;
 		/*this->SetState (KOOPATROOPA_STATE_IS_PICKED_UP);*/
 	}
-	CKoopaTroopa() : Enemy()
+	KoopaTroopa() : Enemy()
 	{
 		isPickedUp = false;
 		isEnable = true;

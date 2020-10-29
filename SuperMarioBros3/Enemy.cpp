@@ -1,6 +1,6 @@
 #include "Enemy.h"
 
-Enemy::Enemy()
+Enemy::Enemy() :GameObject()
 {
 	
 }
@@ -12,12 +12,12 @@ Enemy::~Enemy()
 
 void Enemy::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	CGameObject::Update(dt);
+	GameObject::Update(dt);
 }
 
 void Enemy::SetState(int state)
 {
-	CGameObject::SetState(state);
+	GameObject::SetState(state);
 }
 
 void Enemy::SetEntryPosition(int x, int y)

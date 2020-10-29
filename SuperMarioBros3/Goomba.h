@@ -21,7 +21,7 @@
 
 
 #define GOOMA_INACTIVE_TIME	500
-class CGoomba : public Enemy
+class Goomba : public Enemy
 {
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom,bool isEnable);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
@@ -32,7 +32,7 @@ public:
 	virtual void SetState(int state);
 	virtual bool IsDead();
 	virtual void SetDie(bool n);
-	CGoomba() :Enemy()
+	Goomba() :Enemy()
 	{
 		isEnable = true;
 	}

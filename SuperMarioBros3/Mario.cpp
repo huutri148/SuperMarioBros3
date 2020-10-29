@@ -1,15 +1,19 @@
 ﻿#include <algorithm>
-#include "debug.h"
+#include "Utils.h"
 #include "Enemy.h"
 #include "Mario.h"
 #include "Game.h"
 #include"KoopaTroopa.h"
 #include "Goomba.h"
+#include"Block.h"
+#include "Ground.h"
+#include "Brick.h"
+#include "Pipe.h"
 
-void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
+void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	// Calculate dx, dy 
-	CGameObject::Update(dt);
+	GameObject::Update(dt);
 
 	// Simple fall down
 	vy += MARIO_GRAVITY * dt;
@@ -20,7 +24,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	coEvents.clear();
 
 	// turn off collision when die 
-	if (state != MARIO_STATE_DIE)
+	if (state != MARIO_STATE_DEATH)
 		CalcPotentialCollisions(coObjects, coEvents);
 	/*if (isPickingUp == false)
 	{
@@ -43,86 +47,72 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		float min_tx, min_ty, nx = 0, ny;
 
-		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny);
-
-		// block 
-		/*if (isPickingUp != false)
-		{*/
-		
-			x += min_tx * dx + nx * 0.4f;		// nx*0.4f : need to push out a bit to avoid overlapping next frame
-			y += min_ty * dy + ny * 0.4f;
-	/*	}*/
+		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny);		
+	
+	
+		x+= min_tx * dx + nx * 0.4f;		
+		y += min_ty * dy + ny * 0.4f;
 	
 
 		if (nx != 0 && isPickingUp == false) vx = 0;
 		if (ny != 0)
 		{
-			vy = 0; isInGround = true;
+			vy = 0;
+			if (ny < 0)
+				isInGround = true;
 		}
 
+	
+		
 		// Collision logic 
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
-			// xử lí với obj là quái
-			if (dynamic_cast<Enemy*>(e->obj))
-			{
-				Enemy* enemy = dynamic_cast<Enemy*>(e->obj);
-				if (e->ny < 0)
-				{
-					if (enemy->IsDead() != true)
-					{
-						enemy->SetDie(false);
-						isInGround = true;
-						vy = -MARIO_JUMP_DEFLECT_SPEED;
-					}
-				}
-				else if (e->ny > 0)
-				{
-					DebugOut(L"Bi quai de");
-
-				}
-				else if (e->nx != 0)
-				{
-					// nếu không trong trạng thái untouchable
-					if (untouchable == 0)
-					{
-						if (enemy->IsDead() != true && enemy->IsEnable() == true)
-						{
-							if (form > MARIO_SMALL_FORM)
-							{
-								form -= 1;
-								StartUntouchable();
-							}
-							else
-								SetState(MARIO_STATE_DIE);
-						}
-						else
-						{
-							// xử lí với shell
-							if (dynamic_cast<CKoopaTroopa*> (enemy))
-							{
-								// nếu giữ phím B thì có thể nhặt shell
-								if (isPickingUp == true)
-								{
-									dynamic_cast<CKoopaTroopa*>(enemy)->PickUpBy(this);
-								}
-								//bump shell
-								else
-								{
-									dynamic_cast<CKoopaTroopa*>(enemy)->isPickedUp = false;
-									dynamic_cast<CKoopaTroopa*>(enemy)->IsKicked(this->nx);
-									this->SetState(MARIO_STATE_KICK);
-								}
-								
-							}
-						}
-					}
-				}
-			}
+				
+			//if (dynamic_cast<Ground*>(e->obj)|| dynamic_cast<Brick*>(e->obj)||
+			//	dynamic_cast<Pipe*>(e->obj))
+			//{
+			//	if(dynamic_cast<Ground*>(e->obj))
+			//		DebugOut(L"Ground : %f, %f\n", e->nx,e->ny);
+			//	if(dynamic_cast<Brick*>(e->obj))
+			//		DebugOut(L"Brick : %f, %f\n", e->nx,e-> ny);
+			//	if (nx != 0)
+			//	{
+			//		vx = 0;
+			//	/*	x += min_tx * dx + e->nx*0.4f;
+			//		y += dy;*/
+			//	}
+			//	if (ny != 0)
+			//	{
+			//		vy = 0;
+			//	/*	y += min_ty * dy +e->ny* 0.4f;
+			//		x += dx;*/
+			//	}
+			//	
+			//	y += min_ty * dy + ny * 0.4f;
+			//	x += min_tx * dx + nx * 0.4f;
+			//	DebugOut(L"timex: %f, timey: %f\n", min_tx, min_ty);
+			//}
+			//if (dynamic_cast<Block*>(e->obj))
+			//{
+			//	DebugOut(L"Block : %f, %f\n", nx, ny);
+			//	if (ny < 0 )
+			//	{
+			//
+			//		y += min_ty * dy + ny * 0.4f;
+			//		vy = 0;
+			//	
+			//	}
+			//	else if(ny > 0)
+			//	{
+			//		y += dy;
+			//	}
+			//	x += dx;
+			//}
+	
+									
 		}	
 	}
-	
 	// clean up collision events
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 }
@@ -131,311 +121,59 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	
 
 
-void CMario::Render()
+void Mario::Render()
 {
-	int ani;
-	if (state == MARIO_STATE_DIE)
+	int ani = this->form;
+	if (state == MARIO_STATE_DEATH)
 		ani = MARIO_ANI_DIE;
-	else
+	if (vx != 0 && isInGround == true)
 	{
-		if (form == MARIO_BIG_FORM)
-		{
-			
-			// nếu ko có tác động gì
-			if (vx == 0)
-			{
-				if (nx > 0) ani = MARIO_ANI_BIG_IDLE_RIGHT;
-				else ani = MARIO_ANI_BIG_IDLE_LEFT;
-				if (vy < 0)
-				{
-					if (nx < 0)
-					{
-						ani = MARIO_ANI_BIG_JUMP_LEFT;
-					}
-					else
-						ani = MARIO_ANI_BIG_JUMP_RIGHT;
-				}
-			}
-			else if (vx > 0)
-			{
-				if (nx > 0)
-				{
-					if (power_melter_stack == POWER_METER_FULL)
-					{
-						ani = MARIO_ANI_BIG_RUNNING_RIGHT;
-					}
-					else // nếu nx < 0 thì Mario đang phanh
-						ani = MARIO_ANI_BIG_WALKING_RIGHT;
-				}
-				else if(nx < 0)
-				{
-					ani = MARIO_ANI_BIG_BRAKE_RIGHT;
-				}
-				if (vy < 0)
-				{
-					ani = MARIO_ANI_BIG_JUMP_RIGHT;
-				}
-				if (this->state == MARIO_STATE_KICK)
-					ani = MARIO_ANI_BIG_KICK_RIGHT;
-			}
-			else if (vx < 0)
-			{
-				if (nx < 0)
-				{
-					if (power_melter_stack == POWER_METER_FULL)
-						ani = MARIO_ANI_BIG_RUNNING_LEFT;
-					else
-						ani = MARIO_ANI_BIG_WALKING_LEFT;
-				}
-				else // nếu nx > 0 thì Mario đang phanh
-				{
-					ani = MARIO_ANI_BIG_BRAKE_LEFT;
-				}
-				if (vy < 0)
-				{
-					ani = MARIO_ANI_BIG_JUMP_LEFT;
-				}
-				if (this->state == MARIO_STATE_KICK)
-					ani = MARIO_ANI_BIG_KICK_LEFT;
-				
-			}
-		}
-		else if (form == MARIO_SMALL_FORM)
-		{
-			if (vx == 0)
-			{
-				if (nx > 0) ani = MARIO_ANI_SMALL_IDLE_RIGHT;
-				else ani = MARIO_ANI_SMALL_IDLE_LEFT;
-				if (vy < 0)
-				{
-					if (nx < 0)
-					{
-						ani = MARIO_ANI_SMALL_JUMP_LEFT;
-					}
-					else
-						ani = MARIO_ANI_SMALL_JUMP_RIGHT;
-				}
-			}
-			else if (vx > 0)
-			{
-				if (nx > 0)
-				{
-					if (power_melter_stack == POWER_METER_FULL)
-						ani = MARIO_ANI_SMALL_RUNNING_RIGHT;
-					else
-						ani = MARIO_ANI_SMALL_WALKING_RIGHT;
-				}
-				else
-				{
-					ani = MARIO_ANI_SMALL_BRAKE_RIGHT;
-				}
-				if (vy < 0)
-				{
-					ani = MARIO_ANI_SMALL_JUMP_RIGHT;
-				}
-				if (this->state == MARIO_STATE_KICK)
-					ani = MARIO_ANI_SMALL_KICK_RIGHT;
-				
-			}
-			else
-			{
-				if (nx < 0)
-				{
-					if (power_melter_stack == POWER_METER_FULL)
-						ani = MARIO_ANI_SMALL_RUNNING_LEFT;
-					else
-						ani = MARIO_ANI_SMALL_WALKING_LEFT;
-				}
-				else
-				{
-					ani = MARIO_ANI_SMALL_BRAKE_LEFT;
-				}
-				if (vy < 0)
-				{
-					ani = MARIO_ANI_SMALL_JUMP_LEFT;
-				}
-				if (this->state == MARIO_STATE_KICK)
-					ani = MARIO_ANI_SMALL_KICK_LEFT;
-			}
-		}
-		else if (form == MARIO_FIRE_FORM)
-		{
-			if (vx == 0)
-			{
-				if (nx > 0) ani = MARIO_ANI_FIRE_IDLE_RIGHT;
-				else ani = MARIO_ANI_FIRE_IDLE_LEFT;
-				if (vy < 0)
-				{
-					if (nx < 0)
-					{
-						ani = MARIO_ANI_FIRE_JUMP_LEFT;
-					}
-					else
-						ani = MARIO_ANI_FIRE_JUMP_RIGHT;
-				}
-			}
-			else if (vx > 0)
-			{
-				if (nx > 0)
-				{
-					if (power_melter_stack == POWER_METER_FULL)
-						ani = MARIO_ANI_FIRE_RUNNING_RIGHT;
-					else
-						ani = MARIO_ANI_FIRE_WALKING_RIGHT;
-				}
-				else
-				{
-					ani = MARIO_ANI_FIRE_BRAKE_RIGHT;
-				}
-				if (vy < 0)
-				{
-					ani = MARIO_ANI_FIRE_JUMP_RIGHT;
-				}
-				if (this->state == MARIO_STATE_KICK)
-					ani = MARIO_ANI_FIRE_KICK_RIGHT;
-			}
-			else
-			{
-				if (nx < 0) 
-				{
-					if (power_melter_stack == POWER_METER_FULL)
-						ani = MARIO_ANI_FIRE_RUNNING_LEFT;
-					else
-						ani = MARIO_ANI_FIRE_WALKING_LEFT;
-				}
-				else // nếu nx > 0 thì Mario đang phanh
-					ani = MARIO_ANI_FIRE_BRAKE_LEFT;
-				if (vy < 0)
-				{
-					ani = MARIO_ANI_FIRE_JUMP_LEFT;
-				}
-				if (this->state == MARIO_STATE_KICK)
-					ani = MARIO_ANI_FIRE_KICK_LEFT;
-			}
-		}
-		else if (form == MARIO_RACCOON_FORM)
-		{
-			if (vx == 0)
-			{
-				if (nx > 0) ani = MARIO_ANI_RACCOON_IDLE_RIGHT;
-				else ani = MARIO_ANI_RACCOON_IDLE_LEFT;
-				if (vy < 0)
-				{
-					if (nx < 0)
-					{
-						ani = MARIO_ANI_RACCOON_JUMP_LEFT;
-					}
-					else
-						ani = MARIO_ANI_RACCOON_JUMP_RIGHT;
-				}
-			}
-			else if (vx > 0)
-			{
-				if (nx > 0)
-				{
-					if (power_melter_stack == POWER_METER_FULL)
-						ani = MARIO_ANI_RACCOON_RUNNING_RIGHT;
-					else
-						ani = MARIO_ANI_RACCOON_WALKING_RIGHT;
-				}
-				else // nếu nx < 0 thì Mario đang phanh
-				{
-					ani = MARIO_ANI_RACCOON_BRAKE_RIGHT;
-				}
-				if (vy < 0)
-				{
-					ani = MARIO_ANI_RACCOON_JUMP_RIGHT;
-				}
-				if (this->state == MARIO_STATE_KICK)
-					ani = MARIO_ANI_RACCOON_KICK_LEFT;
-				
-			}
-			else
-			{
-				if (nx < 0)
-				{
-					if (power_melter_stack == POWER_METER_FULL)
-						ani = MARIO_ANI_RACCOON_RUNNING_LEFT;
-					else
-						ani = MARIO_ANI_RACCOON_WALKING_LEFT;
-				}
-				else
-				{
-					ani = MARIO_ANI_RACCOON_BRAKE_LEFT;
-				}
-				if(vy < 0)
-				{
-					ani = MARIO_ANI_RACCOON_JUMP_LEFT;
-				}
-				if (this->state == MARIO_STATE_KICK)
-					ani = MARIO_ANI_RACCOON_KICK_LEFT;
-				
-			}
-
-		}
-	
+		ani += 4;
 	}
+	if (!isInGround)
+		ani += 8;
 	int alpha = 255;
 	if (untouchable) alpha = 128;
-	animations[ani]->Render(x, y, alpha);
-
+	animation_set->at(ani)->Render(nx,x, y, alpha);
 	RenderBoundingBox();
 	
 }
 
-void CMario::SetState(int state)
+void Mario::SetState(int state)
 {
-	CGameObject::SetState(state);
+	GameObject::SetState(state);
 
 	switch (state)
 	{
-	case MARIO_STATE_WALKING_RIGHT:
-		vx = MARIO_WALKING_SPEED;
-		nx = 1;
+	case MARIO_STATE_WALKING:
+		vx = MARIO_WALKING_SPEED * nx;
 		break;
-	case MARIO_STATE_WALKING_LEFT:
-		vx = -MARIO_WALKING_SPEED;
-		nx = -1;
-		break;
-	case MARIO_STATE_JUMP:
-		/*if (jump_stack < 8)
-		{*/
-			vy = -MARIO_JUMP_SPEED_Y;
-		/*	jump_stack++;
-		}*/
-	/*	isJump = true;*/
+	case MARIO_STATE_JUMPING:
+		isInGround = false;
+		vy = -MARIO_JUMP_SPEED_Y;
 		break;
 	case MARIO_STATE_IDLE:
 		vx = 0;
 		break;
-	case MARIO_STATE_DIE:
+	case MARIO_STATE_DEATH:
 		vy = -MARIO_DIE_DEFLECT_SPEED;
 		break;
-	case MARIO_STATE_RUNNING_RIGHT:
-		vx = MARIO_WALKING_SPEED + (BUFF_SPEED * power_melter_stack);
-		nx = 1;
+	case MARIO_STATE_RUNNING:
+		vx = (MARIO_WALKING_SPEED + (BUFF_SPEED * power_melter_stack)) * nx;
 		break;
-	case MARIO_STATE_RUNNING_LEFT:
-		vx =-(MARIO_WALKING_SPEED + (BUFF_SPEED * power_melter_stack));
-		nx = -1; 
+	case MARIO_STATE_BRAKING:
+		vx = MARIO_BRAKE_DEFLECT_SPEED * nx;
 		break;
-	case MARIO_STATE_BRAKE_LEFT:
-		vx = -(MARIO_BRAKE_DEFLECT_SPEED);
-		nx = 1;
-		break;
-	case MARIO_STATE_BRAKE_RIGHT:
-		vx = MARIO_BRAKE_DEFLECT_SPEED;
-		nx = -1;
-		break;
-	case MARIO_STATE_LONG_JUMP:
+	/*case MARIO_STATE_LONG_JUMPING:
 		vy = -MARIO_LONG_JUMP_SPEED_Y;
-		break;
+		isInGround = false;
+		break;*/
 	case MARIO_STATE_KICK:
 		break;
 	}
 }
 
-void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom,bool isEnable)
+void Mario::GetBoundingBox(float& left, float& top, float& right, float& bottom,bool isEnable)
 {
 	left = x;
 	top = y;
@@ -462,54 +200,51 @@ void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom
 	}
 }
 
-void CMario::UpForm()
+void Mario::UpForm()
 {
-	float fx, fy;
-	this->GetPosition(fx, fy);
-	if (form < MARIO_RACCOON_FORM)
+	int diffy = 0;
+	if (form == MARIO_SMALL_FORM)
 	{
-		int level = form + 1;
-		this->SetState(MARIO_STATE_IDLE);
-		this->SetLevel(level);
-		this->SetPosition(fx, 0);
-		this->SetSpeed(0, 0);
+		diffy = 16;
+
 	}
+	form += 1;
+	if (form > MARIO_RACCOON_FORM)
+	{
+		diffy = -16;
+		form = 0;
+	}
+	y -= diffy;
 }
-void CMario::Jump()
-{
-	DWORD current = GetTickCount();
-	if (current - long_jump_start > MARIO_LONG_JUMP_TIME
-		&& isInGround == true		// nếu Mario chưa tiếp đất hoặc vật thì ko cho phép nhảy
-		&& long_jump_start!= 0 )	
-	{
-		this->SetState(MARIO_STATE_LONG_JUMP);
-		isJump == false;
-		long_jump_start = 0;
-	}
-	
-	
-}
-void CMario::unJump()
-{
-	DWORD current = GetTickCount();
-	if (current - long_jump_start < MARIO_LONG_JUMP_TIME	
-		&& this->isInGround == true // nếu Mario chưa tiếp đất hoặc vật thì ko cho phép nhảy
-		&& isJump == true)		//không cho phép nhảy ngắn khi Mario đã nhảy
-	{
-		this->SetState(MARIO_STATE_JUMP);
-		DebugOut(L"\nxyz");
-		
-	}
-	else
-	{
-		DebugOut(L"\nisInGround %d", isInGround);
-		DebugOut(L"\nisJump %d", isJump);
-		DebugOut(L"\nC: %d - L: %d", current, long_jump_start);
-	}
-	isJump = false;
-	long_jump_start = 0;
-}
-void CMario::FillUpPowerMelter()// Tăng stack năng lượng của Mario
+//void Mario::Jump()
+//{
+//	DWORD current = GetTickCount();
+//	if (current - long_jump_start > MARIO_LONG_JUMP_TIME
+//		&& isInGround == true		// nếu Mario chưa tiếp đất hoặc vật thì ko cho phép nhảy
+//		&& long_jump_start!= 0 )	
+//	{
+//		this->SetState(MARIO_STATE_LONG_JUMPING);
+//		isJump == false;
+//		long_jump_start = 0;
+//	}
+//	
+//	
+//}
+//void Mario::unJump()
+//{
+//	DWORD current = GetTickCount();
+//	if (current - long_jump_start < MARIO_LONG_JUMP_TIME	
+//		&& this->isInGround == true // nếu Mario chưa tiếp đất hoặc vật thì ko cho phép nhảy
+//		&& isJump == true)		//không cho phép nhảy ngắn khi Mario đã nhảy
+//	{
+//		this->SetState(MARIO_STATE_JUMPING);
+//		DebugOut(L"\nxyz");
+//		
+//	}
+//	isJump = false;
+//	long_jump_start = 0;
+//}
+void Mario::FillUpPowerMelter()// Tăng stack năng lượng của Mario
 {
 	DWORD current = GetTickCount();
 	if (stack_time_start == 0)
@@ -526,7 +261,7 @@ void CMario::FillUpPowerMelter()// Tăng stack năng lượng của Mario
 		}	
 	}
 }
-void CMario::LosePowerMelter()// Power Stack sẽ cạn theo thời gian
+void Mario::LosePowerMelter()// Power Stack sẽ cạn theo thời gian
 {
 	if (vx == 0)
 	{
@@ -545,14 +280,22 @@ void CMario::LosePowerMelter()// Power Stack sẽ cạn theo thời gian
 		}
 	}
 }
-void CMario::Information()
+void Mario::Information()
 {
 	DebugOut(L"\nX: %d, Y: %d", this->x, this->y);
 	DebugOut(L"\nVx: %f, Vy: %f", this->vx, this->vy);
 }
-void CMario::PickUp()
+void Mario::PickUp()
 {
 	isPickingUp = true;
 
 }
+void Mario::SetDirect(bool nx)
+{
+	if (nx == true)
+		this->nx = 1;
+	else
+		this->nx = -1;
+}
+
 

@@ -1,6 +1,6 @@
 #include "Goomba.h"
 
-void CGoomba::GetBoundingBox(float& left, float& top, float& right, float& bottom,bool isEnable)
+void Goomba::GetBoundingBox(float& left, float& top, float& right, float& bottom,bool isEnable)
 {
 	if (isEnable == true)
 	{
@@ -24,7 +24,7 @@ void CGoomba::GetBoundingBox(float& left, float& top, float& right, float& botto
 	}
 }
 
-void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
+void Goomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	if (state == GOOMBA_STATE_INACTIVE)
 		return;
@@ -63,7 +63,7 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 }
 
-void CGoomba::Render()
+void Goomba::Render()
 {
 	if (state != GOOMBA_STATE_INACTIVE)
 	{
@@ -72,13 +72,13 @@ void CGoomba::Render()
 		if (state == GOOMBA_STATE_DIE_NY) {
 			ani = GOOMBA_ANI_DIE;
 		}
-		animations[ani]->Render(x, y);
+		animation_set->at(ani)->Render(nx,x, y);
 	}
 
 	//RenderBoundingBox();
 }
 
-void CGoomba::SetState(int state)
+void Goomba::SetState(int state)
 {
 	Enemy::SetState(state);
 	switch (state)
@@ -108,7 +108,7 @@ void CGoomba::SetState(int state)
 		break;
 	}
 }
-bool CGoomba::IsDead()
+bool Goomba::IsDead()
 {
 	if (this->state == GOOMBA_STATE_DIE_NY|| this->state == GOOMBA_STATE_DIE_NX )
 	{
@@ -117,7 +117,7 @@ bool CGoomba::IsDead()
 	return false;
 }
  
-void CGoomba::SetDie(bool n)
+void Goomba::SetDie(bool n)
 {
 	if (n == true)
 	{

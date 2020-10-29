@@ -1,9 +1,9 @@
 ﻿#include "KoopaTroopa.h"
-#include "debug.h"
+#include"Utils.h"
 #include "Brick.h"
 
 
-void CKoopaTroopa::GetBoundingBox(float& left, float& top, float& right, float& bottom, bool isEnable)
+void KoopaTroopa::GetBoundingBox(float& left, float& top, float& right, float& bottom, bool isEnable)
 {
 	if (isEnable == true)
 	{
@@ -26,7 +26,7 @@ void CKoopaTroopa::GetBoundingBox(float& left, float& top, float& right, float& 
 	}
 	
 }
-void CKoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
+void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	Enemy::Update(dt, coObjects);
 		
@@ -95,16 +95,16 @@ void CKoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		//Enemy::Update(dt, coObjects);
 	
 }
-void CKoopaTroopa::Render()
+void KoopaTroopa::Render()
 {
 	int ani;
 	if (state == KOOPATROOPA_STATE_WALKING)
 		ani = KOOPATROOPA_ANI_WALKING;
 	else 
 		ani = KOOPATROOPA_ANI_HIDING;
-	animations[ani]->Render(x, y);
+	animation_set->at(ani)->Render(nx,x, y);
 }
-void CKoopaTroopa::SetState(int state)
+void KoopaTroopa::SetState(int state)
 {
 	Enemy::SetState(state);
 	switch (state)
@@ -126,7 +126,7 @@ void CKoopaTroopa::SetState(int state)
 	}
 }
 
-void CKoopaTroopa::SetDie(bool n)
+void KoopaTroopa::SetDie(bool n)
 {
 	// true: nx. false = ny
 	if (n == true)
@@ -135,7 +135,7 @@ void CKoopaTroopa::SetDie(bool n)
 		this->SetState(KOOPATROOPA_STATE_HIDING);
 }
 
-bool CKoopaTroopa::IsDead()
+bool KoopaTroopa::IsDead()
 {
 	if ( this->state == KOOPATROOPA_STATE_HIDING)
 	{
@@ -143,7 +143,7 @@ bool CKoopaTroopa::IsDead()
 	}
 	return false;
 }
-void CKoopaTroopa::IsKicked(int nx)
+void KoopaTroopa::IsKicked(int nx)
 {
 	this->nx = nx;
 	if (this->nx < 0)
@@ -153,7 +153,7 @@ void CKoopaTroopa::IsKicked(int nx)
 	else
 		this->vx = KOOPATROOPA_BUMP_SPEED;
 }
-bool CKoopaTroopa::IsHiding()
+bool KoopaTroopa::IsHiding()
 {
 	if (this->state == KOOPATROOPA_STATE_HIDING)
 		return true;

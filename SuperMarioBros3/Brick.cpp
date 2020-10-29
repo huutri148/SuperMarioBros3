@@ -1,12 +1,12 @@
 #include "Brick.h"
 
-void CBrick::Render()
+void Brick::Render()
 {
-	animations[0]->Render(x, y);
+	animation_set->at(0)->Render(-1,x, y);
 	//RenderBoundingBox();
 }
 
-void CBrick::GetBoundingBox(float& l, float& t, float& r, float& b,bool isEnable)
+void Brick::GetBoundingBox(float& l, float& t, float& r, float& b,bool isEnable)
 {
 	l = x;
 	t = y;

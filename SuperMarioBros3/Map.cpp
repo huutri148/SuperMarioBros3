@@ -1,10 +1,10 @@
 #include <fstream>
 #include <iostream>
 #include "Map.h"
-#include"debug.h"
+#include"Utils.h"
 Map::Map(int idMap, int nTitleCols, int nTitleRows, int nMapCols, int nMapRows, int nTotalTiles)
 {
-	this->TileSet = CTextures::GetInstance()->Get(idMap);
+	this->TileSet = Textures::GetInstance()->Get(idMap);
 	this->TotalColsOfMap = nMapCols;
 	this->TotalRowsOfMap = nMapRows;
 	this->TotalRowsOfTileSet = nTitleRows;
@@ -23,7 +23,7 @@ void Map::CreateTilesFromTileSet()
 		top = tileNum / TotalColsOfTitleSet * TILE_HEIGHT;
 		bottom = top + TILE_HEIGHT;
 		right = left + TILE_WIDTH;
-		LPSPRITE Tile = new CSprite(tileNum, left, top, right, bottom, TileSet);
+		LPSPRITE Tile = new Sprite(tileNum, left, top, right, bottom, TileSet);
 		this->Tiles.push_back(Tile);
 	}
 }
@@ -39,7 +39,6 @@ void Map::LoadMatrix(LPCWSTR path)
 		for (int iColumn = 0; iColumn < TotalColsOfMap; iColumn++)
 		{
 			file >> this->Matrix[iRow][iColumn];
-		
 		}
 
 	}
@@ -51,7 +50,21 @@ void Map::Render()
 	{
 		for (int iColumn = 0; iColumn < TotalColsOfMap; iColumn++)
 		{
-			this->Tiles[this->Matrix[iRow][iColumn] - 1]->Draw(iColumn * TILE_WIDTH, iRow * TILE_HEIGHT);
+			this->Tiles[this->Matrix[iRow][iColumn] - 1]->Draw(-1,iColumn * TILE_WIDTH, iRow * TILE_HEIGHT);
 		}
 	}
+}
+int Map::GetMapHeiht()
+{
+	if (Height == 0)
+		Height = TotalRowsOfMap * TILE_HEIGHT;
+	return Height;
+}
+int Map::GetMapWidth()
+{
+	if (Width == 0)
+	{
+		Width = TotalColsOfMap * TILE_WIDTH;
+	}
+	return Width;
 }
