@@ -18,11 +18,14 @@
 #define KOOPATROOPA_STATE_HIDING 200
 #define KOOPATROOPA_STATE_IS_PICKED_UP 300
 #define KOOPATROOPA_STATE_DIE_NX 400
+#define KOOPATROOPA_STATE_IS_BUMPED 500
 
 
 
 #define KOOPATROOPA_ANI_WALKING 0
 #define KOOPATROOPA_ANI_HIDING 1
+#define KOOPATROOPA_ANI_BUMPING 2
+#define KOOPATROOPA_ANI_DEATH	3
 class KoopaTroopa :public Enemy
 {
 
@@ -32,6 +35,7 @@ class KoopaTroopa :public Enemy
 	virtual void Render();
 public:
 	bool isPickedUp;
+	bool isBumped;
 	virtual void SetState(int state);
 	virtual bool IsDead();
 	virtual void SetDie(bool n);
@@ -40,10 +44,12 @@ public:
 		this->mario = mario;
 		/*this->SetState (KOOPATROOPA_STATE_IS_PICKED_UP);*/
 	}
-	KoopaTroopa() : Enemy()
+	KoopaTroopa(int x, int y) : Enemy(x,y)
 	{
 		isPickedUp = false;
 		isEnable = true;
+		isBumped = false;
+		this->SetState(KOOPATROOPA_STATE_WALKING);
 	}
 	void IsKicked(int nx);
 	bool IsHiding();

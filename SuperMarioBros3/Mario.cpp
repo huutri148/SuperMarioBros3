@@ -26,10 +26,6 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	// turn off collision when die 
 	if (state != MARIO_STATE_DEATH)
 		CalcPotentialCollisions(coObjects, coEvents);
-	/*if (isPickingUp == false)
-	{
-		shell->SetPosition(this->x, this->y);
-	}*/
 	// reset untouchable timer if untouchable time has passed
 	if (GetTickCount() - untouchable_start > MARIO_UNTOUCHABLE_TIME)
 	{
@@ -42,100 +38,167 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		x += dx;
 		y += dy;
+		/*isInGround = false;*/
+		if (vy > 0.1)
+		{	
+			isInGround = false;
+		}
 	}
 	else
 	{
-		float min_tx, min_ty, nx = 0, ny;
+		float min_tx, min_ty, nex = 0, ney;
 
-		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nx, ny);		
-	
-	
-		x+= min_tx * dx + nx * 0.4f;		
-		y += min_ty * dy + ny * 0.4f;
-	
-
-		if (nx != 0 && isPickingUp == false) vx = 0;
-		if (ny != 0)
-		{
-			vy = 0;
-			if (ny < 0)
-				isInGround = true;
-		}
-
-	
+		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nex, ney);		
 		
+		float x0 = x, y0 = y;
+		x = x0 + dx;
+		y = y0 + dy;			
 		// Collision logic 
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
-				
-			//if (dynamic_cast<Ground*>(e->obj)|| dynamic_cast<Brick*>(e->obj)||
-			//	dynamic_cast<Pipe*>(e->obj))
-			//{
-			//	if(dynamic_cast<Ground*>(e->obj))
-			//		DebugOut(L"Ground : %f, %f\n", e->nx,e->ny);
-			//	if(dynamic_cast<Brick*>(e->obj))
-			//		DebugOut(L"Brick : %f, %f\n", e->nx,e-> ny);
-			//	if (nx != 0)
-			//	{
-			//		vx = 0;
-			//	/*	x += min_tx * dx + e->nx*0.4f;
-			//		y += dy;*/
-			//	}
-			//	if (ny != 0)
-			//	{
-			//		vy = 0;
-			//	/*	y += min_ty * dy +e->ny* 0.4f;
-			//		x += dx;*/
-			//	}
-			//	
-			//	y += min_ty * dy + ny * 0.4f;
-			//	x += min_tx * dx + nx * 0.4f;
-			//	DebugOut(L"timex: %f, timey: %f\n", min_tx, min_ty);
-			//}
-			//if (dynamic_cast<Block*>(e->obj))
-			//{
-			//	DebugOut(L"Block : %f, %f\n", nx, ny);
-			//	if (ny < 0 )
-			//	{
-			//
-			//		y += min_ty * dy + ny * 0.4f;
-			//		vy = 0;
-			//	
-			//	}
-			//	else if(ny > 0)
-			//	{
-			//		y += dy;
-			//	}
-			//	x += dx;
-			//}
-	
-									
+			if (dynamic_cast<Enemy*>(e->obj))
+			{
+				Enemy* enemy = dynamic_cast<Enemy*>(e->obj);
+				if (e->ny < 0)
+				{
+					if (enemy->IsDead() != true)
+					{
+						enemy->SetDie(false);//false == Mario stromp in enemy
+						isInGround = true;
+						vy = -MARIO_JUMP_DEFLECT_SPEED;
+					}
+				}
+				else if (e->nx != 0)
+				{
+					if (untouchable == 0)
+					{
+						if (enemy->IsDead() != true && enemy->IsEnable() == true)
+						{
+							if (form > MARIO_SMALL_FORM)
+							{
+								form -= 1;
+								StartUntouchable();
+							}
+							else
+								SetState(MARIO_STATE_DEATH);
+						}
+
+						else
+						{
+							if (dynamic_cast<KoopaTroopa*>(enemy)->state == KOOPATROOPA_STATE_HIDING )
+							{
+								if (isPressedJ == true)
+								{
+									dynamic_cast<KoopaTroopa*>(enemy)->PickUpBy(this);
+									isPickingUp = true;
+								}
+								else
+								{
+									HandleCollision(min_tx, min_ty, e->nx, e->ny, x0, y0);
+									dynamic_cast<KoopaTroopa*>(enemy)->isPickedUp = false;
+									dynamic_cast<KoopaTroopa*>(enemy)->IsKicked(this->nx);
+									this->SetState(MARIO_STATE_KICK);
+								}
+							}
+						}
+					}
+					
+					
+
+					
+				}
+			}
+			if (dynamic_cast<Block*>(e->obj))
+			{
+				if (e->ny < 0)
+				{
+					HandleCollision(min_tx, min_ty, e->nx, e->ny, x0, y0);
+					ny = 1;
+				}
+				else
+				{
+					x = x0 + dx;
+					y = y0 + dy;
+				}
+			}
+			else
+			{
+				HandleCollision(min_tx, min_ty, e->nx, e->ny, x0, y0);
+			}
 		}	
+			
+
 	}
 	// clean up collision events
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 }
 
-
-	
-
-
+void Mario::HandleCollision(float min_tx, float min_ty, float nex, float ney, float x0, float y0)
+{
+	if (nex != 0)
+	{
+		this->vx = 0;
+		this->x = x0 + min_tx * this->dx + nex * 0.1f;
+	}
+	if (ney != 0)
+	{
+		this->vy = 0;
+		this->y = y0 + min_ty * this->dy + ney * 0.1f;
+		if (ney == -1)
+		{
+			isInGround = true;
+			this->ny = 0;
+		}
+			
+	}
+}
 void Mario::Render()
 {
 	int ani = this->form;
-	if (state == MARIO_STATE_DEATH)
-		ani = MARIO_ANI_DIE;
+	//if (vx == 0 && isPickingUp == true)
+	//{
+	//	ani += 32;
+	//}
 	if (vx != 0 && isInGround == true)
 	{
-		ani += 4;
+		if ((vx > 0 && nx > 0) || (vx < 0 && nx < 0))
+		{
+			/*if (isPickingUp != true)
+			{*/
+				if (power_melter_stack < 2)
+					ani += 4;
+				if (power_melter_stack > 2 && power_melter_stack < 6)
+					ani += 12;
+				if (power_melter_stack == POWER_METER_FULL)
+					ani += 16;
+			/*}
+			else
+			{
+				ani += 36;
+			}*/
+		}
+		if((vx >0 && nx < 0 )|| ((vx < 0) &&(nx > 0)))
+			ani += 24;
 	}
-	if (!isInGround)
-		ani += 8;
+	if (!isInGround )
+	{
+		if (power_melter_stack > 6)
+			ani += 20;
+		else
+			ani += 8;
+	}
+	if (state == MARIO_STATE_KICK)
+	{
+		ani += 28;
+	}
+	if (state == MARIO_STATE_DEATH)
+		ani = MARIO_ANI_DIE;
 	int alpha = 255;
 	if (untouchable) alpha = 128;
 	animation_set->at(ani)->Render(nx,x, y, alpha);
-	RenderBoundingBox();
+	DebugOut(L"Mario ani: %d\n", ani);
+	//RenderBoundingBox();
 	
 }
 
@@ -146,14 +209,17 @@ void Mario::SetState(int state)
 	switch (state)
 	{
 	case MARIO_STATE_WALKING:
-		vx = MARIO_WALKING_SPEED * nx;
+		vx = (MARIO_WALKING_SPEED + (BUFF_SPEED * power_melter_stack)) * nx;
 		break;
 	case MARIO_STATE_JUMPING:
 		isInGround = false;
+		ny = -1;
 		vy = -MARIO_JUMP_SPEED_Y;
 		break;
+	
 	case MARIO_STATE_IDLE:
 		vx = 0;
+		isKickShell = false;
 		break;
 	case MARIO_STATE_DEATH:
 		vy = -MARIO_DIE_DEFLECT_SPEED;
@@ -162,13 +228,17 @@ void Mario::SetState(int state)
 		vx = (MARIO_WALKING_SPEED + (BUFF_SPEED * power_melter_stack)) * nx;
 		break;
 	case MARIO_STATE_BRAKING:
-		vx = MARIO_BRAKE_DEFLECT_SPEED * nx;
+		vx = MARIO_BRAKE_DEFLECT_SPEED * - nx;
+		break;
+	case MARIO_STATE_STOP:
+		vx -= 0.01 * vx;
 		break;
 	/*case MARIO_STATE_LONG_JUMPING:
 		vy = -MARIO_LONG_JUMP_SPEED_Y;
 		isInGround = false;
 		break;*/
 	case MARIO_STATE_KICK:
+		isKickShell = true;
 		break;
 	}
 }
@@ -253,17 +323,16 @@ void Mario::FillUpPowerMelter()// Tăng stack năng lượng của Mario
 	}
 	else
 	{
-		if (current - stack_time_start > STACK_TIME && power_melter_stack < POWER_METER_FULL)
+		if (current - stack_time_start > 100 && power_melter_stack < POWER_METER_FULL)
 		{
 			power_melter_stack += 1;
 			stack_time_start = 0;
-			DebugOut(L"Power Meter : %d", power_melter_stack);
 		}	
 	}
 }
 void Mario::LosePowerMelter()// Power Stack sẽ cạn theo thời gian
 {
-	if (vx == 0)
+	if (power_melter_stack > 0)
 	{
 		DWORD current = GetTickCount();
 		if (stack_time_start == 0)
@@ -279,16 +348,21 @@ void Mario::LosePowerMelter()// Power Stack sẽ cạn theo thời gian
 			}
 		}
 	}
+	//if (vx != 0)
+	//{
+	//	this->SetState(MARIO_STATE_STOP);
+	//	if (vx < 0.01 && vx > -0.01)
+	//		vx = 0;
+	//}
+		
 }
 void Mario::Information()
 {
-	DebugOut(L"\nX: %d, Y: %d", this->x, this->y);
-	DebugOut(L"\nVx: %f, Vy: %f", this->vx, this->vy);
+	DebugOut(L"\nMario State: %d ", state);
 }
 void Mario::PickUp()
 {
-	isPickingUp = true;
-
+	isPressedJ = true;
 }
 void Mario::SetDirect(bool nx)
 {
@@ -297,5 +371,25 @@ void Mario::SetDirect(bool nx)
 	else
 		this->nx = -1;
 }
-
+void Mario::Jump()
+{
+	if (isInGround)
+	{
+		this->SetState(MARIO_STATE_JUMPING);
+	}
+}
+int  Mario::GetWidth()
+{
+	if (form == MARIO_RACCOON_FORM)
+		return MARIO_RACCOON_BBOX_WIDTH;
+	else
+		return 16;
+}
+int Mario::GetHeight()
+{
+	if (form == MARIO_SMALL_FORM)
+		return MARIO_SMALL_BBOX_HEIGHT;
+	else
+		return 32;
+}
 

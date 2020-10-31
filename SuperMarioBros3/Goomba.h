@@ -32,9 +32,14 @@ public:
 	virtual void SetState(int state);
 	virtual bool IsDead();
 	virtual void SetDie(bool n);
+	Goomba(float x, float y) :Enemy(x,y)
+	{
+		this->SetState(GOOMBA_STATE_WALKING);
+	}
 	Goomba() :Enemy()
 	{
-		isEnable = true;
+		this->SetState(GOOMBA_STATE_WALKING);
 	}
+	/*void HandleCollision(float min_tx, float min_ty, float nex, float ney, float x0, float y0);*/
 
 };

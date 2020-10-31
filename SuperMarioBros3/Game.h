@@ -71,6 +71,7 @@ public:
 
 	void SetCamPos(float x, float y) { cam_x = x; cam_y = y; }
 	float GetCamY() { return this->cam_y; };
+	float GetCamX() { return this->cam_x; };
 	static Game* GetInstance();
 
 	int GetScreenWidth() { return screen_width; };

@@ -38,7 +38,6 @@ PlayScene::PlayScene(int id, LPCWSTR filePath) :
 
 #define MAX_SCENE_LINE 1024
 
-
 void PlayScene::_ParseSection_TEXTURES(string line)
 {
 	vector<string> tokens = split(line);
@@ -155,9 +154,9 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 
 		DebugOut(L"[INFO] Player object created!\n");
 		break;
-	case OBJECT_TYPE_GOOMBA: obj = new Goomba(); break;
+	case OBJECT_TYPE_GOOMBA: obj = new Goomba(x,y); break;
 	case OBJECT_TYPE_BRICK: obj = new Brick(); break;
-	case OBJECT_TYPE_KOOPAS: obj = new KoopaTroopa(); break;
+	case OBJECT_TYPE_KOOPAS: obj = new KoopaTroopa(x,y); break;
 	case OBJECT_TYPE_BLOCKS: obj = new Block(); break;
 	case OBJECT_TYPE_GROUNDS: obj = new Ground(); break;
 	case OBJECT_TYPE_PIPES:	obj = new Pipe(); break;
@@ -276,7 +275,6 @@ void PlayScene::Update(DWORD dt)
 	{
 		objects[i]->Update(dt, &coObjects);
 	}
-
 	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
 	if (player == NULL) return;
 	
@@ -351,7 +349,8 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	switch (KeyCode)
 	{
 	case DIK_K:
-		mario->SetState(MARIO_STATE_JUMPING);
+		/*mario->SetState(MARIO_STATE_JUMPING);*/
+		mario->Jump();
 		break;
 	case DIK_U:
 		mario->UpForm();
@@ -359,6 +358,10 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	case DIK_I:
 		mario->Information();
 		break;
+	//case DIK_C:
+	//	CreateKoopa();
+	//	break;
+		
 	}
 }
 void PlayScenceKeyHandler::OnKeyUp(int KeyCode)
@@ -366,6 +369,10 @@ void PlayScenceKeyHandler::OnKeyUp(int KeyCode)
 	Mario* mario = ((PlayScene*)scence)->GetPlayer();
 	switch (KeyCode)
 	{
+	case DIK_J:
+		mario->isPickingUp = false;
+		mario->isPressedJ = false;
+		break;
 	}
 		
 }
@@ -379,18 +386,50 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 	if (game->IsKeyDown(DIK_D))
 	{
 		mario->SetDirect(true);
+		if (game->IsKeyDown(DIK_J))
+		{
+			mario->FillUpPowerMelter();
+			mario->PickUp();
+		}
+		
 		mario->SetState(MARIO_STATE_WALKING);
-	}	
+		if (game->IsKeyDown(DIK_A))
+		{
+			mario->SetDirect(false);
+			mario->SetState(MARIO_STATE_BRAKING);
+		}		
+	}
 	else if (game->IsKeyDown(DIK_A))
 	{
 		mario->SetDirect(false);
+		if(game->IsKeyDown(DIK_J))
+		{
+			mario->FillUpPowerMelter();
+			mario->PickUp();
+		}
 		mario->SetState(MARIO_STATE_WALKING);
+		if (game->IsKeyDown(DIK_D))
+		{
+			mario->SetDirect(true);
+			mario->SetState(MARIO_STATE_BRAKING);
+		}
 	}
 	//else if (game->IsKeyDown(DIK_K))
 	//{
 	//	/*mario->Jump();*/
 	//}
 	else
+	{
+		mario->LosePowerMelter();
 		mario->SetState(MARIO_STATE_IDLE);
+		if (game->IsKeyDown(DIK_J))
+		{
+			mario->PickUp();
+		}
+	}
+	
 }
-
+//void CreateKoopa()
+//{
+//	koopa = new KoopaTroopa(200, 416);
+//}

@@ -1,4 +1,5 @@
 #include "Enemy.h"
+#include "Game.h"
 
 Enemy::Enemy() :GameObject()
 {
@@ -22,7 +23,19 @@ void Enemy::SetState(int state)
 
 void Enemy::SetEntryPosition(int x, int y)
 {
-	this->entrY = x;
-	this->entrY = y;
+	this->entryX = x;
+	this->entryY = y;
 }
 
+bool Enemy::IsAbleToActive()
+{
+	if (isEnable = false)
+	{
+		Game* game = Game::GetInstance();
+		int widthX = game->GetCamX() + game->GetScreenWidth();
+		int widthY = game->GetCamY() + game->GetScreenHeight();
+		if (entryX > widthX || entryX < game->GetCamX())
+			return true;
+	}
+	return false;
+}
