@@ -77,7 +77,8 @@ void Goomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
-			if (dynamic_cast<Pipe*>(e->obj) || dynamic_cast<Brick*>(e->obj)|| dynamic_cast<Block*>(e->obj))
+			if (dynamic_cast<Pipe*>(e->obj) || dynamic_cast<Brick*>(e->obj)||
+				dynamic_cast<InvisibleBrick*>(e->obj))
 			{
 				DebugOut(L"\nBrick: nx: %f , ny: %f", e->nx, e->ny);
 				if (e->nx != 0)

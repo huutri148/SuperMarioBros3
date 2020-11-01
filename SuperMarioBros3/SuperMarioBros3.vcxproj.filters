@@ -69,9 +69,6 @@
     <ClInclude Include="Pipe.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RedKoopa.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">
@@ -126,9 +123,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Pipe.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RedKoopa.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

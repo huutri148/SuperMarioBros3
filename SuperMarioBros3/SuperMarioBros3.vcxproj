@@ -157,7 +157,6 @@
     <ClInclude Include="Mario.h" />
     <ClInclude Include="Pipe.h" />
     <ClInclude Include="PlayScene.h" />
-    <ClInclude Include="RedKoopa.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Sprites.h" />
     <ClInclude Include="Textures.h" />
@@ -178,7 +177,6 @@
     <ClCompile Include="Mario.cpp" />
     <ClCompile Include="Pipe.cpp" />
     <ClCompile Include="PlayScene.cpp" />
-    <ClCompile Include="RedKoopa.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Sprites.cpp" />
     <ClCompile Include="Textures.cpp" />

@@ -33,6 +33,7 @@ PlayScene::PlayScene(int id, LPCWSTR filePath) :
 #define OBJECT_TYPE_BLOCKS	5
 #define OBJECT_TYPE_GROUNDS	4
 #define OBJECT_TYPE_PIPES	6
+#define OBJECT_TYPE_INVISIBLEBRICK	7
 
 #define OBJECT_TYPE_PORTAL	50
 
@@ -137,6 +138,7 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 
 	int ani_set_id = atoi(tokens[3].c_str());
 
+
 	AnimationSets* animation_sets = AnimationSets::GetInstance();
 
 	GameObject* obj = NULL;
@@ -156,10 +158,21 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 		break;
 	case OBJECT_TYPE_GOOMBA: obj = new Goomba(x,y); break;
 	case OBJECT_TYPE_BRICK: obj = new Brick(); break;
-	case OBJECT_TYPE_KOOPAS: obj = new KoopaTroopa(x,y); break;
+	case OBJECT_TYPE_KOOPAS:
+	{
+		int set_type = atoi(tokens[4].c_str());
+		obj = new KoopaTroopa(x, y,set_type);
+		break;
+	}
 	case OBJECT_TYPE_BLOCKS: obj = new Block(); break;
 	case OBJECT_TYPE_GROUNDS: obj = new Ground(); break;
 	case OBJECT_TYPE_PIPES:	obj = new Pipe(); break;
+	case OBJECT_TYPE_INVISIBLEBRICK:
+	{
+		int set_type = atoi(tokens[4].c_str());
+		obj = new InvisibleBrick(set_type);
+		break;
+	}
 		
 	/*case OBJECT_TYPE_PORTAL:
 	{
@@ -309,10 +322,9 @@ void PlayScene::Update(DWORD dt)
 		cy = 16;
 	else if (cy + (screenHeight / 2) >= 448)
 		cy = 448 - screenHeight;
-	else/* if (cy < oldCamY + screenHeight / 2)*/
+	else
 	{
 		cy -= screenHeight / 2;
-	/*	DebugOut(L"Error");*/
 	}
   		
 
@@ -373,6 +385,9 @@ void PlayScenceKeyHandler::OnKeyUp(int KeyCode)
 		mario->isPickingUp = false;
 		mario->isPressedJ = false;
 		break;
+	case DIK_S:
+		mario->Undodge();
+		break;
 	}
 		
 }
@@ -418,6 +433,10 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 	//{
 	//	/*mario->Jump();*/
 	//}
+	else if (game->IsKeyDown(DIK_S))
+	{
+		mario->Dodge();
+	}
 	else
 	{
 		mario->LosePowerMelter();
