@@ -361,14 +361,16 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	switch (KeyCode)
 	{
 	case DIK_K:
-		/*mario->SetState(MARIO_STATE_JUMPING);*/
-		mario->Jump();
+		mario->StartJumping();
 		break;
 	case DIK_U:
 		mario->UpForm();
 		break;
 	case DIK_I:
 		mario->Information();
+		break;
+	case DIK_J:
+		mario->Skill();
 		break;
 	//case DIK_C:
 	//	CreateKoopa();
@@ -384,9 +386,17 @@ void PlayScenceKeyHandler::OnKeyUp(int KeyCode)
 	case DIK_J:
 		mario->isPickingUp = false;
 		mario->isPressedJ = false;
+		mario->SetState(MARIO_STATE_IDLE);
+	/*	mario->SetState(MARIO_STATE_IDLE);*/
 		break;
-	case DIK_S:
-		mario->Undodge();
+	case DIK_A:
+		mario->turnFriction = true;
+		break;
+	case DIK_D:
+		mario->turnFriction = true;
+		break;
+	case DIK_K:
+		mario->Jump();
 		break;
 	}
 		
@@ -412,7 +422,11 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 		{
 			mario->SetDirect(false);
 			mario->SetState(MARIO_STATE_BRAKING);
-		}		
+		}	
+		if (game->IsKeyDown(DIK_K))
+		{
+			mario->SuperJump();
+		}
 	}
 	else if (game->IsKeyDown(DIK_A))
 	{
@@ -428,6 +442,10 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 			mario->SetDirect(true);
 			mario->SetState(MARIO_STATE_BRAKING);
 		}
+		if (game->IsKeyDown(DIK_K))
+		{
+			mario->SuperJump();
+		}
 	}
 	//else if (game->IsKeyDown(DIK_K))
 	//{
@@ -435,12 +453,17 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 	//}
 	else if (game->IsKeyDown(DIK_S))
 	{
-		mario->Dodge();
+		mario->Squat();
+	}
+	else if (game->IsKeyDown(DIK_K))
+	{
+		mario->SuperJump();
 	}
 	else
 	{
 		mario->LosePowerMelter();
-		mario->SetState(MARIO_STATE_IDLE);
+	/*	mario->SetState(MARIO_STATE_IDLE);*/
+	/*	mario->turnFriction = true;*/
 		if (game->IsKeyDown(DIK_J))
 		{
 			mario->PickUp();

@@ -46,7 +46,7 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 			else
 				this->x = mario->x - KOOPATROOPA_BBOX_WIDTH;
-			this->y = mario->y + mario->GetHeight() / 2 -5;	
+			this->y = mario->y + mario->GetHeight() / 2 - 8;	
 		}
 		else // nếu người chơi nhả nút giữ sẽ trở về Hiding
 		{
@@ -129,17 +129,16 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 			if (dynamic_cast<Ground*>(e->obj) ||dynamic_cast<Brick*>(e->obj ))
 			{
-				if (e->ny != 0)
-				{
-					vy = 0;
-					y = y0 + min_ty * dy + ny * 0.4f;
-				}
-				if (e->nx != 0 && isPickedUp == false)
-				{
-					x = x0 + min_tx * dx + nx * 0.4f;
-				}
-				
-				
+					if (e->ny != 0)
+					{
+						vy = 0;
+						y = y0 + min_ty * dy + ny * 0.4f;
+					}
+					if (e->nx != 0 && isPickedUp == false)
+					{
+						x = x0 + min_tx * dx + nx * 0.4f;
+					}
+							
 			}
 			// sử dụng các đối tượng vô hình để chặn hướng đi của RedKoopa
 			if (dynamic_cast<InvisibleBrick*>(e->obj))
