@@ -89,6 +89,7 @@ public:
 	void SetAnimationSet(LPANIMATION_SET ani_set) { animation_set = ani_set; }
 	GameObject() ;
 
+	GameObject(int x, int y) { this->x = x; this->y = y; }
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom,bool isEnable) = 0;
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects = NULL);
 	virtual void Render() = 0;

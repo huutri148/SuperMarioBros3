@@ -42,11 +42,15 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		{
 			if (mario->nx > 0)
 			{
-				this->x = mario->x + mario->GetWidth() + 1;
+				this->x = mario->x + mario->GetWidth() - 3 ;
 			}
 			else
-				this->x = mario->x - KOOPATROOPA_BBOX_WIDTH;
-			this->y = mario->y + mario->GetHeight() / 2 - 8;	
+				this->x = mario->x - KOOPATROOPA_BBOX_WIDTH + 3;
+			if (mario->GetHeight() > 16)
+				this->y = mario->y + mario->GetHeight()* 3.5 / 10;
+			else
+				this->y = mario->y;
+			vy = 0;
 		}
 		else // nếu người chơi nhả nút giữ sẽ trở về Hiding
 		{

@@ -358,10 +358,12 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	//DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);
 
 	Mario* mario = ((PlayScene*)scence)->GetPlayer();
+	//LPFireBall fireball = ((PlayScene*)scence)->GetFireBall();
 	switch (KeyCode)
 	{
 	case DIK_K:
 		mario->StartJumping();
+	/*	mario->Float();*/
 		break;
 	case DIK_U:
 		mario->UpForm();
@@ -370,7 +372,18 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		mario->Information();
 		break;
 	case DIK_J:
-		mario->Skill();
+		int flag = mario->Skill();
+	
+		if (flag == 1)
+		{
+			GameObject* fireBall = mario->ShootFireBall();
+			((PlayScene*)scence)->AddObject((FireBall*)fireBall);
+		}
+		if (flag == 2)
+		{
+			mario->TailAttack();
+		}
+			
 		break;
 	//case DIK_C:
 	//	CreateKoopa();
@@ -398,6 +411,8 @@ void PlayScenceKeyHandler::OnKeyUp(int KeyCode)
 	case DIK_K:
 		mario->Jump();
 		break;
+	case DIK_S:
+		mario->SetState(MARIO_STATE_IDLE);
 	}
 		
 }
@@ -470,6 +485,11 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 		}
 	}
 	
+}
+void PlayScene::AddObject(GameObject* obj)
+{
+	this->objects.push_back(obj);
+	DebugOut(L"Size: %d", this->objects.size());
 }
 //void CreateKoopa()
 //{

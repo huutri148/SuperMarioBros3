@@ -338,3 +338,4 @@ Game*Game::GetInstance()
 	if (__instance == NULL) __instance = new Game();
 	return __instance;
 }
+

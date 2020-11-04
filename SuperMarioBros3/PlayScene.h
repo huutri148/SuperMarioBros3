@@ -11,12 +11,14 @@
 #include"Block.h"
 #include"Ground.h"
 #include "Pipe.h"
+#include"FireBall.h"
 class PlayScene : public Scene
 {
 protected:
 	Mario* player;				
 	vector<LPGAMEOBJECT> objects;
 	Map* map;
+	//LPFireBall fireball;
 	void _ParseSection_TEXTURES(string line);
 	void _ParseSection_SPRITES(string line);
 	void _ParseSection_ANIMATIONS(string line);
@@ -33,8 +35,10 @@ public:
 	virtual void Unload();
 
 	Mario* GetPlayer() { return player; }
-
+	void AddObject(GameObject* obj);
+	//LPFireBall GetFireBall() { return fireball; }
 	//friend class CPlayScenceKeyHandler;
+	
 };
 
 class PlayScenceKeyHandler : public ScenceKeyHandler

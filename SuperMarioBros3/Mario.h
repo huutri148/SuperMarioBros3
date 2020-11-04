@@ -23,11 +23,12 @@
 #define MARIO_UNTOUCHABLE_TIME 1000
 //#define ams						0.4f
 #define MARIO_WALKING_SPEED		0.1f
-#define MARIO_JUMP_SPEED_Y		0.5f
-#define MARIO_SUPER_JUMP_SPEED 0.6f
+#define MARIO_JUMP_SPEED_Y		0.3f
+#define MARIO_SUPER_JUMP_SPEED 0.5f
 #define MARIO_JUMP_DEFLECT_SPEED 0.2f
 #define MARIO_BRAKE_DEFLECT_SPEED 0.05f
 #define MARIO_GRAVITY			0.002f
+#define MARIO_LOWER_GRAVITY		0.001f
 #define MARIO_DIE_DEFLECT_SPEED	 0.5f
 #define BUFF_SPEED		0.008f	// tốc độ tăng lên khi tích stack
 #define POWER_METER_FULL 7		// số stack tối đa		//thời gian để tích 1 stack
@@ -114,7 +115,7 @@
 #define MARIO_ANI_DIE				47
 
 
-#define MARIO_SUPER_JUMP_TIME 400
+#define MARIO_SUPER_JUMP_TIME 200
 
 class Mario : public GameObject
 {
@@ -125,13 +126,12 @@ class Mario : public GameObject
 	DWORD jump_time_start;// pressing jumping time
 	int power_melter_stack;
 	int jump_stack;
-
 	bool isInGround;
+	
 	bool isKickShell;
 	bool isDodging;
 public:
-	//	bool isJump;
-	bool isPickingUp;
+		bool isPickingUp;
 	bool isPressedJ;
 	bool turnFriction;
 	Mario() : GameObject()
@@ -184,7 +184,9 @@ public:
 	int GetWidth();
 	int GetHeight();
 	void Squat();
-	void Skill();
+	int Skill();
 	void Friction();
-
+	GameObject* ShootFireBall();
+	void TailAttack();
+	void Float();
 };
