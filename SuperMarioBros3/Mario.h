@@ -34,6 +34,9 @@
 #define POWER_METER_FULL 7		// số stack tối đa		//thời gian để tích 1 stack
 #define STACK_TIME 200			//thời gian để tích 1 stack
 #define MARIO_FRICTION		0.08f
+#define MARIO_SUPER_JUMP_TIME 300
+#define MARIO_FLYING_LIMITED_TIME 2000
+#define MARIO_FLOATING_SPEED_Y	-0.02f
 
 #define MARIO_STATE_IDLE	0
 #define MARIO_STATE_WALKING	100
@@ -115,7 +118,7 @@
 #define MARIO_ANI_DIE				47
 
 
-#define MARIO_SUPER_JUMP_TIME 200
+
 
 class Mario : public GameObject
 {
@@ -123,6 +126,7 @@ class Mario : public GameObject
 	int untouchable;
 	DWORD untouchable_start;
 	DWORD stack_time_start;
+	DWORD fly_time_start;
 	DWORD jump_time_start;// pressing jumping time
 	int power_melter_stack;
 	int jump_stack;
@@ -189,4 +193,5 @@ public:
 	GameObject* ShootFireBall();
 	void TailAttack();
 	void Float();
+	void Fly();
 };

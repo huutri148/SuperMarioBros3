@@ -14,20 +14,20 @@
 void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 
-	//if (dt > 64)
-	//	dt = 16;
 	// Calculate dx, dy 
 	GameObject::Update(dt);
 
-	// Simple fall down
-	//if (isInGround == false)
-	//{
-	//	if (vy > -0.2 && vy < 0.2)
-	//		vy += MARIO_LOWER_GRAVITY * dt;
-	//	else
-	//		vy += MARIO_GRAVITY * dt;
-	//}
-	vy += MARIO_GRAVITY * dt;
+	// fall down slower 
+	if (isInGround == false)
+	{
+		if (vy > -0.2 && vy < 0.2)
+			vy += MARIO_LOWER_GRAVITY * dt;
+		else
+			vy += MARIO_GRAVITY * dt;
+	}
+	else
+		vy += MARIO_GRAVITY * dt;
+	//vy += MARIO_GRAVITY * dt;
 	Friction();
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
@@ -122,12 +122,12 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					}	
 				}
 			}
-			else if (!dynamic_cast<InvisibleBrick*>(e->obj))
+			else if (!dynamic_cast<InvisibleBrick*>(e->obj) && !dynamic_cast<Block*>(e->obj))
 			{
 	
 				HandleCollision(min_tx, min_ty, e->nx, e->ny, x0, y0);
 			}
-			if (dynamic_cast<Block*>(e->obj))
+			else if (dynamic_cast<Block*>(e->obj))
 			{
 				if (e->ny < 0)
 				{
@@ -185,8 +185,8 @@ void Mario::Render()
 				{
 				if (power_melter_stack < 2)
 					ani += 4;
-				if (power_melter_stack > 2 && power_melter_stack < 6)
-					ani += 12;
+				/*if (power_melter_stack > 2 && power_melter_stack < 6)
+					ani += 12;*/
 				if (power_melter_stack == POWER_METER_FULL)
 					ani += 16;
 				}
@@ -198,14 +198,16 @@ void Mario::Render()
 			if ((vx > 0 && nx < 0) || ((vx < 0) && (nx > 0)))
 				ani += 24;
 		}
-		if (!isInGround && !isPickingUp)
+		if (!isInGround && !isPickingUp  )
 		{
 			if (power_melter_stack > 6)
+			{
 				ani += 20;
+			}
+			
 			else
 				ani += 8;
-			if (state == MARIO_STATE_FLOATING)
-				ani = MARIO_ANI_FLOATING;
+		
 		}
 	}
 	else if (state == MARIO_STATE_SQUAT)
@@ -227,9 +229,13 @@ void Mario::Render()
 	/*	DebugOut(L"\nD");*/
 		ani = MARIO_ANI_TAILATTACK;
 	 }
+	if (state == MARIO_STATE_FLOATING)
+		ani = MARIO_ANI_FLOATING;
+	if (state == MARIO_STATE_FLYING)
+		ani = MARIO_ANI_FLYING;
 	 if (state == MARIO_STATE_DEATH)
 		ani = MARIO_ANI_DIE;
-	/* DebugOut(L"\nAni: %d", ani);*/
+	 DebugOut(L"\nAni: %d", ani);
 	int alpha = 255;
 	if (untouchable) alpha = 128;
 	animation_set->at(ani)->Render(nx,x, y, alpha);
@@ -273,7 +279,11 @@ void Mario::SetState(int state)
 		isKickShell = true;
 		break;
 	case MARIO_STATE_FLOATING:
-		this->vy -= 1.1* MARIO_GRAVITY;
+		this->vy = MARIO_FLOATING_SPEED_Y;		
+		break;
+	case MARIO_STATE_FLYING:
+		this->vy = -MARIO_JUMP_SPEED_Y;;
+		this->vx = (MARIO_WALKING_SPEED + (BUFF_SPEED * power_melter_stack)) * nx;
 		break;
 	}
 }
@@ -333,22 +343,25 @@ void Mario::UpForm()
 void Mario::FillUpPowerMelter()// Tăng stack năng lượng của Mario
 {
 	DWORD current = GetTickCount();
-	if (stack_time_start == 0)
+	if (state != MARIO_STATE_FLYING && isInGround != false)
 	{
-		stack_time_start = current;
-	}
-	else
-	{
-		if (current - stack_time_start > 100 && power_melter_stack < POWER_METER_FULL)
+		if (stack_time_start == 0)
 		{
-			power_melter_stack += 1;
-			stack_time_start = 0;
-		}	
-	}
+			stack_time_start = current;
+		}
+		else
+		{
+			if (current - stack_time_start > 100 && power_melter_stack < POWER_METER_FULL)
+			{
+				power_melter_stack += 1;
+				stack_time_start = 0;
+			}
+		}
+	}	
 }
 void Mario::LosePowerMelter()// Power Stack sẽ cạn theo thời gian
 {
-	if (power_melter_stack > 0)
+	if (power_melter_stack > 0 && state != MARIO_STATE_FLYING)
 	{
 		DWORD current = GetTickCount();
 		if (stack_time_start == 0)
@@ -470,15 +483,38 @@ GameObject* Mario::ShootFireBall()
 		 fireBall = new FireBall(this->x - 15, this->y + 10, this->nx);
 	return fireBall;
 }
-//void Mario::Float()
-//{
-//	if (this->form == MARIO_RACCOON_FORM && this->isInGround == false)
-//	{
-//		this->SetState(MARIO_STATE_FLOATING);
-//	}
-//}
+void Mario::Float()
+{
+	if (this->form == MARIO_RACCOON_FORM && this->isInGround == false && vy > 0)
+	{
+		this->SetState(MARIO_STATE_FLOATING);
+	}
+}
 void Mario::TailAttack()
 {
 	this->nx = (-1) * this->nx;
 	this->SetState(MARIO_STATE_TAILATTACK);
+}
+void Mario::Fly()
+{
+
+	if (form == MARIO_RACCOON_FORM)
+	{
+		DWORD current = GetTickCount();
+	/*	DebugOut(L"Power melter stack: %d\n", power_melter_stack);*/
+		if (power_melter_stack == POWER_METER_FULL && current - fly_time_start < MARIO_FLYING_LIMITED_TIME)
+		{
+			this->SetState(MARIO_STATE_FLYING);
+		}
+		else if (current - fly_time_start > MARIO_FLYING_LIMITED_TIME && fly_time_start != 0)
+		{
+			fly_time_start = 0;
+			power_melter_stack = 0;
+		}
+		else if (fly_time_start == 0 && power_melter_stack == POWER_METER_FULL)
+		{
+			fly_time_start = current;
+			this->SetState(MARIO_STATE_FLYING);
+		}
+	}	
 }

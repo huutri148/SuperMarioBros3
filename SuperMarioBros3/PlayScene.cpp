@@ -363,7 +363,8 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	{
 	case DIK_K:
 		mario->StartJumping();
-	/*	mario->Float();*/
+		mario->Float();
+		mario->Fly();
 		break;
 	case DIK_U:
 		mario->UpForm();
@@ -409,6 +410,7 @@ void PlayScenceKeyHandler::OnKeyUp(int KeyCode)
 		mario->turnFriction = true;
 		break;
 	case DIK_K:
+	/*	mario->Float();*/
 		mario->Jump();
 		break;
 	case DIK_S:
@@ -441,6 +443,8 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 		if (game->IsKeyDown(DIK_K))
 		{
 			mario->SuperJump();
+		/*	mario->Float();
+			mario->Fly();*/
 		}
 	}
 	else if (game->IsKeyDown(DIK_A))
@@ -460,6 +464,8 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 		if (game->IsKeyDown(DIK_K))
 		{
 			mario->SuperJump();
+		/*	mario->Float();
+			mario->Fly();*/
 		}
 	}
 	//else if (game->IsKeyDown(DIK_K))
@@ -473,6 +479,8 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 	else if (game->IsKeyDown(DIK_K))
 	{
 		mario->SuperJump();
+		/*mario->Float();
+		mario->Fly();*/
 	}
 	else
 	{

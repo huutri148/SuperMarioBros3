@@ -67,19 +67,20 @@ void FireBall :: Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					y += dy;
 				}
 			}
-			if (dynamic_cast<Enemy*>(e->obj))
+			else
 			{
-				dynamic_cast<Enemy*>(e->obj)->SetDie(true);
-				this->SetState(FIREBALL_STATE_EXPLODE);
-				explodeTime = GetTickCount();
-			}
-			else 
-			{
-				if (e->nx != 0)
+				if (dynamic_cast<Enemy*>(e->obj))
+				{
+					dynamic_cast<Enemy*>(e->obj)->SetDie(true);
+					this->SetState(FIREBALL_STATE_EXPLODE);
+					explodeTime = GetTickCount();
+				}
+				else 	if (e->nx != 0)
 				{
 					this->SetState(FIREBALL_STATE_EXPLODE);
 					explodeTime = GetTickCount();
 				}
+			
 			}
 		}
 	}
