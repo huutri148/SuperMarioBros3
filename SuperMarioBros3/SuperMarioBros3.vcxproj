@@ -146,6 +146,7 @@
     <ClInclude Include="Animations.h" />
     <ClInclude Include="Block.h" />
     <ClInclude Include="Brick.h" />
+    <ClInclude Include="Define.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="FireBall.h" />
     <ClInclude Include="Game.h" />
@@ -157,6 +158,7 @@
     <ClInclude Include="Map.h" />
     <ClInclude Include="Mario.h" />
     <ClInclude Include="Pipe.h" />
+    <ClInclude Include="PiranhaPlant.h" />
     <ClInclude Include="PlayScene.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Sprites.h" />
@@ -178,6 +180,7 @@
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Mario.cpp" />
     <ClCompile Include="Pipe.cpp" />
+    <ClCompile Include="PiranhaPlant.cpp" />
     <ClCompile Include="PlayScene.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Sprites.cpp" />

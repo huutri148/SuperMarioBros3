@@ -1,8 +1,7 @@
 #pragma once
 #include "GameObject.h"
+#include "Define.h"
 
-#define BRICK_BBOX_WIDTH  16
-#define BRICK_BBOX_HEIGHT 16
 
 
 class Brick : public GameObject
@@ -12,8 +11,7 @@ public:
 	virtual void GetBoundingBox(float& l, float& t, float& r, float& b,bool isEnable);
 };
 
-#define INVISIBLEBRICK_TYPE_GROUND	0
-#define INVISIBLEBRICK_TYPE_BLOCK	1
+
 
 
 class InvisibleBrick : public GameObject

@@ -1,7 +1,7 @@
 #include "PlayScene.h"
 #include<iostream>
 #include<fstream>
-
+#include "Define.h"
 #include"Utils.h"
 #include"Textures.h"
 #include"Sprites.h"
@@ -19,25 +19,7 @@ PlayScene::PlayScene(int id, LPCWSTR filePath) :
 	See scene1.txt, scene2.txt for detail format specification
 */
 
-#define SCENE_SECTION_UNKNOWN -1
-#define SCENE_SECTION_TEXTURES 2
-#define SCENE_SECTION_SPRITES 3
-#define SCENE_SECTION_ANIMATIONS 4
-#define SCENE_SECTION_ANIMATION_SETS	5
-#define SCENE_SECTION_OBJECTS	6
-#define SCENE_SECTION_MAPS	7
-#define OBJECT_TYPE_MARIO	0
-#define OBJECT_TYPE_BRICK	1
-#define OBJECT_TYPE_GOOMBA	2
-#define OBJECT_TYPE_KOOPAS	3
-#define OBJECT_TYPE_BLOCKS	5
-#define OBJECT_TYPE_GROUNDS	4
-#define OBJECT_TYPE_PIPES	6
-#define OBJECT_TYPE_INVISIBLEBRICK	7
 
-#define OBJECT_TYPE_PORTAL	50
-
-#define MAX_SCENE_LINE 1024
 
 void PlayScene::_ParseSection_TEXTURES(string line)
 {
@@ -283,10 +265,19 @@ void PlayScene::Update(DWORD dt)
 	{
 		coObjects.push_back(objects[i]);
 	}
-
+	
 	for (size_t i = 0; i < objects.size(); i++)
 	{
-		objects[i]->Update(dt, &coObjects);
+		
+		if (dynamic_cast<Enemy*>(objects[i]))
+		{
+			if (dynamic_cast<Enemy*>(objects[i])->IsAbleToActive() == true)
+				objects[i]->Update(dt, &coObjects);
+			else
+				continue;
+		}
+		else
+			objects[i]->Update(dt, &coObjects);
 	}
 	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
 	if (player == NULL) return;
@@ -304,7 +295,7 @@ void PlayScene::Update(DWORD dt)
 
 	//cx -= screenWidth /2;
 	//cy -= screenHeight /2;
-
+	TurnCamY(cy, player->IsFlying(), screenHeight, mapHeight);
 	if (cx - (screenWidth / 2) <= 16)
 	{
 		cx = 16;
@@ -317,17 +308,28 @@ void PlayScene::Update(DWORD dt)
 	{
 		cx -= (screenWidth / 2);
 	}
-	
-	if (cy - (screenHeight / 2) < 16)
-		cy = 16;
-	else if (cy + (screenHeight / 2) >= 448)
-		cy = 448 - screenHeight;
+	if (_turnCamY == false)
+	{
+		if (cy + SCREEN_HEIGHT > 448)
+		{
+			cy = 448 - screenHeight;
+		}
+		else if (cy - screenHeight < 16)
+		{
+			cy = 16;
+		}
+	}
 	else
 	{
-		cy -= screenHeight / 2;
+		if (cy - (screenHeight / 2) < 16)
+			cy = 16;
+		else if (cy + (screenHeight / 2) >= 448)
+			cy = 448 - screenHeight;
+		else
+		{
+			cy -= screenHeight / 2;
+		}
 	}
-  		
-
 	Game::GetInstance()->SetCamPos(round(cx), round(cy));
 }
 
@@ -369,6 +371,29 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	case DIK_U:
 		mario->UpForm();
 		break;
+	case DIK_R:
+		mario->Reset();
+		break;
+	case DIK_C:
+	{
+		KoopaTroopa* koopa = new KoopaTroopa(960, 383, 1);
+		koopa->SetEnable();
+		AnimationSets* animation_sets = AnimationSets::GetInstance();
+		LPANIMATION_SET ani_set = animation_sets->Get(4);
+		koopa->SetAnimationSet(ani_set);
+		((PlayScene*)scence)->AddObject((KoopaTroopa*)koopa);
+		break;
+	}
+	case DIK_G:
+	{
+		Goomba* goopa = new Goomba(960, 383);
+		goopa->SetEnable();
+		AnimationSets* animation_sets = AnimationSets::GetInstance();
+		LPANIMATION_SET ani_set = animation_sets->Get(3);
+		goopa->SetAnimationSet(ani_set);
+		((PlayScene*)scence)->AddObject((Goomba*)goopa);
+		break;
+	}
 	case DIK_I:
 		mario->Information();
 		break;
@@ -398,9 +423,9 @@ void PlayScenceKeyHandler::OnKeyUp(int KeyCode)
 	switch (KeyCode)
 	{
 	case DIK_J:
-		mario->isPickingUp = false;
-		mario->isPressedJ = false;
-		mario->SetState(MARIO_STATE_IDLE);
+		mario->LosePowerMelter();
+		mario->ReleaseJ();
+		/*mario->SetState(MARIO_STATE_IDLE);*/
 	/*	mario->SetState(MARIO_STATE_IDLE);*/
 		break;
 	case DIK_A:
@@ -428,45 +453,49 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 	if (game->IsKeyDown(DIK_D))
 	{
 		mario->SetDirect(true);
-		if (game->IsKeyDown(DIK_J))
+		if (!mario->IsFlying() && !mario->IsFloating())
 		{
-			mario->FillUpPowerMelter();
-			mario->PickUp();
+			if (game->IsKeyDown(DIK_J))
+			{
+				mario->FillUpPowerMelter();
+				mario->PickUp();
+			}
+
+			mario->SetState(MARIO_STATE_WALKING);
+			if (game->IsKeyDown(DIK_A))
+			{
+				mario->SetDirect(false);
+				mario->SetState(MARIO_STATE_BRAKING);
+			}
+			if (game->IsKeyDown(DIK_K))
+			{
+				mario->SuperJump();
+			}
 		}
 		
-		mario->SetState(MARIO_STATE_WALKING);
-		if (game->IsKeyDown(DIK_A))
-		{
-			mario->SetDirect(false);
-			mario->SetState(MARIO_STATE_BRAKING);
-		}	
-		if (game->IsKeyDown(DIK_K))
-		{
-			mario->SuperJump();
-		/*	mario->Float();
-			mario->Fly();*/
-		}
 	}
 	else if (game->IsKeyDown(DIK_A))
 	{
 		mario->SetDirect(false);
-		if(game->IsKeyDown(DIK_J))
+		if (!mario->IsFlying() && !mario->IsFloating())
 		{
-			mario->FillUpPowerMelter();
-			mario->PickUp();
+			if (game->IsKeyDown(DIK_J))
+			{
+				mario->FillUpPowerMelter();
+				mario->PickUp();
+			}
+			mario->SetState(MARIO_STATE_WALKING);
+			if (game->IsKeyDown(DIK_D))
+			{
+				mario->SetDirect(true);
+				mario->SetState(MARIO_STATE_BRAKING);
+			}
+			if (game->IsKeyDown(DIK_K))
+			{
+				mario->SuperJump();
+			}
 		}
-		mario->SetState(MARIO_STATE_WALKING);
-		if (game->IsKeyDown(DIK_D))
-		{
-			mario->SetDirect(true);
-			mario->SetState(MARIO_STATE_BRAKING);
-		}
-		if (game->IsKeyDown(DIK_K))
-		{
-			mario->SuperJump();
-		/*	mario->Float();
-			mario->Fly();*/
-		}
+		
 	}
 	//else if (game->IsKeyDown(DIK_K))
 	//{
@@ -479,12 +508,10 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 	else if (game->IsKeyDown(DIK_K))
 	{
 		mario->SuperJump();
-		/*mario->Float();
-		mario->Fly();*/
 	}
 	else
 	{
-		mario->LosePowerMelter();
+	
 	/*	mario->SetState(MARIO_STATE_IDLE);*/
 	/*	mario->turnFriction = true;*/
 		if (game->IsKeyDown(DIK_J))
@@ -499,7 +526,17 @@ void PlayScene::AddObject(GameObject* obj)
 	this->objects.push_back(obj);
 	DebugOut(L"Size: %d", this->objects.size());
 }
-//void CreateKoopa()
-//{
-//	koopa = new KoopaTroopa(200, 416);
-//}
+void PlayScene::TurnCamY(float _playerY, bool isFlying, int ScreenHeight, int MapHeight)
+{
+	if (_turnCamY == true && _playerY > 448 - ScreenHeight/2
+		)
+	{
+		if (isFlying != true)
+			_turnCamY = false;
+		else
+			_turnCamY = true;
+	}
+	
+	if (isFlying == true)
+		_turnCamY = true;
+}

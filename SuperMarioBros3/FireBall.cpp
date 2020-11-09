@@ -71,9 +71,19 @@ void FireBall :: Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				if (dynamic_cast<Enemy*>(e->obj))
 				{
-					dynamic_cast<Enemy*>(e->obj)->SetDie(true);
-					this->SetState(FIREBALL_STATE_EXPLODE);
-					explodeTime = GetTickCount();
+					Enemy* enemy = dynamic_cast<Enemy*>(e->obj);
+					if (enemy->IsDead() != true || !enemy->IsEnable() )
+					{
+						dynamic_cast<Enemy*>(e->obj)->SetBeingSkilled();
+						this->SetState(FIREBALL_STATE_EXPLODE);
+						explodeTime = GetTickCount();
+					}
+					else
+					{
+						x += dx;
+						y += dy;
+					}
+				
 				}
 				else 	if (e->nx != 0)
 				{

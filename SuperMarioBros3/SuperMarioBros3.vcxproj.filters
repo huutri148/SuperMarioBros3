@@ -72,6 +72,12 @@
     <ClInclude Include="FireBall.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PiranhaPlant.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Define.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">
@@ -129,6 +135,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FireBall.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PiranhaPlant.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

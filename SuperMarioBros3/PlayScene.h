@@ -18,6 +18,7 @@ protected:
 	Mario* player;				
 	vector<LPGAMEOBJECT> objects;
 	Map* map;
+	bool _turnCamY;
 	//LPFireBall fireball;
 	void _ParseSection_TEXTURES(string line);
 	void _ParseSection_SPRITES(string line);
@@ -33,7 +34,7 @@ public:
 	virtual void Update(DWORD dt);
 	virtual void Render();
 	virtual void Unload();
-
+	void TurnCamY(float _playerY,bool isFlying,int ScreenHeight,int MapHeight);
 	Mario* GetPlayer() { return player; }
 	void AddObject(GameObject* obj);
 	//LPFireBall GetFireBall() { return fireball; }
@@ -47,6 +48,7 @@ public:
 	virtual void KeyState(BYTE* states);
 	virtual void OnKeyDown(int KeyCode);
 	virtual void OnKeyUp(int KeyCode);
+	
 	PlayScenceKeyHandler(Scene* s) :ScenceKeyHandler(s) {};
 };
 

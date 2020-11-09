@@ -5,11 +5,11 @@
 #include <vector>
 #include "Animations.h"
 #include "Sprites.h"
-
+#include "Define.h"
 
 using namespace std;
 
-#define ID_TEX_BBOX -100		// special texture to draw object bounding box
+
 
 class GameObject;
 typedef GameObject* LPGAMEOBJECT;

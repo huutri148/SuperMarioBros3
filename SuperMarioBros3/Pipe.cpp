@@ -9,6 +9,6 @@ void Pipe::GetBoundingBox(float& l, float& t, float& r, float& b, bool isEnable)
 {
 	l = x;
 	t = y;
-	r = x + BLOCK_BBOX_WIDTH;
-	b = y + BLOCK_BBOX_HEIGHT;
+	r = x + PIPE_BBOX_WIDTH;
+	b = y + PIPE_BBOX_HEIGHT;
 }
