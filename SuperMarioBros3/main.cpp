@@ -12,7 +12,6 @@
 
 
 Game* game;
-LPSCENE scene;
 
 LRESULT CALLBACK WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -27,17 +26,18 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-void LoadResource()
-{
-	scene = new PlayScene(1, L"scene1-1.txt");
-	Game::GetInstance()->SetKeyHandler(scene->GetKeyEventHandler());
-	scene->Load();
-}
+//void LoadResource()
+//{
+//	scene = new PlayScene(1, L"scene1-1.txt");
+//	Game::GetInstance()->SetKeyHandler(scene->GetKeyEventHandler());
+//	scene->Load();
+//}
 
 
 void Update(DWORD dt)
 {
-	scene->Update(dt);
+	Game::GetInstance()->GetCurrentScene()->Update(dt);
+
 }
 
 /*
@@ -55,8 +55,7 @@ void Render()
 		d3ddv->ColorFill(bb, NULL, BACKGROUND_COLOR);
 
 		spriteHandler->Begin(D3DXSPRITE_ALPHABLEND);
-		scene->Render();
-	
+		Game::GetInstance()->GetCurrentScene()->Render();
 		spriteHandler->End();
 		d3ddv->EndScene();
 	}
@@ -159,7 +158,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	game->Init(hWnd);
 
 	game->InitKeyboard();
-	LoadResource();
+	game->Load(L"SuperMarioBros3.txt");
+	//LoadResource();
 	
 
 	SetWindowPos(hWnd, 0, 0, 0, SCREEN_WIDTH * 2, SCREEN_HEIGHT * 2, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER);

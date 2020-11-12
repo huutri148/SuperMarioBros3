@@ -4,6 +4,7 @@
 #include "Ground.h"
 #include "Utils.h"
 #include "Block.h"
+#include <algorithm>
 
 void Goomba::GetBoundingBox(float& left, float& top, 
 	float& right, float& bottom,
@@ -40,14 +41,10 @@ void Goomba::Update(DWORD dt,
 		this->SetState(GOOMBA_STATE_WALKING);
 		isEnable = true;
 	}*/
+	HandleTimeSwitchState();
 	if (state == GOOMBA_STATE_INACTIVE)
 		return;
-	if (GetTickCount() - time_death > GOOMA_INACTIVE_TIME && 
-		this->IsDead() == true)
-	{
-		this->SetState(GOOMBA_STATE_INACTIVE);
-		return;
-	}
+
 	Enemy::Update(dt, coObjects);
 	if (this->state != GOOMBA_STATE_BEING_STROMPED)
 		vy += dt * GOOMBA_GRAVITY;
@@ -139,6 +136,28 @@ void Goomba::Render()
 	}
 	//RenderBoundingBox();
 }
+void Goomba::CalcPotentialCollisions(vector<LPGAMEOBJECT>* coObjects,
+	vector<LPCOLLISIONEVENT>& coEvents)
+{
+	for (UINT i = 0; i < coObjects->size(); i++)
+	{
+		LPCOLLISIONEVENT e = SweptAABBEx(coObjects->at(i));
+
+		if (dynamic_cast<Goomba*>(coObjects->at(i))
+			|| dynamic_cast<Block*>(coObjects->at(i)))
+		{
+			continue;
+		}
+		if (e->t > 0 && e->t <= 1.0f)
+		{
+			coEvents.push_back(e);
+		}
+		else
+			delete e;
+	}
+	std::sort(coEvents.begin(), coEvents.end(),
+		CollisionEvent::compare);
+}
 void Goomba::SetState(int state)
 {
 	Enemy::SetState(state);
@@ -179,15 +198,24 @@ bool Goomba::IsDead()
 void Goomba::SetBeingStromped()
 {
 	this->SetState(GOOMBA_STATE_BEING_STROMPED);
-	time_death = GetTickCount();
+	deathTime = GetTickCount();
 }
 void Goomba::SetBeingSkilled()
 {
 	this->SetState(GOOMBA_STATE_BEING_SKILLED);
-	time_death = GetTickCount();
+	deathTime = GetTickCount();
 }
 void Goomba::EnableAgain()
 {
 	Enemy::EnableAgain();
 	this->SetState(GOOMBA_STATE_WALKING);
+}
+void Goomba::HandleTimeSwitchState()
+{
+	if (GetTickCount() - deathTime > GOOMA_INACTIVE_TIME &&
+		this->IsDead() == true)
+	{
+		this->SetState(GOOMBA_STATE_INACTIVE);
+		return;
+	}
 }

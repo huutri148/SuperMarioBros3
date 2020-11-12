@@ -1,7 +1,7 @@
 # id	file_path	transparent_color_r	g	b
 [TEXTURES]
 0	textures\Mario2.png	68	145	190
-20	textures\misc.png	176	224	248
+20	textures\misc.png	166	185	255
 10	textures\enemies.png	3	26	110
 30	textures\map1-1_bank.png	255	255	255
 40	textures\Tiles.png	255	127	93
@@ -185,7 +185,26 @@
 30045	209	0	215	16	70
 30046	216	0	232	16	70
 30047	233	0	249	16	70
-	
+#FIRE PIRANHAPLANT	
+#GREEN
+#darting - bottom
+30050	48	143	64	176	70
+#darting- top
+30051	80	143	96	176	70
+#shooting - bottom
+30052	32	145	47	176	70
+#shooting - top
+30053	65	143	80	176	70
+#RED
+#darting - bottom
+30054	144	144	160	176	70
+#daring - top
+30055	177	144	190	176	70
+#shoot - bottom
+30056	127	145	143	176	70
+#shoot - top
+30057	161	144	176	176	70
+
 #BLOCK
 #Pink
 40001	919	137	935	153	40
@@ -226,6 +245,16 @@
 40049	1191	1	1207	17	40
 #Invisible Brick
 40000	350	200	366	216	10	
+#Coin
+#type 1 - Brick
+40050	294	101	302	115	20
+40051	311	101	312	115	20
+40052	321	100	325	115	20
+#type 2 - air
+#type 3 - 1 - p switch
+40053	334	100	348	116	20
+40054	357	100	363	116	20
+40055	372	100	382	116	20	
 
 # ani_id	sprite1_id	time1	sprite2_id	time2	...
 [ANIMATIONS]
@@ -320,7 +349,7 @@
 #fire shoot
 443	10054	100	10055	100
 #raccoon tail attck
-444	10074	100	10075	100	10076	100	10077	100	10074	100
+444	10074	80	10075	80	10076	80	10077	80	10074	80
 #raccoon float
 445	10077	100	10078	100
 #racoon fly
@@ -363,7 +392,37 @@
 723	30036	100
 #ExitSHELL
 724	30037	100
-
+#=====GREEN PIRANHAPLANT=====
+#darting
+730	30041	100
+#biting
+731	30041	100	30040	100
+#====RED PIRANHAPLANT=====
+#darting
+732	30043	100
+#biting
+733	30043	100	30042	100
+# PIRIHAPLANT DEATH
+734	30044	100	30044	100	30046	100	30047	100
+#===FIRE PIRANHAPLANT====
+#GREEN
+#darting bottom
+735	30050	100
+#darting top
+736	30051	100
+#shooting bottom
+737	30052	100
+#shooting top
+738	30053	100
+#RED
+#darting bottom
+739	30054	100
+#darting top 
+740	30055	100
+#shoot bottom
+741	30056	100
+#shoot top
+742	30057	100
 # ===BLOCK====
 #pink
 810	40001	100
@@ -399,6 +458,10 @@
 843	40046	100	40047	100	40048	100	40049	100
 #Invisible brick
 899	40000	100
+#====COIN====
+850	40050	100	40051	100	40052	100
+851	40053	200	40054	200	40054	200
+852	40053	100
 
 #
 # id	ani1	ani2	ani3
@@ -411,6 +474,10 @@
 3	701	702
 #Green Koopa/Red Koopa
 4	710	711	712	713	720	721	722	723	714	724
+#Green/Red PiranhaPlant
+5	730	731	732	733	734
+#Fire PiranhaPlant
+6	735	736	737	738	739	740	741	742	734
 #Block
 #pink
 21	810
@@ -445,12 +512,16 @@
 43	843
 #Fireball
 60	601	602
+#Coin 
+70	850	851	852
 #invisible brick
 99	899
 
 [OBJECTS]
 # type	x	y	ani_set_id	extra_settings per object type	type
-# type: 0 = Mario , 1 = Brick, 2 = Goomba,3=KoopaTroopa,4= Ground,6 = Pipe,5 = block,7 = Invisible Brick
+# type: 0 = Mario , 1 = Brick, 2 = Goomba,3=KoopaTroopa,4= Ground,
+#6 = Pipe,5 = block,7 = Invisible Brick
+#8 = PiranhaPlant,9 = Coin,10 = FirePiranhaPlant,11 = FirePlantBullet
 # MARIO
 0	16.0	400	1
 #Goombaa
@@ -691,6 +762,11 @@
 5	544	320	31
 5	560	320	31
 5	576	320	32
+#PiranhaPlant
+8	1816	399	5	0
+#Fire PiranhaPlant
+10	376	350	6	1
+10	1880	384	6	0
 #pipe
 6	368	384	50
 6	368	400	51
@@ -786,13 +862,16 @@
 1	2128	416	42
 #Invisible Brick
 7	630	416	99	0
-7	388	416	99	0
+7	399	416	99	0
 7	518	390	99	1
 7	620	380	99	1
 7	2090	384	99	1
 7	2136	384	99	1
 7	2240	416	99	0
 7	1904	416	99	0
+7	376	336	99	0
+7	1817	352	99	0
+7	1880	338	99	0
 #Red Koopa
 3	580.0	360	4	0
 3	2112	370	4	0
@@ -800,5 +879,31 @@
 2	200	415	3
 2	530	415	3
 2	960	383	3
-
+#Coin
+9	150	366	70
+9	1088	336	70
+9	1120	304	70
+9	1152	272	70
+9	1184	240	70
+9	1216	208	70
+9	1344	97	70
+9	1360	97	70
+9	1377	97	70
+9	1488	128	70
+9	1504	128	70
+9	1552	144	70
+9	1568	144	70
+9	1584	144	70
+9	1600	144	70
+9	1631	128	70
+9	1647	128	70
+9	1663	128	70
+9	1679	128	70
+9	1712	160	70
+9	1744	128	70
+9	1776	144	70	
+9	1824	113	70
+9	1856	144	70
+#FirePlantBullet
+11	0	0	60
 	

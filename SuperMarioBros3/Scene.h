@@ -16,7 +16,7 @@ public:
 	virtual void Update(DWORD dt) = 0;
 	virtual void Render() = 0;
 };
-typedef Scene* LPSCENE;
+typedef Scene * LPSCENE;
 
 
 class ScenceKeyHandler : public KeyEventHandler

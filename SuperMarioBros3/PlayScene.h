@@ -12,6 +12,11 @@
 #include"Ground.h"
 #include "Pipe.h"
 #include"FireBall.h"
+#include"PiranhaPlant.h"
+#include"Coin.h"
+#include"FirePiranhaPlant.h"
+#include"FirePlantBullet.h"
+
 class PlayScene : public Scene
 {
 protected:
@@ -19,6 +24,7 @@ protected:
 	vector<LPGAMEOBJECT> objects;
 	Map* map;
 	bool _turnCamY;
+	FirePlantBullet* firebullet;
 	//LPFireBall fireball;
 	void _ParseSection_TEXTURES(string line);
 	void _ParseSection_SPRITES(string line);
@@ -36,6 +42,7 @@ public:
 	virtual void Unload();
 	void TurnCamY(float _playerY,bool isFlying,int ScreenHeight,int MapHeight);
 	Mario* GetPlayer() { return player; }
+	FirePlantBullet* GetPlantBullet() { return firebullet; }
 	void AddObject(GameObject* obj);
 	//LPFireBall GetFireBall() { return fireball; }
 	//friend class CPlayScenceKeyHandler;

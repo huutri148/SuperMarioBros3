@@ -5,9 +5,13 @@
 
 class Goomba : public Enemy
 {
-	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom,bool isEnable);
+	virtual void GetBoundingBox(float& left, float& top,
+		float& right, float& bottom,bool isEnable);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	virtual void Render();
+	virtual void CalcPotentialCollisions(vector<LPGAMEOBJECT>* coObjects,
+		vector<LPCOLLISIONEVENT>& coEvents);
+	virtual void HandleTimeSwitchState() ;
 	
 
 public:

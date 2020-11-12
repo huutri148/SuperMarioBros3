@@ -3,11 +3,17 @@
 #include"Enemy.h"
 #include "Mario.h"
 #include"Define.h"
+#include"Utils.h"
+#include "Brick.h"
+#include "Ground.h"
+#include "Pipe.h"
+#include "Block.h"
+#include"Game.h"
 
 
 class KoopaTroopa :public Enemy
 {
-	Mario* mario;
+	//Mario* mario;
 	int type;
 	bool isBumped;
 	DWORD hidingTime = 0;
@@ -24,16 +30,17 @@ public:
 	virtual bool IsDead();
 	void PickUpBy(Mario* mario);
 	
-	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom, bool isEnable);
+	virtual void GetBoundingBox(float& left, float& top,
+		float& right, float& bottom, bool isEnable);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	virtual void Render();
+	virtual void HandleTimeSwitchState();
 	
 
 	virtual void SetState(int state);
-	//virtual void SetDie(bool n);
 	virtual void SetBeingStromped();
 	virtual void SetBeingSkilled();
 	virtual void EnableAgain();
-	KoopaTroopa(int x, int y, int _type = 0);
+	KoopaTroopa(int x, int y, int _type = KOOPATROOPA_GREEN_TYPE);
 };
 

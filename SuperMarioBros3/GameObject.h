@@ -76,7 +76,8 @@ public:
 	void RenderBoundingBox();
 	
 	LPCOLLISIONEVENT SweptAABBEx(LPGAMEOBJECT coO);
-	void CalcPotentialCollisions(vector<LPGAMEOBJECT>* coObjects, vector<LPCOLLISIONEVENT>& coEvents);
+	void CalcPotentialCollisions(vector<LPGAMEOBJECT>* coObjects,
+		vector<LPCOLLISIONEVENT>& coEvents);
 	void FilterCollision(
 		vector<LPCOLLISIONEVENT>& coEvents,
 		vector<LPCOLLISIONEVENT>& coEventsResult,
@@ -86,11 +87,13 @@ public:
 		float& ny);
 
 	/*void AddAnimation(int aniId);*/
-	void SetAnimationSet(LPANIMATION_SET ani_set) { animation_set = ani_set; }
+	void SetAnimationSet(LPANIMATION_SET ani_set)
+	{ animation_set = ani_set; }
 	GameObject() ;
 
 	GameObject(int x, int y) { this->x = x; this->y = y; }
-	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom,bool isEnable) = 0;
+	virtual void GetBoundingBox(float& left, float& top, float& right,
+		float& bottom,bool isEnable) = 0;
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects = NULL);
 	virtual void Render() = 0;
 

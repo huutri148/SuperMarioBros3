@@ -5,13 +5,16 @@
 #define DIRECTINPUT_VERSION 0x0800
 #include "Scene.h"
 #include <dinput.h>
+#include"Scene.h"
 #include "Utils.h"
 #define KEYBOARD_BUFFER_SIZE 1024
-/*
-Abstract class to define keyboard event handlers
-*/
 
-
+#include<fstream>
+#include"Define.h"
+#include"Sprites.h"
+#include"Animations.h"
+#include"Textures.h"
+#include"PlayScene.h"
 class Game
 {
 	static Game* __instance;
@@ -37,6 +40,8 @@ class Game
 	int screen_width;
 	int screen_height;
 
+	int current_scene;
+	unordered_map<int, LPSCENE> scenes;
 	void _ParseSection_SETTINGS(string line);
 	void _ParseSection_SCENES(string line);
 
@@ -45,7 +50,7 @@ public:
 	void SetKeyHandler(LPKEYEVENTHANDLER handler) { keyHandler = handler; };
 	void Init(HWND hWnd);
 	void Draw(float x, float y, LPDIRECT3DTEXTURE9 texture, int left, int top, int right, int bottom, int alpha = 255);
-	void Draw( int nx, float x, float y, LPDIRECT3DTEXTURE9 texture, int left, int top, int right, int bottom, int alpha);
+	void Draw(int nx, float x, float y, LPDIRECT3DTEXTURE9 texture, int left, int top, int right, int bottom, int alpha);
 
 	int IsKeyDown(int KeyCode);
 	void ProcessKeyboard();
@@ -78,10 +83,10 @@ public:
 	int GetScreenHeight() { return screen_height; };
 
 
-	/*void Load(LPCWSTR gameFile);*/
-	//LPSCENE GetCurrentScene() { return scenes[current_scene]; }
-	//void SwitchScene(int scene_id);
+	void Load(LPCWSTR gameFile);
+	LPSCENE GetCurrentScene() { return scenes[current_scene]; };
+	void SwitchScene(int scene_id);
+
+
 	~Game();
 };
-
-

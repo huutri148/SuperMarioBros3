@@ -22,6 +22,7 @@ class Mario : public GameObject
 	bool isDodging;
 	bool isFlying = false;
 	bool isFloating = false;
+	bool isBraking = false;
 public:
 	// Chuyển thành hàm
 	bool isPickingUp;
@@ -33,9 +34,13 @@ public:
 	
 	Mario(float x, float y);
 
-	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* colliable_objects = NULL);
+	virtual void Update(DWORD dt,
+		vector<LPGAMEOBJECT>* colliable_objects = NULL);
 	virtual void Render();
-	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom, bool isEnable);
+	virtual void GetBoundingBox(float& left, float& top,
+		float& right, float& bottom, bool isEnable);
+	virtual void CalcPotentialCollisions(vector<LPGAMEOBJECT>* coObjects,
+		vector<LPCOLLISIONEVENT>& coEvents);
 
 
 	void SetState(int state);
@@ -48,8 +53,10 @@ public:
 
 	//Xử Lí
 	void Friction();
-	void HandleCollision(float min_tx, float min_ty, float nx, float ny, float x0, float y0);
-	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount(); }
+	void HandleCollision(float min_tx, float min_ty,
+		float nx, float ny, float x0, float y0);
+	void StartUntouchable() 
+	{ untouchable = 1; untouchable_start = GetTickCount(); }
 	void UpForm();
 	void ReleaseJ();
 	void PressK();

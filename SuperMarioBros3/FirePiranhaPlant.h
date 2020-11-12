@@ -1,13 +1,18 @@
 #pragma once
-#include "Enemy.h"
-#include"Define.h"
-class PiranhaPlant :public Enemy
+#include"Enemy.h"
+#include"Game.h"
+#include"Mario.h"
+class FirePiranhaPlant :public Enemy
 {
 	DWORD switchTime;
 	bool isOutOfPipe;
 	int type;
+	bool isShooted;
+	bool shootInGround;
 	virtual void HandleTimeSwitchState();
-public:
+	void Shooting();
+	void GetDirect();
+public: 
 	virtual void GetBoundingBox(float& left, float& top, float& right,
 		float& bottom, bool isEnable);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
@@ -15,10 +20,9 @@ public:
 	virtual void SetState(int state);
 
 	virtual bool IsDead();
-	virtual void SetBeingStromped() ;
+	virtual void SetBeingStromped();
 	virtual void SetBeingSkilled();
-	virtual void EnableAgain() ;
-	PiranhaPlant(float x, float y, int _type = PIRANHAPLANT_GREEN_TYPE);
-	
+	virtual void EnableAgain();
+	FirePiranhaPlant(float x, float y, int _type = PIRANHAPLANT_RED_TYPE);
 };
 
