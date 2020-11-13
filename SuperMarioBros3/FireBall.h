@@ -10,7 +10,7 @@ public:
 	virtual void Render();
 	virtual void GetBoundingBox(float& l, float& t, float& r, float& b, bool isEnable);
 	virtual void SetState(int state);
-	FireBall(int _x, int _y, int _nx) 
+	FireBall(float _x, float _y, int _nx) 
 	{
 		this->x = _x;
 		this->y = _y;

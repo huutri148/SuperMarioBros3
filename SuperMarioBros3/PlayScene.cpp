@@ -6,6 +6,7 @@
 #include"Textures.h"
 #include"Sprites.h"
 
+
  
 using namespace std;
 
@@ -71,7 +72,7 @@ void PlayScene::_ParseSection_ANIMATIONS(string line)
 	LPANIMATION ani = new Animation();
 
 	int ani_id = atoi(tokens[0].c_str());
-	for (int i = 1; i < tokens.size(); i += 2)	// why i+=2 ?  sprite_id | frame_time  
+	for (unsigned int i = 1; i < tokens.size(); i += 2)	// why i+=2 ?  sprite_id | frame_time  
 	{
 		int sprite_id = atoi(tokens[i].c_str());
 		int frame_time = atoi(tokens[i + 1].c_str());
@@ -93,7 +94,7 @@ void PlayScene::_ParseSection_ANIMATION_SETS(string line)
 
 	Animations* animations = Animations::GetInstance();
 
-	for (int i = 1; i < tokens.size(); i++)
+	for (unsigned int i = 1; i < tokens.size(); i++)
 	{
 		int ani_id = atoi(tokens[i].c_str());
 
@@ -116,8 +117,8 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 	if (tokens.size() < 3) return; // skip invalid lines - an object set must have at least id, x, y
 
 	int object_type = atoi(tokens[0].c_str());
-	float x = atof(tokens[1].c_str());
-	float y = atof(tokens[2].c_str());
+	float x =(float) atof(tokens[1].c_str());
+	float y =(float) atof(tokens[2].c_str());
 
 	int ani_set_id = atoi(tokens[3].c_str());
 
@@ -134,13 +135,18 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 			DebugOut(L"[ERROR] MARIO object was created before!\n");
 			return;
 		}
-		obj = new Mario(x, y);
+		obj = new Mario();
 		player = (Mario*)obj;
 
 		DebugOut(L"[INFO] Player object created!\n");
 		break;
 	case OBJECT_TYPE_GOOMBA: obj = new Goomba(x,y); break;
-	case OBJECT_TYPE_BRICK: obj = new Brick(); break;
+	case OBJECT_TYPE_BRICK: 
+	{
+		int set_type = atoi(tokens[4].c_str());
+		obj = new Brick(x, y,set_type);
+		break;
+	}
 	case OBJECT_TYPE_KOOPAS:
 	{
 		int set_type = atoi(tokens[4].c_str());
@@ -182,8 +188,29 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 		obj = new CPortal(x, y, r, b, scene_id);
 	}*/
 	case OBJECT_TYPE_COIN:
-		obj = new Coin(); break;
+	{
+		int set_type = atoi(tokens[4].c_str());
+		obj = new Coin(set_type);
+		if (set_type == COIN_TYPE_1)
+			coin = ((Coin*)obj);
+		break;
+	}
+		
 	break;
+	case OBJECT_TYPE_RACCOONLEAF:
+	{
+		obj = new RaccoonLeaf();
+		leaf = ((RaccoonLeaf*)obj);
+		break;
+	}
+	
+	case OBJECT_TYPE_MUSROOM:
+	{
+		obj = new Mushroom(); 
+		mushroom = ((Mushroom*)obj);
+		break;
+	}
+		
 	default:
 		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
 		return;
@@ -198,6 +225,8 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 	objects.push_back(obj);
 	if (object_type == OBJECT_TYPE_FIREPLANTBULLET)
 		firebullet = ((FirePlantBullet*)obj);
+	
+		
 }
 void PlayScene::_ParseSection_MAPS(string line)
 {
@@ -283,6 +312,8 @@ void PlayScene::Update(DWORD dt)
 	// TO-DO: This is a "dirty" way, need a more organized way 
 
 	vector<LPGAMEOBJECT> coObjects;
+	/*if(item != NULL)
+		item->Update(dt, &coObjects);*/
 	for (size_t i = 1; i < objects.size(); i++)
 	{
 		coObjects.push_back(objects[i]);
@@ -313,10 +344,10 @@ void PlayScene::Update(DWORD dt)
 	int screenHeight = game->GetScreenHeight();
 	int mapWidth = map->GetMapWidth();
 	int mapHeight = map->GetMapHeiht();
-	int oldCamY = game->GetCamY();
+	float oldCamY = game->GetCamY();
 
 	TurnCamY(cy, player->IsFlying(), screenHeight, mapHeight);
-	int Sx = 16, Sy = oldCamY;
+	float Sx = 16, Sy = oldCamY;
 	cx -= screenWidth / 2;
 	cy -= screenHeight /2 ;
 	//if (player->x - screenWidth / 2 <= 16)
@@ -343,7 +374,7 @@ void PlayScene::Update(DWORD dt)
 	//}
 	if (player->x < 16 + game->GetScreenWidth() / 2)
 	{
-		Sx = 16;
+		Sx =(float) 16;
 	}
 	if (player->x > 16 + game->GetScreenWidth() / 2)
 	{
@@ -351,14 +382,14 @@ void PlayScene::Update(DWORD dt)
 	}
 	if (player->x + game->GetScreenWidth() / 2 > mapWidth - 16)
 	{
-		Sx = (mapWidth - 16) - screenWidth;
+		Sx =(float)(mapWidth - 16.0f) - screenWidth;
 	}
 	if (player->y + screenHeight> 448)
 	{
-		Sy = 448 - screenHeight;
+		Sy = (float)(448.0f - screenHeight);
 	}
 	if (player->y - screenHeight/2 < 16)
-		Sy = 16;
+		Sy = (float)16.0f;
 	else 
 	{
 		if (_turnCamY)
@@ -372,7 +403,9 @@ void PlayScene::Update(DWORD dt)
 void PlayScene::Render()
 {
 	this->map->Render();
-	for (int i = 1; i < objects.size(); i++)
+	/*if(item != NULL)
+		item->Render();*/
+	for (unsigned int i = 1; i < objects.size(); i++)
 		objects[i]->Render();
 	objects[0]->Render();
 }
@@ -382,7 +415,7 @@ void PlayScene::Render()
 */
 void PlayScene::Unload()
 {
-	for (int i = 0; i < objects.size(); i++)
+	for (unsigned int i = 0; i < objects.size(); i++)
 		delete objects[i];
 
 	objects.clear();
@@ -498,11 +531,6 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 			}
 
 			mario->SetState(MARIO_STATE_WALKING);
-			if (game->IsKeyDown(DIK_A))
-			{
-				mario->SetDirect(false);
-				mario->SetState(MARIO_STATE_BRAKING);
-			}
 			if (game->IsKeyDown(DIK_K))
 			{
 				mario->SuperJump();
@@ -521,11 +549,6 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 				mario->PickUp();
 			}
 			mario->SetState(MARIO_STATE_WALKING);
-			if (game->IsKeyDown(DIK_D))
-			{
-				mario->SetDirect(true);
-				mario->SetState(MARIO_STATE_BRAKING);
-			}
 			if (game->IsKeyDown(DIK_K))
 			{
 				mario->SuperJump();

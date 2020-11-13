@@ -1,8 +1,10 @@
 #pragma once
 #include"GameObject.h"
 #include"Define.h"
-class Coin : public GameObject
+#include"Item.h"
+class Coin : public Item
 {
+	int type;
 	virtual void GetBoundingBox(float& left, float& top,
 		float& right, float& bottom, bool isEnable);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
@@ -10,8 +12,11 @@ class Coin : public GameObject
 	//virtual void CalcPotentialCollisions(vector<LPGAMEOBJECT>* coObjects,
 	//	vector<LPCOLLISIONEVENT>& coEvents);
 public:
+	void Appear(float x, float y);
+	void Used();
+	int GetType() { return this->type; }
 	virtual void SetState(int state);
-	Coin() { this->SetState(COIN_STATE_ACTIVE); };
+	Coin(int type);
 	void Disappearance();
 };
 

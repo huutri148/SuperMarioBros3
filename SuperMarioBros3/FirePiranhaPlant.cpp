@@ -245,7 +245,7 @@ void FirePiranhaPlant::Shooting()
 				direct = FIREBULLET_DIRECT_3;
 		}
 		bullet->Shoot(x, y, nx, direct);
-		DebugOut(L"\nDirect: %d ",direct);
+		/*DebugOut(L"\nDirect: %d ",direct);*/
 	}
 
 }

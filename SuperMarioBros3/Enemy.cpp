@@ -3,7 +3,9 @@
 
 Enemy::Enemy() :GameObject()
 {
-	
+	deathTime = 0;
+	entryX = 0;
+	entryY = 0;
 }
 
 Enemy::~Enemy()
@@ -30,8 +32,8 @@ void Enemy::SetEntryPosition(float x, float y)
 bool Enemy::IsAbleToActive()
 {
 	Game* game = Game::GetInstance();
-	int widthX = game->GetCamX() + game->GetScreenWidth();
-	int widthY = game->GetCamY() + game->GetScreenHeight();
+	float widthX = game->GetCamX() + game->GetScreenWidth();
+	float widthY = game->GetCamY() + game->GetScreenHeight();
 	if (isEnable == false)
 	{
 		if (/*entryX >= widthX || entryX < game->GetCamX()*/

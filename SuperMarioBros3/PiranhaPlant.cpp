@@ -97,7 +97,7 @@ void PiranhaPlant::Render()
 	{
 		if (state != PIRANHAPLANT_STATE_INACTIVE)
 		{
-			int ani;
+			int ani = 0;
 			if (state == PIRANHAPLANT_STATE_DARTING)
 			{
 				if (type == PIRANHAPLANT_GREEN_TYPE)
@@ -126,6 +126,7 @@ PiranhaPlant::PiranhaPlant(float x, float y, int _type) :Enemy(x, y)
 	this->state = PIRANHAPLANT_STATE_DARTING;
 	vy = PIRANHAPLANT_DARTING_SPEED;
 	this->isOutOfPipe = true;
+	switchTime = 0;
 }
 void PiranhaPlant::SetState(int _state)
 {
@@ -189,6 +190,6 @@ void PiranhaPlant::HandleTimeSwitchState()
 		&& deathTime != 0)
 	{
 		this->SetState(PIRANHAPLANT_STATE_INACTIVE);
-		deathTime != 0;
+		deathTime = 0;
 	}
 }

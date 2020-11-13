@@ -4,7 +4,7 @@
 class Enemy :public GameObject
 {	
 protected:
-	DWORD deathTime;
+	DWORD deathTime = 0;
 	float entryX, entryY;
 	
 public:

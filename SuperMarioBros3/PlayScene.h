@@ -16,15 +16,22 @@
 #include"Coin.h"
 #include"FirePiranhaPlant.h"
 #include"FirePlantBullet.h"
+#include"RaccoonLeaf.h"
+#include"Mushroom.h"
+#include"Item.h"
 
 class PlayScene : public Scene
 {
 protected:
-	Mario* player;				
-	vector<LPGAMEOBJECT> objects;
-	Map* map;
-	bool _turnCamY;
-	FirePlantBullet* firebullet;
+	Mario* player = NULL;
+	vector<LPGAMEOBJECT> objects ;
+	Map* map = NULL ;
+	bool _turnCamY = false;
+	FirePlantBullet* firebullet = NULL;
+	/*Item* item;*/
+	RaccoonLeaf* leaf = NULL;
+	Mushroom* mushroom = NULL;
+	Coin* coin = NULL;
 	//LPFireBall fireball;
 	void _ParseSection_TEXTURES(string line);
 	void _ParseSection_SPRITES(string line);
@@ -40,13 +47,16 @@ public:
 	virtual void Update(DWORD dt);
 	virtual void Render();
 	virtual void Unload();
-	void TurnCamY(float _playerY,bool isFlying,int ScreenHeight,int MapHeight);
+	void TurnCamY(float _playerY, bool isFlying, int ScreenHeight, int MapHeight);
 	Mario* GetPlayer() { return player; }
 	FirePlantBullet* GetPlantBullet() { return firebullet; }
 	void AddObject(GameObject* obj);
+	RaccoonLeaf* GetLeaf() { return leaf; }
+	Mushroom* GetMushroom() { return mushroom; }
+	Coin* GetCoin() { return coin; };
 	//LPFireBall GetFireBall() { return fireball; }
-	//friend class CPlayScenceKeyHandler;
-	
+	friend class CPlayScenceKeyHandler;
+
 };
 
 class PlayScenceKeyHandler : public ScenceKeyHandler

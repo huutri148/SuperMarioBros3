@@ -50,7 +50,7 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			else
 				this->x = mario->x - KOOPATROOPA_BBOX_WIDTH + 3;
 			if (mario->GetHeight() > MARIO_SMALL_BBOX_HEIGHT)
-				this->y = mario->y + mario->GetHeight()* 3.5 / 10;
+				this->y = mario->y +  (float) mario->GetHeight()* 3.5f / 10;
 			else
 				this->y = mario->y;
 			vy = 0;
@@ -109,7 +109,7 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				if (dynamic_cast<Enemy*>(e->obj))
 				{
 					Enemy* enemy = dynamic_cast<Enemy*>(e->obj);
-					if (e->nx != 0 && !enemy->IsDead())
+					if (!enemy->IsDead())
 					{
 						if (isPickedUp == true)
 						{
@@ -124,8 +124,11 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					if (dynamic_cast<Pipe*>(e->obj) || 
 						dynamic_cast<Brick*>(e->obj) )
 					{
+						
 						if (e->nx != 0)
 						{
+							if (dynamic_cast<Brick*>(e->obj))
+								dynamic_cast<Brick*>(e->obj)->SetEmpty();
 							this->vx = -this->vx;
 							this->nx = -this->nx;
 							x = x0 + min_tx * dx + nx * 0.4f;
@@ -329,7 +332,7 @@ void KoopaTroopa::PickUpBy(Mario* mario)
 	isPickedUp = true;
 	//this->mario = mario;
 }
-KoopaTroopa ::KoopaTroopa(int x, int y,int _type) : Enemy(x, y)
+KoopaTroopa ::KoopaTroopa(float x, float y,int _type) : Enemy(x, y)
 {
 	isPickedUp = false;
 	//isEnable = true;
@@ -361,7 +364,7 @@ void KoopaTroopa::HandleTimeSwitchState()
 		this->SetState(KOOPATROOPA_STATE_INACTIVE);
 		return;
 	}
-	if (GetTickCount() - turnWalkingTime >
+	if (GetTickCount64() - turnWalkingTime >
 		KOOPATROOPA_TURN_WALKING_TIME &&
 		this->state == KOOPATROOPA_STATE_EXIT_SHELL)
 	{			
@@ -370,7 +373,7 @@ void KoopaTroopa::HandleTimeSwitchState()
 			KOOPATROOPA_BBOX_HEIGHT_HIDING;
 		turnWalkingTime = 0;
 	}
-	if (GetTickCount() - hidingTime >
+	if (GetTickCount64() - hidingTime >
 		KOOPATROOPA_EXIT_SHELL_TIME &&
 		this->state == KOOPATROOPA_STATE_HIDING)
 	{

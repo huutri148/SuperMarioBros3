@@ -212,7 +212,7 @@ void Goomba::EnableAgain()
 }
 void Goomba::HandleTimeSwitchState()
 {
-	if (GetTickCount() - deathTime > GOOMA_INACTIVE_TIME &&
+	if (GetTickCount64() - deathTime > GOOMA_INACTIVE_TIME &&
 		this->IsDead() == true)
 	{
 		this->SetState(GOOMBA_STATE_INACTIVE);

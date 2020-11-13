@@ -41,6 +41,6 @@ public:
 	virtual void SetBeingStromped();
 	virtual void SetBeingSkilled();
 	virtual void EnableAgain();
-	KoopaTroopa(int x, int y, int _type = KOOPATROOPA_GREEN_TYPE);
+	KoopaTroopa(float x, float y, int _type = KOOPATROOPA_GREEN_TYPE);
 };
 

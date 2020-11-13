@@ -45,14 +45,14 @@ public:
 	float x;
 	float y;
 
-	float dx;	// dx = vx*dt
-	float dy;	// dy = vy*dt
+	float dx = 0;	// dx = vx*dt
+	float dy = 0;	// dy = vy*dt
 
 	float vx;
 	float vy;
 
 	int nx;
-	int ny;
+	/*int ny;*/
 
 	int state;
 	bool isEnable;
@@ -91,7 +91,17 @@ public:
 	{ animation_set = ani_set; }
 	GameObject() ;
 
-	GameObject(int x, int y) { this->x = x; this->y = y; }
+	GameObject(float x, float y) 
+	{
+		nx = 1;
+		this->x = x;
+		this->y = y;
+		vx = 0;
+		vy = 0;
+		isEnable = false;
+		dt = 0;
+		state = 0;
+	}
 	virtual void GetBoundingBox(float& left, float& top, float& right,
 		float& bottom,bool isEnable) = 0;
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects = NULL);

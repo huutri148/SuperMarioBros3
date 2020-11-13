@@ -8,7 +8,7 @@ public:
 	virtual void Render();
 	virtual void GetBoundingBox(float& l, float& t, float& r, float& b, bool isEnable);
 	virtual void SetState(int state);
-	void Shoot(int _x, int _y, int _nx,int _direct)
+	void Shoot(float _x, float _y, int _nx,int _direct)
 	{
 		this->x = _x;
 		this->y = _y;

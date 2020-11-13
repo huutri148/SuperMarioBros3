@@ -6,20 +6,19 @@
 
 class Mario : public GameObject
 {
-	int form;
-	int untouchable;
+	int form = 0;
+	int untouchable = 0;
 
 	// Thời gian bắt đầu các trạng thái
-	DWORD untouchable_start;
-	DWORD stack_time_start;
-	DWORD fly_time_start;
-	DWORD jump_time_start;// pressing jumping time
-	int power_melter_stack;
+	DWORD untouchable_start = 0;
+	DWORD stack_time_start = 0;
+	DWORD fly_time_start = 0;
+	DWORD jump_time_start = 0;// pressing jumping time
+	int power_melter_stack = 0;
 
 	//Các biến cờ ở các trạng thái
-	bool isInGround;
-	bool isKickShell;
-	bool isDodging;
+	bool isInGround ;
+	bool isKickShell = false;
 	bool isFlying = false;
 	bool isFloating = false;
 	bool isBraking = false;
@@ -32,7 +31,7 @@ public:
 	bool IsFloating();
 	bool IsInGround();
 	
-	Mario(float x, float y);
+	Mario();
 
 	virtual void Update(DWORD dt,
 		vector<LPGAMEOBJECT>* colliable_objects = NULL);
@@ -50,6 +49,7 @@ public:
 	int GetWidth();
 	int GetHeight();
 	void Information();
+	int GetForm() { return form; };
 
 	//Xử Lí
 	void Friction();
@@ -61,6 +61,9 @@ public:
 	void ReleaseJ();
 	void PressK();
 	void Reset();
+	void TurnBigForm();
+	void TurnFireForm();
+	void TurnRaccoonForm();
 
 	//Thay đổi PowerMelter
 	void FillUpPowerMelter();

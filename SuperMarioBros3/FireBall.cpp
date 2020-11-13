@@ -85,8 +85,10 @@ void FireBall :: Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					}
 				
 				}
-				else 	if (e->nx != 0)
+				else if (e->nx != 0)
 				{
+					if (dynamic_cast<Brick*>(e->obj))
+						dynamic_cast<Brick*>(e->obj)->SetEmpty();
 					this->SetState(FIREBALL_STATE_EXPLODE);
 					explodeTime = GetTickCount();
 				}

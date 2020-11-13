@@ -289,8 +289,8 @@ void Game::SweptAABB(
 
 	if (dx == 0)
 	{
-		tx_entry = -99999999999;
-		tx_exit = 99999999999;
+		tx_entry =(float) -99999999999;
+		tx_exit =(float) 99999999999;
 	}
 	else
 	{
@@ -300,8 +300,8 @@ void Game::SweptAABB(
 
 	if (dy == 0)
 	{
-		ty_entry = -99999999999;
-		ty_exit = 99999999999;
+		ty_entry = (float)-99999999999;
+		ty_exit = (float)99999999999;
 	}
 	else
 	{

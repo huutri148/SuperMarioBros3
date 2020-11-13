@@ -4,6 +4,7 @@
 #include "Mario.h"
 #include "Game.h"
 #include"KoopaTroopa.h"
+#include"RaccoonLeaf.h"
 #include "Goomba.h"
 #include"Block.h"
 #include "Ground.h"
@@ -39,7 +40,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	if (state != MARIO_STATE_DEATH)
 		CalcPotentialCollisions(coObjects, coEvents);
 	// reset untouchable timer if untouchable time has passed
-	if (GetTickCount() - untouchable_start > MARIO_UNTOUCHABLE_TIME)
+	if (GetTickCount64() - untouchable_start > MARIO_UNTOUCHABLE_TIME)
 	{
 		untouchable_start = 0;
 		untouchable = 0;
@@ -84,6 +85,19 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							isFloating = false;
 							vy = -MARIO_JUMP_DEFLECT_SPEED;
 							vx = nx * MARIO_WALK_DEFELCT_SPEED;
+						}
+						else if (enemy->IsDead() == true)
+						{
+							if (dynamic_cast<KoopaTroopa*>(enemy))
+							{
+								if (enemy->state ==
+									KOOPATROOPA_STATE_HIDING)
+								{
+									dynamic_cast<KoopaTroopa*>(enemy)->
+										IsKicked(nx);
+									}
+									
+							}
 						}
 						else if (dynamic_cast<PiranhaPlant*>(enemy)
 							|| dynamic_cast<FirePiranhaPlant*>(enemy))
@@ -144,12 +158,13 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 								}
 								else if (isPressedJ == false)
 								{
-									HandleCollision(min_tx, min_ty,
-										e->nx, e->ny,
-										x0, y0);
+								
 									dynamic_cast<KoopaTroopa*>(enemy)->
 										IsKicked(this->nx);
 									this->SetState(MARIO_STATE_KICK);
+									HandleCollision(min_tx, min_ty,
+										e->nx, e->ny,
+										x0, y0);
 								}
 							}
 							
@@ -191,7 +206,21 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						SetState(MARIO_STATE_DEATH);
 				}
 			}
-			else if (!dynamic_cast<Block*>(e->obj) && !dynamic_cast<Coin*>(e->obj))
+			else if (dynamic_cast<Brick*>(e->obj))
+			{
+				HandleCollision(min_tx, min_ty,
+				e->nx, e->ny,
+				x0, y0);
+				if (e->ny > 0)
+					dynamic_cast<Brick*>(e->obj)->SetEmpty();
+			}
+			else if (dynamic_cast<Item*>(e->obj))
+			{
+				dynamic_cast<Item*>(e->obj)->Used();
+			}
+			else if (!dynamic_cast<Block*>(e->obj) && 
+			!dynamic_cast<Coin*>(e->obj) &&
+			!dynamic_cast<RaccoonLeaf*>(e->obj))
 			{
 					HandleCollision(min_tx, min_ty,
 					e->nx, e->ny,
@@ -498,7 +527,7 @@ void Mario::SetState(int state)
 	
 		break;
 	case MARIO_STATE_STOP:
-		vx -= 0.01 * vx;
+		vx -=(float) 0.01 * vx;
 		break;
 	case MARIO_STATE_KICK:
 		isKickShell = true;
@@ -771,7 +800,6 @@ void Mario::HandleCollision(float min_tx, float min_ty,
 			isInGround = true;
 			isFlying = false;
 			isFloating = false;
-			this->ny = 0;
 		}
 			
 	}
@@ -813,10 +841,10 @@ int Mario::GetHeight()
 	else
 		return MARIO_BIG_BBOX_HEIGHT;
 }
-  Mario::Mario(float x, float y)
+  Mario::Mario()
  {
-	 this->x = x;
-	 this->y = y;
+	 x = 16;
+	y = 415;
 	 vx = vy = 0;
 	 nx = 1;
 	 power_melter_stack = 0;
@@ -825,6 +853,9 @@ int Mario::GetHeight()
 	 isKickShell = false;
 	 isPressedJ = false;
 	 isInGround = true;
+	 fly_time_start = 0;
+	 turnFriction = false;
+	 isPickingUp = false;
  }
   void Mario::ReleaseJ()
   {
@@ -862,4 +893,18 @@ bool Mario::IsInGround()
 {
 	return isInGround;
 }
-
+void Mario::TurnBigForm()
+{
+	this->SetLevel(MARIO_BIG_FORM);
+	y -= (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT + 2);
+}
+void Mario::TurnRaccoonForm()
+{
+	this->SetLevel(MARIO_RACCOON_FORM);
+	y -= (MARIO_RACCOON_BBOX_HEIGHT - MARIO_BIG_BBOX_HEIGHT + 2);
+}
+void Mario::TurnFireForm()
+{
+	this->SetLevel(MARIO_FIRE_FORM);
+	y -= (MARIO_FIRE_BBOX_HEIGHT - MARIO_BIG_BBOX_HEIGHT + 2);
+}
