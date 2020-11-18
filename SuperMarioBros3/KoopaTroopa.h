@@ -28,7 +28,7 @@ public:
 	void IsKicked(int nx);
 	bool IsHiding();
 	virtual bool IsDead();
-	void PickUpBy(Mario* mario);
+	void PickUpBy();
 	
 	virtual void GetBoundingBox(float& left, float& top,
 		float& right, float& bottom, bool isEnable);

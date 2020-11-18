@@ -21,12 +21,14 @@ class Mario : public GameObject
 	bool isKickShell = false;
 	bool isFlying = false;
 	bool isFloating = false;
-	bool isBraking = false;
+	bool canBrake = false;
+	bool isPickingUp = false;
+	
 public:
 	// Chuyển thành hàm
-	bool isPickingUp;
 	bool turnFriction;
 	bool isPressedJ;
+	bool GetisPickUp() { return isPickingUp; }
 	bool IsFlying();
 	bool IsFloating();
 	bool IsInGround();
@@ -80,4 +82,5 @@ public:
 	void Jump();
 	void SuperJump();
 	void PickUp();
+	bool Brake();
 };

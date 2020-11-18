@@ -1,4 +1,4 @@
-#include "PlayScene.h"
+﻿#include "PlayScene.h"
 #include<iostream>
 #include<fstream>
 #include "Define.h"
@@ -312,8 +312,6 @@ void PlayScene::Update(DWORD dt)
 	// TO-DO: This is a "dirty" way, need a more organized way 
 
 	vector<LPGAMEOBJECT> coObjects;
-	/*if(item != NULL)
-		item->Update(dt, &coObjects);*/
 	for (size_t i = 1; i < objects.size(); i++)
 	{
 		coObjects.push_back(objects[i]);
@@ -350,37 +348,11 @@ void PlayScene::Update(DWORD dt)
 	float Sx = 16, Sy = oldCamY;
 	cx -= screenWidth / 2;
 	cy -= screenHeight /2 ;
-	//if (player->x - screenWidth / 2 <= 16)
-	//{
-	//	cx = 16;
-	//}
-	//else if (player->x + screenWidth / 2 > mapWidth - 16)
-	//	cx = (mapWidth - 16) - screenWidth;
-	//if (player->y - screenHeight  < 16)
-	//{
-	//	cy = 16;
-	//}
-	//else
-	//{
-	//	if (_turnCamY)
-	//		cy -= screenHeight / 2;
-	//}
-	// if (player->y + SCREEN_HEIGHT >= 448)
-	//{
-	//	if(_turnCamY && player->y + screenHeight /2 >= 448)
-	//		cy = 448 - screenHeight;
-	//	else if(!_turnCamY)
-	//		cy = 448 - screenHeight;
-	//}
-	if (player->x < 16 + game->GetScreenWidth() / 2)
-	{
-		Sx =(float) 16;
-	}
-	if (player->x > 16 + game->GetScreenWidth() / 2)
+	if (player->x > 16 + screenWidth / 2)
 	{
 		Sx = cx;
 	}
-	if (player->x + game->GetScreenWidth() / 2 > mapWidth - 16)
+	if (player->x + screenWidth / 2 > mapWidth - 16)
 	{
 		Sx =(float)(mapWidth - 16.0f) - screenWidth;
 	}
@@ -395,16 +367,12 @@ void PlayScene::Update(DWORD dt)
 		if (_turnCamY)
 			Sy = cy;
 	}
-		
-
 	Game::GetInstance()->SetCamPos(round(Sx), round(Sy ));
 }
 
 void PlayScene::Render()
 {
 	this->map->Render();
-	/*if(item != NULL)
-		item->Render();*/
 	for (unsigned int i = 1; i < objects.size(); i++)
 		objects[i]->Render();
 	objects[0]->Render();
@@ -427,9 +395,7 @@ void PlayScene::Unload()
 void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 {
 	//DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);
-
 	Mario* mario = ((PlayScene*)scence)->GetPlayer();
-	//LPFireBall fireball = ((PlayScene*)scence)->GetFireBall();
 	switch (KeyCode)
 	{
 	case DIK_K:
@@ -480,10 +446,6 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		}
 			
 		break;
-	//case DIK_C:
-	//	CreateKoopa();
-	//	break;
-		
 	}
 }
 void PlayScenceKeyHandler::OnKeyUp(int KeyCode)
@@ -492,10 +454,7 @@ void PlayScenceKeyHandler::OnKeyUp(int KeyCode)
 	switch (KeyCode)
 	{
 	case DIK_J:
-		
 		mario->ReleaseJ();
-		/*mario->SetState(MARIO_STATE_IDLE);*/
-	/*	mario->SetState(MARIO_STATE_IDLE);*/
 		break;
 	case DIK_A:
 		mario->turnFriction = true;
@@ -504,7 +463,6 @@ void PlayScenceKeyHandler::OnKeyUp(int KeyCode)
 		mario->turnFriction = true;
 		break;
 	case DIK_K:
-	/*	mario->Float();*/
 		mario->Jump();
 		break;
 	case DIK_S:
@@ -516,7 +474,6 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 {
 	Game* game = Game::GetInstance();
 	Mario* mario = ((PlayScene*)scence)->GetPlayer();
-
 	// disable control key when Mario die 
 	if (mario->GetState() == MARIO_STATE_DEATH) return;
 	if (game->IsKeyDown(DIK_D))
@@ -538,7 +495,7 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 		}
 		
 	}
-	 if (game->IsKeyDown(DIK_A))
+	if (game->IsKeyDown(DIK_A))
 	{
 		mario->SetDirect(false);
 		if (!mario->IsFlying() && !mario->IsFloating())
@@ -556,10 +513,6 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 		}
 		
 	}
-	//else if (game->IsKeyDown(DIK_K))
-	//{
-	//	/*mario->Jump();*/
-	//}
 	else if (game->IsKeyDown(DIK_S))
 	{
 		mario->Squat();
@@ -571,11 +524,8 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 	else
 	{
 		mario->LosePowerMelter();
-	/*	mario->SetState(MARIO_STATE_IDLE);*/
-	/*	mario->turnFriction = true;*/
 		if (game->IsKeyDown(DIK_J))
 		{
-			
 			mario->PickUp();
 		}
 	}
@@ -586,6 +536,7 @@ void PlayScene::AddObject(GameObject* obj)
 	this->objects.push_back(obj);
 	DebugOut(L"Size: %d", this->objects.size());
 }
+//Bật Camera khi Mario bay 
 void PlayScene::TurnCamY(float _playerY, bool isFlying, int ScreenHeight, int MapHeight)
 {
 	if (_turnCamY == true && _playerY > 448 - ScreenHeight/2)

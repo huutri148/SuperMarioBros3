@@ -16,6 +16,7 @@ public:
 	virtual void SetBeingStromped() = 0;
 	virtual void SetBeingSkilled() = 0;
 	virtual void HandleTimeSwitchState() = 0;
+	virtual void ChangeDirect() { this->nx = -nx; this->vx = -this->vx; };
 	
 	virtual void SetEntryPosition(float x, float y);
 	void SetEnable() { this->isEnable = true; };

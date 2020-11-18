@@ -65,18 +65,8 @@ void Goomba::Update(DWORD dt,
 		FilterCollision(coEvents, coEventsResult, 
 			min_tx, min_ty,
 			nx, ny);
-		float x0 = x, y0 = y;
-		x = x0 + dx;
-		y = y0 + dy;
-		/*x += min_tx * dx + nx * 0.4f;		
-		y += min_ty * dy + ny * 0.4f;
-		if (nx != 0)
-		{
-			this->nx = -this->nx;
-			vx = -vx;
-		}
-
-		if (ny < 0 && state != GOOMBA_STATE_DIE_NX) vy = 0;*/
+		x += min_tx * dx + nx * 0.4f;
+		if (ny != 0) vy = 0;
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
@@ -88,33 +78,22 @@ void Goomba::Update(DWORD dt,
 				{
 					this->nx = -this->nx;
 					vx = -vx;
-					this->x = x0 + e->t * dx + e->nx * 0.4f;
 				}
 				else
 				{
-					x = x0 + dx;
-					y = y0 + dy;
+					x += dx;
 				}
 			}
-			if (dynamic_cast<Ground*>(e->obj))
+			else
 			{
-				if (e->nx != 0)
-				{
-					this->x = x0 + min_tx * dx + e->nx * 0.4f;
-				}
-				if (e->ny != 0)
-				{
+				if (ny < 0)
 					vy = 0;
-					this->y = y0 + min_ty * dy + e->ny * 0.4f;
+				else
+				{
+					y += dy;
+					x += dx;
 				}
-				
 			}
-		/*	if (dynamic_cast<Enemy*>(e->obj))
-			{
-				x = x0 + dx;
-				y = y0 + dy;
-			}*/
-		
 		}
 
 	}

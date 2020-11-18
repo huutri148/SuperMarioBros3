@@ -107,16 +107,11 @@ void Coin::SetState(int state)
 		break;
 	}
 }
-void Coin::Disappearance()
-{
-	this->SetState(COIN_STATE_INACTIVE);
-}
 void Coin::Appear(float x, float y)
 {
 	this->SetPosition(x +  3, y);
 	this->isEnable = true;
 	this->SetState(COIN_STATE_APPEAR);
-
 }
 Coin::Coin(int type)
 {

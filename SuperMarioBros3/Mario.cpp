@@ -50,7 +50,6 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		x += dx;
 		y += dy;
-		/*isInGround = false;*/
 		if (vy > 0.2)
 		{
 			isInGround = false;
@@ -73,64 +72,54 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			if (dynamic_cast<Enemy*>(e->obj))
 			{
 				Enemy* enemy = dynamic_cast<Enemy*>(e->obj);
-				if (e->ny != 0)
+				if (e->ny < 0)
 				{
-					if (e->ny < 0)
+					if (enemy->IsDead() != true && 
+					!dynamic_cast<PiranhaPlant*>(enemy)&&
+					!dynamic_cast<FirePiranhaPlant*>(enemy))
 					{
-						if (enemy->IsDead() != true && 
-							!dynamic_cast<PiranhaPlant*>(enemy))
+						enemy->SetBeingStromped();
+						isInGround = true;
+						isFloating = false;
+						vy = -MARIO_JUMP_DEFLECT_SPEED;
+						vx = nx * MARIO_WALK_DEFELCT_SPEED;
+					}
+					else if (enemy->IsDead() == true)
+					{
+						if (dynamic_cast<KoopaTroopa*>(enemy))
 						{
-							enemy->SetBeingStromped();
-							isInGround = true;
-							isFloating = false;
-							vy = -MARIO_JUMP_DEFLECT_SPEED;
-							vx = nx * MARIO_WALK_DEFELCT_SPEED;
-						}
-						else if (enemy->IsDead() == true)
-						{
-							if (dynamic_cast<KoopaTroopa*>(enemy))
+							if (enemy->state ==
+								KOOPATROOPA_STATE_HIDING)
 							{
-								if (enemy->state ==
-									KOOPATROOPA_STATE_HIDING)
-								{
 									dynamic_cast<KoopaTroopa*>(enemy)->
 										IsKicked(nx);
-									}
-									
+									vy = -MARIO_JUMP_DEFLECT_SPEED;
 							}
-						}
-						else if (dynamic_cast<PiranhaPlant*>(enemy)
-							|| dynamic_cast<FirePiranhaPlant*>(enemy))
-						{
-							if (untouchable == 0)
-							{
-								if (enemy->IsDead() != true)
-								{
-									if (form > MARIO_SMALL_FORM)
-									{
-										form -= 1;
-										StartUntouchable();
-									}
-									else
-										SetState(MARIO_STATE_DEATH);
-								}
-							}
-						}
-						else
-						{
-							HandleCollision(min_tx, min_ty,
-								nex, ney,
-								x0, y0);
 						}
 					}
-
+					else if (dynamic_cast<PiranhaPlant*>(enemy) ||
+						 dynamic_cast<FirePiranhaPlant*>(enemy))
+					{
+						if (untouchable == 0)
+						{
+							if (enemy->IsDead() != true)
+							{
+								if (form > MARIO_SMALL_FORM)
+								{
+									form -= 1;
+									StartUntouchable();
+								}
+								else
+									SetState(MARIO_STATE_DEATH);
+							}
+						}
+					}
 				}
 				else if (e->nx != 0)
 				{
-					if (untouchable == 0)
+					if (untouchable == 0 )
 					{
-						if (enemy->IsDead() != true && state != 
-							MARIO_STATE_TAILATTACK)
+						if (enemy->IsDead() != true)
 						{
 							if (form > MARIO_SMALL_FORM)
 							{
@@ -139,21 +128,17 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							}
 							else
 								SetState(MARIO_STATE_DEATH);
+							enemy->ChangeDirect();
 						}
-						else if (state == MARIO_STATE_TAILATTACK)
+						else if(dynamic_cast<KoopaTroopa*>(enemy))
 						{
-							enemy->SetBeingSkilled();
-						}
-						else if(dynamic_cast<KoopaTroopa*>(enemy) && 
-							state != MARIO_STATE_TAILATTACK)
-						{
-							if (dynamic_cast<KoopaTroopa*>(enemy)->state ==
+							KoopaTroopa* koopa = dynamic_cast<KoopaTroopa*>(enemy);
+							if (koopa->state ==
 								KOOPATROOPA_STATE_HIDING)
 							{
 								if (isPressedJ == true)
 								{
-									dynamic_cast<KoopaTroopa*>(enemy)
-										->PickUpBy(this);
+									koopa->PickUpBy();
 									isPickingUp = true;
 								}
 								else if (isPressedJ == false)
@@ -171,12 +156,6 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						}
 					}
 				}
-			}
-			else if (dynamic_cast<Coin*>(e->obj))
-			{
-				dynamic_cast<Coin*>(e->obj)->Disappearance();
-				x = x0 + dx;
-				y = y0 + dy;
 			}
 			else if (dynamic_cast<Block*>(e->obj))
 			{
@@ -218,11 +197,9 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				dynamic_cast<Item*>(e->obj)->Used();
 			}
-			else if (!dynamic_cast<Block*>(e->obj) && 
-			!dynamic_cast<Coin*>(e->obj) &&
-			!dynamic_cast<RaccoonLeaf*>(e->obj))
+			else 
 			{
-					HandleCollision(min_tx, min_ty,
+				HandleCollision(min_tx, min_ty,
 					e->nx, e->ny,
 					x0, y0);
 			}
@@ -335,7 +312,7 @@ void Mario::Render()
 					break;
 				}
 			}
-			if (state == MARIO_STATE_BRAKING)
+			if (canBrake)
 			{
 				switch (form)
 				{
@@ -496,8 +473,9 @@ void Mario::SetState(int state)
 	switch (state)
 	{
 	case MARIO_STATE_WALKING:
-		vx = (MARIO_WALKING_SPEED +
-			(BUFF_SPEED * power_melter_stack)) * nx;
+		if(Brake() == false)
+			vx = (MARIO_WALKING_SPEED +
+				(BUFF_SPEED * power_melter_stack)) * nx;
 		break;
 	case MARIO_STATE_JUMPING:
 		isInGround = false;
@@ -841,34 +819,34 @@ int Mario::GetHeight()
 	else
 		return MARIO_BIG_BBOX_HEIGHT;
 }
-  Mario::Mario()
- {
-	 x = 16;
+Mario::Mario()
+{
+	x = 16;
 	y = 415;
-	 vx = vy = 0;
-	 nx = 1;
-	 power_melter_stack = 0;
-	 form = MARIO_SMALL_FORM;
-	 isEnable = true;
-	 isKickShell = false;
-	 isPressedJ = false;
-	 isInGround = true;
-	 fly_time_start = 0;
-	 turnFriction = false;
-	 isPickingUp = false;
- }
-  void Mario::ReleaseJ()
-  {
-	  isPickingUp = false;
-	  isPressedJ = false;
-	  if (state == MARIO_STATE_SHOOT_FIREBALL ||
-		  state ==MARIO_STATE_TAILATTACK)
-		  SetState(MARIO_STATE_IDLE);
-  }
-  void Mario::PressK()
-  {
+	vx = vy = 0;
+	nx = 1;
+	power_melter_stack = 0;
+	form = MARIO_SMALL_FORM;
+	isEnable = true;
+	isKickShell = false;
+	isPressedJ = false;
+	isInGround = true;
+	fly_time_start = 0;
+	turnFriction = false;
+	isPickingUp = false;
+}
+void Mario::ReleaseJ()
+{
+	isPickingUp = false;
+	isPressedJ = false;
+	if (state == MARIO_STATE_SHOOT_FIREBALL ||
+		state ==MARIO_STATE_TAILATTACK)
+		SetState(MARIO_STATE_IDLE);
+}
+void Mario::PressK()
+{
 
-  }
+}
 void Mario::Reset()
 {
 	SetPosition(16, 400);
@@ -907,4 +885,26 @@ void Mario::TurnFireForm()
 {
 	this->SetLevel(MARIO_FIRE_FORM);
 	y -= (MARIO_FIRE_BBOX_HEIGHT - MARIO_BIG_BBOX_HEIGHT + 2);
+}
+bool Mario::Brake()
+{
+	if (nx * vx < 0)
+	{
+		if (nx > 0)
+		{
+			vx += MARIO_WALKING_SPEED / 30;
+		}
+		else
+		{
+			vx -= MARIO_WALKING_SPEED / 30;
+		}
+		canBrake = true;
+		power_melter_stack = 0;
+		return true;
+	}
+	else
+	{
+		canBrake = false;
+	}
+	return false;
 }

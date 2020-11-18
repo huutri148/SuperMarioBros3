@@ -17,6 +17,5 @@ public:
 	int GetType() { return this->type; }
 	virtual void SetState(int state);
 	Coin(int type);
-	void Disappearance();
 };
 

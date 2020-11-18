@@ -57,6 +57,7 @@ void FirePiranhaPlant::Update(DWORD dt,
 			nx, ny);
 		float x0 = x, y0 = y;
 		y = y0 + dy;
+
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];

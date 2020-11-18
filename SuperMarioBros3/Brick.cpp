@@ -21,6 +21,8 @@ void Brick::GetBoundingBox(float& l, float& t, float& r, float& b,bool isEnable)
 }
 void Brick::SetEmpty()
 {
+	//if (state != BRICK_STATE_NORMAL)
+	//	return;
 		this->SetState(BRICK_STATE_EMPTY);
 		LPSCENE scence = Game::GetInstance()->GetCurrentScene();
 		Mario* mario = ((PlayScene*)scence)->GetPlayer();
