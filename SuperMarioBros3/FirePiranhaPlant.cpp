@@ -72,7 +72,7 @@ void FirePiranhaPlant::Update(DWORD dt,
 				}
 
 			}
-			if (dynamic_cast<InvisibleBrick*>(e->obj))
+			else if (dynamic_cast<InvisibleBrick*>(e->obj))
 			{
 				if (e->ny != 0)
 				{
@@ -148,6 +148,7 @@ void FirePiranhaPlant::SetState(int _state)
 	switch (_state)
 	{
 	case FIREPIRANHAPLANT_STATE_DARTING:
+		isShooted = false;
 		if (isOutOfPipe == false)
 		{
 			vy = -PIRANHAPLANT_DARTING_SPEED;
@@ -192,8 +193,9 @@ void FirePiranhaPlant::EnableAgain()
 }
 void FirePiranhaPlant::HandleTimeSwitchState()
 {
+	DWORD current = GetTickCount();
 	if (state == FIREPIRANHAPLANT_STATE_DEATH &&
-		GetTickCount() - deathTime >
+		current - deathTime >
 		FIREPIRANHAPLANT_INACTIVE_TIME
 		&& deathTime != 0)
 	{
@@ -201,18 +203,25 @@ void FirePiranhaPlant::HandleTimeSwitchState()
 		deathTime = 0;
 	}
 	if (state == FIREPIRANHAPLANT_STATE_DARTING &&
-		GetTickCount() - switchTime >
+		current - switchTime >
 		FIREPIRANHAPLANT_SWITCH_TIME && switchTime != 0)
 	{
 		this->SetState(FIREPIRANHAPLANT_STATE_DARTING);
 	}
 	if (state == FIREPIRANHAPLANT_STATE_SHOOTING &&
-		GetTickCount() - switchTime >
-		FIREPIRANHAPLANT_SWITCH_TIME && switchTime != 0)
+	current - switchTime >	FIREPIRANHAPLANT_SHOOTING_TIME 
+		&& current - switchTime < FIREPIRANHAPLANT_SWITCH_TIME
+		&& isShooted== false)
 	{
 		Shooting();
+	}
+	if (state == FIREPIRANHAPLANT_STATE_SHOOTING &&
+		current - switchTime >
+		FIREPIRANHAPLANT_SWITCH_TIME && switchTime != 0)
+	{
 		this->SetState(FIREPIRANHAPLANT_STATE_DARTING);
 	}
+	
 }
 void FirePiranhaPlant::Shooting()
 {
@@ -229,8 +238,6 @@ void FirePiranhaPlant::Shooting()
 			&& diffX > -FIREPIRANHAPLANT_FREEFIRE_MAX_ZONE_X))
 	{
 		int direct = 1;
-
-	
 		if (abs(diffX) > FIREPIRANHAPLANT_TARGET_X)
 		{
 			if (diffY > 0)
@@ -246,6 +253,7 @@ void FirePiranhaPlant::Shooting()
 				direct = FIREBULLET_DIRECT_3;
 		}
 		bullet->Shoot(x, y, nx, direct);
+		isShooted = true;
 		/*DebugOut(L"\nDirect: %d ",direct);*/
 	}
 

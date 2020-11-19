@@ -421,18 +421,18 @@
 #===FIRE PIRANHAPLANT====
 #GREEN
 #darting bottom
-735	30050	100
+735	30050	100	30052	100
 #darting top
-736	30051	100
+736	30051	100	30053	100
 #shooting bottom
 737	30052	100
 #shooting top
 738	30053	100
 #RED
 #darting bottom
-739	30054	100
+739	30054	300	30056	300
 #darting top 
-740	30055	100
+740	30055	100	30057	100
 #shoot bottom
 741	30056	100
 #shoot top
@@ -936,4 +936,3 @@
 9	0	0	70	1
 #FirePlantBullet
 11	0	0	60
-

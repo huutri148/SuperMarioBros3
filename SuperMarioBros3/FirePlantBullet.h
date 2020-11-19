@@ -10,8 +10,8 @@ public:
 	virtual void SetState(int state);
 	void Shoot(float _x, float _y, int _nx,int _direct)
 	{
-		this->x = _x;
-		this->y = _y;
+		this->x = _x  ;
+		this->y = _y ;
 		this->isEnable = true;
 		this->nx = _nx;
 		this->SetState(_direct);
