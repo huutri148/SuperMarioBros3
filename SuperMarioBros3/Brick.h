@@ -7,14 +7,19 @@
 
 class Brick : public GameObject
 {
+	
+	DWORD changeTime;
+	bool isUsed;
 	float entryX, entryY;
 	int type;
 public:
+	static bool isTransForm;
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	/*virtual void CalcPotentialCollisions(vector<LPGAMEOBJECT>* coObjects,
 		vector<LPCOLLISIONEVENT>& coEvents);*/
 	virtual void Render();
-	Brick(float x, float y, int _type  = BRICK_TYPE_ITEM_COIN) :GameObject(x, y) {
+	Brick(float x, float y, int _type  = BRICK_TYPE_ITEM_COIN)
+		:GameObject(x, y) {
 		this->entryX = x;
 		this->entryY = y;
 		type = _type;
@@ -25,7 +30,6 @@ public:
 	void SetEmpty();
 	virtual void GetBoundingBox(float& l, float& t, float& r, float& b,bool isEnable);
 };
-
 
 
 

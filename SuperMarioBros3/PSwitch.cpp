@@ -1,0 +1,81 @@
+#include "PSwitch.h"
+#include"Game.h"
+#include"Mario.h"
+
+void PSwitch::Render()
+{
+
+	if (isEnable == true)
+	{
+		int ani = PSWITCH_ANI_APPEAR;
+		if (state == PSWITCH_STATE_PRESSED)
+			ani = PSWITCH_ANI_PRESSED;
+		animation_set->at(ani)->Render(-1, x, y);
+	}
+}
+
+void PSwitch::GetBoundingBox(float& l, float& t, float& r,
+	float& b, bool isEnable)
+{
+	if (isEnable == true)
+	{
+		l = x;
+		t = y;
+		r = x + PSWITCH_BBOX_WIDTH;
+		if (state == PSWITCH_STATE_PRESSED)
+			b = y + PSWITCH_PRESSED_BBOX_HEIGHT;
+		else
+			b = y + PSWITCH_BBOX_HEIGHT;
+	}
+	else
+	{
+		l = 0;
+		t = 0;
+		r = 0;
+		b = 0;
+	}
+
+}
+void PSwitch::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
+{
+	
+}
+void PSwitch::SetState(int _state)
+{
+	GameObject::SetState(_state);
+	switch (_state)
+	{
+	case PSWITCH_STATE_APPEAR:
+		vy = 0;
+		appearTime = GetTickCount();
+		isEnable = true;
+		break;
+	case PSWITCH_STATE_PRESSED:
+		y += PSWITCH_BBOX_HEIGHT - PSWITCH_PRESSED_BBOX_HEIGHT;
+		appearTime = 0;
+		break;
+	case PSWITCH_STATE_INACTIVE:
+		isEnable = false;
+		vx = 0;
+		vy = 0;
+		break;
+	}
+}
+void PSwitch::Appear(float x, float y)
+{
+	this->SetPosition(x,
+		y - PSWITCH_BBOX_HEIGHT  + 2);
+	this->SetState(PSWITCH_STATE_APPEAR);
+}
+void PSwitch::Used()
+{
+	if (state != PSWITCH_STATE_PRESSED)
+	{
+		this->SetState(PSWITCH_STATE_PRESSED);
+		Brick::isTransForm = true;
+	}
+	
+}
+PSwitch::PSwitch()
+{
+}

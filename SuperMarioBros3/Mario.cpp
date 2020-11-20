@@ -473,7 +473,7 @@ void Mario::SetState(int state)
 	switch (state)
 	{
 	case MARIO_STATE_WALKING:
-		if(Brake() == false)
+	/*	if(Brake() == false)*/
 			vx = (MARIO_WALKING_SPEED +
 				(BUFF_SPEED * power_melter_stack)) * nx;
 		break;

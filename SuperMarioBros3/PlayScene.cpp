@@ -210,6 +210,12 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 		mushroom = ((Mushroom*)obj);
 		break;
 	}
+	case OBJECT_TYPE_PSWITCH:
+	{
+		obj = new PSwitch();
+		pSwitch = ((PSwitch*)obj);
+		break;
+	}
 		
 	default:
 		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
@@ -250,6 +256,7 @@ void PlayScene::_ParseSection_MAPS(string line)
 void PlayScene::Load()
 {
 	DebugOut(L"[INFO] Start loading scene resources from : %s \n", sceneFilePath);
+	
 
 	ifstream f;
 	f.open(sceneFilePath);

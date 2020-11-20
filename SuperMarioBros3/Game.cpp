@@ -1,5 +1,4 @@
 ﻿#include "Game.h"
-
 Game* Game::__instance = NULL;
 
 /*

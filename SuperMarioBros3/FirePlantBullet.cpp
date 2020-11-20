@@ -10,7 +10,7 @@ void FirePlantBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	GameObject::Update(dt, coObjects);
 	x += dx;
 	y += dy;
-	DebugOut(L"\nX: &f, Y: %f", x, y);
+	/*DebugOut(L"\nX: &f, Y: %f", x, y);*/
 }
 void FirePlantBullet::GetBoundingBox(float& l, float& t, 
 	float& r, float& b, bool isEnable)

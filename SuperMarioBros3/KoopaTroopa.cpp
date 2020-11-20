@@ -46,12 +46,15 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		{
 			if (mario->nx > 0)
 			{
-				this->x = mario->x + mario->GetWidth() - 3 ;
+				this->x = mario->x + mario->GetWidth() - 
+					KOOPATROOPA_DEFLECT_HOLDING_X;
 			}
 			else
-				this->x = mario->x - KOOPATROOPA_BBOX_WIDTH + 3;
+				this->x = mario->x - KOOPATROOPA_BBOX_WIDTH + 
+				KOOPATROOPA_DEFLECT_HOLDING_X;
 			if (mario->GetHeight() > MARIO_SMALL_BBOX_HEIGHT)
-				this->y = mario->y +  (float) mario->GetHeight()* 3.5f / 10;
+				this->y = mario->y +  (float) mario->GetHeight()* 
+				KOOPATROOPA_DEFLECT_HOLDING_Y;
 			else
 				this->y = mario->y;
 			vy = 0;
@@ -215,7 +218,7 @@ void KoopaTroopa::SetState(int state)
 	case KOOPATROOPA_STATE_WALKING:
 		vx = -KOOPATROOPA_WALKING_SPEED;
 		isBumped = false;
-		isPickedUp = false;
+		/*isPickedUp = false;*/
 		nx = -1;
 		break;
 	case KOOPATROOPA_STATE_HIDING:
@@ -308,6 +311,12 @@ void KoopaTroopa::HandleTimeSwitchState()
 		this->SetState(KOOPATROOPA_STATE_WALKING);
 		this->y -= KOOPATROOPA_BBOX_HEIGHT -
 			KOOPATROOPA_BBOX_HEIGHT_HIDING;
+		if (isPickedUp == true)
+		{
+			this->x -= nx * KOOPATROOPA_DEFLECT_HOLDING_X;
+			isPickedUp = false;
+		}
+			
 		turnWalkingTime = 0;
 	}
 	if (GetTickCount64() - hidingTime >

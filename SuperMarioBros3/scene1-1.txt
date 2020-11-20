@@ -268,6 +268,7 @@
 #P- SWITCH
 40062	156	144	172	160	20
 40063	178	144	194	160	20
+#used
 40064	200	153	216	160	20
 
 # ani_id	sprite1_id	time1	sprite2_id	time2	...
@@ -483,6 +484,9 @@
 #====MUSHROOM====
 854	40058	100
 855	40060	100
+#====PSWITCH=====
+856	40062	100	40063	100
+857	40064	100
 # id	ani1	ani2	ani3
 #
 [ANIMATION_SETS]
@@ -525,10 +529,14 @@
 40	840
 #wood brick
 41	841
+
 #Brick
-42	842
+42	842	852	
 #? Brick
 43	843	844	
+# BREAKABLE - TYPE ? BRICK
+44	842	844
+	
 #Fireball
 60	601	602
 #Coin 
@@ -537,7 +545,8 @@
 71	853
 #MUSHROOM
 72	854	855
-
+#PSWITCH
+73	856	857
 #invisible brick
 99	899
 
@@ -546,7 +555,7 @@
 # type: 0 = Mario , 1 = Brick, 2 = Goomba,3=KoopaTroopa,4= Ground,
 #6 = Pipe,5 = block,7 = Invisible Brick
 #8 = PiranhaPlant,9 = Coin,10 = FirePiranhaPlant,11 = FirePlantBullet
-#12 = RACOONLEAF,13 = MUSHROOM
+#12 = RACOONLEAF,13 = MUSHROOM,14 = PSWITCH
 # MARIO
 0	16.0	400	1
 #Goombaa
@@ -858,11 +867,13 @@
 12	0	0	71	
 #Mushroom 
 13	0	0	72
+#PSWITCH
+14	0	0	73
 # ? Brick
-1	192	368	43	1
-1	208	368	43	1
-1	240	320	43	1
-1	256	320	43	4
+1	192	368	42	5
+1	208	368	44	6
+1	240	320	42	5
+1	256	320	42	5
 1	432	336	43	1
 1	672	400	43	4
 1	720	360	43	1

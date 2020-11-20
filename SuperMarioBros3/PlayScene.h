@@ -19,6 +19,7 @@
 #include"RaccoonLeaf.h"
 #include"Mushroom.h"
 #include"Item.h"
+#include"PSwitch.h"
 
 class PlayScene : public Scene
 {
@@ -28,10 +29,10 @@ protected:
 	Map* map = NULL ;
 	bool _turnCamY = false;
 	FirePlantBullet* firebullet = NULL;
-	/*Item* item;*/
 	RaccoonLeaf* leaf = NULL;
 	Mushroom* mushroom = NULL;
 	Coin* coin = NULL;
+	PSwitch* pSwitch = NULL;
 	//LPFireBall fireball;
 	void _ParseSection_TEXTURES(string line);
 	void _ParseSection_SPRITES(string line);
@@ -54,6 +55,7 @@ public:
 	RaccoonLeaf* GetLeaf() { return leaf; }
 	Mushroom* GetMushroom() { return mushroom; }
 	Coin* GetCoin() { return coin; };
+	PSwitch* GetSwitch() { return pSwitch; };
 	//LPFireBall GetFireBall() { return fireball; }
 	friend class CPlayScenceKeyHandler;
 
