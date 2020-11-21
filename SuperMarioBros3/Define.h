@@ -361,7 +361,6 @@
 
 #define COIN_ANI_TYPE_1	0
 #define COIN_ANI_TYPE_2	1
-#define COIN_ANI_TYPE_3	2
 
 #define COIN_STATE_IDLE		0
 #define COIN_STATE_INACTIVE	100

@@ -254,7 +254,6 @@ void FirePiranhaPlant::Shooting()
 		}
 		bullet->Shoot(x, y, nx, direct);
 		isShooted = true;
-		/*DebugOut(L"\nDirect: %d ",direct);*/
 	}
 
 }

@@ -3,8 +3,10 @@
 #include "Item.h"
 class Mushroom :public Item
 {
+	int type;
 public:
 	virtual void Render();
+	void Appear(float x, float y, int _type = MUSHROOM_ANI_POWERUP);
 	void Appear(float x, float y);
 	virtual void Update(DWORD dt,
 		vector<LPGAMEOBJECT>* coObjects);

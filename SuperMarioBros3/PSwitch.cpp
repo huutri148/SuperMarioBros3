@@ -41,11 +41,11 @@ void PSwitch::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	bool _isTransForm = Brick::isTransForm;
 	if (isEnable == false || _isTransForm == false)
 		return;
-	if (state == PSWITCH_STATE_PRESSED &&
-		GetTickCount() - appearTime > PSWITCH_TRANSFORM_TIME
+	if (GetTickCount() - appearTime > PSWITCH_TRANSFORM_TIME
 		&& appearTime != 0)
 	{
 		 Brick::isTransForm= false;
+		 appearTime = 0;
 	}
 	
 }

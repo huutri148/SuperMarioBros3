@@ -6,6 +6,8 @@ void Mushroom::Render()
 	if (isEnable == true)
 	{
 		int ani = MUSHROOM_ANI_POWERUP;
+		if (type == MUSHROOM_TYPE_1UP)
+			ani = MUSHROOM_ANI_1UP;
 		animation_set->at(ani)->Render(this->nx, x, y);
 	}
 	//RenderBoundingBox();
@@ -117,12 +119,21 @@ void Mushroom::SetState(int _state)
 		break;
 	}
 }
+void Mushroom::Appear(float x, float y, int _type)
+{
+	this->type = _type;
+	this->SetPosition(x, y);
+	this->SetState(MUSHROOM_STATE_APPEARANCE);
+	this->isEnable = true;
+	this->nx = 1;
+}
 void Mushroom::Appear(float x, float y)
 {
 	this->SetPosition(x, y);
-	this->SetState(RACCOONLEAF_STATE_APPEARANCE);
+	this->SetState(MUSHROOM_STATE_APPEARANCE);
 	this->isEnable = true;
 	this->nx = 1;
+	type = MUSHROOM_ANI_POWERUP;
 }
 void Mushroom::Used()
 {
@@ -130,7 +141,6 @@ void Mushroom::Used()
 	LPSCENE scence = Game::GetInstance()->GetCurrentScene();
 	Mario* mario = ((PlayScene*)scence)->GetPlayer();
 	mario->TurnBigForm();
-	
 }
 Mushroom::Mushroom()
 {

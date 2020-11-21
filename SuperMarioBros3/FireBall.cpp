@@ -56,47 +56,38 @@ void FireBall :: Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					vy =0 - FIREBALL_SPEED_NY;
 					this->y +=  min_ty * this->dy + ney * 0.1f;
 				}
-			/*	if (e->nx != 0)
-				{
-					this->SetState(FIREBALL_STATE_EXPLODE);
-					explodeTime = GetTickCount();
-				}*/
 				else 
 				{
 					x += dx;
 					y += dy;
 				}
 			}
-			else
+			else if (dynamic_cast<Enemy*>(e->obj))
 			{
-				if (dynamic_cast<Enemy*>(e->obj))
-				{
-					Enemy* enemy = dynamic_cast<Enemy*>(e->obj);
-					if (enemy->IsDead() != true || !enemy->IsEnable() )
+				Enemy* enemy = dynamic_cast<Enemy*>(e->obj);
+				if (enemy->IsDead() != true ||
+					!enemy->IsEnable())
 					{
 						dynamic_cast<Enemy*>(e->obj)->SetBeingSkilled();
-						this->SetState(FIREBALL_STATE_EXPLODE);
-						explodeTime = GetTickCount();
+							this->SetState(FIREBALL_STATE_EXPLODE);
+							explodeTime = GetTickCount();
 					}
 					else
 					{
 						x += dx;
 						y += dy;
 					}
-				
-				}
-				else if (e->nx != 0)
-				{
-					if (dynamic_cast<Brick*>(e->obj))
-						dynamic_cast<Brick*>(e->obj)->SetEmpty();
-					this->SetState(FIREBALL_STATE_EXPLODE);
-					explodeTime = GetTickCount();
-				}
-				else
-				{
-					x += dx;
-					y += dy;
-				}
+			}
+			else if (dynamic_cast<Brick*>(e->obj))
+			{
+				dynamic_cast<Brick*>(e->obj)->SetEmpty();
+				this->SetState(FIREBALL_STATE_EXPLODE);
+				explodeTime = GetTickCount();
+			}
+			else
+			{
+				x += dx;
+				y += dy;
 			}
 		}
 	}

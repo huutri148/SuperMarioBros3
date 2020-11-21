@@ -201,21 +201,23 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 			else if (dynamic_cast<Brick*>(e->obj))
 			{
-			Brick* brick = dynamic_cast<Brick*>(e->obj);
-			if (!brick->CanUsed())
-			{
-				if (e->ny > 0)
+				Brick* brick = dynamic_cast<Brick*>(e->obj);
+				if (!brick->CanUsed())
 				{
-					brick->SetEmpty();
-					this->y = y0 + min_ty * this->dy + ney * 0.4f;
-				}
-				else 
-				{
-					HandleCollision(min_tx, min_ty,
-						e->nx, e->ny,
-						x0, y0);
-				}
+					if (e->ny > 0)
+					{
+						brick->SetEmpty();
+						this->y = y0 + min_ty * this->dy + ney * 0.4f;
+					}
+					else 
+					{
+						HandleCollision(min_tx, min_ty,
+							e->nx, e->ny,
+							x0, y0);
+					}
 			}
+			// nếu viên gạch Breakable ở trạng thái 
+			// COIN hay là Empty
 			else
 			{
 				brick->Used();
@@ -236,7 +238,6 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 	// clean up collision events
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
-	//DebugOut(L"\nState: %d", state);
 }
 void Mario::Render()
 {
@@ -497,7 +498,6 @@ void Mario::Render()
 void Mario::SetState(int state)
 {
 	GameObject::SetState(state);
-
 	switch (state)
 	{
 	case MARIO_STATE_WALKING:
@@ -530,7 +530,6 @@ void Mario::SetState(int state)
 			vx = MARIO_BRAKE_DEFLECT_SPEED * -nx;
 			power_melter_stack  = 0;
 		}
-	
 		break;
 	case MARIO_STATE_STOP:
 		vx -=(float) 0.01 * vx;

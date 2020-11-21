@@ -76,8 +76,6 @@ void Coin::Render()
 		if (state != COIN_STATE_INACTIVE)
 		{
 			int ani;
-			if(type == COIN_TYPE_3)
-				ani = COIN_ANI_TYPE_3;
 			if (type == COIN_TYPE_1)
 				ani = COIN_ANI_TYPE_1;
 			else

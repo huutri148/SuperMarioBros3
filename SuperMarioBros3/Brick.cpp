@@ -31,6 +31,8 @@ void Brick::GetBoundingBox(float& l, float& t, float& r, float& b,bool isEnable)
 }
 void Brick::SetEmpty()
 {
+	if (state == BRICK_STATE_INACTIVE)
+		return;
 	if (type != BRICK_TYPE_BREAKABLE)
 	{
 		this->SetState(BRICK_STATE_EMPTY);
@@ -64,6 +66,12 @@ void Brick::SetEmpty()
 		{
 			item = ((PlayScene*)scence)->GetSwitch();
 			item->Appear(x, y);
+			break;
+		}
+		case BRICK_TYPE_ITEM_EXTRA_LIFE:
+		{
+			item = ((PlayScene*)scence)->GetMushroom();
+			((Mushroom*)item)->Appear(x, y, MUSHROOM_TYPE_1UP);
 			break;
 		}
 		}
@@ -131,7 +139,7 @@ void Brick::Used()
 bool Brick::CanUsed()
 {
 	if (this->state == BRICK_STATE_EMPTY
-		&& isTransForm == true
+		&& Brick::isTransForm == true
 		&& type == BRICK_TYPE_BREAKABLE)
 		return true;
 	return false;
