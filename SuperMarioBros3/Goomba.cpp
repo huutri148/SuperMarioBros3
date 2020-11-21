@@ -66,36 +66,19 @@ void Goomba::Update(DWORD dt,
 			min_tx, min_ty,
 			nx, ny);
 		x += min_tx * dx + nx * 0.4f;
+		y += min_ty * dy + ny * 0.4f;
 		if (ny != 0) vy = 0;
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
-			if (dynamic_cast<Pipe*>(e->obj) || 
-				dynamic_cast<Brick*>(e->obj)||
-				dynamic_cast<InvisibleBrick*>(e->obj))
+			if (!dynamic_cast<Block*>(e->obj))
 			{
-				if (e->nx != 0)
+				if (nx != 0 && ny == 0)
 				{
-					this->nx = -this->nx;
-					vx = -vx;
-				}
-				else
-				{
-					x += dx;
-				}
-			}
-			else
-			{
-				if (ny < 0)
-					vy = 0;
-				else
-				{
-					y += dy;
-					x += dx;
+					this->ChangeDirect();
 				}
 			}
 		}
-
 	}
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 }
@@ -114,28 +97,6 @@ void Goomba::Render()
 		}
 	}
 	//RenderBoundingBox();
-}
-void Goomba::CalcPotentialCollisions(vector<LPGAMEOBJECT>* coObjects,
-	vector<LPCOLLISIONEVENT>& coEvents)
-{
-	for (UINT i = 0; i < coObjects->size(); i++)
-	{
-		LPCOLLISIONEVENT e = SweptAABBEx(coObjects->at(i));
-
-		if (dynamic_cast<Goomba*>(coObjects->at(i))
-			|| dynamic_cast<Block*>(coObjects->at(i)))
-		{
-			continue;
-		}
-		if (e->t > 0 && e->t <= 1.0f)
-		{
-			coEvents.push_back(e);
-		}
-		else
-			delete e;
-	}
-	std::sort(coEvents.begin(), coEvents.end(),
-		CollisionEvent::compare);
 }
 void Goomba::SetState(int state)
 {

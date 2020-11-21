@@ -206,7 +206,8 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				{
 					if (e->ny > 0)
 					{
-						brick->SetEmpty();
+						if(form != MARIO_SMALL_FORM)
+							brick->SetEmpty();
 						this->y = y0 + min_ty * this->dy + ney * 0.4f;
 					}
 					else 

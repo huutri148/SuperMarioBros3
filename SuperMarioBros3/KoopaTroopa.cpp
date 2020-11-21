@@ -71,14 +71,14 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		CalcPotentialCollisions(coObjects, coEvents);
 	if (coEvents.size() == 0)
 	{
-		DebugOut(L"\nNoCollision, vy: %f", vy);
 		x += dx;
 		y += dy;
+		//Nếu Koopa rời khỏi mặt đất
+		// kéo nó lại vị trí cuối cùng mà xảy ra đụng độ
 		if (CanPullBack &&
 			type == KOOPATROOPA_RED_TYPE )
 		{
-			if (y - lastStanding_Y >= 1.0f
-			/*	&& vy > 0.15*/)
+			if (y - lastStanding_Y >= 1.0f)
 			{
 				
 				y -= 4;
@@ -96,12 +96,10 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		x += min_tx * dx + nx * 0.4f;
 		y += min_ty * dy + ny * 0.4f;
 		if (ny != 0) vy = 0;
-		
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			
 			LPCOLLISIONEVENT e = coEventsResult[i];
-			DebugOut(L"\nnX: %f, nY: %f", e->nx, e->ny);
 			//Xử lí khi Koopa trong trạng thái bị đá và cầm
 			if (dynamic_cast<Enemy*>(e->obj))
 			{
@@ -116,35 +114,42 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					x += dx;
 				}
 			}
-			else if (dynamic_cast<Brick*>(e->obj) ||
-				dynamic_cast<Pipe*>(e->obj))
+			else if (dynamic_cast<Brick*>(e->obj))
 			{
+				CanPullBack = true;
+				lastStanding_Y = y;
 				if (e->nx != 0)
 				{
-					if (dynamic_cast<Brick*>(e->obj) && 
-						isBumped == true)
+					if(isBumped == true)
 						dynamic_cast<Brick*>(e->obj)->SetEmpty();
 					this->ChangeDirect();
 				}
 			}
-			else
+			else if (dynamic_cast<Block*>(e->obj))
 			{
-				if (nx != 0 && !dynamic_cast<Block*>(e->obj)
-					&& ny == 0)
-					ChangeDirect();
-				if (!dynamic_cast<Mario*>(e->obj))
+				CanPullBack = true;
+				lastStanding_Y = y;
+				if (ny < 0)
 				{
-					CanPullBack = true;
-					lastStanding_Y = y;
+					vy = 0;
 				}
+				else
+					x += dx;
+			}
+			else if (dynamic_cast<Ground*>(e->obj) || dynamic_cast<Pipe*>(e->obj))
+			{
+				CanPullBack = true;
+				lastStanding_Y = y;
+				if (nx != 0 && ny == 0)
+					ChangeDirect();
 				if (ny < 0)
 				{
 					vy = 0;
 				}
 				else
 				{
-					y += dy;
 					x += dx;
+					y += dy;
 				}
 			}
 		}
