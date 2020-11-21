@@ -9,14 +9,11 @@ void KoopaTroopa::GetBoundingBox(float& left, float& top,
 		left = x;
 		top = y;
 		right = x + KOOPATROOPA_BBOX_WIDTH;
-
-		if (state == KOOPATROOPA_STATE_HIDING || 
-			state ==KOOPATROOPA_STATE_IS_BUMPED ||
-			state == KOOPATROOPA_STATE_EXIT_SHELL)
-			bottom = y + KOOPATROOPA_BBOX_HEIGHT_HIDING;
-		else
+		if (state == KOOPATROOPA_STATE_WALKING)
 			bottom = y + KOOPATROOPA_BBOX_HEIGHT;
-
+		else
+			bottom = y + KOOPATROOPA_BBOX_HEIGHT_HIDING;
+		
 	}
 	else
 	{
@@ -29,13 +26,14 @@ void KoopaTroopa::GetBoundingBox(float& left, float& top,
 }
 void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	
 	HandleTimeSwitchState();
 	if (state == KOOPATROOPA_STATE_INACTIVE)
 		return;
 	Enemy::Update(dt, coObjects);
 	vy += KOOPATROOPA_GRAVITY * dt;
 	
+	if (state != KOOPATROOPA_STATE_WALKING)
+		CanPullBack = false;
 	//Xét nếu đang bị cầm ở dạng shell
 	if (isPickedUp == true)
 	{
@@ -65,7 +63,6 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			this->SetState(KOOPATROOPA_STATE_HIDING);
 			IsKicked(mario->nx);
 		}
-	
 	}
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
@@ -74,8 +71,21 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		CalcPotentialCollisions(coObjects, coEvents);
 	if (coEvents.size() == 0)
 	{
+		DebugOut(L"\nNoCollision, vy: %f", vy);
 		x += dx;
 		y += dy;
+		if (CanPullBack &&
+			type == KOOPATROOPA_RED_TYPE )
+		{
+			if (y - lastStanding_Y >= 1.0f
+			/*	&& vy > 0.15*/)
+			{
+				
+				y -= 4;
+				x -= nx * 13;
+				this->ChangeDirect();
+			}
+		}
 	}
 	else
 	{
@@ -84,10 +94,14 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			min_tx, min_ty, 
 			nx, ny);
 		x += min_tx * dx + nx * 0.4f;
+		y += min_ty * dy + ny * 0.4f;
 		if (ny != 0) vy = 0;
+		
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
+			
 			LPCOLLISIONEVENT e = coEventsResult[i];
+			DebugOut(L"\nnX: %f, nY: %f", e->nx, e->ny);
 			//Xử lí khi Koopa trong trạng thái bị đá và cầm
 			if (dynamic_cast<Enemy*>(e->obj))
 			{
@@ -110,46 +124,23 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					if (dynamic_cast<Brick*>(e->obj) && 
 						isBumped == true)
 						dynamic_cast<Brick*>(e->obj)->SetEmpty();
-					this->vx = -this->vx;
-					this->nx = -this->nx;
-				}
-			}
-			// sử dụng các đối tượng vô hình để chặn hướng đi của RedKoopa
-			else if (dynamic_cast<InvisibleBrick*>(e->obj))
-			{
-				
-				if (dynamic_cast<InvisibleBrick*>(e->obj)->GetType() ==
-						INVISIBLEBRICK_TYPE_GROUND)
-				{
-					if (e->nx != 0)
-					{
-						this->nx = -this->nx;
-						vx = -vx;
-					}
-
-				}
-				else
-				{
-					//chỉ đối với RedKoopa
-					if (type == KOOPATROOPA_RED_TYPE &&
-						state == KOOPATROOPA_STATE_WALKING)
-					{
-						if (e->nx != 0)
-						{
-							this->nx = -this->nx;
-							vx = -vx;
-						}
-					}
-					else
-					{
-						x += dx;
-					}
+					this->ChangeDirect();
 				}
 			}
 			else
 			{
+				if (nx != 0 && !dynamic_cast<Block*>(e->obj)
+					&& ny == 0)
+					ChangeDirect();
+				if (!dynamic_cast<Mario*>(e->obj))
+				{
+					CanPullBack = true;
+					lastStanding_Y = y;
+				}
 				if (ny < 0)
+				{
 					vy = 0;
+				}
 				else
 				{
 					y += dy;

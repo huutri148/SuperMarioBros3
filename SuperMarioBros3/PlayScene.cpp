@@ -554,3 +554,27 @@ void PlayScene::TurnCamY(float _playerY, bool isFlying, int ScreenHeight, int Ma
 	if (isFlying == true)
 		_turnCamY = true;
 }
+//void PlayScene::GetColliableObj(LPGAMEOBJECT curObj,
+//	vector<LPGAMEOBJECT>& coObjects)
+//{
+//	if ()
+//	{
+//		for (auto obj : listObjects)
+//		{
+//			if (dynamic_cast<Ground*>(obj) ||
+//				(dynamic_cast<BreakWall*>(obj) &&
+//					obj->GetState() == NORMAL))
+//				coObjects.push_back(obj);
+//		}
+//	}
+//	else if (dynamic_cast<*>(curObj))
+//	{
+//		for (auto obj : )
+//		{
+//			if (dynamic_cast<Ground*>(obj) || 
+//				(dynamic_cast<*>(obj) && 
+//					obj->GetState() == NORMAL))
+//				coObjects.push_back(obj);
+//		}
+//	}
+//}

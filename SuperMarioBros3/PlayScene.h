@@ -57,6 +57,8 @@ public:
 	Coin* GetCoin() { return coin; };
 	PSwitch* GetSwitch() { return pSwitch; };
 	//LPFireBall GetFireBall() { return fireball; }
+	void GetColliableObj(LPGAMEOBJECT curObj,
+		vector<LPGAMEOBJECT>& coObjects);
 	friend class CPlayScenceKeyHandler;
 
 };

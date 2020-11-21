@@ -20,11 +20,11 @@ class KoopaTroopa :public Enemy
 	DWORD turnWalkingTime = 0;
 	
 public:
-
 	//chuyển thành hàm
 	bool isPickedUp;
-		
 	
+	float lastStanding_Y;
+	bool CanPullBack = false;
 	void IsKicked(int nx);
 	bool IsHiding();
 	virtual bool IsDead();
