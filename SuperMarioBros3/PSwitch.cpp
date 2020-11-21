@@ -38,6 +38,15 @@ void PSwitch::GetBoundingBox(float& l, float& t, float& r,
 }
 void PSwitch::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+	bool _isTransForm = Brick::isTransForm;
+	if (isEnable == false || _isTransForm == false)
+		return;
+	if (state == PSWITCH_STATE_PRESSED &&
+		GetTickCount() - appearTime > PSWITCH_TRANSFORM_TIME
+		&& appearTime != 0)
+	{
+		 Brick::isTransForm= false;
+	}
 	
 }
 void PSwitch::SetState(int _state)
@@ -47,12 +56,11 @@ void PSwitch::SetState(int _state)
 	{
 	case PSWITCH_STATE_APPEAR:
 		vy = 0;
-		appearTime = GetTickCount();
 		isEnable = true;
 		break;
 	case PSWITCH_STATE_PRESSED:
 		y += PSWITCH_BBOX_HEIGHT - PSWITCH_PRESSED_BBOX_HEIGHT;
-		appearTime = 0;
+		appearTime = GetTickCount();
 		break;
 	case PSWITCH_STATE_INACTIVE:
 		isEnable = false;

@@ -26,6 +26,9 @@ public:
 		this->SetState(BRICK_STATE_NORMAL);
 		isEnable = true;
 	};
+	bool Breakable();
+	bool CanUsed();
+	void Used();
 	void SetState(int _state);
 	void SetEmpty();
 	virtual void GetBoundingBox(float& l, float& t, float& r, float& b,bool isEnable);

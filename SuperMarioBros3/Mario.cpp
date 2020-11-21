@@ -65,10 +65,23 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		float x0 = x, y0 = y;
 		x = x0 + dx;
 		y = y0 + dy;
+	/*	x += min_tx * dx + nex * 0.4f;
+		y += min_ty * dy + ney * 0.4f;*/
+		
 		// Collision logic 
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
+			//if (e->ny != 0)
+			//{
+			//	vy = 0;
+			//	if (e->ny < 0)    // Handle Jumping
+			//	{
+			//		isInGround = true;
+			//		isFlying = false;
+			//		isFloating = false;
+			//	}
+			//}
 			if (dynamic_cast<Enemy*>(e->obj))
 			{
 				Enemy* enemy = dynamic_cast<Enemy*>(e->obj);
@@ -94,6 +107,8 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 									dynamic_cast<KoopaTroopa*>(enemy)->
 										IsKicked(nx);
 									vy = -MARIO_JUMP_DEFLECT_SPEED;
+									this->y = y0 + min_ty * this->dy
+										+ ney * 0.4f;
 							}
 						}
 					}
@@ -143,7 +158,6 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 								}
 								else if (isPressedJ == false)
 								{
-								
 									dynamic_cast<KoopaTroopa*>(enemy)->
 										IsKicked(this->nx);
 									this->SetState(MARIO_STATE_KICK);
@@ -161,8 +175,8 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				if (e->ny < 0)
 				{
-					HandleCollision(min_tx, min_ty, 
-						e->nx, e->ny, 
+					HandleCollision(min_tx, min_ty,
+						e->nx, e->ny,
 						x0, y0);
 					vy = 0;
 				}
@@ -187,11 +201,25 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 			else if (dynamic_cast<Brick*>(e->obj))
 			{
-				HandleCollision(min_tx, min_ty,
-				e->nx, e->ny,
-				x0, y0);
+			Brick* brick = dynamic_cast<Brick*>(e->obj);
+			if (!brick->CanUsed())
+			{
 				if (e->ny > 0)
-					dynamic_cast<Brick*>(e->obj)->SetEmpty();
+				{
+					brick->SetEmpty();
+					this->y = y0 + min_ty * this->dy + ney * 0.4f;
+				}
+				else 
+				{
+					HandleCollision(min_tx, min_ty,
+						e->nx, e->ny,
+						x0, y0);
+				}
+			}
+			else
+			{
+				brick->Used();
+			}
 			}
 			else if (dynamic_cast<Item*>(e->obj))
 			{
@@ -200,8 +228,8 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			else 
 			{
 				HandleCollision(min_tx, min_ty,
-					e->nx, e->ny,
-					x0, y0);
+				e->nx, e->ny,
+				x0, y0);
 			}
 			
 		}

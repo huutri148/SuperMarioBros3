@@ -75,30 +75,22 @@ void Brick::SetEmpty()
 }
 void Brick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	bool _isTransform = Brick::isTransForm;
 	if (state == BRICK_STATE_INACTIVE ||
 		isEnable == false)
 		return;
-	if (GetTickCount() - changeTime >
-		BRICK_CHANGE_TIME && _isTransform == true
-		&& changeTime != 0)
+	if (type == BRICK_TYPE_BREAKABLE)
 	{
-		DebugOut(L"\nB");
-		changeTime = 0;
-		this->SetState(BRICK_STATE_NORMAL);
+		bool _isTransform = Brick::isTransForm;
+		if (_isTransform == false)
+		{
+			this->SetState(BRICK_STATE_NORMAL);
+		}
+		else
+		{
+			this->SetState(BRICK_STATE_EMPTY);
+		}
 		return;
 	}
-	else if (_isTransform == true
-		&& type == BRICK_TYPE_BREAKABLE && 
-		changeTime == 0)
-	{
-		DebugOut(L"\nA");
-		this->SetState(BRICK_STATE_EMPTY);
-		changeTime = GetTickCount();
-		return;
-	}
-	else if (type == BRICK_TYPE_BREAKABLE)
-		return;
 	GameObject::Update(dt, coObjects);
 	if(state != BRICK_STATE_NORMAL)
 		vy += BRICK_GRAVITY * dt;
@@ -132,10 +124,21 @@ void Brick::SetState(int _state)
 		break;
 	}
 }
+void Brick::Used()
+{
+	this->SetState(BRICK_STATE_BREAK);
+}
+bool Brick::CanUsed()
+{
+	if (this->state == BRICK_STATE_EMPTY
+		&& isTransForm == true
+		&& type == BRICK_TYPE_BREAKABLE)
+		return true;
+	return false;
+}
 void InvisibleBrick::Render()
 {
 	animation_set->at(0)->Render(-1, x, y);
-	//RenderBoundingBox();
 }
 
 void InvisibleBrick::GetBoundingBox(float& l, float& t, float& r, float& b, bool isEnable)
