@@ -1,4 +1,4 @@
-#include "FirePiranhaPlant.h"
+﻿#include "FirePiranhaPlant.h"
 #include "Ground.h"
 #include "Brick.h"
 void FirePiranhaPlant::GetBoundingBox(float& left, float& top,
@@ -34,13 +34,13 @@ void FirePiranhaPlant::GetBoundingBox(float& left, float& top,
 void FirePiranhaPlant::Update(DWORD dt,
 	vector<LPGAMEOBJECT>* coObjects)
 {
+	GetDirect();
 	HandleTimeSwitchState();
 	if (state == FIREPIRANHAPLANT_STATE_INACTIVE)
 		return;
 	Enemy::Update(dt, coObjects);
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
-	GetDirect();
 	coEvents.clear();
 	if (!this->IsDead())
 		CalcPotentialCollisions(coObjects, coEvents);
@@ -57,7 +57,6 @@ void FirePiranhaPlant::Update(DWORD dt,
 			nx, ny);
 		float x0 = x, y0 = y;
 		y = y0 + dy;
-
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
@@ -93,7 +92,7 @@ void FirePiranhaPlant::Render()
 	{
 			if (state != FIREPIRANHAPLANT_STATE_INACTIVE)
 			{
-				int ani;
+				int ani = FIREPIRANHAPLANT_GREEN_ANI_DARTING_TOP;
 				if (state == FIREPIRANHAPLANT_STATE_DARTING)
 				{
 					if (shootInGround == false)
@@ -194,6 +193,9 @@ void FirePiranhaPlant::EnableAgain()
 void FirePiranhaPlant::HandleTimeSwitchState()
 {
 	DWORD current = GetTickCount();
+	// Chuyển trạng thái từ death sang InAcTive
+	// sử dụng ani 
+	// nên chuyển thành effect riêng
 	if (state == FIREPIRANHAPLANT_STATE_DEATH &&
 		current - deathTime >
 		FIREPIRANHAPLANT_INACTIVE_TIME
@@ -202,12 +204,14 @@ void FirePiranhaPlant::HandleTimeSwitchState()
 		this->SetState(FIREPIRANHAPLANT_STATE_INACTIVE);
 		deathTime = 0;
 	}
+	// Chuyển trạng thái từ lao ngoài Pipe khi va chạm với Ground
 	if (state == FIREPIRANHAPLANT_STATE_DARTING &&
 		current - switchTime >
 		FIREPIRANHAPLANT_SWITCH_TIME && switchTime != 0)
 	{
 		this->SetState(FIREPIRANHAPLANT_STATE_DARTING);
 	}
+	// Bắn trong một khoảng thời gian nhất định
 	if (state == FIREPIRANHAPLANT_STATE_SHOOTING &&
 	current - switchTime >	FIREPIRANHAPLANT_SHOOTING_TIME 
 		&& current - switchTime < FIREPIRANHAPLANT_SWITCH_TIME
@@ -215,6 +219,7 @@ void FirePiranhaPlant::HandleTimeSwitchState()
 	{
 		Shooting();
 	}
+	// Chuyển trạng thái khi ở trên Pipe sang trạng thái đợi bắn
 	if (state == FIREPIRANHAPLANT_STATE_SHOOTING &&
 		current - switchTime >
 		FIREPIRANHAPLANT_SWITCH_TIME && switchTime != 0)
@@ -252,7 +257,8 @@ void FirePiranhaPlant::Shooting()
 			else
 				direct = FIREBULLET_DIRECT_3;
 		}
-		bullet->Shoot(x, y, nx, direct);
+		bullet->Shoot(x + FIREPIRAHANPLANT_SHOOTING_X
+			, y , nx, direct);
 		isShooted = true;
 	}
 
@@ -273,4 +279,7 @@ void FirePiranhaPlant::GetDirect()
 		shootInGround = false;
 	else
 		shootInGround = true;
+	// Nếu Mario ở trên Pipe sẽ không lao ra
+	if (abs(x - mX) <= FIREPIRANHAPLANT_BBOX_WIDTH /2)
+		switchTime = GetTickCount();
 }

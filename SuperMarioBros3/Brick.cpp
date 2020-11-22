@@ -33,7 +33,7 @@ void Brick::SetEmpty()
 {
 	if (state == BRICK_STATE_INACTIVE)
 		return;
-	if (type != BRICK_TYPE_BREAKABLE)
+	if (type != BRICK_BREAKABLE_TYPE)
 	{
 		this->SetState(BRICK_STATE_EMPTY);
 		LPSCENE scence = Game::GetInstance()->GetCurrentScene();
@@ -42,13 +42,13 @@ void Brick::SetEmpty()
 		int form = mario->GetForm();
 		switch (type)
 		{
-		case BRICK_TYPE_ITEM_COIN:
+		case BRICK_ITEM_COIN_TYPE:
 		{
 			item = ((PlayScene*)scence)->GetCoin();
 			item->Appear(x, y);
 			break;
 		}
-		case BRICK_TYPE_POWERUP:
+		case BRICK_POWER_UP_TYPE:
 		{
 			if (form == MARIO_SMALL_FORM)
 			{
@@ -62,13 +62,13 @@ void Brick::SetEmpty()
 			}
 			break;
 		}
-		case BRICK_TYPE_PSWITCH:
+		case BRICK_PSWITCH_TYPE:
 		{
 			item = ((PlayScene*)scence)->GetSwitch();
 			item->Appear(x, y);
 			break;
 		}
-		case BRICK_TYPE_ITEM_EXTRA_LIFE:
+		case BRICK_ITEM_EXTRA_LIFE_TYPE:
 		{
 			item = ((PlayScene*)scence)->GetMushroom();
 			((Mushroom*)item)->Appear(x, y, MUSHROOM_TYPE_1UP);
@@ -86,7 +86,7 @@ void Brick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	if (state == BRICK_STATE_INACTIVE ||
 		isEnable == false)
 		return;
-	if (type == BRICK_TYPE_BREAKABLE)
+	if (type == BRICK_BREAKABLE_TYPE)
 	{
 		bool _isTransform = Brick::isTransForm;
 		if (_isTransform == false)
@@ -121,7 +121,7 @@ void Brick::SetState(int _state)
 		vy = 0;
 		break;
 	case BRICK_STATE_EMPTY:
-		if (type != BRICK_TYPE_BREAKABLE)
+		if (type != BRICK_BREAKABLE_TYPE)
 			vy = -BRICK_DEFLECT_SPEED;
 		vx = 0;
 		break;
@@ -140,7 +140,13 @@ bool Brick::CanUsed()
 {
 	if (this->state == BRICK_STATE_EMPTY
 		&& Brick::isTransForm == true
-		&& type == BRICK_TYPE_BREAKABLE)
+		&& type == BRICK_BREAKABLE_TYPE)
+		return true;
+	return false;
+}
+bool Brick::Breakable()
+{
+	if (type == BRICK_BREAKABLE_TYPE)
 		return true;
 	return false;
 }

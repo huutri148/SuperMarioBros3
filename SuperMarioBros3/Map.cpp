@@ -2,7 +2,8 @@
 #include <iostream>
 #include "Map.h"
 #include"Utils.h"
-Map::Map(int idMap, int nTitleCols, int nTitleRows, int nMapCols, int nMapRows, int nTotalTiles)
+Map::Map(int idMap, int nTitleCols, int nTitleRows, int nMapCols,
+	int nMapRows, int nTotalTiles)
 {
 	this->TileSet = Textures::GetInstance()->Get(idMap);
 	this->TotalColsOfMap = nMapCols;
@@ -23,7 +24,8 @@ void Map::CreateTilesFromTileSet()
 		top = tileNum / TotalColsOfTitleSet * TILE_HEIGHT;
 		bottom = top + TILE_HEIGHT;
 		right = left + TILE_WIDTH;
-		LPSPRITE Tile = new Sprite(tileNum, left, top, right, bottom, TileSet);
+		LPSPRITE Tile = new Sprite(tileNum, left, top,
+			right, bottom, TileSet);
 		this->Tiles.push_back(Tile);
 	}
 }
@@ -50,7 +52,9 @@ void Map::Render()
 	{
 		for (int iColumn = 0; iColumn < TotalColsOfMap; iColumn++)
 		{
-			this->Tiles[this->Matrix[iRow][iColumn] - 1]->Draw(-1,iColumn * TILE_WIDTH, iRow * TILE_HEIGHT);
+			this->Tiles[this->Matrix[iRow][iColumn] - 1]->Draw(-1,
+				(float)iColumn * TILE_WIDTH,
+				(float) iRow * TILE_HEIGHT);
 		}
 	}
 }

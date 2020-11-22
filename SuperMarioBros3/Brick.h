@@ -18,7 +18,7 @@ public:
 	/*virtual void CalcPotentialCollisions(vector<LPGAMEOBJECT>* coObjects,
 		vector<LPCOLLISIONEVENT>& coEvents);*/
 	virtual void Render();
-	Brick(float x, float y, int _type  = BRICK_TYPE_ITEM_COIN)
+	Brick(float x, float y, int _type  = BRICK_ITEM_COIN_TYPE)
 		:GameObject(x, y) {
 		this->entryX = x;
 		this->entryY = y;

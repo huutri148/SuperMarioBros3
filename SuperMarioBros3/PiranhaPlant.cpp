@@ -1,4 +1,4 @@
-#include "PiranhaPlant.h"
+﻿#include "PiranhaPlant.h"
 #include "Ground.h"
 #include "Brick.h"
 #include "Utils.h"
@@ -35,9 +35,19 @@ void PiranhaPlant::GetBoundingBox(float& left, float& top,
 void PiranhaPlant::Update(DWORD dt,
 	vector<LPGAMEOBJECT>* coObjects)
 {
+	// Nếu Mario ở trên ống sẽ không Plant sẽ không lao ra
+	PlayScene* playscene = ((PlayScene*)Game::GetInstance()->GetCurrentScene());
+	Mario* mario = playscene->GetPlayer();
+	float mX, mY;
+	mario->GetPosition(mX, mY);
+	if (abs(mX - x) <= FIREPIRANHAPLANT_BBOX_WIDTH / 2)
+		switchTime = GetTickCount();
+
+
 	HandleTimeSwitchState();
 	if (state == PIRANHAPLANT_STATE_INACTIVE)
 		return;
+
 	Enemy::Update(dt, coObjects);
 	//if (this->state != PIRANHAPLANT_STATE_DEATH)
 	//	vy += dt * GOOMBA_GRAVITY;
@@ -116,7 +126,7 @@ void PiranhaPlant::Render()
 			{
 				ani = PIRANHAPLANT_ANI_DEATH;
 			}
-			animation_set->at(ani)->Render(nx, x, y);
+			animation_set->at(ani)->Render(-1, x, y);
 		}
 	}
 }

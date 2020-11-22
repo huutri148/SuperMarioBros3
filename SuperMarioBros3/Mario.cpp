@@ -206,8 +206,11 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				{
 					if (e->ny > 0)
 					{
-						if(form != MARIO_SMALL_FORM)
-							brick->SetEmpty();
+						//Nếu là Breakable thì Small Form ko thể làm vỡ
+						// Các Brick còn lại thì có thể tác động
+						if(brick->Breakable() && form != MARIO_SMALL_FORM ||
+							!brick->Breakable())
+						brick->SetEmpty();
 						this->y = y0 + min_ty * this->dy + ney * 0.4f;
 					}
 					else 

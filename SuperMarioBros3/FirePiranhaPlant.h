@@ -7,7 +7,7 @@ class FirePiranhaPlant :public Enemy
 	DWORD switchTime;
 	bool isOutOfPipe;
 	int type;
-	bool isShooted;
+	bool isShooted = false;
 	bool shootInGround;
 	virtual void HandleTimeSwitchState();
 	void Shooting();
