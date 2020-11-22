@@ -93,7 +93,7 @@ void Goomba::Render()
 			if (state == GOOMBA_STATE_BEING_STROMPED) {
 				ani = GOOMBA_ANI_DIE;
 			}
-			animation_set->at(ani)->Render(nx, x, y);
+			animation_set->at(ani)->Render(nx,ny, x, y);
 		}
 	}
 	//RenderBoundingBox();
@@ -109,6 +109,7 @@ void Goomba::SetState(int state)
 		break;
 	case GOOMBA_STATE_BEING_SKILLED:
 		vy = -GOOMBA_DIE_DEFLECT_SPEED;
+		ny = 1;
 		vx = 0;
 		break;
 	case GOOMBA_STATE_BEING_STROMPED:

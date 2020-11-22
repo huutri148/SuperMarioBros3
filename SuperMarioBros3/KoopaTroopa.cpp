@@ -200,9 +200,8 @@ void KoopaTroopa::Render()
 				else
 					ani = KOOPATROOPA_RED_ANI_EXIT_SHELL;
 			}
-			animation_set->at(ani)->Render(nx, x, y);
+			animation_set->at(ani)->Render(nx,ny, x, y);
 		}
-		
 	}
 
 }
@@ -225,6 +224,7 @@ void KoopaTroopa::SetState(int state)
 		break;
 	case KOOPATROOPA_STATE_BEING_SKILLED:
 		vy = -KOOPATROOPA_DIE_DEFLECT_SPEED;
+		ny = 1;
 		isBumped = false;
 		isPickedUp = false;
 		vx = 0;

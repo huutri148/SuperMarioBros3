@@ -52,7 +52,7 @@ public:
 	float vy;
 
 	int nx;
-	/*int ny;*/
+	int ny = -1;
 
 	int state;
 	bool isEnable;
