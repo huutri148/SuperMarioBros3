@@ -182,7 +182,6 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				}
 				else
 				{
-					x = x0 + dx;
 					y = y0 + dy;
 				}
 			}
@@ -230,6 +229,9 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			else if (dynamic_cast<Item*>(e->obj))
 			{
 				dynamic_cast<Item*>(e->obj)->Used();
+				HandleCollision(min_tx, min_ty,
+					e->nx, e->ny,
+					x0, y0);
 			}
 			else 
 			{
@@ -718,7 +720,7 @@ void Mario::Friction()
 	if (turnFriction == true)
 	{
 		this->vx -= this->vx * MARIO_FRICTION;
-		if (abs(this->vx) < 0.007)
+		if (abs(this->vx) < 0.06)
 		{
 			this->SetState(MARIO_STATE_IDLE);
 			turnFriction = false;

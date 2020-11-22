@@ -37,13 +37,13 @@ void Mushroom::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	if (state == MUSHROOM_STATE_INACTIVE)
 		return;
 	GameObject::Update(dt, coObjects);
-	vy += RACCOONLEAF_GRAVITY * dt;
-	
+	if (state == MUSHROOM_STATE_WALKING || y <= appearY)
+		vy += RACCOONLEAF_GRAVITY * dt;
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 	coEvents.clear();
-	if (state != MUSHROOM_STATE_INACTIVE)
-		CalcPotentialCollisions(coObjects, coEvents);
+
+	CalcPotentialCollisions(coObjects, coEvents);
 	if (coEvents.size() == 0)
 	{
 		x += dx;
@@ -55,44 +55,28 @@ void Mushroom::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		FilterCollision(coEvents, coEventsResult,
 			min_tx, min_ty,
 			nx, ny);
-		float x0 = x, y0 = y;
-		x = x0 + dx;
-		y = y0 + dy;
+		this->y += min_ty * dy + ny * 0.4f;
+		this->x += min_tx * dx + nx * 0.4f;
+		if (ny != 0) vy = 0;
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
-			if (dynamic_cast<Brick*>(e->obj)||
-				dynamic_cast<Ground*>(e->obj) ||
-				dynamic_cast<Block*>(e->obj))
+			if (dynamic_cast<Brick*>(e->obj))
 			{
 				if (e->ny < 0)
 				{
-					this->y = y0 + min_ty * dy + e->ny * 0.4f;
-					vy = 0;
 					this->SetState(MUSHROOM_STATE_WALKING);
-				}
-				else
-				{
-					x = x0 + dx;
-					y = y0 + dy;
+					vy = 0;
 				}
 			}
-			 else if(dynamic_cast<Pipe*>(e->obj))
+			else if (!dynamic_cast<Block*>(e->obj))
 			{
-				if (e->nx != 0)
+				if (nx != 0 && ny == 0)
 				{
-					
+					this->vx = -this->vx;
 					this->nx = -this->nx;
-					vx = -vx;
-					this->x = x0 + e->t * dx + e->nx * 0.4f;
-				}
-				else
-				{
-					x = x0 + dx;
-					y = y0 + dy;
 				}
 			}
-		
 		}
 
 	}
@@ -105,7 +89,6 @@ void Mushroom::SetState(int _state)
 	{
 	case MUSHROOM_STATE_APPEARANCE:
 		isEnable = true;
-		nx = 1;
 		vx = 0;
 		vy = -MUSHROOM_SPEED_APPEARANCE_Y;
 		break;
@@ -121,18 +104,20 @@ void Mushroom::SetState(int _state)
 }
 void Mushroom::Appear(float x, float y, int _type)
 {
+	appearY = y - MUSHROOM_BBOX_HEIGHT - 1;
 	this->type = _type;
+	this->SetAppearedDirect();
 	this->SetPosition(x, y);
 	this->SetState(MUSHROOM_STATE_APPEARANCE);
 	this->isEnable = true;
-	this->nx = 1;
 }
 void Mushroom::Appear(float x, float y)
 {
 	this->SetPosition(x, y);
+	appearY = y - MUSHROOM_BBOX_HEIGHT - 1;
+	this->SetAppearedDirect();
 	this->SetState(MUSHROOM_STATE_APPEARANCE);
 	this->isEnable = true;
-	this->nx = 1;
 	type = MUSHROOM_ANI_POWERUP;
 }
 void Mushroom::Used()
@@ -145,4 +130,10 @@ void Mushroom::Used()
 Mushroom::Mushroom()
 {
 	isEnable = false;
+}
+void Mushroom::SetAppearedDirect()
+{
+	PlayScene* scene = (PlayScene*)Game::GetInstance()->GetCurrentScene();
+	Mario* mario = scene->GetPlayer();
+	this->nx = mario->nx;
 }

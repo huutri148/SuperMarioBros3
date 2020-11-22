@@ -30,7 +30,7 @@ void Coin::Update(DWORD dt,
 	if (state != COIN_STATE_APPEAR)
 		return;
 	GameObject::Update(dt, coObjects);
-	vy += RACCOONLEAF_GRAVITY * dt;
+	vy += COIN_GRAIVITY * dt;
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 	coEvents.clear();
