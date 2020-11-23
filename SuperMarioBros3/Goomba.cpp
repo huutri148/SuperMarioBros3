@@ -114,7 +114,7 @@ void Goomba::SetState(int state)
 		break;
 	case GOOMBA_STATE_BEING_STROMPED:
 		y += GOOMBA_BBOX_HEIGHT -
-			GOOMBA_BBOX_HEIGHT_DIE - 7;
+			GOOMBA_BBOX_HEIGHT_DIE ;
 		vx = 0;
 		vy = 0;
 		break;

@@ -158,7 +158,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	game->Init(hWnd);
 
 	game->InitKeyboard();
-	game->Load(L"SuperMarioBros3.txt");
+	game->Load(L"Resources/SuperMarioBros3.txt");
 	//LoadResource();
 	
 

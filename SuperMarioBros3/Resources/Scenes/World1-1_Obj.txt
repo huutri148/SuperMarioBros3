@@ -1,17 +1,17 @@
 # id	file_path	transparent_color_r	g	b
 [TEXTURES]
-0	textures\Mario2.png	68	145	190
-20	textures\misc.png	166	185	255
-10	textures\enemies.png	3	26	110
-30	textures\map1-1_bank.png	255	255	255
-40	textures\Tiles.png	255	127	93
-50	textures\Tiles.png	127	255	142
-60	textures\enemies2.png	0	128	128
-70	textures\Enemies3.png	68	145	190
+0	Resources\textures\mario.png	68	145	190
+10	Resources\textures\enemies_world_1.png	0	255	255
+20	Resources\textures\misc.png	166	185	255
+30	Resources\textures\map1-1_bank.png	255	255	255
+40	Resources\textures\tiles.png	255	127	93
+50	Resources\textures\tiles.png	127	255	142
+70	Resources\textures\enemies.png	68	145	190
+
 
 #ID	TolRowTile	TolColTile	TolRowMap	TolColMap	TotalTiles	Matrix_path
 [MAP]
-30	11	11	178	45	117	Map\map1-1.txt
+30	11	11	178	45	117	Resources\Map\World1-1.txt
 
 # id	left	top	right	bottom	texture_id
 [SPRITES]
@@ -139,36 +139,30 @@
 20006	451	1	467	17	0
 20007	469	1	485	17	0
 #GOOMBA
-30001	0	0	16	16	70
-30002	16	0	32	16	70
+30001	9	11	25	27	10
+30002	32	11	48	27	10
 #die
-30003	32	0	48	16	70
+30003	54	18	70	27	10
 #GREEN KOOPA
 #walk
-30020	205	191	221	218	60
-30021	222	192	238	218	60
+30020	31	119	47	145	10
+30021	50	118	66	145	10
 #bump
-30022	239	202	255	218	60
-30023	256	202	272	218	60
-30024	273	202	289	218	60
-30025	290	202	306	218	60
-#dead
-30026	152	202	168	218	60
+30022	32	149	48	165	10
+30023	53	148	69	164	10
+30024	74	148	90	164	10
 #exit shell
-30027	32	65	48	81	70
+30025	74	127	92	143	10
 #RED KOOPA
 #walk
-30030	205	163	221	190	60
-30031	222	164	238	190	60
+30030	28	67	44	93	10
+30031	47	66	63	93	10
 #bump
-30032	239	174	255	190	60
-30033	256	174	272	190	60
-30034	273	174	289	190	60
-30035	290	174	306	190	60
-#dead
-30036	152	202	168	218	60	
+30032	29	97	45	113	10
+30033	50	96	66	112	10
+30034	71	96	87	112	10
 #exit shell
-30037	129	65	145	81	70
+30035	71	75	89	91	10
 #PIRIHANPLANT
 #GREEN
 #biting
@@ -244,7 +238,7 @@
 40048	1174	1	1190	17	40
 40049	1191	1	1207	17	40
 #Invisible Brick
-40000	350	200	366	216	10	
+40000	600	600	616	616	70	
 #Coin
 #type 1 - Brick
 40050	294	101	302	115	20
@@ -391,22 +385,18 @@
 #Hiding
 711	30022	100
 #Bump
-712	30022	100	30023	100	30024	100	30025	100
-#dead
-713	30026	100
+712	30022	100	30023	100	30024	100
 #exit shell
-714	30027	100
+713	30025	100
 #=====Red Koopa====
 #walk
 720	30030	100	30031	100
 #hiding
 721	30032	100
 #bump
-722	30032	100	30033	100	30034	100	30035	100
-#DEAD 
-723	30036	100
+722	30032	100	30033	100	30034	100
 #ExitSHELL
-724	30037	100
+723	30035	100
 #=====GREEN PIRANHAPLANT=====
 #darting
 730	30041	100
@@ -496,7 +486,7 @@
 # GOOMBA
 3	701	702
 #Green Koopa/Red Koopa
-4	710	711	712	720	721	722	714	724
+4	710	711	712	720	721	722	713	723
 #Green/Red PiranhaPlant
 5	730	731	732	733	734
 #Fire PiranhaPlant

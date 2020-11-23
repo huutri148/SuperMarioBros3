@@ -2,4 +2,4 @@
 start	1
 #scene list
 [SCENES]
-1	scene1-1.txt
+1	Resources\Scenes\World1-1_Obj.txt
