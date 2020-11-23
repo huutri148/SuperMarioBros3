@@ -37,13 +37,13 @@
 #define POWER_METER_FULL				7		// số stack tối đa		//thời gian để tích 1 stack
 #define POWER_MELTER_MINIMUM			0
 #define POWER_MELTER_BUFF_SPEED_LEVEL	4
-#define STACK_TIME					    200			//thời gian để tích 1 stack
+#define STACK_TIME						200			//thời gian để tích 1 stack
 #define LOSE_STACK_TIME					100
 #define MARIO_FRICTION					0.08f
 #define MARIO_SUPER_JUMP_TIME			300
-#define MARIO_FLYING_LIMITED_TIME		 2000
-#define MARIO_FLOATING_SPEED_Y			0.0f
-#define MARIO_FALLING_SPEED				0.02f
+#define MARIO_FLYING_LIMITED_TIME		2000
+#define MARIO_FLOATING_SPEED_Y			0.01f
+#define MARIO_FALLING_SPEED				0.03f
 //Các trạng thái của Mario
 #define MARIO_STATE_IDLE				0
 #define MARIO_STATE_WALKING				100

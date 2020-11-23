@@ -86,7 +86,7 @@ void Game::Draw( int nx,float x, float y, LPDIRECT3DTEXTURE9 texture, int left, 
 	spriteHandler->GetTransform(&oldTransform);
 
 	D3DXVECTOR2 center = D3DXVECTOR2(p.x + (right - left) / 2, p.y + (bottom - top) / 2);
-	D3DXVECTOR2 rotate = D3DXVECTOR2(nx > 0 ? -1 : 1, 1);
+	D3DXVECTOR2 rotate = D3DXVECTOR2(nx > 0 ? -1.0f : 1.0f, 1);
 
 
 	// Xây dựng một ma trận 2D lưu thông tin biến đổi (scale, rotate)
@@ -119,7 +119,7 @@ void Game::Draw(int nx,int ny, float x, float y, LPDIRECT3DTEXTURE9 texture, int
 	spriteHandler->GetTransform(&oldTransform);
 
 	D3DXVECTOR2 center = D3DXVECTOR2(p.x + (right - left) / 2, p.y + (bottom - top) / 2);
-	D3DXVECTOR2 rotate = D3DXVECTOR2(nx > 0 ? -1.0 : 1.0, ny < 0 ? 1.0 : -1.0);
+	D3DXVECTOR2 rotate = D3DXVECTOR2(nx > 0 ? -1.0f : 1.0f, ny < 0 ? 1.0f : -1.0f);
 
 
 	// Xây dựng một ma trận 2D lưu thông tin biến đổi (scale, rotate)

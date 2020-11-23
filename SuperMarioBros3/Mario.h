@@ -10,11 +10,12 @@ class Mario : public GameObject
 	int untouchable = 0;
 
 	// Thời gian bắt đầu các trạng thái
-	DWORD untouchable_start = 0;
-	DWORD stack_time_start = 0;
-	DWORD fly_time_start = 0;
-	DWORD jump_time_start = 0;// pressing jumping time
-	int power_melter_stack = 0;
+	DWORD untouchableStart = 0;
+	DWORD stackTimeStart = 0;
+	DWORD flyTimeStart = 0;
+	DWORD jumpTimeStart = 0;// pressing jumping time
+	DWORD floatingTime = 0;
+	int powerMelterStack = 0;
 
 	//Các biến cờ ở các trạng thái
 	bool isInGround ;
@@ -58,7 +59,7 @@ public:
 	void HandleCollision(float min_tx, float min_ty,
 		float nx, float ny, float x0, float y0);
 	void StartUntouchable() 
-	{ untouchable = 1; untouchable_start = GetTickCount(); }
+	{ untouchable = 1; untouchableStart = GetTickCount(); }
 	void UpForm();
 	void ReleaseJ();
 	void PressK();
@@ -78,7 +79,7 @@ public:
 	void TailAttack();
 	void Float();
 	void Fly();
-	void StartJumping() { jump_time_start = GetTickCount(); }
+	void StartJumping() { jumpTimeStart = GetTickCount(); }
 	void Jump();
 	void SuperJump();
 	void PickUp();
