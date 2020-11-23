@@ -31,11 +31,11 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		return;
 	Enemy::Update(dt, coObjects);
 	vy += KOOPATROOPA_GRAVITY * dt;
-	
+
 	if (state != KOOPATROOPA_STATE_WALKING)
 		CanPullBack = false;
 	//Xét nếu đang bị cầm ở dạng shell
-	if (isPickedUp == true)
+	if (isPickedUp == true && !isDead)
 	{
 		Game* game = Game::GetInstance();
 		LPSCENE scence = game->GetCurrentScene();
@@ -67,7 +67,7 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 	coEvents.clear();
-	if(state != KOOPATROOPA_STATE_BEING_SKILLED)
+	if(isDead != true)
 		CalcPotentialCollisions(coObjects, coEvents);
 	if (coEvents.size() == 0)
 	{
@@ -95,19 +95,31 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			nx, ny);
 		x += min_tx * dx + nx * 0.4f;
 		y += min_ty * dy + ny * 0.4f;
-		if (ny != 0) vy = 0;
+		if (ny != 0)
+		{
+			vy = 0;
+			if (hidingTime != 0 && !isBumped)
+				vx = 0;
+		}
+		
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
-			
 			LPCOLLISIONEVENT e = coEventsResult[i];
 			//Xử lí khi Koopa trong trạng thái bị đá và cầm
 			if (dynamic_cast<Enemy*>(e->obj))
 			{
+				Enemy* enemy = dynamic_cast<Enemy*>(e->obj);
 				if (isPickedUp == true || isBumped == true)
 				{
-					dynamic_cast<Enemy*>(e->obj)->SetBeingSkilled();
+					enemy->SetBeingSkilled(nx);
+					enemy->SetDead();
 					if (isPickedUp == true)
-						this->SetBeingSkilled();
+					{
+						this->SetBeingSkilled(nx);
+						isDead = true;
+						deathTime = GetTickCount();
+					}
+					
 				}
 				else
 				{
@@ -156,7 +168,6 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 }
-
 void KoopaTroopa::Render()
 {
 	if (isEnable == true)
@@ -178,13 +189,6 @@ void KoopaTroopa::Render()
 					ani = KOOPATROOPA_GREEN_ANI_HIDING;
 				else
 					ani = KOOPATROOPA_RED_ANI_HIDING;
-			}
-			if (state == KOOPATROOPA_STATE_BEING_SKILLED)
-			{
-				if (type == KOOPATROOPA_GREEN_TYPE)
-					ani = KOOPATROOPA_GREEN_ANI_DEATH;
-				else
-					ani = KOOPATROOPA_RED_ANI_DEATH;
 			}
 			if (isBumped == true)
 			{
@@ -212,8 +216,8 @@ void KoopaTroopa::SetState(int state)
 	{
 	case KOOPATROOPA_STATE_WALKING:
 		vx = -KOOPATROOPA_WALKING_SPEED;
+		ny = -1;
 		isBumped = false;
-		/*isPickedUp = false;*/
 		nx = -1;
 		break;
 	case KOOPATROOPA_STATE_HIDING:
@@ -221,16 +225,6 @@ void KoopaTroopa::SetState(int state)
 		isPickedUp = false;
 		vy = 0;
 		vx = 0;
-		break;
-	case KOOPATROOPA_STATE_BEING_SKILLED:
-		vy = -KOOPATROOPA_DIE_DEFLECT_SPEED;
-		ny = 1;
-		isBumped = false;
-		isPickedUp = false;
-		vx = 0;
-		break;
-	case KOOPATROOPA_STATE_IS_BUMPED:
-		isBumped = true;
 		break;
 	case KOOPATROOPA_STATE_INACTIVE:
 		isEnable = false;
@@ -245,7 +239,7 @@ void KoopaTroopa::SetState(int state)
 }
 bool KoopaTroopa::IsDead()
 {
-	if (this->state == KOOPATROOPA_STATE_HIDING || 
+	if (this->state == KOOPATROOPA_STATE_HIDING && !isBumped || 
 		this->state == KOOPATROOPA_STATE_INACTIVE)
 	{
 		return true;
@@ -255,9 +249,8 @@ bool KoopaTroopa::IsDead()
 void KoopaTroopa::IsKicked(int n)
 {
 	this->nx = n;
-	this->SetState(KOOPATROOPA_STATE_IS_BUMPED);
-	vx = nx *KOOPATROOPA_BUMP_SPEED;
 	isBumped = true;
+	vx = nx *KOOPATROOPA_BUMP_SPEED;
 }
 bool KoopaTroopa::IsHiding()
 {
@@ -282,10 +275,16 @@ void KoopaTroopa::SetBeingStromped()
 	this->SetState(KOOPATROOPA_STATE_HIDING);
 	hidingTime = GetTickCount();
 }
-void KoopaTroopa::SetBeingSkilled()
+void KoopaTroopa::SetBeingSkilled(int _nx)
 {
-	this->SetState(KOOPATROOPA_STATE_BEING_SKILLED);
-	deathTime = GetTickCount();
+	this->nx = _nx;
+	this->SetState(KOOPATROOPA_STATE_HIDING);
+	hidingTime = GetTickCount();
+	vx = nx *KOOPATROOPA_DIE_DEFLECT_SPEED_X;
+	vy = -KOOPATROOPA_DIE_DEFLECT_SPEED_Y;
+	ny = 1;
+	isBumped = false;
+	isPickedUp = false;	
 }
 void KoopaTroopa::EnableAgain()
 {
@@ -295,11 +294,12 @@ void KoopaTroopa::EnableAgain()
 void KoopaTroopa::HandleTimeSwitchState()
 {
 	if (GetTickCount() - deathTime > KOOPATROOPA_INACTIVE_TIME &&
-		this->state == KOOPATROOPA_STATE_BEING_SKILLED)
+		isDead == true)
 	{
 		this->SetState(KOOPATROOPA_STATE_INACTIVE);
 		return;
 	}
+	// Ở trạng thái hiding chuyển sang walking
 	if (GetTickCount64() - turnWalkingTime >
 		KOOPATROOPA_TURN_WALKING_TIME &&
 		this->state == KOOPATROOPA_STATE_EXIT_SHELL)
@@ -307,21 +307,31 @@ void KoopaTroopa::HandleTimeSwitchState()
 		this->SetState(KOOPATROOPA_STATE_WALKING);
 		this->y -= KOOPATROOPA_BBOX_HEIGHT -
 			KOOPATROOPA_BBOX_HEIGHT_HIDING;
+
+		// Nếu mario còn giữ sẽ đẩy BoundingBox ra một chút
 		if (isPickedUp == true)
 		{
 			this->x -= nx * KOOPATROOPA_DEFLECT_HOLDING_X;
 			isPickedUp = false;
 		}
-			
 		turnWalkingTime = 0;
 	}
+
+	// Chuyển sang Exit shell 
 	if (GetTickCount64() - hidingTime >
-		KOOPATROOPA_EXIT_SHELL_TIME &&
+		KOOPATROOPA_EXIT_SHELL_TIME && !isBumped &&
 		this->state == KOOPATROOPA_STATE_HIDING)
 	{
 		this->SetState(KOOPATROOPA_STATE_EXIT_SHELL);
 		hidingTime = 0;
 		turnWalkingTime = GetTickCount();
+	}
+	// Khi vận tốc về 0 sẽ tự động tính thời gian hiding
+	if (this->state == KOOPATROOPA_STATE_HIDING 
+		&& vx == 0 && hidingTime == 0)
+	{
+		hidingTime = GetTickCount();
+		isBumped = false;
 	}
 
 }

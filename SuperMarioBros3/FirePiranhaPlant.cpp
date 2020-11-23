@@ -175,7 +175,7 @@ bool FirePiranhaPlant::IsDead()
 	}
 	return false;
 }
-void FirePiranhaPlant::SetBeingSkilled()
+void FirePiranhaPlant::SetBeingSkilled(int nx)
 {
 	this->SetState(FIREPIRANHAPLANT_STATE_DEATH);
 	y += FIREPIRANHAPLANT_BBOX_HEIGHT -

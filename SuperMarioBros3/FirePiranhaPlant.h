@@ -21,7 +21,7 @@ public:
 
 	virtual bool IsDead();
 	virtual void SetBeingStromped();
-	virtual void SetBeingSkilled();
+	virtual void SetBeingSkilled(int nx);
 	virtual void EnableAgain();
 	FirePiranhaPlant(float x, float y, int _type = PIRANHAPLANT_RED_TYPE);
 };

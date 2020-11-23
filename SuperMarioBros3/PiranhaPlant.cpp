@@ -171,7 +171,7 @@ bool PiranhaPlant::IsDead()
 	}
 	return false;
 }
-void PiranhaPlant::SetBeingSkilled()
+void PiranhaPlant::SetBeingSkilled(int nx)
 {
 	this->SetState(PIRANHAPLANT_STATE_DEATH);
 	y += PIRANHAPLANT_BBOX_HEIGHT -

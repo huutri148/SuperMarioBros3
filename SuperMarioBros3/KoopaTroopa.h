@@ -39,7 +39,7 @@ public:
 
 	virtual void SetState(int state);
 	virtual void SetBeingStromped();
-	virtual void SetBeingSkilled();
+	virtual void SetBeingSkilled(int nx);
 	virtual void EnableAgain();
 	KoopaTroopa(float x, float y, int _type = KOOPATROOPA_GREEN_TYPE);
 };

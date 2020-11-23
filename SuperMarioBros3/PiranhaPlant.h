@@ -16,7 +16,7 @@ public:
 
 	virtual bool IsDead();
 	virtual void SetBeingStromped() ;
-	virtual void SetBeingSkilled();
+	virtual void SetBeingSkilled(int nx);
 	virtual void EnableAgain() ;
 	PiranhaPlant(float x, float y, int _type = PIRANHAPLANT_GREEN_TYPE);
 	

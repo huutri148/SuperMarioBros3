@@ -16,7 +16,7 @@ public:
 	virtual void SetState(int state);
 	virtual bool IsDead();
 	virtual void SetBeingStromped();
-	virtual void SetBeingSkilled();
+	virtual void SetBeingSkilled(int nx);
 	virtual void EnableAgain();
 	Goomba(float x, float y) :Enemy(x,y)
 	{

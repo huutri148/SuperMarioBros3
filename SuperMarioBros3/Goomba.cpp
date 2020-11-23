@@ -108,9 +108,9 @@ void Goomba::SetState(int state)
 		vx = nx *GOOMBA_WALKING_SPEED;
 		break;
 	case GOOMBA_STATE_BEING_SKILLED:
-		vy = -GOOMBA_DIE_DEFLECT_SPEED;
+		vy = -GOOMBA_DIE_DEFLECT_SPEED_Y;
+		vx = nx * GOOMBA_DIE_DEFLECT_SPEED_X;
 		ny = 1;
-		vx = 0;
 		break;
 	case GOOMBA_STATE_BEING_STROMPED:
 		y += GOOMBA_BBOX_HEIGHT -
@@ -141,8 +141,9 @@ void Goomba::SetBeingStromped()
 	this->SetState(GOOMBA_STATE_BEING_STROMPED);
 	deathTime = GetTickCount();
 }
-void Goomba::SetBeingSkilled()
+void Goomba::SetBeingSkilled(int nx)
 {
+	this->nx = nx;
 	this->SetState(GOOMBA_STATE_BEING_SKILLED);
 	deathTime = GetTickCount();
 }
