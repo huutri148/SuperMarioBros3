@@ -176,7 +176,6 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 	}
 	case OBJECT_TYPE_FIREPLANTBULLET:
 	{
-		
 		obj = new FirePlantBullet();
 		break;
 	}
@@ -195,15 +194,12 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 			coin = ((Coin*)obj);
 		break;
 	}
-		
-	break;
 	case OBJECT_TYPE_RACCOONLEAF:
 	{
 		obj = new RaccoonLeaf();
 		leaf = ((RaccoonLeaf*)obj);
 		break;
 	}
-	
 	case OBJECT_TYPE_MUSROOM:
 	{
 		obj = new Mushroom(); 
@@ -216,7 +212,11 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 		pSwitch = ((PSwitch*)obj);
 		break;
 	}
-		
+	case OBJECT_TYPE_PARAGOOMBA:
+	{
+		obj = new ParaGoomba();
+		break;
+	}
 	default:
 		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
 		return;
@@ -326,16 +326,7 @@ void PlayScene::Update(DWORD dt)
 	
 	for (size_t i = 0; i < objects.size(); i++)
 	{
-		
-		if (dynamic_cast<Enemy*>(objects[i]))
-		{
-			if (dynamic_cast<Enemy*>(objects[i])->IsAbleToActive() == true)
-				objects[i]->Update(dt, &coObjects);
-			else
-				continue;
-		}
-		else
-			objects[i]->Update(dt, &coObjects);
+		objects[i]->Update(dt, &coObjects);
 	}
 	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
 	if (player == NULL) return;

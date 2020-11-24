@@ -147,11 +147,11 @@ void Goomba::SetBeingSkilled(int nx)
 	this->SetState(GOOMBA_STATE_BEING_SKILLED);
 	deathTime = GetTickCount();
 }
-void Goomba::EnableAgain()
-{
-	Enemy::EnableAgain();
-	this->SetState(GOOMBA_STATE_WALKING);
-}
+//void Goomba::EnableAgain()
+//{
+//	Enemy::EnableAgain();
+//	this->SetState(GOOMBA_STATE_WALKING);
+//}
 void Goomba::HandleTimeSwitchState()
 {
 	if (GetTickCount64() - deathTime > GOOMA_INACTIVE_TIME &&

@@ -20,6 +20,7 @@
 #include"Mushroom.h"
 #include"Item.h"
 #include"PSwitch.h"
+#include"ParaGoomba.h"
 
 class PlayScene : public Scene
 {
@@ -56,11 +57,9 @@ public:
 	Mushroom* GetMushroom() { return mushroom; }
 	Coin* GetCoin() { return coin; };
 	PSwitch* GetSwitch() { return pSwitch; };
-	//LPFireBall GetFireBall() { return fireball; }
 	void GetColliableObj(LPGAMEOBJECT curObj,
 		vector<LPGAMEOBJECT>& coObjects);
 	friend class CPlayScenceKeyHandler;
-
 };
 
 class PlayScenceKeyHandler : public ScenceKeyHandler

@@ -286,11 +286,11 @@ void KoopaTroopa::SetBeingSkilled(int _nx)
 	isBumped = false;
 	isPickedUp = false;	
 }
-void KoopaTroopa::EnableAgain()
-{
-	Enemy::EnableAgain();
-	this->SetState(KOOPATROOPA_STATE_WALKING);
-}
+//void KoopaTroopa::EnableAgain()
+//{
+//	Enemy::EnableAgain();
+//	this->SetState(KOOPATROOPA_STATE_WALKING);
+//}
 void KoopaTroopa::HandleTimeSwitchState()
 {
 	if (GetTickCount() - deathTime > KOOPATROOPA_INACTIVE_TIME &&

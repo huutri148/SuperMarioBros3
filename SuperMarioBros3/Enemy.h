@@ -21,12 +21,13 @@ public:
 	virtual void SetEntryPosition(float x, float y);
 	void SetEnable() { this->isEnable = true; };
 	void SetDead() { this->isDead = true; };
-	virtual bool IsEnable() { return this->isEnable; };
-	void EnableAgain();
-	bool IsAbleToActive();
+	//virtual bool IsEnable() { return this->isEnable; };
+	//void EnableAgain();
+	/*bool IsAbleToActive();*/
 
 	Enemy();
-	Enemy(float x, float y) { this->x = x; this->y = y; this->SetEntryPosition(x, y); isEnable = false; }
+	Enemy(float x, float y) { this->x = x; this->y = y;
+	this->SetEntryPosition(x, y); isEnable = true; }
 	~Enemy();
 };
 
