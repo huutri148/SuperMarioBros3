@@ -93,7 +93,7 @@ void Goomba::Render()
 			if (state == GOOMBA_STATE_BEING_STROMPED) {
 				ani = GOOMBA_ANI_DIE;
 			}
-			animation_set->at(ani)->Render(nx,ny, x, y);
+			animation_set->at(ani)->Render(nx,ny, round(x),round( y));
 		}
 	}
 	//RenderBoundingBox();

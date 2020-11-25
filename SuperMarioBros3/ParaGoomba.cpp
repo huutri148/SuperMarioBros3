@@ -1,5 +1,6 @@
 #include "ParaGoomba.h"
 #include "Block.h"
+#include"Utils.h"
 void ParaGoomba::GetBoundingBox(float& left, float& top,
 	float& right, float& bottom,
 	bool isEnable)
@@ -9,7 +10,7 @@ void ParaGoomba::GetBoundingBox(float& left, float& top,
 		left = x;
 		top = y;
 		right = x + PARAGOOMBA_BBOX_WIDTH;
-		bottom = y + PARAGOOMBA_BBOX_HEIGHT;
+		bottom = y + PARAGOOMBA_BBOX_HEIGHT_WALKING;
 	}
 	else
 	{
@@ -46,18 +47,13 @@ void ParaGoomba::Update(DWORD dt,
 		x += min_tx * dx + nx * 0.4f;
 		y += min_ty * dy + ny * 0.4f;
 		if (ny != 0) vy = 0;
+
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
-			if (!dynamic_cast<Block*>(e->obj))
-			{
-				if (nx != 0 && ny == 0)
-				{
-					this->ChangeDirect();
-				}
-			}
 		}
 	}
+	DebugOut(L"\nVy: %f", vy);
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 }
 void ParaGoomba::Render()
@@ -69,7 +65,7 @@ void ParaGoomba::Render()
 			ani = PARAGOOMBA_ANI_WALKING;
 		else
 			ani = PARAGOOMBA_ANI_JUMPING;
-		animation_set->at(ani)->Render(nx, ny, x, y);
+		animation_set->at(ani)->Render(nx, ny, round(x), round(y));
 	}
 }
 void ParaGoomba::SetState(int state)
