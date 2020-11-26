@@ -2,8 +2,7 @@
 #include "Utils.h"
 void FirePlantBullet::Render()
 {
-	if(isEnable)
-		animation_set->at(0)->Render(-1, x, y);
+	animation_set->at(0)->Render(-1, round(x), round(y));
 }
 void FirePlantBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {

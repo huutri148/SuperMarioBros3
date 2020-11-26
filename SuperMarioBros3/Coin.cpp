@@ -80,7 +80,7 @@ void Coin::Render()
 				ani = COIN_ANI_TYPE_1;
 			else
 				ani = COIN_ANI_TYPE_2;
-			animation_set->at(ani)->Render(-1, x, y);
+			animation_set->at(ani)->Render(-1,round( x),round( y));
 		}
 	}
 	//RenderBoundingBox();

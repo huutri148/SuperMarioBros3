@@ -7,7 +7,7 @@ void RaccoonLeaf::Render()
 	if (isEnable == true)
 	{
 		int ani = RACCOONLEAF_ANI_NORMAL;
-		animation_set->at(ani)->Render(this->nx, x, y);
+		animation_set->at(ani)->Render(this->nx, round(x), round(y));
 	}
 	//RenderBoundingBox();
 }

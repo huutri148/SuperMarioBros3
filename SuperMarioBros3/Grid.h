@@ -34,7 +34,7 @@ public:
 
 	void Add(Unit* unit);
 	void Move(Unit* unit, float x, float y);
-	void Get(D3DVECTOR camPosition, vector<Unit*>& listUnits);
+	void Get(float cam_x,float cam_y, vector<Unit*>& listUnits);
 	void Out();
 };
 

@@ -40,7 +40,8 @@ public:
 	virtual void SetState(int state);
 	virtual void SetBeingStromped();
 	virtual void SetBeingSkilled(int nx);
-	virtual void EnableAgain();
+	virtual void Inactive() { this->SetState(KOOPATROOPA_STATE_INACTIVE); }
+	/*virtual void EnableAgain();*/
 	KoopaTroopa(float x, float y, int _type = KOOPATROOPA_GREEN_TYPE);
 };
 
