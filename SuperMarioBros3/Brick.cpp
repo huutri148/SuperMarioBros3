@@ -38,42 +38,42 @@ void Brick::SetEmpty()
 		this->SetState(BRICK_STATE_EMPTY);
 		LPSCENE scence = Game::GetInstance()->GetCurrentScene();
 		Mario* mario = ((PlayScene*)scence)->GetPlayer();
-		Item* item;
+		/*Item* item;*/
 		int form = mario->GetForm();
 		switch (type)
 		{
-		case BRICK_ITEM_COIN_TYPE:
-		{
-			item = ((PlayScene*)scence)->GetCoin();
-			item->Appear(x, y);
-			break;
-		}
-		case BRICK_POWER_UP_TYPE:
-		{
-			if (form == MARIO_SMALL_FORM)
-			{
-				item = ((PlayScene*)scence)->GetMushroom();
-				item->Appear(x, y);
-			}
-			else
-			{
-				item = ((PlayScene*)scence)->GetLeaf();
-				item->Appear(x, y);
-			}
-			break;
-		}
-		case BRICK_PSWITCH_TYPE:
-		{
-			item = ((PlayScene*)scence)->GetSwitch();
-			item->Appear(x, y);
-			break;
-		}
-		case BRICK_ITEM_EXTRA_LIFE_TYPE:
-		{
-			item = ((PlayScene*)scence)->GetMushroom();
-			((Mushroom*)item)->Appear(x, y, MUSHROOM_TYPE_1UP);
-			break;
-		}
+		//case BRICK_ITEM_COIN_TYPE:
+		//{
+		///*	item = ((PlayScene*)scence)->GetCoin();*/
+		//	item->Appear(x, y);
+		//	break;
+		//}
+		//case BRICK_POWER_UP_TYPE:
+		//{
+		//	if (form == MARIO_SMALL_FORM)
+		//	{
+		//		item = ((PlayScene*)scence)->GetMushroom();
+		//		item->Appear(x, y);
+		//	}
+		//	else
+		//	{
+		//		item = ((PlayScene*)scence)->GetLeaf();
+		//		item->Appear(x, y);
+		//	}
+		//	break;
+		//}
+		//case BRICK_PSWITCH_TYPE:
+		//{
+		//	item = ((PlayScene*)scence)->GetSwitch();
+		//	item->Appear(x, y);
+		//	break;
+		//}
+		//case BRICK_ITEM_EXTRA_LIFE_TYPE:
+		//{
+		//	item = ((PlayScene*)scence)->GetMushroom();
+		//	((Mushroom*)item)->Appear(x, y, MUSHROOM_TYPE_1UP);
+		//	break;
+		//}
 		}
 	}
 	else
