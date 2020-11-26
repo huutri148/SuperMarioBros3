@@ -218,7 +218,7 @@ void FirePiranhaPlant::Shooting()
 	Game* game = Game::GetInstance();
 	LPSCENE scence = game->GetCurrentScene();
 	Mario* mario = ((PlayScene*)scence)->GetPlayer();
-	FirePlantBullet* bullet = ((PlayScene*)scence)->GetPlantBullet();
+	/*FirePlantBullet* bullet = ((PlayScene*)scence)->GetPlantBullet();*/
 	float mX, mY;
 	mario->GetPosition(mX, mY);
 	float diffX = mX - x, diffY = mY - y;
@@ -242,8 +242,8 @@ void FirePiranhaPlant::Shooting()
 			else
 				direct = FIREBULLET_DIRECT_3;
 		}
-		bullet->Shoot(x + FIREPIRAHANPLANT_SHOOTING_X
-			, y , nx, direct);
+		/*bullet->Shoot(x + FIREPIRAHANPLANT_SHOOTING_X
+			, y , nx, direct);*/
 		isShooted = true;
 	}
 

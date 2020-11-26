@@ -226,7 +226,7 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 		int scene_id = atoi(tokens[6].c_str());
 		obj = new CPortal(x, y, r, b, scene_id);
 	}*/
-	case OBJECT_TYPE_COIN:
+	/*case OBJECT_TYPE_COIN:
 	{
 		int set_type = atoi(tokens[4].c_str());
 		obj = new Coin(set_type);
@@ -258,7 +258,7 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 		pSwitch = ((PSwitch*)obj);
 		unit = new Unit(grid, obj, x, y);
 		break;
-	}
+	}*/
 
 	default:
 		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
@@ -497,26 +497,6 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	case DIK_R:
 		mario->Reset();
 		break;
-	case DIK_C:
-	{
-		KoopaTroopa* koopa = new KoopaTroopa(960, 383, 1);
-		koopa->SetEnable(true);
-		AnimationSets* animation_sets = AnimationSets::GetInstance();
-		LPANIMATION_SET ani_set = animation_sets->Get(4);
-		koopa->SetAnimationSet(ani_set);
-		((PlayScene*)scence)->AddObject((KoopaTroopa*)koopa);
-		break;
-	}
-	case DIK_G:
-	{
-		Goomba* goopa = new Goomba(960, 383);
-		goopa->SetEnable(true);
-		AnimationSets* animation_sets = AnimationSets::GetInstance();
-		LPANIMATION_SET ani_set = animation_sets->Get(3);
-		goopa->SetAnimationSet(ani_set);
-		((PlayScene*)scence)->AddObject((Goomba*)goopa);
-		break;
-	}
 	case DIK_I:
 		mario->Information();
 		break;
@@ -526,7 +506,7 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		if (flag == 1)
 		{
 			GameObject* fireBall = mario->ShootFireBall();
-			((PlayScene*)scence)->AddObject((FireBall*)fireBall);
+			//((PlayScene*)scence)->AddObject((FireBall*)fireBall);
 		}
 		if (flag == 2)
 		{
@@ -619,21 +599,16 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 	}
 	
 }
-void PlayScene::AddObject(GameObject* obj)
-{
-	this->objects.push_back(obj);
-	DebugOut(L"Size: %d", this->objects.size());
-}
 //Bật Camera khi Mario bay 
 void PlayScene::TurnCamY(float _playerY, bool isFlying, int ScreenHeight, int MapHeight)
 {
-	if (_turnCamY == true && _playerY > 448 - ScreenHeight/2)
+	if (isTurnCamY == true && _playerY > 448 - ScreenHeight/2)
 	{
-		_turnCamY = false;
+		isTurnCamY = false;
 	}
 	
 	if (isFlying == true)
-		_turnCamY = true;
+		isTurnCamY = true;
 }
 void PlayScene::UpdateCameraPosition()
 {
@@ -666,7 +641,7 @@ void PlayScene::UpdateCameraPosition()
 		Sy = (float)16.0f;
 	else
 	{
-		if (_turnCamY)
+		if (isTurnCamY)
 			Sy = cy;
 	}
 	Game::GetInstance()->SetCamPos(round(Sx), round(Sy));
