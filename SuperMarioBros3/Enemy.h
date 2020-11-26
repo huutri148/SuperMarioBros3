@@ -6,10 +6,12 @@ class Enemy :public GameObject
 protected:
 	DWORD deathTime = 0;
 	float entryX, entryY;
-	bool isDead = false;
+	
 	
 public:
 	bool isAbleToActive = false;
+	bool isDead = false;
+
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom,bool isEnable) = 0;
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	virtual void Render() = 0;
@@ -17,10 +19,13 @@ public:
 
 	virtual bool IsEnable() { return this->isEnable; };
 	virtual bool IsDead() = 0;
+	virtual bool IsInactive() = 0;
+	
 
 	virtual void HandleTimeSwitchState() = 0;
 	virtual void ChangeDirect() { this->nx = -nx; this->vx = -this->vx; };
 	virtual void Inactive() = 0;
+	virtual void Active() = 0;
 	void AbleToActive();
 
 	virtual void SetEntryPosition(float x, float y);
@@ -30,9 +35,6 @@ public:
 	void SetDead() { this->isDead = true; };
 	virtual void SetBeingStromped() = 0;
 	virtual void SetBeingSkilled(int nx) = 0;
-
-	//void EnableAgain();
-	//bool IsAbleToActive();
 
 	Enemy();
 	Enemy(float x, float y) { this->x = x;

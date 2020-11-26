@@ -6,9 +6,7 @@ void PiranhaPlant::GetBoundingBox(float& left, float& top,
 	float& right, float& bottom,
 	bool isEnable)
 {
-	if (isEnable == true)
-	{
-		if (state != PIRANHAPLANT_STATE_DEATH)
+			if (state != PIRANHAPLANT_STATE_DEATH)
 		{
 			left = x;
 			top = y;
@@ -22,15 +20,6 @@ void PiranhaPlant::GetBoundingBox(float& left, float& top,
 			right = x + PIRANHAPLANT_BBOX_DEATH_WIDTH;
 			bottom = y + PIRANHAPLANT_BBOX_DEATH_HEIGHT;
 		}
-	}
-
-	else
-	{
-		left = 0;
-		top = 0;
-		right = 0;
-		bottom = 0;
-	}
 }
 void PiranhaPlant::Update(DWORD dt,
 	vector<LPGAMEOBJECT>* coObjects)
@@ -176,6 +165,7 @@ void PiranhaPlant::SetBeingSkilled(int nx)
 	y += PIRANHAPLANT_BBOX_HEIGHT -
 		PIRANHAPLANT_BBOX_DEATH_HEIGHT;
 	deathTime = GetTickCount();
+	isDead = true;
 }
 void PiranhaPlant::SetBeingStromped()
 {
@@ -188,7 +178,7 @@ void PiranhaPlant::HandleTimeSwitchState()
 		&& switchTime != 0)
 	{
 		switchTime = 0;
-		this->SetState(PIRANHAPLANT_STATE_DARTING);
+		isEnable = false;
 	}
 	if (state == PIRANHAPLANT_STATE_DEATH &&
 		GetTickCount() - deathTime > PIRANHAPLANT_INACTIVE_TIME
