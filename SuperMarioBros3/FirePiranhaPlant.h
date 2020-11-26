@@ -22,7 +22,8 @@ public:
 	virtual bool IsDead();
 	virtual void SetBeingStromped();
 	virtual void SetBeingSkilled(int nx);
-	virtual void EnableAgain();
+	virtual void Inactive() { this->SetState(FIREPIRANHAPLANT_STATE_INACTIVE); };
+	/*virtual void EnableAgain();*/
 	FirePiranhaPlant(float x, float y, int _type = PIRANHAPLANT_RED_TYPE);
 };
 

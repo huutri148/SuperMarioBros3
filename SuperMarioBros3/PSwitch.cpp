@@ -10,7 +10,7 @@ void PSwitch::Render()
 		int ani = PSWITCH_ANI_APPEAR;
 		if (state == PSWITCH_STATE_PRESSED)
 			ani = PSWITCH_ANI_PRESSED;
-		animation_set->at(ani)->Render(-1, x, y);
+		animation_set->at(ani)->Render(-1, round(x),round( y));
 	}
 }
 

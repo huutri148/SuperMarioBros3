@@ -5,30 +5,19 @@ void FirePiranhaPlant::GetBoundingBox(float& left, float& top,
 	float& right, float& bottom,
 	bool isEnable)
 {
-	if (isEnable == true)
+	if (state != FIREPIRANHAPLANT_STATE_DEATH)
 	{
-		if (state != FIREPIRANHAPLANT_STATE_DEATH)
-		{
-			left = x;
-			top = y;
-			right = x + PIRANHAPLANT_BBOX_WIDTH;
-			bottom = y + PIRANHAPLANT_BBOX_HEIGHT;
-		}
-		else
-		{
-			left = x;
-			top = y;
-			right = x + FIREPIRANHAPLANT_BBOX_DEATH_WIDTH;
-			bottom = y + FIREPIRANHAPLANT_BBOX_DEATH_HEIGHT;
-		}
+		left = x;
+		top = y;
+		right = x + PIRANHAPLANT_BBOX_WIDTH;
+		bottom = y + PIRANHAPLANT_BBOX_HEIGHT;
 	}
-
 	else
 	{
-		left = 0;
-		top = 0;
-		right = 0;
-		bottom = 0;
+		left = x;
+		top = y;
+		right = x + FIREPIRANHAPLANT_BBOX_DEATH_WIDTH;
+		bottom = y + FIREPIRANHAPLANT_BBOX_DEATH_HEIGHT;
 	}
 }
 void FirePiranhaPlant::Update(DWORD dt,
@@ -82,30 +71,27 @@ void FirePiranhaPlant::Update(DWORD dt,
 				}
 			}
 		}
-
 	}
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 }
 void FirePiranhaPlant::Render()
 {
-	if (isEnable == true)
+	if (state != FIREPIRANHAPLANT_STATE_INACTIVE)
 	{
-			if (state != FIREPIRANHAPLANT_STATE_INACTIVE)
+		int ani = FIREPIRANHAPLANT_GREEN_ANI_DARTING_TOP;
+		if (state == FIREPIRANHAPLANT_STATE_DARTING)
+		{
+			if (shootInGround == false)
 			{
-				int ani = FIREPIRANHAPLANT_GREEN_ANI_DARTING_TOP;
-				if (state == FIREPIRANHAPLANT_STATE_DARTING)
-				{
-					if (shootInGround == false)
-					{
-						if (type != FIREPIRANHAPLANT_RED_TYPE)
-							ani = FIREPIRANHAPLANT_GREEN_ANI_DARTING_TOP;
-						else
-							ani =FIREPIRANHAPLANT_RED_ANI_DARTING_TOP;
-					}
-					else
-					{
-						if (type != FIREPIRANHAPLANT_RED_TYPE)
-							ani = FIREPIRANHAPLANT_GREEN_ANI_DARTING_BOTTOM;
+				if (type != FIREPIRANHAPLANT_RED_TYPE)
+					ani = FIREPIRANHAPLANT_GREEN_ANI_DARTING_TOP;
+				else
+					ani =FIREPIRANHAPLANT_RED_ANI_DARTING_TOP;
+			}
+			else
+			{
+				if (type != FIREPIRANHAPLANT_RED_TYPE)
+					ani = FIREPIRANHAPLANT_GREEN_ANI_DARTING_BOTTOM;
 						else
 							ani = FIREPIRANHAPLANT_RED_ANI_DARTING_BOTTOM;
 					}
@@ -130,9 +116,9 @@ void FirePiranhaPlant::Render()
 				}
 				else if (state == FIREPIRANHAPLANT_STATE_DEATH)
 					ani = FIREPIRANHAPLANT_ANI_DEATH;
-				animation_set->at(ani)->Render(nx, x, y);
+				animation_set->at(ani)->Render(nx, round(x),round( y));
 			}
-	}
+	
 }
 FirePiranhaPlant::FirePiranhaPlant(float x, float y, int _type) :Enemy(x, y)
 {
@@ -162,7 +148,9 @@ void FirePiranhaPlant::SetState(int _state)
 		vy = 0;
 		break;
 	case FIREPIRANHAPLANT_STATE_INACTIVE:
-		isEnable = false;
+	/*	isEnable = false;*/
+		x = entryX;
+		y = entryY;
 		break;
 	}
 }
@@ -186,10 +174,7 @@ void FirePiranhaPlant::SetBeingStromped()
 {
 
 }
-void FirePiranhaPlant::EnableAgain()
-{
 
-}
 void FirePiranhaPlant::HandleTimeSwitchState()
 {
 	DWORD current = GetTickCount();
@@ -217,7 +202,7 @@ void FirePiranhaPlant::HandleTimeSwitchState()
 		&& current - switchTime < FIREPIRANHAPLANT_SWITCH_TIME
 		&& isShooted== false)
 	{
-		Shooting();
+		/*Shooting();*/
 	}
 	// Chuyển trạng thái khi ở trên Pipe sang trạng thái đợi bắn
 	if (state == FIREPIRANHAPLANT_STATE_SHOOTING &&

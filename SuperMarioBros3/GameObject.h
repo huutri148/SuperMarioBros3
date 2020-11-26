@@ -98,7 +98,7 @@ public:
 		this->y = y;
 		vx = 0;
 		vy = 0;
-		isEnable = false;
+		isEnable = true;
 		dt = 0;
 		state = 0;
 	}

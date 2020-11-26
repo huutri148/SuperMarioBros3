@@ -10,37 +10,18 @@ void Goomba::GetBoundingBox(float& left, float& top,
 	float& right, float& bottom,
 	bool isEnable)
 {
-	if (isEnable == true)
-	{
-
-		left = x;
-		top = y;
-		right = x + GOOMBA_BBOX_WIDTH;
-
-		if (state == GOOMBA_STATE_DIE)
-			bottom = y + GOOMBA_BBOX_HEIGHT_DIE;
-		else
-			bottom = y + GOOMBA_BBOX_HEIGHT;
-	}
-
+	left = x;
+	top = y;
+	right = x + GOOMBA_BBOX_WIDTH;
+	if (state == GOOMBA_STATE_DIE)
+		bottom = y + GOOMBA_BBOX_HEIGHT_DIE;
 	else
-	{
-		left = 0;
-		top = 0;
-		right = 0;
-		bottom = 0;
-	}
+		bottom = y + GOOMBA_BBOX_HEIGHT;
 }
 
 void Goomba::Update(DWORD dt,
 	vector<LPGAMEOBJECT>* coObjects)
 {
-	/*if (this->IsAbleToActive() == true)
-	{
-		this->SetPosition(entryX, entryY);
-		this->SetState(GOOMBA_STATE_WALKING);
-		isEnable = true;
-	}*/
 	HandleTimeSwitchState();
 	if (state == GOOMBA_STATE_INACTIVE)
 		return;
@@ -84,19 +65,14 @@ void Goomba::Update(DWORD dt,
 }
 void Goomba::Render()
 {
-	if (isEnable == true)
+	if (state != GOOMBA_STATE_INACTIVE)
 	{
-		if (state != GOOMBA_STATE_INACTIVE)
-		{
-			int ani;
-			ani = GOOMBA_ANI_WALKING;
-			if (state == GOOMBA_STATE_BEING_STROMPED) {
-				ani = GOOMBA_ANI_DIE;
-			}
-			animation_set->at(ani)->Render(nx,ny, x, y);
-		}
+		int ani;
+		ani = GOOMBA_ANI_WALKING;
+		if (state == GOOMBA_STATE_BEING_STROMPED)
+			ani = GOOMBA_ANI_DIE;
+		animation_set->at(ani)->Render(nx, ny, round(x), round(y));
 	}
-	//RenderBoundingBox();
 }
 void Goomba::SetState(int state)
 {
@@ -120,7 +96,9 @@ void Goomba::SetState(int state)
 		break;
 	case GOOMBA_STATE_INACTIVE:
 		vx = 0;
-		isEnable = false;
+	/*	isEnable = false;*/
+		x = entryX;
+		y = entryY;
 		break;
 	}
 }
@@ -146,11 +124,6 @@ void Goomba::SetBeingSkilled(int nx)
 	this->nx = nx;
 	this->SetState(GOOMBA_STATE_BEING_SKILLED);
 	deathTime = GetTickCount();
-}
-void Goomba::EnableAgain()
-{
-	Enemy::EnableAgain();
-	this->SetState(GOOMBA_STATE_WALKING);
 }
 void Goomba::HandleTimeSwitchState()
 {

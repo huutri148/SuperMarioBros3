@@ -103,31 +103,28 @@ void PiranhaPlant::Update(DWORD dt,
 }
 void PiranhaPlant::Render()
 {
-	if (isEnable == true)
+	if (state != PIRANHAPLANT_STATE_INACTIVE)
 	{
-		if (state != PIRANHAPLANT_STATE_INACTIVE)
+		int ani = 0;
+		if (state == PIRANHAPLANT_STATE_DARTING)
 		{
-			int ani = 0;
-			if (state == PIRANHAPLANT_STATE_DARTING)
-			{
-				if (type == PIRANHAPLANT_GREEN_TYPE)
-					ani = PIRANHAPLANT_GREEN_ANI_DARTING;
-				else
-					ani = PIRANHAPLANT_RED_ANI_DARTING;
-			}	
-			else if (state == PIRANHAPLANT_STATE_BITING)
-			{
-				if (type == PIRANHAPLANT_GREEN_TYPE)
-					ani = PIRANHAPLANT_GREEN_ANI_BITING;
-				else
-					ani = PIRANHAPLANT_RED_ANI_BITING;
-			}
-			else if (state == PIRANHAPLANT_STATE_DEATH)
-			{
-				ani = PIRANHAPLANT_ANI_DEATH;
-			}
-			animation_set->at(ani)->Render(-1, x, y);
+			if (type == PIRANHAPLANT_GREEN_TYPE)
+				ani = PIRANHAPLANT_GREEN_ANI_DARTING;
+			else
+				ani = PIRANHAPLANT_RED_ANI_DARTING;
+		}	
+		else if (state == PIRANHAPLANT_STATE_BITING)
+		{
+			if (type == PIRANHAPLANT_GREEN_TYPE)
+				ani = PIRANHAPLANT_GREEN_ANI_BITING;
+			else
+				ani = PIRANHAPLANT_RED_ANI_BITING;
 		}
+		else if (state == PIRANHAPLANT_STATE_DEATH)
+		{
+			ani = PIRANHAPLANT_ANI_DEATH;
+		}
+		animation_set->at(ani)->Render(-1,round( x),round( y));
 	}
 }
 PiranhaPlant::PiranhaPlant(float x, float y, int _type) :Enemy(x, y)
@@ -158,7 +155,9 @@ void PiranhaPlant::SetState(int _state)
 		vy = 0;
 		break;
 	case PIRANHAPLANT_STATE_INACTIVE:
-		isEnable = false;
+		x = entryX;
+		y = entryY;
+		/*isEnable = false;*/
 		break;
 	}
 }
@@ -179,10 +178,6 @@ void PiranhaPlant::SetBeingSkilled(int nx)
 	deathTime = GetTickCount();
 }
 void PiranhaPlant::SetBeingStromped()
-{
-
-}
-void PiranhaPlant::EnableAgain()
 {
 
 }

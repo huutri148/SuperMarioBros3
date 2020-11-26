@@ -2,34 +2,20 @@
 #include"Game.h"
 void Mushroom::Render()
 {
-
-	if (isEnable == true)
-	{
-		int ani = MUSHROOM_ANI_POWERUP;
-		if (type == MUSHROOM_TYPE_1UP)
-			ani = MUSHROOM_ANI_1UP;
-		animation_set->at(ani)->Render(this->nx, x, y);
-	}
+	int ani = MUSHROOM_ANI_POWERUP;
+	if (type == MUSHROOM_TYPE_1UP)
+		ani = MUSHROOM_ANI_1UP;
+	animation_set->at(ani)->Render(this->nx, round(x),round( y));
 	//RenderBoundingBox();
 }
 
 void Mushroom::GetBoundingBox(float& l, float& t, float& r,
 	float& b, bool isEnable)
 {
-	if (isEnable == true)
-	{
-		l = x;
-		t = y;
-		r = x + MUSHROOM_BBOX_WIDTH;
-		b = y + MUSHROOM_BBOX_HEIGHT;
-	}
-	else
-	{
-		l = 0;
-		t = 0;
-		r = 0;
-		b = 0;
-	}
+	l = x;
+	t = y;
+	r = x + MUSHROOM_BBOX_WIDTH;
+	b = y + MUSHROOM_BBOX_HEIGHT;
 
 }
 void Mushroom::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -129,7 +115,6 @@ void Mushroom::Used()
 }
 Mushroom::Mushroom()
 {
-	isEnable = false;
 }
 void Mushroom::SetAppearedDirect()
 {

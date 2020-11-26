@@ -36,7 +36,7 @@ class Game
 
 	float cam_x = 0.0f;
 	float cam_y = 0.0f;
-
+	//D3DVECTOR cameraPosition;
 	int screen_width;
 	int screen_height;
 
@@ -82,7 +82,7 @@ public:
 
 	int GetScreenWidth() { return screen_width; };
 	int GetScreenHeight() { return screen_height; };
-
+	//D3DXVECTOR3 GetCameraPositon() { return this->cameraPosition; }
 
 	void Load(LPCWSTR gameFile);
 	LPSCENE GetCurrentScene() { return scenes[current_scene]; };

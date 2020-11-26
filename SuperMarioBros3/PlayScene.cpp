@@ -22,7 +22,20 @@ PlayScene::PlayScene(int id, LPCWSTR filePath) :
 */
 
 
+void PlayScene::_ParseSection_GRID(string line)
+{
+	vector<string> tokens = split(line);
 
+	if (tokens.size() < 4) return; // skip invalid lines
+
+	int W = atoi(tokens[0].c_str());
+	int H = atoi(tokens[1].c_str());
+	int x = atoi(tokens[2].c_str());
+	int y = atoi(tokens[3].c_str());
+
+	grid = new Grid(W, H, x, y);
+	DebugOut(L"\nParseSection_GRID: Done");
+}
 void PlayScene::_ParseSection_TEXTURES(string line)
 {
 	vector<string> tokens = split(line);
@@ -117,8 +130,8 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 	if (tokens.size() < 3) return; // skip invalid lines - an object set must have at least id, x, y
 
 	int object_type = atoi(tokens[0].c_str());
-	float x =(float) atof(tokens[1].c_str());
-	float y =(float) atof(tokens[2].c_str());
+	float x = (float)atof(tokens[1].c_str());
+	float y = (float)atof(tokens[2].c_str());
 
 	int ani_set_id = atoi(tokens[3].c_str());
 
@@ -137,47 +150,73 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 		}
 		obj = new Mario();
 		player = (Mario*)obj;
-
 		DebugOut(L"[INFO] Player object created!\n");
 		break;
-	case OBJECT_TYPE_GOOMBA: obj = new Goomba(x,y); break;
-	case OBJECT_TYPE_BRICK: 
+	case OBJECT_TYPE_GOOMBA: 
+	{
+		obj = new Goomba(x, y);
+		unit = new Unit(grid, obj, x, y);
+		break;
+	}
+	case OBJECT_TYPE_BRICK:
 	{
 		int set_type = atoi(tokens[4].c_str());
-		obj = new Brick(x, y,set_type);
+		obj = new Brick(x, y, set_type);
+		unit = new Unit(grid, obj, x, y);
 		break;
 	}
 	case OBJECT_TYPE_KOOPAS:
 	{
 		int set_type = atoi(tokens[4].c_str());
-		obj = new KoopaTroopa(x, y,set_type);
+		obj = new KoopaTroopa(x, y, set_type);
+		unit = new Unit(grid, obj, x, y);
 		break;
 	}
-	case OBJECT_TYPE_BLOCKS: obj = new Block(); break;
-	case OBJECT_TYPE_GROUNDS: obj = new Ground(); break;
-	case OBJECT_TYPE_PIPES:	obj = new Pipe(); break;
+	case OBJECT_TYPE_BLOCKS: 
+	{
+		obj = new Block(); 
+		unit = new Unit(grid, obj, x, y);
+		break;
+	}
+	case OBJECT_TYPE_GROUNDS:
+	{
+		/*int width = atoi(tokens[4].c_str());
+		int height = atoi(tokens[5].c_str());*/
+		obj = new Ground(/*x ,y, width, height*/);
+		unit = new Unit(grid, obj, x, y);
+		break;
+	}
+	case OBJECT_TYPE_PIPES: 
+	{
+		obj = new Pipe();
+		unit = new Unit(grid, obj, x, y);
+		break;
+	}
 	case OBJECT_TYPE_INVISIBLEBRICK:
 	{
 		int set_type = atoi(tokens[4].c_str());
 		obj = new InvisibleBrick(set_type);
+		unit = new Unit(grid, obj, x, y);
 		break;
 	}
 	case OBJECT_TYPE_PIRANHAPLANT:
 	{
 		int set_type = atoi(tokens[4].c_str());
 		obj = new PiranhaPlant(x, y, set_type);
+		unit = new Unit(grid, obj, x, y);
 		break;
 	}
 	case OBJECT_TYPE_FIREPIRANHAPLANT:
 	{
 		int set_type = atoi(tokens[4].c_str());
-		obj = new FirePiranhaPlant(x,y,set_type);
+		obj = new FirePiranhaPlant(x, y, set_type);
+		unit = new Unit(grid, obj, x, y);
 		break;
 	}
 	case OBJECT_TYPE_FIREPLANTBULLET:
 	{
-		
 		obj = new FirePlantBullet();
+		unit = new Unit(grid, obj, x, y);
 		break;
 	}
 	/*case OBJECT_TYPE_PORTAL:
@@ -193,47 +232,48 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 		obj = new Coin(set_type);
 		if (set_type == COIN_TYPE_1)
 			coin = ((Coin*)obj);
+		unit = new Unit(grid, obj, x, y);
 		break;
 	}
-		
+
 	break;
 	case OBJECT_TYPE_RACCOONLEAF:
 	{
 		obj = new RaccoonLeaf();
 		leaf = ((RaccoonLeaf*)obj);
+		unit = new Unit(grid, obj, x, y);
 		break;
 	}
-	
+
 	case OBJECT_TYPE_MUSROOM:
 	{
-		obj = new Mushroom(); 
+		obj = new Mushroom();
 		mushroom = ((Mushroom*)obj);
+		unit = new Unit(grid, obj, x, y);
 		break;
 	}
 	case OBJECT_TYPE_PSWITCH:
 	{
 		obj = new PSwitch();
 		pSwitch = ((PSwitch*)obj);
+		unit = new Unit(grid, obj, x, y);
 		break;
 	}
-		
+
 	default:
 		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
 		return;
 	}
-
 	// General object setup
 	obj->SetPosition(x, y);
-
 	LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
-
 	obj->SetAnimationSet(ani_set);
-	objects.push_back(obj);
-	if (object_type == OBJECT_TYPE_FIREPLANTBULLET)
-		firebullet = ((FirePlantBullet*)obj);
-	
-		
+	//objects.push_back(obj);
+
+	//if (object_type == OBJECT_TYPE_FIREPLANTBULLET)
+	//	firebullet = ((FirePlantBullet*)obj);
 }
+
 void PlayScene::_ParseSection_MAPS(string line)
 {
 	vector<string> tokens = split(line);
@@ -251,13 +291,12 @@ void PlayScene::_ParseSection_MAPS(string line)
 	this->map = new Map(idMap, tolRowTileSet, tolColTileSet, tolRowMap, tolColMap, totalTiles);
 	map->LoadMatrix(MatrixPath.c_str());
 	map->CreateTilesFromTileSet();
+	DebugOut(L"\nParseSection_MAPS: Done");
 }
 
 void PlayScene::Load()
 {
 	DebugOut(L"[INFO] Start loading scene resources from : %s \n", sceneFilePath);
-	
-
 	ifstream f;
 	f.open(sceneFilePath);
 
@@ -275,19 +314,27 @@ void PlayScene::Load()
 			section = SCENE_SECTION_MAPS;
 			continue;
 		}
-
+		if (line == "[GRID]")
+		{
+			section = SCENE_SECTION_GRID;
+			continue;
+		}
 		if (line == "[TEXTURES]") { section = SCENE_SECTION_TEXTURES; continue; }
 		if (line == "[SPRITES]") {
-			section = SCENE_SECTION_SPRITES; continue;
+			section = SCENE_SECTION_SPRITES; 
+			continue;
 		}
 		if (line == "[ANIMATIONS]") {
-			section = SCENE_SECTION_ANIMATIONS; continue;
+			section = SCENE_SECTION_ANIMATIONS;
+			continue;
 		}
 		if (line == "[ANIMATION_SETS]") {
-			section = SCENE_SECTION_ANIMATION_SETS; continue;
+			section = SCENE_SECTION_ANIMATION_SETS;
+			continue;
 		}
 		if (line == "[OBJECTS]") {
-			section = SCENE_SECTION_OBJECTS; continue;
+			section = SCENE_SECTION_OBJECTS;
+			continue;
 		}
 		if (line[0] == '[') { section = SCENE_SECTION_UNKNOWN; continue; }
 
@@ -302,6 +349,7 @@ void PlayScene::Load()
 		case SCENE_SECTION_ANIMATION_SETS: _ParseSection_ANIMATION_SETS(line); break;
 		case SCENE_SECTION_OBJECTS: _ParseSection_OBJECTS(line); break;
 		case SCENE_SECTION_MAPS:	_ParseSection_MAPS(line); break;
+		case SCENE_SECTION_GRID: _ParseSection_GRID(line); break;
 			
 		}
 	}
@@ -315,76 +363,109 @@ void PlayScene::Load()
 
 void PlayScene::Update(DWORD dt)
 {
-	// We know that Mario is the first object in the list hence we won't add him into the colliable object list
-	// TO-DO: This is a "dirty" way, need a more organized way 
+	GetObjectFromGrid();
+	UpdatePlayer(dt);
+	ActiveEnemiesInViewport();
+	//DebugOut(L"\nSize of obj: %d", objects.size());
+	for (UINT i = 0; i < objects.size(); i++)
+	{
+		LPGAMEOBJECT object = objects[i];
+		vector<LPGAMEOBJECT> coObjects;
 
-	vector<LPGAMEOBJECT> coObjects;
-	for (size_t i = 1; i < objects.size(); i++)
-	{
-		coObjects.push_back(objects[i]);
+		GetColliableObjects(object, coObjects);
+		object->Update(dt, &coObjects);
 	}
-	
-	for (size_t i = 0; i < objects.size(); i++)
-	{
-		
-		if (dynamic_cast<Enemy*>(objects[i]))
-		{
-			if (dynamic_cast<Enemy*>(objects[i])->IsAbleToActive() == true)
-				objects[i]->Update(dt, &coObjects);
-			else
-				continue;
-		}
-		else
-			objects[i]->Update(dt, &coObjects);
-	}
-	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
-	if (player == NULL) return;
-	
+
+
 
 	// Update camera to follow mario
-	float cx, cy;
-	player->GetPosition(cx, cy);
-	Game* game = Game::GetInstance();
-	int screenWidth = game->GetScreenWidth();
-	int screenHeight = game->GetScreenHeight();
-	int mapWidth = map->GetMapWidth();
-	int mapHeight = map->GetMapHeiht();
-	float oldCamY = game->GetCamY();
+	SetInactivation();
 
-	TurnCamY(cy, player->IsFlying(), screenHeight, mapHeight);
-	float Sx = 16, Sy = oldCamY;
-	cx -= screenWidth / 2;
-	cy -= screenHeight /2 ;
-	if (player->x > 16 + screenWidth / 2)
+	UpdateCameraPosition();
+	
+	UpdateGrid();
+}
+void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& coObjects)
+{
+	if (dynamic_cast<Item*>(curObj))
 	{
-		Sx = cx;
+		for (auto obj : objects)
+		{
+			if (!dynamic_cast<Enemy*>(obj))
+				coObjects.push_back(obj);
+		}
 	}
-	if (player->x + screenWidth / 2 > mapWidth - 16)
+	else if (dynamic_cast<FirePiranhaPlant*>(curObj) || 
+		dynamic_cast<PiranhaPlant*>(curObj))
 	{
-		Sx =(float)(mapWidth - 16.0f) - screenWidth;
+		for (auto obj : objects)
+		{
+			if (dynamic_cast<Ground*>(obj) || 
+				dynamic_cast<InvisibleBrick*>(obj))
+				coObjects.push_back(obj);
+		}
 	}
-	if (player->y + screenHeight> 448)
+	else if (dynamic_cast<KoopaTroopa*>(curObj))
 	{
-		Sy = (float)(448.0f - screenHeight);
+		for (auto obj : objects)
+		{
+			if (!dynamic_cast<FirePlantBullet*>(obj) && !dynamic_cast<Item*>(obj)
+				&& !dynamic_cast<InvisibleBrick*>(obj))
+				coObjects.push_back(obj);
+		}
 	}
-	if (player->y - screenHeight/2 < 16)
-		Sy = (float)16.0f;
-	else 
+	else if (dynamic_cast<Goomba*>(curObj))
 	{
-		if (_turnCamY)
-			Sy = cy;
+		for (auto obj : objects)
+		{
+			if (!dynamic_cast<Block*>(obj) && !dynamic_cast<FirePlantBullet*>(obj) 
+				&&!dynamic_cast<Item*>(obj) && !dynamic_cast<InvisibleBrick*>(obj))
+				coObjects.push_back(obj);
+		}
 	}
-	Game::GetInstance()->SetCamPos(round(Sx), round(Sy ));
+	else if (dynamic_cast<Mario*>(curObj))
+	{
+		for (auto obj : objects)
+		{
+			if ( dynamic_cast<Ground*>(obj) ||dynamic_cast<Block*>(obj)
+				|| dynamic_cast<Brick*>(obj) || dynamic_cast<Item*>(obj) ||
+				dynamic_cast<Pipe*>(obj))
+				coObjects.push_back(obj);
+			else 
+			{
+				if (dynamic_cast<FirePlantBullet*>(obj) && obj->IsEnable() == true)
+					coObjects.push_back(obj);
+				else if ((dynamic_cast<Goomba*>(obj) || dynamic_cast<KoopaTroopa*>(obj)  ||
+					dynamic_cast<PiranhaPlant*>(obj) || dynamic_cast<FirePiranhaPlant*>(obj))
+					&& obj->isEnable == true)
+					coObjects.push_back(obj);
+			}
+		}
+	}
 }
 
 void PlayScene::Render()
 {
-	this->map->Render();
-	for (unsigned int i = 1; i < objects.size(); i++)
+	Game* game = Game::GetInstance();
+	int screenWidth = game->GetScreenWidth();
+	int screenHeight = game->GetScreenHeight();
+	float cam_x = game->GetCamX();
+	float cam_y = game->GetCamY();
+	this->map->Render(cam_x,cam_y,screenWidth,screenHeight);
+	//DebugOut(L"\nRender size:\t,%d", objects.size());
+	for (unsigned int i = 0; i < objects.size(); i++)
 		objects[i]->Render();
-	objects[0]->Render();
-}
+	player->Render();
 
+}
+void PlayScene::UpdatePlayer(DWORD dt)
+{
+	if (player->state == MARIO_STATE_DEATH)
+		return;
+	vector<LPGAMEOBJECT> coObjects;
+	GetColliableObjects(player, coObjects);
+	player->Update(dt, &coObjects);
+}
 /*
 	Unload current scene
 */
@@ -419,7 +500,7 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	case DIK_C:
 	{
 		KoopaTroopa* koopa = new KoopaTroopa(960, 383, 1);
-		koopa->SetEnable();
+		koopa->SetEnable(true);
 		AnimationSets* animation_sets = AnimationSets::GetInstance();
 		LPANIMATION_SET ani_set = animation_sets->Get(4);
 		koopa->SetAnimationSet(ani_set);
@@ -429,7 +510,7 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	case DIK_G:
 	{
 		Goomba* goopa = new Goomba(960, 383);
-		goopa->SetEnable();
+		goopa->SetEnable(true);
 		AnimationSets* animation_sets = AnimationSets::GetInstance();
 		LPANIMATION_SET ani_set = animation_sets->Get(3);
 		goopa->SetAnimationSet(ani_set);
@@ -554,27 +635,174 @@ void PlayScene::TurnCamY(float _playerY, bool isFlying, int ScreenHeight, int Ma
 	if (isFlying == true)
 		_turnCamY = true;
 }
-//void PlayScene::GetColliableObj(LPGAMEOBJECT curObj,
-//	vector<LPGAMEOBJECT>& coObjects)
-//{
-//	if ()
-//	{
-//		for (auto obj : listObjects)
-//		{
-//			if (dynamic_cast<Ground*>(obj) ||
-//				(dynamic_cast<BreakWall*>(obj) &&
-//					obj->GetState() == NORMAL))
-//				coObjects.push_back(obj);
-//		}
-//	}
-//	else if (dynamic_cast<*>(curObj))
-//	{
-//		for (auto obj : )
-//		{
-//			if (dynamic_cast<Ground*>(obj) || 
-//				(dynamic_cast<*>(obj) && 
-//					obj->GetState() == NORMAL))
-//				coObjects.push_back(obj);
-//		}
-//	}
-//}
+void PlayScene::UpdateCameraPosition()
+{
+	float cx, cy;
+	player->GetPosition(cx, cy);
+	Game* game = Game::GetInstance();
+	int screenWidth = game->GetScreenWidth();
+	int screenHeight = game->GetScreenHeight();
+	int mapWidth = map->GetMapWidth();
+	int mapHeight = map->GetMapHeiht();
+	float oldCamY = game->GetCamY();
+
+	TurnCamY(cy, player->IsFlying(), screenHeight, mapHeight);
+	float Sx = 16, Sy = oldCamY;
+	cx -= screenWidth / 2;
+	cy -= screenHeight / 2;
+	if (player->x > 16 + screenWidth / 2)
+	{
+		Sx = cx;
+	}
+	if (player->x + screenWidth / 2 > mapWidth - 16)
+	{
+		Sx = (float)(mapWidth - 16.0f) - screenWidth;
+	}
+	if (player->y + screenHeight > 448)
+	{
+		Sy = (float)(448.0f - screenHeight);
+	}
+	if (player->y - screenHeight / 2 < 16)
+		Sy = (float)16.0f;
+	else
+	{
+		if (_turnCamY)
+			Sy = cy;
+	}
+	Game::GetInstance()->SetCamPos(round(Sx), round(Sy));
+};
+void PlayScene::GetObjectFromGrid()
+{
+	listUnits.clear();
+	objects.clear();
+
+	Game* game = Game::GetInstance();
+	float cam_x,cam_y;
+
+	cam_x = game->GetCamX();
+	cam_y = game->GetCamY();
+
+	grid->Get(cam_x,cam_y, listUnits);
+
+	for (UINT i = 0; i < listUnits.size(); i++)
+	{
+		LPGAMEOBJECT obj = listUnits[i]->GetObj();
+		objects.push_back(obj);
+	}
+
+ }
+void PlayScene::UpdateGrid()
+{
+	for(unsigned int i = 0; i < listUnits.size(); i++)
+	{
+		LPGAMEOBJECT obj = listUnits[i]->GetObj();
+
+		if (obj->IsEnable() == false)
+			continue;
+		float newPos_x, newPos_y;
+		obj->GetPosition(newPos_x, newPos_y);
+		listUnits[i]->Move(newPos_x, newPos_y);
+	}
+}
+bool PlayScene::IsInViewport(LPGAMEOBJECT object)
+{
+	Game* game = Game::GetInstance();
+	float cam_x, cam_y;
+	cam_x =game->GetCamX();
+	cam_y = game->GetCamY();
+	if (cam_x == 0 && cam_y == 0)
+		UpdateCameraPosition();
+	float obj_x, obj_y;
+	object->GetPosition(obj_x, obj_y);
+	
+	return obj_x >= cam_x && obj_x < cam_x + SCREEN_WIDTH
+		&& obj_y >= cam_y && obj_y < cam_y + SCREEN_HEIGHT;
+};
+void PlayScene::SetInactivation()
+{
+	Game* game = Game::GetInstance();
+	
+	for (auto object : objects)
+	{
+		if (!IsInViewport(object))
+		{
+			if (dynamic_cast<Enemy*>(object) )
+			{
+				dynamic_cast<Enemy*>(object)->Inactive();
+				dynamic_cast<Enemy*>(object)->AbleToActive();
+			}
+			else if (dynamic_cast<Item*>(object) && object->IsEnable() == true)
+			{
+				dynamic_cast<Item*>(object)->SetEnable(false);
+			}
+			
+		}
+		else
+		{
+			if (dynamic_cast<Enemy*>(object))
+			{
+				dynamic_cast<Enemy*>(object)->isAbleToActive = false;
+			}
+		}
+	};
+}
+
+void PlayScene::ActiveEnemiesInViewport()
+{
+	Game* game = Game::GetInstance();
+	for (auto obj : objects)
+	{
+		if (dynamic_cast<Goomba*>(obj))
+		{
+			Goomba* goomba = dynamic_cast<Goomba*>(obj);
+
+			if (goomba->GetState() == GOOMBA_STATE_INACTIVE &&
+				goomba->IsEnable() == true)
+			{
+				if (IsInViewport(goomba) == true && goomba->isAbleToActive == true)
+				{
+					goomba->SetState(GOOMBA_STATE_WALKING);
+				}
+			}
+		}
+		else if (dynamic_cast<KoopaTroopa*>(obj))
+		{
+			KoopaTroopa* koopa = dynamic_cast<KoopaTroopa*>(obj);
+
+			if (koopa->GetState() == KOOPATROOPA_STATE_INACTIVE &&
+				koopa->IsEnable() == true)
+			{
+				if (IsInViewport(koopa) == true&& koopa->isAbleToActive == true)
+				{
+					koopa->SetState(KOOPATROOPA_STATE_WALKING);
+				}
+			}
+		}
+		else if (dynamic_cast<FirePiranhaPlant*>(obj))
+		{
+			FirePiranhaPlant* plant = dynamic_cast<FirePiranhaPlant*>(obj);
+
+			if (plant->GetState() == FIREPIRANHAPLANT_STATE_INACTIVE &&
+				plant->IsEnable() == true)
+			{
+				if (IsInViewport(plant) == true&& plant->isAbleToActive == true)
+				{
+					plant->SetState(FIREPIRANHAPLANT_STATE_DARTING);
+				}
+			}
+		}
+		else if (dynamic_cast<PiranhaPlant*>(obj))
+		{
+			PiranhaPlant* plant = dynamic_cast<PiranhaPlant*>(obj);
+
+			if (plant->GetState() == PIRANHAPLANT_STATE_INACTIVE &&
+				plant->IsEnable() == true)
+			{
+				if (IsInViewport(plant) == true && plant->isAbleToActive == true)
+				{
+					plant->SetState(PIRANHAPLANT_STATE_DARTING);
+				}
+			}
+		}
+	}
+}

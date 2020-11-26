@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Game.h"
 #include "Textures.h"
 #include "GameObject.h"
@@ -20,6 +20,7 @@
 #include"Mushroom.h"
 #include"Item.h"
 #include"PSwitch.h"
+#include "Grid.h"
 
 class PlayScene : public Scene
 {
@@ -33,6 +34,17 @@ protected:
 	Mushroom* mushroom = NULL;
 	Coin* coin = NULL;
 	PSwitch* pSwitch = NULL;
+	int xn = 0;
+	Unit* unit;
+	Grid* grid;
+	vector<Unit*> listUnits;
+
+
+	vector<LPGAMEOBJECT> listItems;
+	vector<LPGAMEOBJECT> listStaticObjectsToRender;
+	vector<LPGAMEOBJECT> listMovingObjectsToRender;
+
+
 	//LPFireBall fireball;
 	void _ParseSection_TEXTURES(string line);
 	void _ParseSection_SPRITES(string line);
@@ -40,7 +52,7 @@ protected:
 	void _ParseSection_ANIMATION_SETS(string line);
 	void _ParseSection_OBJECTS(string line);
 	void _ParseSection_MAPS(string line);
-
+	void _ParseSection_GRID(string line);
 public:
 	PlayScene(int id, LPCWSTR filePath);
 
@@ -57,8 +69,21 @@ public:
 	Coin* GetCoin() { return coin; };
 	PSwitch* GetSwitch() { return pSwitch; };
 	//LPFireBall GetFireBall() { return fireball; }
-	void GetColliableObj(LPGAMEOBJECT curObj,
-		vector<LPGAMEOBJECT>& coObjects);
+	void ActiveEnemiesInViewport();
+
+
+
+	void SetInactivation();
+	bool IsInViewport(LPGAMEOBJECT object);
+	void UpdateCameraPosition();
+	
+	// Nhận các đối tượng cần xét
+	void GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& coObjects);
+	void GetObjectFromGrid();
+	void UpdateGrid();
+	void UpdatePlayer(DWORD dt);
+
+
 	friend class CPlayScenceKeyHandler;
 
 };
