@@ -23,7 +23,7 @@ void Goomba::Update(DWORD dt,
 	vector<LPGAMEOBJECT>* coObjects)
 {
 	HandleTimeSwitchState();
-	if (state == GOOMBA_STATE_INACTIVE)
+	if (state == GOOMBA_STATE_INACTIVE || isEnable == false)
 		return;
 
 	Enemy::Update(dt, coObjects);
@@ -52,12 +52,16 @@ void Goomba::Update(DWORD dt,
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
-			if (!dynamic_cast<Block*>(e->obj))
+			if (!dynamic_cast<Block*>(e->obj) && !dynamic_cast<Goomba*>(e->obj))
 			{
 				if (nx != 0 && ny == 0)
 				{
 					this->ChangeDirect();
 				}
+			}
+			else
+			{
+				x += dx;
 			}
 		}
 	}
@@ -65,7 +69,7 @@ void Goomba::Update(DWORD dt,
 }
 void Goomba::Render()
 {
-	if (state != GOOMBA_STATE_INACTIVE)
+	if (state != GOOMBA_STATE_INACTIVE && isEnable == true)
 	{
 		int ani;
 		ani = GOOMBA_ANI_WALKING;
@@ -86,11 +90,13 @@ void Goomba::SetState(int state)
 	case GOOMBA_STATE_BEING_SKILLED:
 		vy = -GOOMBA_DIE_DEFLECT_SPEED_Y;
 		vx = nx * GOOMBA_DIE_DEFLECT_SPEED_X;
+		isDead = true;
 		ny = 1;
 		break;
 	case GOOMBA_STATE_BEING_STROMPED:
 		y += GOOMBA_BBOX_HEIGHT -
 			GOOMBA_BBOX_HEIGHT_DIE ;
+		isDead = true;
 		vx = 0;
 		vy = 0;
 		break;
@@ -100,13 +106,14 @@ void Goomba::SetState(int state)
 		x = entryX;
 		y = entryY;
 		break;
+	case GOOMBA_STATE_DEATH:
+		isEnable = false;
+		break;
 	}
 }
 bool Goomba::IsDead()
 {
-	if (this->state == GOOMBA_STATE_BEING_STROMPED||
-		this->state == GOOMBA_STATE_BEING_SKILLED || 
-		this->state == GOOMBA_STATE_INACTIVE)
+	if (this->state != GOOMBA_STATE_WALKING)
 	{
 		return true;
 	}
@@ -127,10 +134,10 @@ void Goomba::SetBeingSkilled(int nx)
 }
 void Goomba::HandleTimeSwitchState()
 {
-	if (GetTickCount64() - deathTime > GOOMA_INACTIVE_TIME &&
-		this->IsDead() == true)
+	if (GetTickCount64() - deathTime > GOOMA_DEATH_TIME &&
+		this->IsDead() == true && isDead == true)
 	{
-		this->SetState(GOOMBA_STATE_INACTIVE);
+		this->SetState(GOOMBA_STATE_DEATH);
 		return;
 	}
 }

@@ -364,8 +364,11 @@ void PlayScene::Load()
 void PlayScene::Update(DWORD dt)
 {
 	GetObjectFromGrid();
+
 	UpdatePlayer(dt);
+
 	ActiveEnemiesInViewport();
+
 	//DebugOut(L"\nSize of obj: %d", objects.size());
 	for (UINT i = 0; i < objects.size(); i++)
 	{
@@ -375,8 +378,6 @@ void PlayScene::Update(DWORD dt)
 		GetColliableObjects(object, coObjects);
 		object->Update(dt, &coObjects);
 	}
-
-
 
 	// Update camera to follow mario
 	SetInactivation();
@@ -400,6 +401,11 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 	{
 		for (auto obj : objects)
 		{
+			if (dynamic_cast<Enemy*>(obj))
+			{
+				if (dynamic_cast<Enemy*>(obj)->isDead == true)
+					continue;
+			}
 			if (dynamic_cast<Ground*>(obj) || 
 				dynamic_cast<InvisibleBrick*>(obj))
 				coObjects.push_back(obj);
@@ -409,6 +415,11 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 	{
 		for (auto obj : objects)
 		{
+			if (dynamic_cast<Enemy*>(obj))
+			{
+				if (dynamic_cast<Enemy*>(obj)->isDead == true)
+					continue;
+			}
 			if (!dynamic_cast<FirePlantBullet*>(obj) && !dynamic_cast<Item*>(obj)
 				&& !dynamic_cast<InvisibleBrick*>(obj))
 				coObjects.push_back(obj);
@@ -418,6 +429,11 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 	{
 		for (auto obj : objects)
 		{
+			if (dynamic_cast<Enemy*>(obj))
+			{
+				if (dynamic_cast<Enemy*>(obj)->isDead == true)
+					continue;
+			}
 			if (!dynamic_cast<Block*>(obj) && !dynamic_cast<FirePlantBullet*>(obj) 
 				&&!dynamic_cast<Item*>(obj) && !dynamic_cast<InvisibleBrick*>(obj))
 				coObjects.push_back(obj);
@@ -436,7 +452,8 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 				if (dynamic_cast<FirePlantBullet*>(obj) && obj->IsEnable() == true)
 					coObjects.push_back(obj);
 				else if ((dynamic_cast<Goomba*>(obj) || dynamic_cast<KoopaTroopa*>(obj)  ||
-					dynamic_cast<PiranhaPlant*>(obj) || dynamic_cast<FirePiranhaPlant*>(obj))
+					dynamic_cast<PiranhaPlant*>(obj) ||
+					dynamic_cast<FirePiranhaPlant*>(obj))
 					&& obj->isEnable == true)
 					coObjects.push_back(obj);
 			}
@@ -447,21 +464,37 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 void PlayScene::Render()
 {
 	Game* game = Game::GetInstance();
+
 	int screenWidth = game->GetScreenWidth();
 	int screenHeight = game->GetScreenHeight();
 	float cam_x = game->GetCamX();
 	float cam_y = game->GetCamY();
-	this->map->Render(cam_x,cam_y,screenWidth,screenHeight);
-	//DebugOut(L"\nRender size:\t,%d", objects.size());
-	for (unsigned int i = 0; i < objects.size(); i++)
-		objects[i]->Render();
-	player->Render();
 
+
+	this->map->Render(cam_x,cam_y,screenWidth,screenHeight);
+	for (auto obj : listMovingObjectsToRender)
+	{
+		if (obj->IsEnable() == false)
+			continue;
+		obj->Render();
+	}
+	
+	for (auto obj : listStaticObjectsToRender)
+	{
+		if (obj->IsEnable() == false)
+			continue;
+
+		obj->Render();
+	}
+	player->Render();
 }
 void PlayScene::UpdatePlayer(DWORD dt)
 {
 	if (player->state == MARIO_STATE_DEATH)
-		return;
+	{
+		isGameOver = true;
+	}
+		
 	vector<LPGAMEOBJECT> coObjects;
 	GetColliableObjects(player, coObjects);
 	player->Update(dt, &coObjects);
@@ -625,6 +658,10 @@ void PlayScene::UpdateCameraPosition()
 	float Sx = 16, Sy = oldCamY;
 	cx -= screenWidth / 2;
 	cy -= screenHeight / 2;
+	// Ở đây xét số cứng 
+	// Cần phải sửa vì còn extra map ở dưới
+	// nếu có thể chia thành hai map thì sẽ để theo 
+	//chiều dài và chiều rộng của map
 	if (player->x > 16 + screenWidth / 2)
 	{
 		Sx = cx;
@@ -649,6 +686,9 @@ void PlayScene::UpdateCameraPosition()
 void PlayScene::GetObjectFromGrid()
 {
 	listUnits.clear();
+	listStaticObjectsToRender.clear();
+	listMovingObjectsToRender.clear();
+	/*listPipeToRender.clear();*/
 	objects.clear();
 
 	Game* game = Game::GetInstance();
@@ -663,6 +703,16 @@ void PlayScene::GetObjectFromGrid()
 	{
 		LPGAMEOBJECT obj = listUnits[i]->GetObj();
 		objects.push_back(obj);
+
+		if (dynamic_cast<Ground*>(obj) || dynamic_cast<Block*>(obj) ||
+			dynamic_cast<InvisibleBrick*>(obj))
+			continue;
+		else if (dynamic_cast<Brick*>(obj)|| dynamic_cast<Pipe*>(obj))
+			listStaticObjectsToRender.push_back(obj);
+	/*	else if (dynamic_cast<Pipe*>(obj))
+			listPipeToRender.push_back(obj);*/
+		else if (dynamic_cast<Enemy*>(obj))
+			listMovingObjectsToRender.push_back(obj);
 	}
 
  }
@@ -693,6 +743,8 @@ bool PlayScene::IsInViewport(LPGAMEOBJECT object)
 	return obj_x >= cam_x && obj_x < cam_x + SCREEN_WIDTH
 		&& obj_y >= cam_y && obj_y < cam_y + SCREEN_HEIGHT;
 };
+
+// Inactive các quái khi ra khỏi Viewport
 void PlayScene::SetInactivation()
 {
 	Game* game = Game::GetInstance();
@@ -722,61 +774,21 @@ void PlayScene::SetInactivation()
 	};
 }
 
+
+// Active các đối tượng quái khi entryPoint gặp Viewport
 void PlayScene::ActiveEnemiesInViewport()
 {
 	Game* game = Game::GetInstance();
 	for (auto obj : objects)
 	{
-		if (dynamic_cast<Goomba*>(obj))
+		if (dynamic_cast<Enemy*>(obj))
 		{
-			Goomba* goomba = dynamic_cast<Goomba*>(obj);
-
-			if (goomba->GetState() == GOOMBA_STATE_INACTIVE &&
-				goomba->IsEnable() == true)
+			Enemy* enemy = dynamic_cast<Enemy*>(obj);
+			if (enemy->IsInactive() && enemy->IsEnable())
 			{
-				if (IsInViewport(goomba) == true && goomba->isAbleToActive == true)
-				{
-					goomba->SetState(GOOMBA_STATE_WALKING);
-				}
-			}
-		}
-		else if (dynamic_cast<KoopaTroopa*>(obj))
-		{
-			KoopaTroopa* koopa = dynamic_cast<KoopaTroopa*>(obj);
-
-			if (koopa->GetState() == KOOPATROOPA_STATE_INACTIVE &&
-				koopa->IsEnable() == true)
-			{
-				if (IsInViewport(koopa) == true&& koopa->isAbleToActive == true)
-				{
-					koopa->SetState(KOOPATROOPA_STATE_WALKING);
-				}
-			}
-		}
-		else if (dynamic_cast<FirePiranhaPlant*>(obj))
-		{
-			FirePiranhaPlant* plant = dynamic_cast<FirePiranhaPlant*>(obj);
-
-			if (plant->GetState() == FIREPIRANHAPLANT_STATE_INACTIVE &&
-				plant->IsEnable() == true)
-			{
-				if (IsInViewport(plant) == true&& plant->isAbleToActive == true)
-				{
-					plant->SetState(FIREPIRANHAPLANT_STATE_DARTING);
-				}
-			}
-		}
-		else if (dynamic_cast<PiranhaPlant*>(obj))
-		{
-			PiranhaPlant* plant = dynamic_cast<PiranhaPlant*>(obj);
-
-			if (plant->GetState() == PIRANHAPLANT_STATE_INACTIVE &&
-				plant->IsEnable() == true)
-			{
-				if (IsInViewport(plant) == true && plant->isAbleToActive == true)
-				{
-					plant->SetState(PIRANHAPLANT_STATE_DARTING);
-				}
+				if (IsInViewport(enemy) == true
+					&& enemy->isAbleToActive == true)
+					enemy->Active();
 			}
 		}
 	}

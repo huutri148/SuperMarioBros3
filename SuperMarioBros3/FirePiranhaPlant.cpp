@@ -118,7 +118,6 @@ void FirePiranhaPlant::Render()
 					ani = FIREPIRANHAPLANT_ANI_DEATH;
 				animation_set->at(ani)->Render(nx, round(x),round( y));
 			}
-	
 }
 FirePiranhaPlant::FirePiranhaPlant(float x, float y, int _type) :Enemy(x, y)
 {
@@ -186,7 +185,7 @@ void FirePiranhaPlant::HandleTimeSwitchState()
 		FIREPIRANHAPLANT_INACTIVE_TIME
 		&& deathTime != 0)
 	{
-		this->SetState(FIREPIRANHAPLANT_STATE_INACTIVE);
+		isEnable = false;
 		deathTime = 0;
 	}
 	// Chuyển trạng thái từ lao ngoài Pipe khi va chạm với Ground

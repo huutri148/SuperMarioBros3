@@ -39,6 +39,7 @@ protected:
 	vector<LPGAMEOBJECT> listItems;
 	vector<LPGAMEOBJECT> listStaticObjectsToRender;
 	vector<LPGAMEOBJECT> listMovingObjectsToRender;
+	/*vector<LPGAMEOBJECT> listPipeToRender; */// Pipe phải vẽ đè lên plant
 
 
 	//LPFireBall fireball;

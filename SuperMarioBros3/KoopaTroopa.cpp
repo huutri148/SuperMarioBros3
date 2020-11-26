@@ -16,7 +16,7 @@ void KoopaTroopa::GetBoundingBox(float& left, float& top,
 void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	HandleTimeSwitchState();
-	if (state == KOOPATROOPA_STATE_INACTIVE)
+	if (state == KOOPATROOPA_STATE_INACTIVE || isEnable == false)
 		return;
 	Enemy::Update(dt, coObjects);
 	vy += KOOPATROOPA_GRAVITY * dt;
@@ -104,9 +104,7 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					enemy->SetDead();
 					if (isPickedUp == true)
 					{
-						this->SetBeingSkilled(this->nx);
-						isDead = true;
-						deathTime = GetTickCount();
+						this->SetState(KOOPATROOPA_STATE_DEATH);
 					}
 					
 				}
@@ -159,7 +157,7 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 }
 void KoopaTroopa::Render()
 {
-	if (state != KOOPATROOPA_STATE_INACTIVE)
+	if (state != KOOPATROOPA_STATE_INACTIVE || isEnable == false)
 	{
 		int ani = -1;
 
@@ -170,7 +168,7 @@ void KoopaTroopa::Render()
 			else
 				ani = KOOPATROOPA_RED_ANI_WALKING;
 		}
-		else if (state == KOOPATROOPA_STATE_HIDING)
+		else if (state == KOOPATROOPA_STATE_HIDING || state == KOOPATROOPA_STATE_DEATH)
 		{
 			if (type == KOOPATROOPA_GREEN_TYPE)
 				ani = KOOPATROOPA_GREEN_ANI_HIDING;
@@ -211,8 +209,14 @@ void KoopaTroopa::SetState(int state)
 		vy = 0;
 		vx = 0;
 		break;
+	case KOOPATROOPA_STATE_DEATH:
+		this->nx = -nx;
+		deathTime = GetTickCount();
+		vx = nx * KOOPATROOPA_DIE_DEFLECT_SPEED_X;
+		vy = -KOOPATROOPA_DIE_DEFLECT_SPEED_Y;
+		isDead = true;
+		break;
 	case KOOPATROOPA_STATE_INACTIVE:
-		/*isEnable = false;*/
 		x = entryX;
 		y = entryY;
 		vx = 0;
@@ -275,10 +279,10 @@ void KoopaTroopa::SetBeingSkilled(int _nx)
 }
 void KoopaTroopa::HandleTimeSwitchState()
 {
-	if (GetTickCount() - deathTime > KOOPATROOPA_INACTIVE_TIME &&
+	if (GetTickCount() - deathTime > KOOPATROOPA_DEATH_TIME &&
 		isDead == true)
 	{
-		this->SetState(KOOPATROOPA_STATE_INACTIVE);
+		isEnable = true;
 		return;
 	}
 	// Ở trạng thái hiding chuyển sang walking
