@@ -13,20 +13,10 @@ void FirePlantBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 void FirePlantBullet::GetBoundingBox(float& l, float& t, 
 	float& r, float& b, bool isEnable)
 {
-	if (isEnable == true)
-	{
-		l = x;
-		t = y;
-		r = x + FIREBULLET_BBOX_WIDTH;
-		b = y + FIREBULLET_BBOX_HEIGHT;
-	}
-	else
-	{
-		l = 0;
-		t = 0;
-		r = 0;
-		b = 0;
-	}
+	l = x;
+	t = y;
+	r = x + FIREBULLET_BBOX_WIDTH;
+	b = y + FIREBULLET_BBOX_HEIGHT;
 }
 void FirePlantBullet::SetState(int _state)
 {

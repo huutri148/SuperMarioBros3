@@ -8,17 +8,18 @@ public:
 	virtual void Render();
 	virtual void GetBoundingBox(float& l, float& t, float& r, float& b, bool isEnable);
 	virtual void SetState(int state);
-	void Shoot(float _x, float _y, int _nx,int _direct)
+	void Shoot( float x,float y,int _nx,int _direct)
 	{
-		this->x = _x  ;
-		this->y = _y ;
-		this->isEnable = true;
+		this->x = x;
+		this->y = y;
 		this->nx = _nx;
 		this->SetState(_direct);
 	}
 	FirePlantBullet()
 	{
-		this->isEnable = false;
+		AnimationSets* animation_sets = AnimationSets::GetInstance();
+		LPANIMATION_SET ani_set = animation_sets->Get(60);
+		this->SetAnimationSet(ani_set);
 	}
 };
 

@@ -374,7 +374,14 @@ void PlayScene::Update(DWORD dt)
 	{
 		LPGAMEOBJECT object = objects[i];
 		vector<LPGAMEOBJECT> coObjects;
-
+		if (dynamic_cast<FirePiranhaPlant*>(object))
+		{
+			FirePiranhaPlant* plant = dynamic_cast<FirePiranhaPlant*>(object);
+			if (plant->canShoot == true)
+			{
+				plant->Shooting(grid);
+			}
+		}
 		GetColliableObjects(object, coObjects);
 		object->Update(dt, &coObjects);
 	}
@@ -410,6 +417,10 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 				dynamic_cast<InvisibleBrick*>(obj))
 				coObjects.push_back(obj);
 		}
+	}
+	else if (dynamic_cast<FirePlantBullet*>(curObj))
+	{
+		return;
 	}
 	else if (dynamic_cast<KoopaTroopa*>(curObj))
 	{
@@ -711,7 +722,9 @@ void PlayScene::GetObjectFromGrid()
 			listStaticObjectsToRender.push_back(obj);
 	/*	else if (dynamic_cast<Pipe*>(obj))
 			listPipeToRender.push_back(obj);*/
-		else if (dynamic_cast<Enemy*>(obj))
+		else if (dynamic_cast<Enemy*>(obj) )
+			listMovingObjectsToRender.push_back(obj);
+		else if (dynamic_cast<FirePlantBullet*>(obj))
 			listMovingObjectsToRender.push_back(obj);
 	}
 
