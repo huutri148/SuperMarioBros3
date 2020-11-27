@@ -48,10 +48,10 @@ void Map::LoadMatrix(LPCWSTR path)
 }
 void Map::Render(float cam_x,float cam_y, int screenWidth,int screenHeight)
 {
-	int FirstColumn = floor(cam_x/ TILE_WIDTH);
-	int FirstRow = floor(cam_y / TILE_HEIGHT);
-	int LastRow = floor((cam_y + SCREEN_HEIGHT) / TILE_HEIGHT);
-	int LastColumn = ceil((cam_x + screenWidth) / TILE_WIDTH);
+	int FirstColumn =(int) floor(cam_x/ TILE_WIDTH);
+	int FirstRow =(int) floor(cam_y / TILE_HEIGHT);
+	int LastRow =(int) floor((cam_y + SCREEN_HEIGHT) / TILE_HEIGHT);
+	int LastColumn =(int) ceil((cam_x + screenWidth) / TILE_WIDTH);
 	if (LastColumn >= TotalColsOfMap)
 		LastColumn = TotalColsOfMap - 1;
 	if (LastRow >= TotalRowsOfMap)

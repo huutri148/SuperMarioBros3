@@ -1,5 +1,6 @@
 ﻿#include "Grid.h"
 #include "Utils.h"
+#include"Item.h"
 Unit::Unit(Grid* grid, LPGAMEOBJECT obj,
 	float x, float y)
 {
@@ -10,7 +11,7 @@ Unit::Unit(Grid* grid, LPGAMEOBJECT obj,
 
 	this->prev = NULL;
 	this->next = NULL;
-
+	
 	grid->Add(this);
 }
 
@@ -52,7 +53,6 @@ void Grid::Add(Unit* unit)
 	// thêm vào đầu cell - add head
 	unit->prev = NULL;
 	unit->next = cells[row][col];
-
 	cells[row][col] = unit;
 	if (unit->next != NULL)
 		unit->next->prev = unit;
