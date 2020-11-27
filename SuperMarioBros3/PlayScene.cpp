@@ -650,9 +650,9 @@ void PlayScene::UpdateCameraPosition()
 	{
 		Sx = (float)(mapWidth - 16.0f) - screenWidth;
 	}
-	if (player->y + screenHeight > 448)
+	if (player->y + screenHeight > 490)
 	{
-		Sy = (float)(448.0f - screenHeight);
+		Sy = (float)(490.0f - screenHeight);
 	}
 	if (player->y - screenHeight / 2 < 16)
 		Sy = (float)16.0f;
