@@ -100,8 +100,11 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				Enemy* enemy = dynamic_cast<Enemy*>(e->obj);
 				if (isPickedUp == true || isBumped == true)
 				{
-					enemy->SetBeingSkilled(this->nx);
-					enemy->SetDead();
+					if (enemy->IsDead() == false)
+					{
+						enemy->SetBeingSkilled(this->nx);
+						enemy->SetDead();
+					}
 					if (isPickedUp == true)
 					{
 						this->SetState(KOOPATROOPA_STATE_DEATH);

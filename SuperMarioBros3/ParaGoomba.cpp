@@ -1,24 +1,25 @@
-#include "ParaGoomba.h"
+﻿#include "ParaGoomba.h"
 #include "Block.h"
 #include"Utils.h"
+
+
+/* Hoàn thành cơ bản về di chuyển của ParaKoopa 
+* nhưng cần bổ sung thêm về hướng di chuyển (Chasing Mario) 
+* tạo và truyền thông tin chung của Mario cho mọi Enemy
+* và tìm cách tạo Animation cho mượt hơn
+*/
+
 void ParaGoomba::GetBoundingBox(float& left, float& top,
 	float& right, float& bottom,
 	bool isEnable)
 {
-	if (isEnable == true)
-	{
-		left = x;
-		top = y;
-		right = x + PARAGOOMBA_BBOX_WIDTH;
+	left = x;
+	top = y;
+	right = x + PARAGOOMBA_BBOX_WIDTH;
+	if(state == PARAGOOMBA_STATE_WALKING)
 		bottom = y + PARAGOOMBA_BBOX_HEIGHT_WALKING;
-	}
-	else
-	{
-		left = 0;
-		top = 0;
-		right = 0;
-		bottom = 0;
-	}
+	else 
+		bottom = y + PARAGOOMBA_BBOX_HEIGHT_FLAPPING;
 }
 
 void ParaGoomba::Update(DWORD dt,
@@ -26,12 +27,14 @@ void ParaGoomba::Update(DWORD dt,
 {
 	if (state == GOOMBA_STATE_INACTIVE)
 		return;
+	HandleTimeSwitchState();
 	Enemy::Update(dt, coObjects);
 	vy += dt * PARAGOOMBA_GRAVITY;
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
 	coEvents.clear();
+
 	CalcPotentialCollisions(coObjects, coEvents);
 	if (coEvents.size() == 0)
 	{
@@ -51,14 +54,32 @@ void ParaGoomba::Update(DWORD dt,
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
+			if (!dynamic_cast<Block*>(e->obj) && !dynamic_cast<Goomba*>(e->obj))
+			{
+				if (nx != 0 && ny == 0)
+				{
+					this->ChangeDirect();
+				}
+				else if (ny < 0 )
+				{
+					if(state == PARAGOOMBA_STATE_SUPER_JUMPING)
+						this->SetState(PARAGOOMBA_STATE_WALKING);
+					if (state == PARAGOOMBA_STATE_FLAPPING)
+						this->SetState(PARAGOOMBA_STATE_FLAPPING);
+				}
+				
+			}
+			else
+			{
+				x += dx;
+			}
 		}
 	}
-	DebugOut(L"\nVy: %f", vy);
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 }
 void ParaGoomba::Render()
 {
-	if (isEnable)
+	if (state != PARAGOOMBA_STATE_INACTIVE)
 	{
 		int ani = 0;
 		if (state == PARAGOOMBA_STATE_WALKING)
@@ -76,31 +97,88 @@ void ParaGoomba::SetState(int state)
 	case PARAGOOMBA_STATE_WALKING:
 		vx =- PARAGOOMBA_WALKING_SPEED;
 		nx = -1;
-		switchStateTime = GetTickCount();
 		vy = 0;
 		break;
-	case PARAGOOMBA_STATE_JUMPING:
-		switchStateTime = GetTickCount();
+	case PARAGOOMBA_STATE_FLAPPING:
 		vy = -PARAGOOMBA_JUMP_SPEED;
 		break;
 	case PARAGOOMBA_STATE_SUPER_JUMPING:
 		vy = -PARAGOOMBA_SUPER_JUMP_SPEED;
 		break;
+	case PARAGOOMBA_STATE_INACTIVE:
+		x = entryX;
+		y = entryY;
+		break;
+	case PARAGOOMBA_STATE_DEATH:
+		vy = -GOOMBA_DIE_DEFLECT_SPEED_Y;
+		vx = nx * GOOMBA_DIE_DEFLECT_SPEED_X;
+		isDead = true;
+		ny = 1;
+		break;
+
 	}
 }
 bool ParaGoomba::IsDead()
 {
-	return true;
+	if(state == PARAGOOMBA_STATE_INACTIVE ||
+		state == PARAGOOMBA_STATE_DEATH ||
+		state == PARAGOOMBA_STATE_GOOMBA)
+		return true;
+	return false;
 }
 
 
 void ParaGoomba::SetBeingStromped()
 {
-
+	this->SetState(PARAGOOMBA_STATE_GOOMBA);
 }
 void ParaGoomba::SetBeingSkilled(int nx)
 {
+	this->nx = nx;
+	this->SetState(PARAGOOMBA_STATE_DEATH);
+	deathTime = GetTickCount();
 }
 void ParaGoomba::HandleTimeSwitchState()
 {
+	DWORD current = GetTickCount();
+	if (GetTickCount64() - deathTime > GOOMA_DEATH_TIME 
+		 && isDead == true)
+	{
+		this->isEnable = false;
+		return;
+	}
+	else if (current - switchStateTime > PARAGOOMBA_SWITCH_STATE_TIME)
+	{
+		if (state == PARAGOOMBA_STATE_WALKING)
+		{
+			y -= PARAGOOMBA_BBOX_HEIGHT_FLAPPING - PARAGOOMBA_STATE_WALKING;
+			this->SetState(PARAGOOMBA_STATE_FLAPPING);
+		}
+			
+		else if (state == PARAGOOMBA_STATE_FLAPPING)
+			this->SetState(PARAGOOMBA_STATE_SUPER_JUMPING);
+		switchStateTime = GetTickCount();
+	}
+}
+bool ParaGoomba::IsInactive()
+{
+	if (this->state == PARAGOOMBA_STATE_INACTIVE)
+		return true;
+	return false;
+}
+
+void ParaGoomba::Inactive()
+{
+	this->SetState(PARAGOOMBA_STATE_INACTIVE);
+}
+void ParaGoomba::Active()
+{
+	this->SetState(PARAGOOMBA_STATE_WALKING);
+}
+void ParaGoomba::ChangeToGoomba(Grid* grid)
+{
+	Goomba* goomba = new Goomba();
+	goomba->SetPosition(x, y);
+	this->SetState(PARAGOOMBA_STATE_INACTIVE);
+	Unit* unit = new Unit(grid, goomba, x, y);
 }

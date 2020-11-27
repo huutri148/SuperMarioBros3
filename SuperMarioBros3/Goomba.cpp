@@ -52,7 +52,8 @@ void Goomba::Update(DWORD dt,
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
-			if (!dynamic_cast<Block*>(e->obj) && !dynamic_cast<Goomba*>(e->obj))
+			if (!dynamic_cast<Block*>(e->obj) && !dynamic_cast<Goomba*>(e->obj)&&
+				!dynamic_cast<ParaGoomba*>(e->obj))
 			{
 				if (nx != 0 && ny == 0)
 				{
