@@ -548,8 +548,7 @@
 # type	x	y	ani_set_id	extra_settings per object type	type
 # type: 0 = Mario , 1 = Brick, 2 = Goomba,3=KoopaTroopa,4= Ground,
 #6 = Pipe,5 = block,7 = Invisible Brick
-#8 = PiranhaPlant,9 = Coin,10 = FirePiranhaPlant,11 = FirePlantBullet
-#12 = RACOONLEAF,13 = MUSHROOM,14 = PSWITCH
+#8 = PiranhaPlant,9 = Coin,10 = FirePiranhaPlant
 # MARIO
 0	18.0	400	1
 #Goombaa
@@ -559,10 +558,10 @@
 #2	896	440	3
 #2	1000	440	3
 #PiranhaPlant
-#8	1816	399	5	0
+8	1816	399	5	0
 #Fire PiranhaPlant
 10	376	350	6	1
-#10	1880	384	6	0
+10	1880	384	6	0
 #Block Pink
 5	256	384	21
 5	272	384	22
@@ -857,12 +856,6 @@
 4	2288	384	41
 4	2272	320	41
 4	2288	320	41
-#RACOONLEAF
-12	0	0	71	
-#Mushroom 
-13	0	0	72
-#PSWITCH
-14	0	0	73
 # ? Brick
 1	192	368	43	1
 1	208	368	43	1
@@ -895,14 +888,6 @@
 1	2112	416	42	5
 1	2128	416	42	5
 #Invisible Brick
-#7	630	416	99	0
-#7	399	416	99	0
-#7	518	390	99	1
-#7	620	380	99	1
-#7	2090	384	99	1
-#7	2136	384	99	1
-#7	2240	416	99	0
-#7	1904	416	99	0
 7	368	336	99	0
 7	376	336	99	0
 7	384	336	99	0
@@ -917,7 +902,6 @@
 2	846	400	3
 2	880	400	3
 #Coin
-#9	150	366	70	2
 9	1088	336	70	2
 9	1120	304	70	2
 9	1152	272	70	2
@@ -941,6 +925,3 @@
 9	1776	144	70	2
 9	1824	113	70	2
 9	1856	144	70	2
-9	0	0	70	1
-#FirePlantBullet
-#11	0	0	60

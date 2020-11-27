@@ -213,12 +213,6 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 		unit = new Unit(grid, obj, x, y);
 		break;
 	}
-	case OBJECT_TYPE_FIREPLANTBULLET:
-	{
-		obj = new FirePlantBullet();
-		unit = new Unit(grid, obj, x, y);
-		break;
-	}
 	/*case OBJECT_TYPE_PORTAL:
 	{
 		float r = atof(tokens[4].c_str());
@@ -226,40 +220,13 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 		int scene_id = atoi(tokens[6].c_str());
 		obj = new CPortal(x, y, r, b, scene_id);
 	}*/
-	/*case OBJECT_TYPE_COIN:
+	case OBJECT_TYPE_COIN:
 	{
 		int set_type = atoi(tokens[4].c_str());
 		obj = new Coin(set_type);
-		if (set_type == COIN_TYPE_1)
-			coin = ((Coin*)obj);
 		unit = new Unit(grid, obj, x, y);
 		break;
 	}
-
-	break;
-	case OBJECT_TYPE_RACCOONLEAF:
-	{
-		obj = new RaccoonLeaf();
-		leaf = ((RaccoonLeaf*)obj);
-		unit = new Unit(grid, obj, x, y);
-		break;
-	}
-
-	case OBJECT_TYPE_MUSROOM:
-	{
-		obj = new Mushroom();
-		mushroom = ((Mushroom*)obj);
-		unit = new Unit(grid, obj, x, y);
-		break;
-	}
-	case OBJECT_TYPE_PSWITCH:
-	{
-		obj = new PSwitch();
-		pSwitch = ((PSwitch*)obj);
-		unit = new Unit(grid, obj, x, y);
-		break;
-	}*/
-
 	default:
 		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
 		return;
@@ -268,10 +235,6 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 	obj->SetPosition(x, y);
 	LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
 	obj->SetAnimationSet(ani_set);
-	//objects.push_back(obj);
-
-	//if (object_type == OBJECT_TYPE_FIREPLANTBULLET)
-	//	firebullet = ((FirePlantBullet*)obj);
 }
 
 void PlayScene::_ParseSection_MAPS(string line)
@@ -381,6 +344,12 @@ void PlayScene::Update(DWORD dt)
 			{
 				plant->Shooting(grid);
 			}
+		}
+		if (dynamic_cast<Brick*>(object))
+		{
+			Brick* brick = dynamic_cast<Brick*>(object);
+			if (brick->isUsed == true )
+				brick->DropItem(grid);
 		}
 		GetColliableObjects(object, coObjects);
 		object->Update(dt, &coObjects);
@@ -494,7 +463,7 @@ void PlayScene::Render()
 	{
 		if (obj->IsEnable() == false)
 			continue;
-
+		
 		obj->Render();
 	}
 	player->Render();
@@ -722,12 +691,11 @@ void PlayScene::GetObjectFromGrid()
 			listStaticObjectsToRender.push_back(obj);
 	/*	else if (dynamic_cast<Pipe*>(obj))
 			listPipeToRender.push_back(obj);*/
-		else if (dynamic_cast<Enemy*>(obj) )
+		else if (dynamic_cast<Enemy*>(obj)|| dynamic_cast<FirePlantBullet*>(obj))
 			listMovingObjectsToRender.push_back(obj);
-		else if (dynamic_cast<FirePlantBullet*>(obj))
+		else if (dynamic_cast<Item*>(obj))
 			listMovingObjectsToRender.push_back(obj);
 	}
-
  }
 void PlayScene::UpdateGrid()
 {
@@ -771,11 +739,10 @@ void PlayScene::SetInactivation()
 				dynamic_cast<Enemy*>(object)->Inactive();
 				dynamic_cast<Enemy*>(object)->AbleToActive();
 			}
-			else if (dynamic_cast<Item*>(object) && object->IsEnable() == true)
+		/*	else if (dynamic_cast<Item*>(object) && object->IsEnable() == true)
 			{
 				dynamic_cast<Item*>(object)->SetEnable(false);
-			}
-			
+			}*/
 		}
 		else
 		{

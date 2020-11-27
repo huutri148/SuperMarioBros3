@@ -88,23 +88,21 @@ void Mushroom::SetState(int _state)
 		break;
 	}
 }
-void Mushroom::Appear(float x, float y, int _type)
-{
-	appearY = y - MUSHROOM_BBOX_HEIGHT - 1;
-	this->type = _type;
-	this->SetAppearedDirect();
-	this->SetPosition(x, y);
-	this->SetState(MUSHROOM_STATE_APPEARANCE);
-	this->isEnable = true;
-}
+//void Mushroom::Appear(float x, float y, int _type)
+//{
+//	appearY = y - MUSHROOM_BBOX_HEIGHT - 1;
+//	this->type = _type;
+//	this->SetAppearedDirect();
+//	this->SetPosition(x, y);
+//	this->SetState(MUSHROOM_STATE_APPEARANCE);
+//	this->isEnable = true;
+//}
 void Mushroom::Appear(float x, float y)
 {
 	this->SetPosition(x, y);
 	appearY = y - MUSHROOM_BBOX_HEIGHT - 1;
 	this->SetAppearedDirect();
 	this->SetState(MUSHROOM_STATE_APPEARANCE);
-	this->isEnable = true;
-	type = MUSHROOM_ANI_POWERUP;
 }
 void Mushroom::Used()
 {
@@ -113,8 +111,12 @@ void Mushroom::Used()
 	Mario* mario = ((PlayScene*)scence)->GetPlayer();
 	mario->TurnBigForm();
 }
-Mushroom::Mushroom()
+Mushroom::Mushroom(int type)
 {
+	this->type = type;
+	AnimationSets* animation_sets = AnimationSets::GetInstance();
+	LPANIMATION_SET ani_set = animation_sets->Get(72);
+	this->SetAnimationSet(ani_set);
 }
 void Mushroom::SetAppearedDirect()
 {

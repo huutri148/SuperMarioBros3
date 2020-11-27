@@ -27,6 +27,7 @@ class PlayScene : public Scene
 protected:
 	Mario* player = NULL;
 	Map* map = NULL ;
+	int na = 0;
 
 	bool isTurnCamY = false;// Camera Y được bật khi Mario bay 
 	bool isGameOver = false;
