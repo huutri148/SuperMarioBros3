@@ -508,7 +508,7 @@ void Mario::Render()
 	int alpha = 255;
 	//DebugOut(L"Ani: %d\n", ani);
 	if (untouchable) alpha = 128;
-	animation_set->at(ani)->Render(nx, round(x),round( y), alpha);
+	animation_set->at(ani)->Render(nx, round(x), round(y), alpha);
 	RenderBoundingBox();
 }
 void Mario::SetState(int state)

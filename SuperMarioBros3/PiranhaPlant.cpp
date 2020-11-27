@@ -6,9 +6,7 @@ void PiranhaPlant::GetBoundingBox(float& left, float& top,
 	float& right, float& bottom,
 	bool isEnable)
 {
-	if (isEnable == true)
-	{
-		if (state != PIRANHAPLANT_STATE_DEATH)
+			if (state != PIRANHAPLANT_STATE_DEATH)
 		{
 			left = x;
 			top = y;
@@ -22,15 +20,6 @@ void PiranhaPlant::GetBoundingBox(float& left, float& top,
 			right = x + PIRANHAPLANT_BBOX_DEATH_WIDTH;
 			bottom = y + PIRANHAPLANT_BBOX_DEATH_HEIGHT;
 		}
-	}
-
-	else
-	{
-		left = 0;
-		top = 0;
-		right = 0;
-		bottom = 0;
-	}
 }
 void PiranhaPlant::Update(DWORD dt,
 	vector<LPGAMEOBJECT>* coObjects)
@@ -103,31 +92,28 @@ void PiranhaPlant::Update(DWORD dt,
 }
 void PiranhaPlant::Render()
 {
-	if (isEnable == true)
+	if (state != PIRANHAPLANT_STATE_INACTIVE)
 	{
-		if (state != PIRANHAPLANT_STATE_INACTIVE)
+		int ani = 0;
+		if (state == PIRANHAPLANT_STATE_DARTING)
 		{
-			int ani = 0;
-			if (state == PIRANHAPLANT_STATE_DARTING)
-			{
-				if (type == PIRANHAPLANT_GREEN_TYPE)
-					ani = PIRANHAPLANT_GREEN_ANI_DARTING;
-				else
-					ani = PIRANHAPLANT_RED_ANI_DARTING;
-			}	
-			else if (state == PIRANHAPLANT_STATE_BITING)
-			{
-				if (type == PIRANHAPLANT_GREEN_TYPE)
-					ani = PIRANHAPLANT_GREEN_ANI_BITING;
-				else
-					ani = PIRANHAPLANT_RED_ANI_BITING;
-			}
-			else if (state == PIRANHAPLANT_STATE_DEATH)
-			{
-				ani = PIRANHAPLANT_ANI_DEATH;
-			}
-			animation_set->at(ani)->Render(-1, x, y);
+			if (type == PIRANHAPLANT_GREEN_TYPE)
+				ani = PIRANHAPLANT_GREEN_ANI_DARTING;
+			else
+				ani = PIRANHAPLANT_RED_ANI_DARTING;
+		}	
+		else if (state == PIRANHAPLANT_STATE_BITING)
+		{
+			if (type == PIRANHAPLANT_GREEN_TYPE)
+				ani = PIRANHAPLANT_GREEN_ANI_BITING;
+			else
+				ani = PIRANHAPLANT_RED_ANI_BITING;
 		}
+		else if (state == PIRANHAPLANT_STATE_DEATH)
+		{
+			ani = PIRANHAPLANT_ANI_DEATH;
+		}
+		animation_set->at(ani)->Render(-1,round( x),round( y));
 	}
 }
 PiranhaPlant::PiranhaPlant(float x, float y, int _type) :Enemy(x, y)
@@ -158,7 +144,9 @@ void PiranhaPlant::SetState(int _state)
 		vy = 0;
 		break;
 	case PIRANHAPLANT_STATE_INACTIVE:
-		isEnable = false;
+		x = entryX;
+		y = entryY;
+		/*isEnable = false;*/
 		break;
 	}
 }
@@ -177,12 +165,9 @@ void PiranhaPlant::SetBeingSkilled(int nx)
 	y += PIRANHAPLANT_BBOX_HEIGHT -
 		PIRANHAPLANT_BBOX_DEATH_HEIGHT;
 	deathTime = GetTickCount();
+	isDead = true;
 }
 void PiranhaPlant::SetBeingStromped()
-{
-
-}
-void PiranhaPlant::EnableAgain()
 {
 
 }
@@ -193,7 +178,7 @@ void PiranhaPlant::HandleTimeSwitchState()
 		&& switchTime != 0)
 	{
 		switchTime = 0;
-		this->SetState(PIRANHAPLANT_STATE_DARTING);
+		isEnable = false;
 	}
 	if (state == PIRANHAPLANT_STATE_DEATH &&
 		GetTickCount() - deathTime > PIRANHAPLANT_INACTIVE_TIME

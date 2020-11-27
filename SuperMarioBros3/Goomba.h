@@ -17,10 +17,18 @@ public:
 	virtual bool IsDead();
 	virtual void SetBeingStromped();
 	virtual void SetBeingSkilled(int nx);
-	//virtual void EnableAgain();
+	virtual void Inactive() { this->SetState(GOOMBA_STATE_INACTIVE); }
+	virtual void Active() { this->SetState(GOOMBA_STATE_WALKING); };
+	virtual bool IsInactive()
+	{
+		if (this->state == GOOMBA_STATE_INACTIVE)
+			return true;
+		return false;
+	}
 	Goomba(float x, float y) :Enemy(x,y)
 	{
 		this->SetState(GOOMBA_STATE_WALKING);
+		
 	}
 	Goomba() :Enemy()
 	{

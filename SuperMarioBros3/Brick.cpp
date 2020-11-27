@@ -1,17 +1,14 @@
-#include "Brick.h"
+﻿#include "Brick.h"
 #include <algorithm>
 bool Brick::isTransForm = false;
 void Brick::Render()
 {
-	if (isEnable == true )
-	{
-		int ani;
-		if (state == BRICK_STATE_NORMAL)
-			ani = BRICK_ANI_NORMAL;
-		else 
-			ani = BRICK_ANI_EMPTY;
-		animation_set->at(ani)->Render(-1, x, y);
-	}
+	int ani;
+	if (state == BRICK_STATE_NORMAL)
+		ani = BRICK_ANI_NORMAL;
+	else 
+		ani = BRICK_ANI_EMPTY;
+	animation_set->at(ani)->Render(-1, x, y);
 }
 
 void Brick::GetBoundingBox(float& l, float& t, float& r, float& b,bool isEnable)
@@ -33,50 +30,13 @@ void Brick::SetEmpty()
 {
 	if (state == BRICK_STATE_INACTIVE)
 		return;
-	if (type != BRICK_BREAKABLE_TYPE)
+	if (type != BRICK_BREAKABLE_TYPE &&
+		state != BRICK_STATE_EMPTY)
 	{
 		this->SetState(BRICK_STATE_EMPTY);
-		LPSCENE scence = Game::GetInstance()->GetCurrentScene();
-		Mario* mario = ((PlayScene*)scence)->GetPlayer();
-		Item* item;
-		int form = mario->GetForm();
-		switch (type)
-		{
-		case BRICK_ITEM_COIN_TYPE:
-		{
-			item = ((PlayScene*)scence)->GetCoin();
-			item->Appear(x, y);
-			break;
-		}
-		case BRICK_POWER_UP_TYPE:
-		{
-			if (form == MARIO_SMALL_FORM)
-			{
-				item = ((PlayScene*)scence)->GetMushroom();
-				item->Appear(x, y);
-			}
-			else
-			{
-				item = ((PlayScene*)scence)->GetLeaf();
-				item->Appear(x, y);
-			}
-			break;
-		}
-		case BRICK_PSWITCH_TYPE:
-		{
-			item = ((PlayScene*)scence)->GetSwitch();
-			item->Appear(x, y);
-			break;
-		}
-		case BRICK_ITEM_EXTRA_LIFE_TYPE:
-		{
-			item = ((PlayScene*)scence)->GetMushroom();
-			((Mushroom*)item)->Appear(x, y, MUSHROOM_TYPE_1UP);
-			break;
-		}
-		}
+		isUsed = true;
 	}
-	else
+	else if(type == BRICK_BREAKABLE_TYPE)
 	{
 		this->SetState(BRICK_STATE_BREAK);
 	}
@@ -132,6 +92,11 @@ void Brick::SetState(int _state)
 		break;
 	}
 }
+/// <summary>
+/// Với Brick ở trạng thái Breakable thì state break sẽ làm cho 
+/// viên gạch biến mất và thêm hiệu ứng
+/// ngay cả ở trạng thái là đồng tiền
+/// </summary>
 void Brick::Used()
 {
 	this->SetState(BRICK_STATE_BREAK);
@@ -161,4 +126,46 @@ void InvisibleBrick::GetBoundingBox(float& l, float& t, float& r, float& b, bool
 	t = y;
 	r = x + BRICK_BBOX_WIDTH;
 	b = y + BRICK_BBOX_HEIGHT;
+}
+void Brick::DropItem(Grid* grid)
+{
+	LPSCENE scence = Game::GetInstance()->GetCurrentScene();
+	Mario* mario = ((PlayScene*)scence)->GetPlayer();
+	Item* item;
+	int form = mario->GetForm();
+	switch (type)
+	{
+	case BRICK_ITEM_COIN_TYPE:
+	{
+		item = new Coin(COIN_TYPE_1);
+		item->Appear(x, y);
+		Unit* unit = new Unit(grid, item, x, y);
+		break;
+	}
+	case BRICK_POWER_UP_TYPE:
+	{
+		if (form == MARIO_SMALL_FORM)
+			item = new Mushroom(MUSHROOM_TYPE_POWERUP);
+		else
+			item = new RaccoonLeaf();
+		item->Appear(x, y);
+		Unit* unit = new Unit(grid, item, x, y);
+		break;
+	}
+	case BRICK_PSWITCH_TYPE:
+	{
+		item = new PSwitch();
+		item->Appear(x, y);
+		Unit* unit = new Unit(grid, item, x, y);
+		break;
+	}
+	case BRICK_ITEM_EXTRA_LIFE_TYPE:
+	{
+		item = new Mushroom(MUSHROOM_TYPE_1UP);
+		item->Appear(x, y);
+		Unit* unit = new Unit(grid, item, x, y);
+		break;
+	}
+	}
+	isUsed = false;
 }

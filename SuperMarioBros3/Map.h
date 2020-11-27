@@ -19,7 +19,7 @@ public:
 	~Map();
 	void CreateTilesFromTileSet();
 	void LoadMatrix(LPCWSTR path);
-	void Render();
+	void Render(float cam_x, float cam_y,int screenWidth,int screenHeight);
 	int GetTotalColsOfMap() { return this->TotalColsOfMap; }
 	int GetTotalRowsOfMap() { return this->TotalRowsOfMap; }
 	int GetMapHeiht();

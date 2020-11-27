@@ -1,4 +1,6 @@
 ﻿#include "Grid.h"
+#include "Utils.h"
+#include"Item.h"
 Unit::Unit(Grid* grid, LPGAMEOBJECT obj,
 	float x, float y)
 {
@@ -9,7 +11,7 @@ Unit::Unit(Grid* grid, LPGAMEOBJECT obj,
 
 	this->prev = NULL;
 	this->next = NULL;
-
+	
 	grid->Add(this);
 }
 
@@ -48,11 +50,9 @@ void Grid::Add(Unit* unit)
 {
 	int row = (int)(unit->y / cellHeight);
 	int col = (int)(unit->x / cellWidth);
-
 	// thêm vào đầu cell - add head
 	unit->prev = NULL;
 	unit->next = cells[row][col];
-
 	cells[row][col] = unit;
 	if (unit->next != NULL)
 		unit->next->prev = unit;
@@ -95,10 +95,10 @@ void Grid::Move(Unit* unit, float x, float y)
 	Add(unit);
 }
 
-void Grid::Get(D3DVECTOR camPosition, vector<Unit*>& listUnits)
+void Grid::Get(float cam_x,float cam_y, vector<Unit*>& listUnits)
 {
-	int startCol = (int)(camPosition.x / cellWidth);
-	int endCol = ceil((camPosition.x + SCREEN_WIDTH) / cellWidth);
+	int startCol = (int)(cam_x / cellWidth);
+	int endCol =(int) ceil((cam_x + SCREEN_WIDTH) / cellWidth);
 
 	for (int i = 0; i < numRows; i++)
 	{
