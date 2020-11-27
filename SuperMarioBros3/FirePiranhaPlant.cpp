@@ -202,6 +202,7 @@ void FirePiranhaPlant::HandleTimeSwitchState()
 		&& isShooted== false)
 	{
 		/*Shooting();*/
+		canShoot = true;
 	}
 	// Chuyển trạng thái khi ở trên Pipe sang trạng thái đợi bắn
 	if (state == FIREPIRANHAPLANT_STATE_SHOOTING &&
@@ -212,12 +213,11 @@ void FirePiranhaPlant::HandleTimeSwitchState()
 	}
 	
 }
-void FirePiranhaPlant::Shooting()
+void FirePiranhaPlant::Shooting(Grid* grid)
 {
 	Game* game = Game::GetInstance();
 	LPSCENE scence = game->GetCurrentScene();
 	Mario* mario = ((PlayScene*)scence)->GetPlayer();
-	/*FirePlantBullet* bullet = ((PlayScene*)scence)->GetPlantBullet();*/
 	float mX, mY;
 	mario->GetPosition(mX, mY);
 	float diffX = mX - x, diffY = mY - y;
@@ -241,9 +241,13 @@ void FirePiranhaPlant::Shooting()
 			else
 				direct = FIREBULLET_DIRECT_3;
 		}
-		/*bullet->Shoot(x + FIREPIRAHANPLANT_SHOOTING_X
-			, y , nx, direct);*/
+		FirePlantBullet* bullet = new FirePlantBullet();
+		bullet->Shoot( x + FIREPIRAHANPLANT_SHOOTING_X
+			, y,nx, direct);
+		Unit* unit = new Unit(grid, bullet, x + FIREPIRAHANPLANT_SHOOTING_X
+			, y);
 		isShooted = true;
+		canShoot = false;
 	}
 
 }
