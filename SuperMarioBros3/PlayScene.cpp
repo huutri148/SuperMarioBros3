@@ -227,6 +227,12 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 		unit = new Unit(grid, obj, x, y);
 		break;
 	}
+	case OBJECT_TYPE_PARAGOOMBA:
+	{
+		obj = new ParaGoomba(x,y);
+		unit = new Unit(grid, obj, x, y);
+		break;
+	}
 	default:
 		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
 		return;
@@ -345,11 +351,17 @@ void PlayScene::Update(DWORD dt)
 				plant->Shooting(grid);
 			}
 		}
-		if (dynamic_cast<Brick*>(object))
+		else if (dynamic_cast<Brick*>(object))
 		{
 			Brick* brick = dynamic_cast<Brick*>(object);
 			if (brick->isUsed == true )
 				brick->DropItem(grid);
+		}
+		else if (dynamic_cast<ParaGoomba*>(object))
+		{
+			ParaGoomba* goomba = dynamic_cast<ParaGoomba*>(object);
+			if (goomba->state == PARAGOOMBA_STATE_GOOMBA)
+				goomba->ChangeToGoomba(grid);
 		}
 		GetColliableObjects(object, coObjects);
 		object->Update(dt, &coObjects);
@@ -411,11 +423,26 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 		{
 			if (dynamic_cast<Enemy*>(obj))
 			{
+				// tránh trường hợp quái rớt trúng đầu và bị rớt xuống
 				if (dynamic_cast<Enemy*>(obj)->isDead == true)
 					continue;
 			}
 			if (!dynamic_cast<Block*>(obj) && !dynamic_cast<FirePlantBullet*>(obj) 
 				&&!dynamic_cast<Item*>(obj) && !dynamic_cast<InvisibleBrick*>(obj))
+				coObjects.push_back(obj);
+		}
+	}
+	else if (dynamic_cast<ParaGoomba*>(curObj))
+	{
+		for (auto obj : objects)
+		{
+			if (dynamic_cast<Enemy*>(obj))
+			{
+				if (dynamic_cast<Enemy*>(obj)->isDead == true)
+					continue;
+			}
+			if (!dynamic_cast<Block*>(obj) && !dynamic_cast<FirePlantBullet*>(obj)
+				&& !dynamic_cast<Item*>(obj) && !dynamic_cast<InvisibleBrick*>(obj))
 				coObjects.push_back(obj);
 		}
 	}
@@ -431,9 +458,7 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 			{
 				if (dynamic_cast<FirePlantBullet*>(obj) && obj->IsEnable() == true)
 					coObjects.push_back(obj);
-				else if ((dynamic_cast<Goomba*>(obj) || dynamic_cast<KoopaTroopa*>(obj)  ||
-					dynamic_cast<PiranhaPlant*>(obj) ||
-					dynamic_cast<FirePiranhaPlant*>(obj))
+				else if ((dynamic_cast<Enemy*>(obj))
 					&& obj->isEnable == true)
 					coObjects.push_back(obj);
 			}

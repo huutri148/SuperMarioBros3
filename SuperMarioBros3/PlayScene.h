@@ -20,6 +20,7 @@
 #include"Mushroom.h"
 #include"Item.h"
 #include"PSwitch.h"
+#include"ParaGoomba.h"
 #include "Grid.h"
 
 class PlayScene : public Scene
