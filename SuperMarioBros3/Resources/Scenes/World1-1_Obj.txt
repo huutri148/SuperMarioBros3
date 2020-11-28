@@ -655,7 +655,7 @@
 #6 = Pipe,5 = block,7 = Invisible Brick
 #8 = PiranhaPlant,9 = Coin,10 = FirePiranhaPlant,11 ParaGoomba
 # MARIO
-0	16.0	380	1
+0	1000.0	380	1
 #PiranhaPlant
 8	1816	399	5	0
 #Fire PiranhaPlant
@@ -775,7 +775,7 @@
 3	580.0	360	4	0
 3	2112	370	4	0
 #Green Koopa
-3	1489	405	4	1
+3	1490	405	4	1
 #Goomba
 2	200	415	3
 2	530	415	3
