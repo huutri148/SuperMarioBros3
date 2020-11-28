@@ -174,15 +174,17 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 	}
 	case OBJECT_TYPE_BLOCKS: 
 	{
-		obj = new Block(); 
+		int width = atoi(tokens[4].c_str());
+		int height = atoi(tokens[5].c_str());
+		obj = new Block(x,y,width,height); 
 		unit = new Unit(grid, obj, x, y);
 		break;
 	}
 	case OBJECT_TYPE_GROUNDS:
 	{
-		/*int width = atoi(tokens[4].c_str());
-		int height = atoi(tokens[5].c_str());*/
-		obj = new Ground(/*x ,y, width, height*/);
+		int width = atoi(tokens[4].c_str());
+		int height = atoi(tokens[5].c_str());
+		obj = new Ground(x ,y, width, height);
 		unit = new Unit(grid, obj, x, y);
 		break;
 	}
@@ -735,10 +737,11 @@ void PlayScene::GetObjectFromGrid()
 		LPGAMEOBJECT obj = listUnits[i]->GetObj();
 		objects.push_back(obj);
 
-		if (dynamic_cast<Ground*>(obj) || dynamic_cast<Block*>(obj) ||
+		if (  /*dynamic_cast<Block*>(obj) ||*/
 			dynamic_cast<InvisibleBrick*>(obj))
 			continue;
-		else if (dynamic_cast<Brick*>(obj)|| dynamic_cast<Pipe*>(obj))
+		else if (dynamic_cast<Brick*>(obj)|| dynamic_cast<Pipe*>(obj)||
+			dynamic_cast<Ground*>(obj) || dynamic_cast<Block*>(obj))
 			listStaticObjectsToRender.push_back(obj);
 	/*	else if (dynamic_cast<Pipe*>(obj))
 			listPipeToRender.push_back(obj);*/
