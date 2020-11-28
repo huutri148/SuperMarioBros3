@@ -129,7 +129,7 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				CanPullBack = true;
 				lastStanding_Y = y;
-				if(e->ny < 0 && nx == 0)
+				if(e->ny < 0 )
 				{
 					vy = 0;
 				}
