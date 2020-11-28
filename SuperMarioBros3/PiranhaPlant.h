@@ -17,7 +17,15 @@ public:
 	virtual bool IsDead();
 	virtual void SetBeingStromped() ;
 	virtual void SetBeingSkilled(int nx);
-	virtual void EnableAgain() ;
+	virtual void Inactive() { this->SetState(PIRANHAPLANT_STATE_INACTIVE); }
+	virtual void Active() { this->SetState(PIRANHAPLANT_STATE_DARTING); };
+	virtual bool IsInactive()
+	{
+		if (this->state ==PIRANHAPLANT_STATE_INACTIVE)
+			return true;
+		return false;
+	}
+
 	PiranhaPlant(float x, float y, int _type = PIRANHAPLANT_GREEN_TYPE);
 	
 };

@@ -10,10 +10,6 @@ class RaccoonLeaf :public Item
 	DWORD changeDirectTime = 0;
 public:
 	virtual void Render();
-	/*RaccoonLeaf(float x, float y) :GameObject(x, y) {
-		this->SetState();
-		
-	};*/
 	RaccoonLeaf();
 	virtual void Appear(float x, float y);
 	virtual void Update(DWORD dt, 

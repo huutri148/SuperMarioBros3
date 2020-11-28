@@ -7,7 +7,7 @@ class Mushroom :public Item
 	float appearY;
 public:
 	virtual void Render();
-	void Appear(float x, float y, int _type = MUSHROOM_ANI_POWERUP);
+	//void Appear(float x, float y, int _type = MUSHROOM_ANI_POWERUP);
 	void Appear(float x, float y);
 	virtual void Update(DWORD dt,
 		vector<LPGAMEOBJECT>* coObjects);
@@ -16,6 +16,6 @@ public:
 	virtual void GetBoundingBox(float& l, float& t, float& r,
 		float& b, bool isEnable);
 	void Used();
-	Mushroom();
+	Mushroom(int type = MUSHROOM_ANI_POWERUP);
 };
 

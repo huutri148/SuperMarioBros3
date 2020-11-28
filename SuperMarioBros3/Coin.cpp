@@ -80,7 +80,7 @@ void Coin::Render()
 				ani = COIN_ANI_TYPE_1;
 			else
 				ani = COIN_ANI_TYPE_2;
-			animation_set->at(ani)->Render(-1, x, y);
+			animation_set->at(ani)->Render(-1,round( x),round( y));
 		}
 	}
 	//RenderBoundingBox();
@@ -91,7 +91,6 @@ void Coin::SetState(int state)
 	switch (state)
 	{
 	case COIN_STATE_IDLE:
-		isEnable = true;
 		vx = 0;
 		vy = 0;
 		nx = -1;
@@ -118,8 +117,12 @@ Coin::Coin(int type)
 		this->SetState(COIN_STATE_IDLE);
 	if (type == COIN_TYPE_1)
 		this->SetState(COIN_STATE_INACTIVE);
+	AnimationSets* animation_sets = AnimationSets::GetInstance();
+	LPANIMATION_SET ani_set = animation_sets->Get(70);
+	this->SetAnimationSet(ani_set);
 }
 void Coin::Used()
 {
 	this->SetState(COIN_STATE_INACTIVE);
+
 }

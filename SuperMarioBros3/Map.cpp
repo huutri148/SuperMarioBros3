@@ -46,11 +46,19 @@ void Map::LoadMatrix(LPCWSTR path)
 	}
 	file.close();
 }
-void Map::Render()
+void Map::Render(float cam_x,float cam_y, int screenWidth,int screenHeight)
 {
-	for (int iRow = 0; iRow < TotalRowsOfMap; iRow++)
+	int FirstColumn =(int) floor(cam_x/ TILE_WIDTH);
+	int FirstRow =(int) floor(cam_y / TILE_HEIGHT);
+	int LastRow =(int) floor((cam_y + SCREEN_HEIGHT) / TILE_HEIGHT);
+	int LastColumn =(int) ceil((cam_x + screenWidth) / TILE_WIDTH);
+	if (LastColumn >= TotalColsOfMap)
+		LastColumn = TotalColsOfMap - 1;
+	if (LastRow >= TotalRowsOfMap)
+		LastColumn = TotalRowsOfMap - 1;
+	for (int iRow = FirstRow; iRow < LastRow; iRow++)
 	{
-		for (int iColumn = 0; iColumn < TotalColsOfMap; iColumn++)
+		for (int iColumn = FirstColumn; iColumn < LastColumn; iColumn++)
 		{
 			this->Tiles[this->Matrix[iRow][iColumn] - 1]->Draw(-1,
 				(float)iColumn * TILE_WIDTH,

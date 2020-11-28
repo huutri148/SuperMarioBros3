@@ -2,8 +2,7 @@
 #include "Utils.h"
 void FirePlantBullet::Render()
 {
-	if(isEnable)
-		animation_set->at(0)->Render(-1, x, y);
+	animation_set->at(0)->Render(-1, round(x), round(y));
 }
 void FirePlantBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
@@ -14,20 +13,10 @@ void FirePlantBullet::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 void FirePlantBullet::GetBoundingBox(float& l, float& t, 
 	float& r, float& b, bool isEnable)
 {
-	if (isEnable == true)
-	{
-		l = x;
-		t = y;
-		r = x + FIREBULLET_BBOX_WIDTH;
-		b = y + FIREBULLET_BBOX_HEIGHT;
-	}
-	else
-	{
-		l = 0;
-		t = 0;
-		r = 0;
-		b = 0;
-	}
+	l = x;
+	t = y;
+	r = x + FIREBULLET_BBOX_WIDTH;
+	b = y + FIREBULLET_BBOX_HEIGHT;
 }
 void FirePlantBullet::SetState(int _state)
 {

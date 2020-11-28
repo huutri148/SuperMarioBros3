@@ -4,16 +4,18 @@
 #include "Mario.h"
 #include"Game.h"
 #include"RaccoonLeaf.h"
+#include"Grid.h"
 
 class Brick : public GameObject
 {
 	
 	DWORD changeTime;
-	bool isUsed;
+	
 	float entryX, entryY;
 	int type;
 public:
 	static bool isTransForm;
+	bool isUsed = false;
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	/*virtual void CalcPotentialCollisions(vector<LPGAMEOBJECT>* coObjects,
 		vector<LPCOLLISIONEVENT>& coEvents);*/
@@ -24,10 +26,11 @@ public:
 		this->entryY = y;
 		type = _type;
 		this->SetState(BRICK_STATE_NORMAL);
-		isEnable = true;
 	};
 	bool Breakable();
 	bool CanUsed();
+
+	void DropItem(Grid* grid);
 	void Used();
 	void SetState(int _state);
 	void SetEmpty();
