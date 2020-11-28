@@ -159,6 +159,7 @@
     <ClInclude Include="Ground.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="KeyEventHandler.h" />
+    <ClInclude Include="KoopaParaTroopa.h" />
     <ClInclude Include="KoopaTroopa.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Mario.h" />
@@ -188,6 +189,7 @@
     <ClCompile Include="Grid.cpp" />
     <ClCompile Include="Ground.cpp" />
     <ClCompile Include="Item.cpp" />
+    <ClCompile Include="KoopaParaTroopa.cpp" />
     <ClCompile Include="KoopaTroopa.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
