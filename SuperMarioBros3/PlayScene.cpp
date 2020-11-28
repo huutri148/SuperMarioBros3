@@ -405,7 +405,7 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 		{
 			if (dynamic_cast<Enemy*>(obj))
 			{
-				if (dynamic_cast<Enemy*>(obj)->isDead == true)
+				if (!dynamic_cast<KoopaTroopa*>(obj))
 					continue;
 			}
 			if (dynamic_cast<Ground*>(obj) || 
@@ -423,7 +423,8 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 		{
 			if (dynamic_cast<Enemy*>(obj))
 			{
-				if (dynamic_cast<Enemy*>(obj)->isDead == true)
+				if (dynamic_cast<Enemy*>(obj)->isDead == true ||
+					dynamic_cast<Enemy*>(obj)->IsInactive())
 					continue;
 			}
 			if (!dynamic_cast<FirePlantBullet*>(obj) && !dynamic_cast<Item*>(obj)
@@ -438,7 +439,7 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 			if (dynamic_cast<Enemy*>(obj))
 			{
 				// tránh trường hợp quái rớt trúng đầu và bị rớt xuống
-				if (dynamic_cast<Enemy*>(obj)->isDead == true)
+				if (!dynamic_cast<KoopaTroopa*>(obj))
 					continue;
 			}
 			if (!dynamic_cast<Block*>(obj) && !dynamic_cast<FirePlantBullet*>(obj) 
@@ -452,7 +453,7 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 		{
 			if (dynamic_cast<Enemy*>(obj))
 			{
-				if (dynamic_cast<Enemy*>(obj)->isDead == true)
+				if (!dynamic_cast<KoopaTroopa*>(obj))
 					continue;
 			}
 			if (!dynamic_cast<Block*>(obj) && !dynamic_cast<FirePlantBullet*>(obj)
@@ -464,11 +465,8 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 	{
 		for (auto obj : objects)
 		{
-			if (dynamic_cast<Enemy*>(obj))
-			{
-				if (dynamic_cast<Enemy*>(obj)->isDead == true)
-					continue;
-			}
+			if (!dynamic_cast<KoopaTroopa*>(obj))
+				continue;
 			if (!dynamic_cast<FirePlantBullet*>(obj)&& !dynamic_cast<Item*>(obj) 
 				&& !dynamic_cast<InvisibleBrick*>(obj))
 				coObjects.push_back(obj);
@@ -478,7 +476,7 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 	{
 		for (auto obj : objects)
 		{
-			if ( dynamic_cast<Ground*>(obj) ||dynamic_cast<Block*>(obj)
+				if ( dynamic_cast<Ground*>(obj) ||dynamic_cast<Block*>(obj)
 				|| dynamic_cast<Brick*>(obj) || dynamic_cast<Item*>(obj) ||
 				dynamic_cast<Pipe*>(obj))
 				coObjects.push_back(obj);
@@ -737,11 +735,10 @@ void PlayScene::GetObjectFromGrid()
 		LPGAMEOBJECT obj = listUnits[i]->GetObj();
 		objects.push_back(obj);
 
-		if (  /*dynamic_cast<Block*>(obj) ||*/
+		if (  dynamic_cast<Block*>(obj) || dynamic_cast<Ground*>(obj)||
 			dynamic_cast<InvisibleBrick*>(obj))
 			continue;
-		else if (dynamic_cast<Brick*>(obj)|| dynamic_cast<Pipe*>(obj)||
-			dynamic_cast<Ground*>(obj) || dynamic_cast<Block*>(obj))
+		else if (dynamic_cast<Brick*>(obj)|| dynamic_cast<Pipe*>(obj))
 			listStaticObjectsToRender.push_back(obj);
 	/*	else if (dynamic_cast<Pipe*>(obj))
 			listPipeToRender.push_back(obj);*/
