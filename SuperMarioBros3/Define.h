@@ -36,7 +36,7 @@
 #define BUFF_SPEED						0.008f	// tốc độ tăng lên khi tích stack
 #define POWER_METER_FULL				7		// số stack tối đa		//thời gian để tích 1 stack
 #define POWER_MELTER_MINIMUM			0
-#define POWER_MELTER_BUFF_SPEED_LEVEL	4
+#define POWER_MELTER_BUFF_SPEED_LEVEL	3
 #define STACK_TIME						200			//thời gian để tích 1 stack
 #define LOSE_STACK_TIME					100
 #define MARIO_FRICTION					0.08f
@@ -318,7 +318,7 @@
 #define FIREBULLET_DIRECT_3		3
 #define FIREBULLET_DIRECT_4		4
 //GROUND
-#define GROUND_BBOX_WIDTH		16
+#define GROUND_BBOX_WIDTH		176
 #define GROUND_BBOX_HEIGHT		16
 //Block
 #define BLOCK_BBOX_WIDTH		16
