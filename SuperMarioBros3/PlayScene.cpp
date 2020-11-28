@@ -233,6 +233,12 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 		unit = new Unit(grid, obj, x, y);
 		break;
 	}
+	case OBJECT_TYPE_PARATROOPA:
+	{
+		obj = new KoopaParaTroopa(x, y);
+		unit = new Unit(grid, obj, x, y);
+		break;
+	}
 	default:
 		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
 		return;
@@ -363,6 +369,12 @@ void PlayScene::Update(DWORD dt)
 			if (goomba->state == PARAGOOMBA_STATE_GOOMBA)
 				goomba->ChangeToGoomba(grid);
 		}
+		else if (dynamic_cast<KoopaParaTroopa*>(object))
+		{
+			KoopaParaTroopa* parakoopa = dynamic_cast<KoopaParaTroopa*>(object);
+			if (parakoopa->state == PARATROOPA_STATE_KOOPA)
+				parakoopa->ChangeToKoopa(grid);
+		}
 		GetColliableObjects(object, coObjects);
 		object->Update(dt, &coObjects);
 	}
@@ -443,6 +455,20 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 			}
 			if (!dynamic_cast<Block*>(obj) && !dynamic_cast<FirePlantBullet*>(obj)
 				&& !dynamic_cast<Item*>(obj) && !dynamic_cast<InvisibleBrick*>(obj))
+				coObjects.push_back(obj);
+		}
+	}
+	else if (dynamic_cast<KoopaParaTroopa*>(curObj))
+	{
+		for (auto obj : objects)
+		{
+			if (dynamic_cast<Enemy*>(obj))
+			{
+				if (dynamic_cast<Enemy*>(obj)->isDead == true)
+					continue;
+			}
+			if (!dynamic_cast<FirePlantBullet*>(obj)&& !dynamic_cast<Item*>(obj) 
+				&& !dynamic_cast<InvisibleBrick*>(obj))
 				coObjects.push_back(obj);
 		}
 	}

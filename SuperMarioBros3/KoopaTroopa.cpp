@@ -264,6 +264,15 @@ KoopaTroopa ::KoopaTroopa(float x, float y,int _type) : Enemy(x, y)
 	type = _type;
 	this->SetState(KOOPATROOPA_STATE_WALKING);
 }
+KoopaTroopa::KoopaTroopa()
+{
+	type = 1;
+	this->SetState(KOOPATROOPA_STATE_WALKING);
+	this->isEnable = true;
+	AnimationSets* animation_sets = AnimationSets::GetInstance();
+	LPANIMATION_SET ani_set = animation_sets->Get(4);
+	this->SetAnimationSet(ani_set);
+}
 void KoopaTroopa::SetBeingStromped()
 {
 	this->SetState(KOOPATROOPA_STATE_HIDING);

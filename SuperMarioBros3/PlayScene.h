@@ -22,6 +22,7 @@
 #include"PSwitch.h"
 #include"ParaGoomba.h"
 #include "Grid.h"
+#include"KoopaParaTroopa.h"
 
 class PlayScene : public Scene
 {

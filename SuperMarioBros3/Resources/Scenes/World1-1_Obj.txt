@@ -458,7 +458,7 @@
 #jump
 706	30010	100	30011	100	30012	100	30013	100
 
-
+#======KOOPATROOPA======
 #=====Green Koopa=======
 #walk
 710	30020	100	30021	100
@@ -477,6 +477,16 @@
 722	30032	100	30033	100	30034	100
 #ExitSHELL
 723	30035	100
+
+#=======KOOPA-PARATROOPA====
+#===========GREEN==========
+#jumping
+714	30026	100	30027	100	30028	100
+#shell(death)
+715	30032	100
+#===========RED============
+715	30036	100	30037	100	30038	100
+
 
 
 
@@ -588,6 +598,8 @@
 7	705	706
 #RED GOOMBA
 8	703	704
+# PARATROOPA-GREEN
+9	714
 #Block
 #pink
 21	810
@@ -641,15 +653,9 @@
 # type	x	y	ani_set_id	extra_settings per object type	type
 # type: 0 = Mario , 1 = Brick, 2 = Goomba,3=KoopaTroopa,4= Ground,
 #6 = Pipe,5 = block,7 = Invisible Brick
-#8 = PiranhaPlant,9 = Coin,10 = FirePiranhaPlant,15 ParaGoomba
+#8 = PiranhaPlant,9 = Coin,10 = FirePiranhaPlant,11 ParaGoomba
 # MARIO
-0	600.0	400	1
-#Goombaa
-#2	200	416	3
-#2	530	416	3
-#2	850	400	3
-#2	896	440	3
-#2	1000	440	3
+0	1172.0	400	1
 #PiranhaPlant
 8	1816	399	5	0
 #Fire PiranhaPlant
@@ -986,13 +992,20 @@
 #Red Koopa
 3	580.0	360	4	0
 3	2112	370	4	0
+#Green Koopa
+3	1489	405	4	1
 #Goomba
 2	200	415	3
 2	530	415	3
 2	846	400	3
 2	880	400	3
 #ParaGoomba
-15	900	396	7
+11	900	396	7
+#Green_ParaTroopa
+12	1342	300	9
+12	1393	300	9
+12	1441	300	9
+
 #Coin
 9	1088	336	70	2
 9	1120	304	70	2
