@@ -44,6 +44,8 @@
 #define MARIO_FLYING_LIMITED_TIME		2000
 #define MARIO_FLOATING_SPEED_Y			0.01f
 #define MARIO_FALLING_SPEED				0.03f
+#define MARIO_MAX_BULLET				2
+#define MARIO_SHOOTING_TIME				200
 //Các trạng thái của Mario
 #define MARIO_STATE_IDLE				0
 #define MARIO_STATE_WALKING				100

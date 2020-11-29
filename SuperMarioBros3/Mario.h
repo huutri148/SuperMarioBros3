@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "GameObject.h"
 #include"Define.h"
+#include"FireBall.h"
+#include"Grid.h"
 
 
 
@@ -15,7 +17,10 @@ class Mario : public GameObject
 	DWORD flyTimeStart = 0;
 	DWORD jumpTimeStart = 0;// pressing jumping time
 	DWORD floatingTime = 0;
+	DWORD shootingTime = 0;
 	int powerMelterStack = 0;
+
+	int indexFireBall = 0;
 
 	//Các biến cờ ở các trạng thái
 	bool isInGround ;
@@ -27,6 +32,8 @@ class Mario : public GameObject
 	
 public:
 	// Chuyển thành hàm
+	//vector<FireBall*> fireBall;
+	
 	bool turnFriction;
 	bool isPressedJ;
 	bool GetisPickUp() { return isPickingUp; }
@@ -73,7 +80,7 @@ public:
 	void LosePowerMelter();
 
 	//Các hành động của Mario
-	GameObject* ShootFireBall();
+	void ShootFireBall(Grid* grid);
 	int Skill();
 	void Squat();
 	void TailAttack();

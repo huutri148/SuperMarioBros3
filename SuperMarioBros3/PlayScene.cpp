@@ -174,16 +174,16 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 	}
 	case OBJECT_TYPE_BLOCKS: 
 	{
-		int width = atoi(tokens[4].c_str());
-		int height = atoi(tokens[5].c_str());
+		float width = atoi(tokens[4].c_str());
+		float height = atoi(tokens[5].c_str());
 		obj = new Block(x,y,width,height); 
 		unit = new Unit(grid, obj, x, y);
 		break;
 	}
 	case OBJECT_TYPE_GROUNDS:
 	{
-		int width = atoi(tokens[4].c_str());
-		int height = atoi(tokens[5].c_str());
+		float width = atoi(tokens[4].c_str());
+		float height = atoi(tokens[5].c_str());
 		obj = new Ground(x ,y, width, height);
 		unit = new Unit(grid, obj, x, y);
 		break;
@@ -408,8 +408,8 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 				if (!dynamic_cast<KoopaTroopa*>(obj))
 					continue;
 			}
-			if (dynamic_cast<Ground*>(obj) || 
-				dynamic_cast<InvisibleBrick*>(obj))
+			if (dynamic_cast<Ground*>(obj) || 	dynamic_cast<InvisibleBrick*>(obj) ||
+				dynamic_cast<FireBall*>(obj))
 				coObjects.push_back(obj);
 		}
 	}
@@ -468,6 +468,22 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 			if (!dynamic_cast<KoopaTroopa*>(obj))
 				continue;
 			if (!dynamic_cast<FirePlantBullet*>(obj)&& !dynamic_cast<Item*>(obj) 
+				&& !dynamic_cast<InvisibleBrick*>(obj))
+				coObjects.push_back(obj);
+		}
+	}
+	else if (dynamic_cast<FireBall*>(curObj))
+	{
+		for (auto obj : objects)
+		{
+			if (dynamic_cast<Enemy*>(obj))
+			{
+				if (dynamic_cast<Enemy*>(obj)->IsInactive())
+					continue;
+				else 
+					coObjects.push_back(obj);
+			}
+			if (!dynamic_cast<FirePlantBullet*>(obj) && !dynamic_cast<Item*>(obj)
 				&& !dynamic_cast<InvisibleBrick*>(obj))
 				coObjects.push_back(obj);
 		}
@@ -569,8 +585,9 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	
 		if (flag == 1)
 		{
-			GameObject* fireBall = mario->ShootFireBall();
-			//((PlayScene*)scence)->AddObject((FireBall*)fireBall);
+
+			Grid* grid = ((PlayScene*)scence)->GetGrid();
+			mario->ShootFireBall(grid);
 		}
 		if (flag == 2)
 		{
@@ -742,7 +759,8 @@ void PlayScene::GetObjectFromGrid()
 			listStaticObjectsToRender.push_back(obj);
 	/*	else if (dynamic_cast<Pipe*>(obj))
 			listPipeToRender.push_back(obj);*/
-		else if (dynamic_cast<Enemy*>(obj)|| dynamic_cast<FirePlantBullet*>(obj))
+		else if (dynamic_cast<Enemy*>(obj)|| dynamic_cast<FirePlantBullet*>(obj) ||
+			dynamic_cast<FireBall*>(obj))
 			listMovingObjectsToRender.push_back(obj);
 		else if (dynamic_cast<Item*>(obj))
 			listMovingObjectsToRender.push_back(obj);
