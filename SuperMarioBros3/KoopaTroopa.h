@@ -49,5 +49,6 @@ public:
 		return false;
 	}
 	KoopaTroopa(float x, float y, int _type = KOOPATROOPA_GREEN_TYPE);
+	KoopaTroopa();
 };
 

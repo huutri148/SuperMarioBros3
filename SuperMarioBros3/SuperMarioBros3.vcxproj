@@ -160,10 +160,12 @@
     <ClInclude Include="HUD.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="KeyEventHandler.h" />
+    <ClInclude Include="KoopaParaTroopa.h" />
     <ClInclude Include="KoopaTroopa.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Mario.h" />
     <ClInclude Include="Mushroom.h" />
+    <ClInclude Include="ParaGoomba.h" />
     <ClInclude Include="Pipe.h" />
     <ClInclude Include="PiranhaPlant.h" />
     <ClInclude Include="PlayScene.h" />
@@ -190,11 +192,13 @@
     <ClCompile Include="Ground.cpp" />
     <ClCompile Include="HUD.cpp" />
     <ClCompile Include="Item.cpp" />
+    <ClCompile Include="KoopaParaTroopa.cpp" />
     <ClCompile Include="KoopaTroopa.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Mario.cpp" />
     <ClCompile Include="Mushroom.cpp" />
+    <ClCompile Include="ParaGoomba.cpp" />
     <ClCompile Include="Pipe.cpp" />
     <ClCompile Include="PiranhaPlant.cpp" />
     <ClCompile Include="PlayScene.cpp" />

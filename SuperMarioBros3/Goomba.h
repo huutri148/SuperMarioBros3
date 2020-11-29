@@ -33,5 +33,9 @@ public:
 	Goomba() :Enemy()
 	{
 		this->SetState(GOOMBA_STATE_WALKING);
+		this->isEnable = true;
+		AnimationSets* animation_sets = AnimationSets::GetInstance();
+		LPANIMATION_SET ani_set = animation_sets->Get(8);
+		this->SetAnimationSet(ani_set);
 	}
 };

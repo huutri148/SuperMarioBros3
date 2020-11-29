@@ -20,15 +20,16 @@
 #include"Mushroom.h"
 #include"Item.h"
 #include"PSwitch.h"
+#include"ParaGoomba.h"
 #include "Grid.h"
+#include"KoopaParaTroopa.h"
 
 class PlayScene : public Scene
 {
 protected:
 	Mario* player = NULL;
 	Map* map = NULL ;
-	int na = 0;
-
+	
 	bool isTurnCamY = false;// Camera Y được bật khi Mario bay 
 	bool isGameOver = false;
 
@@ -77,6 +78,7 @@ public:
 	// Nhận các đối tượng cần xét
 	void GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& coObjects);
 	void GetObjectFromGrid();
+	Grid* GetGrid() { return grid; };
 	void UpdateGrid();
 	
 	void UpdatePlayer(DWORD dt);

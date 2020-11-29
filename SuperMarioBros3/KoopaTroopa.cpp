@@ -102,6 +102,7 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				{
 					enemy->SetBeingSkilled(this->nx);
 					enemy->SetDead();
+										
 					if (isPickedUp == true)
 					{
 						this->SetState(KOOPATROOPA_STATE_DEATH);
@@ -128,7 +129,7 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				CanPullBack = true;
 				lastStanding_Y = y;
-				if (ny < 0)
+				if(e->ny < 0 )
 				{
 					vy = 0;
 				}
@@ -260,6 +261,15 @@ KoopaTroopa ::KoopaTroopa(float x, float y,int _type) : Enemy(x, y)
 	isBumped = false;
 	type = _type;
 	this->SetState(KOOPATROOPA_STATE_WALKING);
+}
+KoopaTroopa::KoopaTroopa()
+{
+	type = 1;
+	this->SetState(KOOPATROOPA_STATE_WALKING);
+	this->isEnable = true;
+	AnimationSets* animation_sets = AnimationSets::GetInstance();
+	LPANIMATION_SET ani_set = animation_sets->Get(4);
+	this->SetAnimationSet(ani_set);
 }
 void KoopaTroopa::SetBeingStromped()
 {
