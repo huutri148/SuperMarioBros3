@@ -47,6 +47,11 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		untouchableStart = 0;
 		untouchable = 0;
 	}
+	if (GetTickCount() - shootingTime> MARIO_SHOOTING_TIME
+		&& state == MARIO_STATE_SHOOT_FIREBALL)
+	{
+		this->SetState(MARIO_STATE_IDLE);
+	}
 	// No collision occured, proceed normally
 	if (coEvents.size() == 0)
 	{
@@ -697,19 +702,34 @@ void Mario::Friction()
 
 	}
 }
-GameObject* Mario::ShootFireBall()
+void Mario::ShootFireBall(Grid* grid)
 {
-	this->SetState(MARIO_STATE_SHOOT_FIREBALL);
-	FireBall* fireBall;
-	if (nx > 0)
-		fireBall = new FireBall(this->x + MARIO_FIRE_BBOX_WIDTH, 
-			this->y + MARIO_FIRE_BBOX_WIDTH /3,
-			this->nx);
+	// TODO: sửa để hạn chế tạo ra nhiều đối tượng fireball
+	// hạn chế việc tăng ram
+	if (++indexFireBall <= MARIO_MAX_BULLET)
+	{
+		if (indexFireBall == 1)
+		{
+			shootingTime = GetTickCount();
+		}
+		this->SetState(MARIO_STATE_SHOOT_FIREBALL);
+		FireBall* fireBall;
+		if (nx > 0)
+			fireBall = new FireBall(this->x + MARIO_FIRE_BBOX_WIDTH,
+				this->y + MARIO_FIRE_BBOX_WIDTH / 3,
+				this->nx);
+		else
+			fireBall = new FireBall(this->x - MARIO_FIRE_BBOX_WIDTH,
+				this->y + MARIO_FIRE_BBOX_WIDTH / 3,
+				this->nx);
+		Unit* unit = new Unit(grid, fireBall, this->x - MARIO_FIRE_BBOX_WIDTH,
+			this->y + MARIO_FIRE_BBOX_WIDTH / 3);
+	}
 	else
-		fireBall = new FireBall(this->x - MARIO_FIRE_BBOX_WIDTH, 
-			this->y + MARIO_FIRE_BBOX_WIDTH / 3,
-			this->nx);
-	return fireBall;
+	{
+		indexFireBall = 0;
+	}
+	
 }
 void Mario::Float()
 {
