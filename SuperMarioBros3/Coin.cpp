@@ -111,6 +111,8 @@ Coin::Coin(int type)
 }
 void Coin::Used()
 {
+	LPSCENE scence = Game::GetInstance()->GetCurrentScene();
+	Mario* mario = ((PlayScene*)scence)->GetPlayer();
 	this->SetState(COIN_STATE_INACTIVE);
-
+	mario->GainMoney(1);
 }

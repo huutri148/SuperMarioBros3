@@ -94,6 +94,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						!dynamic_cast<FirePiranhaPlant*>(enemy))
 					{
 						enemy->SetBeingStromped();
+						score += 100;
 						vy = -MARIO_JUMP_DEFLECT_SPEED;
 						vx = nx * MARIO_WALK_DEFELCT_SPEED;
 					}
@@ -155,6 +156,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 								{
 									dynamic_cast<KoopaTroopa*>(enemy)->IsKicked(this->nx);
 									this->SetState(MARIO_STATE_KICK);
+									score += 100;
 								}
 							}
 						}
@@ -189,7 +191,12 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						// Các Brick còn lại thì có thể tác động
 						if (brick->Breakable() && form != MARIO_SMALL_FORM ||
 							!brick->Breakable())
+						{
 							brick->SetEmpty();
+							if (brick->state != BRICK_STATE_INACTIVE)
+								this->GainPoint(10);
+						}
+							
 					}
 				}
 				// nếu viên gạch Breakable ở trạng thái 
@@ -197,7 +204,10 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				else
 				{
 					brick->Used();
+					this->GainPoint(10);
+					this->GainMoney(1);
 				}
+			
 			}
 			else if (dynamic_cast<Block*>(e->obj))
 			{
@@ -213,7 +223,6 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 		}
 	}
-	
 	// clean up collision events
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 }
@@ -854,6 +863,10 @@ Mario::Mario()
 	flyTimeStart = 0;
 	turnFriction = false;
 	isPickingUp = false;
+	indexFireBall = 0;
+	score = 0;
+	money = 0;
+	life = 4;
 }
 void Mario::ReleaseJ()
 {

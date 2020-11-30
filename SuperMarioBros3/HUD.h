@@ -5,6 +5,8 @@
 class Hud : public GameObject
 {
 	Font* font;
+
+
 	LPSPRITE hud1;
 	LPSPRITE hud2;
 	LPSPRITE playerSprite;
@@ -14,6 +16,7 @@ class Hud : public GameObject
 	vector<LPSPRITE> scoreSprite;
 	vector<LPSPRITE> remainTimeSprites;
 	vector<LPSPRITE> powerMelterSprite;
+	vector<LPSPRITE> filledPowerMelterSprite;
 	
 	int nlife = 4;
 	int remainTime = 0;
@@ -21,6 +24,7 @@ class Hud : public GameObject
 	int money = 0;
 	int world = 1;
 	int time = 0;
+	int powerMelterStack = 0;
 public:
 	Hud();
 	virtual void GetBoundingBox(float& left, float& top,

@@ -21,6 +21,10 @@ class Mario : public GameObject
 	int powerMelterStack = 0;
 
 	int indexFireBall = 0;
+	int score = 0;
+	int money = 0;
+	int life = 4;
+	int type = 0;
 
 	//Các biến cờ ở các trạng thái
 	bool isInGround ;
@@ -91,4 +95,14 @@ public:
 	void SuperJump();
 	void PickUp();
 	bool Brake();
+
+	void GainMoney(int pMoney) { money += pMoney; };
+	void GainPoint(int pPoint) { score += pPoint; };
+	void GainLife() { life += 1; };
+
+	int GetMoney() { return money; };
+	int GetScore() { return score; };
+	int GetLife() { return life; };
+	int GetPowerMelter() { return powerMelterStack; };
+
 };

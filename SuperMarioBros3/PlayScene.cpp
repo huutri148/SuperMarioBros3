@@ -174,16 +174,16 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 	}
 	case OBJECT_TYPE_BLOCKS: 
 	{
-		float width = atoi(tokens[4].c_str());
-		float height = atoi(tokens[5].c_str());
+		float width = (float)atof(tokens[4].c_str());
+		float height = (float)atof(tokens[5].c_str());
 		obj = new Block(x,y,width,height); 
 		unit = new Unit(grid, obj, x, y);
 		break;
 	}
 	case OBJECT_TYPE_GROUNDS:
 	{
-		float width = atoi(tokens[4].c_str());
-		float height = atoi(tokens[5].c_str());
+		float width = (float)atof(tokens[4].c_str());
+		float height = (float)atof(tokens[5].c_str());
 		obj = new Ground(x ,y, width, height);
 		unit = new Unit(grid, obj, x, y);
 		break;
