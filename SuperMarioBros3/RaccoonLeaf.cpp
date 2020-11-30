@@ -80,6 +80,7 @@ void RaccoonLeaf::Used()
 	Mario* mario = ((PlayScene*)scence)->GetPlayer();
 	mario->TurnRaccoonForm();
 	this->SetState(RACCOONLEAF_STATE_INACTIVE);
+	mario->GainPoint(1000);
 }
 RaccoonLeaf::RaccoonLeaf()
 {
