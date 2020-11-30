@@ -23,15 +23,15 @@
 #include"ParaGoomba.h"
 #include "Grid.h"
 #include"KoopaParaTroopa.h"
-
+#include"Hud.h"
 class PlayScene : public Scene
 {
 protected:
 	Mario* player = NULL;
 	Map* map = NULL ;
-	
 	bool isTurnCamY = false;// Camera Y được bật khi Mario bay 
 	bool isGameOver = false;
+	Hud* hud = NULL;
 
 	Unit* unit;
 	Grid* grid;

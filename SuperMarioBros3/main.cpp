@@ -1,7 +1,6 @@
 ﻿#include <windows.h>
 #include <d3d9.h>
 #include <d3dx9.h>
-
 #include"Utils.h"
 #include "Game.h"
 #include "GameObject.h"
@@ -9,7 +8,7 @@
 #include"Map.h"
 #include"PlayScene.h"
 #include"Define.h"
-
+#include"Font.h"
 
 Game* game;
 
@@ -149,7 +148,6 @@ int Run()
 
 	return 1;
 }
-
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	HWND hWnd = CreateGameWindow(hInstance, nCmdShow, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -161,7 +159,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	game->Load(L"Resources/SuperMarioBros3.txt");
 	//LoadResource();
 	
-
 	SetWindowPos(hWnd, 0, 0, 0, SCREEN_WIDTH * 2, SCREEN_HEIGHT * 2, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER);
 
 	Run();
