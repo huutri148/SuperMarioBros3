@@ -108,6 +108,15 @@
     <ClInclude Include="ParaGoomba.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Hud.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PowerMelter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Font.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">
@@ -198,6 +207,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ParaGoomba.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Hud.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PowerMelter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Font.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

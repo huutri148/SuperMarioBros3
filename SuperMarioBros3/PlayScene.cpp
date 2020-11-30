@@ -241,6 +241,11 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 		unit = new Unit(grid, obj, x, y);
 		break;
 	}
+	case OBJECT_TYPE_HUD:
+	{
+		hud = new Hud();
+		return;
+	}
 	default:
 		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
 		return;
@@ -385,7 +390,7 @@ void PlayScene::Update(DWORD dt)
 	SetInactivation();
 
 	UpdateCameraPosition();
-	
+	hud->Update(dt);
 	UpdateGrid();
 }
 void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& coObjects)
@@ -534,6 +539,7 @@ void PlayScene::Render()
 		obj->Render();
 	}
 	player->Render();
+	hud->Render();
 }
 void PlayScene::UpdatePlayer(DWORD dt)
 {
@@ -718,9 +724,9 @@ void PlayScene::UpdateCameraPosition()
 	{
 		Sx = (float)(mapWidth - 16.0f) - screenWidth;
 	}
-	if (player->y + screenHeight > 448)
+	if (player->y + screenHeight > 490)
 	{
-		Sy = (float)(448.0f - screenHeight);
+		Sy = (float)(490.0f - screenHeight);
 	}
 	if (player->y - screenHeight / 2 < 16)
 		Sy = (float)16.0f;

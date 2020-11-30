@@ -1,7 +1,6 @@
 ﻿#include <windows.h>
 #include <d3d9.h>
 #include <d3dx9.h>
-
 #include"Utils.h"
 #include "Game.h"
 #include "GameObject.h"
@@ -9,7 +8,7 @@
 #include"Map.h"
 #include"PlayScene.h"
 #include"Define.h"
-
+#include"Font.h"
 
 Game* game;
 
@@ -26,12 +25,6 @@ LRESULT CALLBACK WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-//void LoadResource()
-//{
-//	scene = new PlayScene(1, L"scene1-1.txt");
-//	Game::GetInstance()->SetKeyHandler(scene->GetKeyEventHandler());
-//	scene->Load();
-//}
 
 
 void Update(DWORD dt)
@@ -50,10 +43,16 @@ void Render()
 	LPD3DXSPRITE spriteHandler = game->GetSpriteHandler();
 
 	if (d3ddv->BeginScene())
-	{
+	{/*
+		RECT rect;
+		rect.left = left;
+		rect.top = top;
+		rect.right = right;
+		rect.bottom = bottom;
+		D3DXVECTOR3 p(120, 120, 0);*/
 		// Clear back buffer with a color
 		d3ddv->ColorFill(bb, NULL, BACKGROUND_COLOR);
-
+		
 		spriteHandler->Begin(D3DXSPRITE_ALPHABLEND);
 		Game::GetInstance()->GetCurrentScene()->Render();
 		spriteHandler->End();
@@ -149,7 +148,6 @@ int Run()
 
 	return 1;
 }
-
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	HWND hWnd = CreateGameWindow(hInstance, nCmdShow, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -161,7 +159,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	game->Load(L"Resources/SuperMarioBros3.txt");
 	//LoadResource();
 	
-
 	SetWindowPos(hWnd, 0, 0, 0, SCREEN_WIDTH * 2, SCREEN_HEIGHT * 2, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER);
 
 	Run();
