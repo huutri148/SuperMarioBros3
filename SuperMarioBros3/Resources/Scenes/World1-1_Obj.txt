@@ -17,7 +17,7 @@
 
 #grid_width	grid_height	cell_width	cell_height
 [GRID]
-2848	720	177	120
+2848	720	177	150
 
 # id	left	top	right	bottom	texture_id
 [SPRITES]
