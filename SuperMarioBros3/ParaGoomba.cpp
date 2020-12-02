@@ -26,7 +26,16 @@ void ParaGoomba::Update(DWORD dt,
 	vector<LPGAMEOBJECT>* coObjects)
 {
 	if (state == GOOMBA_STATE_INACTIVE)
+	{
+		if (goomba->isDead == true)
+		{
+			this->isDead = true;
+			this->isEnable = false;
+		}
+			
 		return;
+	}
+	
 	HandleTimeSwitchState();
 	Enemy::Update(dt, coObjects);
 	if (vy > -0.2 && vy < 0.2)
@@ -176,13 +185,16 @@ void ParaGoomba::Inactive()
 }
 void ParaGoomba::Active()
 {
-	if(goomba == NULL)
+	if (goomba->IsInactive() && goomba->isEnable == true)
+	{
 		this->SetState(PARAGOOMBA_STATE_WALKING);
+		goomba->isEnable = false;
+	}
 }
 void ParaGoomba::ChangeToGoomba(Grid* grid)
 {
-	goomba = new Goomba();
 	goomba->SetPosition(x, y);
+	goomba->isEnable = true;
 	this->SetState(PARAGOOMBA_STATE_INACTIVE);
 	Unit* unit = new Unit(grid, goomba, x, y);
 }

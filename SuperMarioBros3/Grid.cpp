@@ -1,6 +1,7 @@
 ﻿#include "Grid.h"
 #include "Utils.h"
 #include"Item.h"
+#include "FireBall.h"
 Unit::Unit(Grid* grid, LPGAMEOBJECT obj,
 	float x, float y)
 {
@@ -70,7 +71,19 @@ void Grid::Move(Unit* unit, float x, float y)
 	// nếu object ra khỏi vùng viewport-> không cần cập nhật 
 	if (newRow < 0 || newRow >= numRows || newCol < 0 ||
 		newCol >= numCols)
+	{
+		if (dynamic_cast<FireBall*>(unit->GetObj()))
+		{
+			DebugOut(L"\nThat was my fucking fireball! Bitch!");
+			GameObject* obj = unit->GetObj();
+			delete obj;
+			obj = NULL;
+			DebugOut(L"\nAnd i fucking destroy it");
+		}
+		
 		return;
+	}
+	
 
 	// cập nhật tọa độ mới
 	unit->x = x;

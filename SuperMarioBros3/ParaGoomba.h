@@ -25,6 +25,8 @@ public:
 	ParaGoomba(float x, float y) :Enemy(x, y)
 	{
 		this->SetState(PARAGOOMBA_STATE_WALKING);
+		goomba = new Goomba();
+		goomba->isEnable = false;
 	}
 	ParaGoomba() :Enemy()
 	{

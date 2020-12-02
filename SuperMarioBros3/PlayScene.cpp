@@ -345,8 +345,8 @@ void PlayScene::Load()
 
 void PlayScene::Update(DWORD dt)
 {
-	GetObjectFromGrid();
 
+	GetObjectFromGrid();
 	UpdatePlayer(dt);
 
 	ActiveEnemiesInViewport();
@@ -392,6 +392,7 @@ void PlayScene::Update(DWORD dt)
 	UpdateCameraPosition();
 	hud->Update(dt);
 	UpdateGrid();
+	
 }
 void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& coObjects)
 {
@@ -522,12 +523,15 @@ void PlayScene::Render()
 	float cam_x = game->GetCamX();
 	float cam_y = game->GetCamY();
 
-
+	//DebugOut(L"\nListMoving Obj: %d", listMovingObjectsToRender.size());
 	this->map->Render(cam_x,cam_y,screenWidth,screenHeight);
 	for (auto obj : listMovingObjectsToRender)
 	{
-		if (obj->IsEnable() == false)
+		if (obj->IsEnable() == false || obj == NULL)
+		{
 			continue;
+		}
+			
 		obj->Render();
 	}
 	
