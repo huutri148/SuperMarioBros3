@@ -18,6 +18,10 @@
 #pragma region Các hàm cập nhật tọa độ, animation
 void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+	if (GetTickCount64() - tailAttackTime >
+		MARIO_TAIL_ATTACK_TIME)
+		isSwingTail = false;
+	UpdateStageOfTailAttack();
 	if (dt > 64)
 		dt = 16;
 	// Calculate dx, dy 
@@ -223,6 +227,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 		}
 	}
+
 	// clean up collision events
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 }
@@ -471,16 +476,15 @@ void Mario::Render()
 	{
 		ani = MARIO_ANI_FLYING;
 	}
-	else if (state == MARIO_STATE_TAILATTACK)
+	else if (isSwingTail)
 		ani = MARIO_ANI_TAILATTACK;
 	else if (state == MARIO_STATE_SHOOT_FIREBALL)
 		ani = MARIO_ANI_SHOOT_FIRE_BALL;
 	int alpha = 255;
 	/*DebugOut(L"Ani: %d\n", ani);*/
-	//DebugOut(L"\nPower Melter:%d ", powerMelterStack);
 	if (untouchable) alpha = 128;
 	animation_set->at(ani)->Render(nx, round(x), round(y), alpha);
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 void Mario::SetState(int state)
 {
@@ -566,9 +570,11 @@ void Mario::GetBoundingBox(float& left, float& top, float& right,
 		}
 		else if (form == MARIO_RACCOON_FORM)
 		{
-			right = x + MARIO_RACCOON_BBOX_WIDTH;
-			if (state == MARIO_STATE_TAILATTACK)
-				right = x + MARIO_RACCOON_TAILATTACK_WIDTH;
+			if (nx > 0)
+				left = x + MARIO_TAIL_BBOX_WIDTH;
+			right = left + MARIO_RACCOON_BBOX_WIDTH;
+			if (isSwingTail)
+				right += MARIO_TAIL_BBOX_WIDTH;
 			bottom = y + MARIO_RACCOON_BBOX_HEIGHT;
 		}
 	}
@@ -752,7 +758,48 @@ void Mario::Float()
 void Mario::TailAttack()
 {
 	//this->nx = - this->nx;
-	this->SetState(MARIO_STATE_TAILATTACK);
+	/*this->SetState(MARIO_STATE_TAILATTACK);*/
+	if (GetTickCount() - tailAttackTime > MARIO_TAIL_ATTACK_TIME)
+	{
+		isSwingTail = true;
+		tailAttackTime = GetTickCount();
+		stageOfSwingTail = 0;
+	}
+}
+void Mario::UpdateStageOfTailAttack()
+{
+	if (isSwingTail)
+	{
+		int stage =(int) (GetTickCount64() - tailAttackTime) /
+			MARIO_EACH_STAGE_IN_SWING_TAIL_TIME;
+		switch (stage)
+		{
+		case 0:
+				if (stageOfSwingTail == 0)
+				{
+					x = x + nx*(MARIO_TAIL_BBOX_WIDTH - 2);
+					stageOfSwingTail++;
+					//DebugOut(L"[INFO] case 0, x = %f \n", x);
+				}
+				break;
+		case 1:
+				if (stageOfSwingTail == 1)
+					stageOfSwingTail++;
+				break;
+		case 2:
+				if (stageOfSwingTail == 2)
+					stageOfSwingTail++;
+				break;
+		case 3:
+				if (stageOfSwingTail == 3)
+				{
+					x = x - nx *( MARIO_TAIL_BBOX_WIDTH - 2) ;
+					stageOfSwingTail = 0;
+					//DebugOut(L"[INFO] case 3, x = %f \n", x);
+				}
+				break;
+		}
+	}
 }
 void Mario::Fly()
 {
@@ -790,27 +837,6 @@ void Mario::Fly()
 
 
 
-void Mario::HandleCollision(float min_tx, float min_ty,
-	float nex, float ney, float x0, float y0)
-{
-	if (nex != 0 )
-	{
-		this->vx = 0;
-		this->x = x0 + min_tx * this->dx + nex * 0.1f;
-	}
-	if (ney != 0)
-	{
-		this->vy = 0;
-		this->y = y0 + min_ty * this->dy + ney * 0.1f;
-		if (ney == -1)
-		{
-			isInGround = true;
-			isFlying = false;
-			isFloating = false;
-		}
-			
-	}
-}
 void Mario::UpForm()
 {
 	int diffy = 0;

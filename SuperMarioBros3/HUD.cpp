@@ -73,7 +73,7 @@ void Hud::Render()
 	}
 	// Todo: needed a way to deal with it more efficiently
 	// and it work differently in raccoon form
-	for (unsigned int i = 0; i < powerMelterStack ; i++)
+	for ( int i = 0; i < powerMelterStack ; i++)
 	{
 		filledPowerMelterSprite[i]->Draw(-1, x + 92 + 8 * i, y - 71);
 	}

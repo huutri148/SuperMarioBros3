@@ -17,7 +17,7 @@
 
 #grid_width	grid_height	cell_width	cell_height
 [GRID]
-2848	720	177	120
+2848	720	177	150
 
 # id	left	top	right	bottom	texture_id
 [SPRITES]
@@ -547,7 +547,7 @@
 #fire shoot
 443	10054	100	10055	100
 #raccoon tail attack
-444	10074	80	10075	80	10076	80	10077	80	10074	80
+444	10074	100	10075	100	10076	100	10077	100	10074	100
 #raccoon float
 445	10077	100	10078	100
 #racoon fly

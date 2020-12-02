@@ -735,7 +735,8 @@ void PlayScene::UpdateCameraPosition()
 		if (isTurnCamY)
 			Sy = cy;
 	}
-	Game::GetInstance()->SetCamPos(round(Sx), round(Sy));
+	if(player->isSwingTail == false)
+		Game::GetInstance()->SetCamPos(round(Sx), round(Sy));
 };
 void PlayScene::GetObjectFromGrid()
 {
