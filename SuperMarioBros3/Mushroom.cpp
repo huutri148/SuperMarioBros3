@@ -47,22 +47,24 @@ void Mushroom::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
-			if (dynamic_cast<Brick*>(e->obj))
-			{
 				if (e->ny < 0)
 				{
 					this->SetState(MUSHROOM_STATE_WALKING);
 					vy = 0;
 				}
-			}
-			else if (!dynamic_cast<Block*>(e->obj))
-			{
 				if (nx != 0 && ny == 0)
 				{
-					this->vx = -this->vx;
-					this->nx = -this->nx;
+					if (dynamic_cast<Pipe*>(e->obj) ||
+						dynamic_cast<Brick*>(e->obj))
+					{
+						this->vx = -this->vx;
+						this->nx = -this->nx;
+					}
+					else
+					{
+						x += dx;
+					}
 				}
-			}
 		}
 
 	}

@@ -3,11 +3,7 @@
 #include"Utils.h"
 
 
-/* Hoàn thành cơ bản về di chuyển của ParaKoopa 
-* nhưng cần bổ sung thêm về hướng di chuyển (Chasing Mario) 
-* tạo và truyền thông tin chung của Mario cho mọi Enemy
-* và tìm cách tạo Animation cho mượt hơn
-*/
+
 
 void ParaGoomba::GetBoundingBox(float& left, float& top,
 	float& right, float& bottom,
@@ -26,16 +22,11 @@ void ParaGoomba::Update(DWORD dt,
 	vector<LPGAMEOBJECT>* coObjects)
 {
 	if (state == GOOMBA_STATE_INACTIVE)
-	{
-		if (goomba->isDead == true)
-		{
-			this->isDead = true;
-			this->isEnable = false;
-		}
-			
 		return;
-	}
-	
+/* Hoàn thành cơ bản về di chuyển của ParaKoopa
+* nhưng cần bổ sung thêm về hướng di chuyển (Chasing Mario)
+* tạo và truyền thông tin chung của Mario cho mọi Enemy
+*/
 	HandleTimeSwitchState();
 	Enemy::Update(dt, coObjects);
 	if (vy > -0.2 && vy < 0.2)
