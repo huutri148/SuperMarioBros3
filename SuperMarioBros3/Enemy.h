@@ -6,8 +6,7 @@ class Enemy :public GameObject
 protected:
 	DWORD deathTime = 0;
 	float entryX, entryY;
-	
-	
+	D3DXVECTOR2 playerPosition;
 public:
 	bool isAbleToActive = false;
 	bool isDead = false;
@@ -35,6 +34,11 @@ public:
 	void SetDead() { this->isDead = true; };
 	virtual void SetBeingStromped() = 0;
 	virtual void SetBeingSkilled(int nx) = 0;
+	void GetPlayerPosition(float x, float y)
+	{ 
+		playerPosition.x = x;
+		playerPosition.y = y;
+	}
 
 	Enemy();
 	Enemy(float x, float y) { this->x = x;
