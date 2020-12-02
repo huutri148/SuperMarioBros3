@@ -139,6 +139,7 @@ void Brick::DropItem(Grid* grid)
 	{
 		item = new Coin(COIN_TYPE_1);
 		item->Appear(x, y);
+		mario->GainMoney(1);
 		Unit* unit = new Unit(grid, item, x, y);
 		break;
 	}

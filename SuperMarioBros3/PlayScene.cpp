@@ -174,15 +174,17 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 	}
 	case OBJECT_TYPE_BLOCKS: 
 	{
-		obj = new Block(); 
+		float width = (float)atof(tokens[4].c_str());
+		float height = (float)atof(tokens[5].c_str());
+		obj = new Block(x,y,width,height); 
 		unit = new Unit(grid, obj, x, y);
 		break;
 	}
 	case OBJECT_TYPE_GROUNDS:
 	{
-		/*int width = atoi(tokens[4].c_str());
-		int height = atoi(tokens[5].c_str());*/
-		obj = new Ground(/*x ,y, width, height*/);
+		float width = (float)atof(tokens[4].c_str());
+		float height = (float)atof(tokens[5].c_str());
+		obj = new Ground(x ,y, width, height);
 		unit = new Unit(grid, obj, x, y);
 		break;
 	}
@@ -232,6 +234,17 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 		obj = new ParaGoomba(x,y);
 		unit = new Unit(grid, obj, x, y);
 		break;
+	}
+	case OBJECT_TYPE_PARATROOPA:
+	{
+		obj = new KoopaParaTroopa(x, y);
+		unit = new Unit(grid, obj, x, y);
+		break;
+	}
+	case OBJECT_TYPE_HUD:
+	{
+		hud = new Hud();
+		return;
 	}
 	default:
 		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
@@ -363,6 +376,12 @@ void PlayScene::Update(DWORD dt)
 			if (goomba->state == PARAGOOMBA_STATE_GOOMBA)
 				goomba->ChangeToGoomba(grid);
 		}
+		else if (dynamic_cast<KoopaParaTroopa*>(object))
+		{
+			KoopaParaTroopa* parakoopa = dynamic_cast<KoopaParaTroopa*>(object);
+			if (parakoopa->state == PARATROOPA_STATE_KOOPA)
+				parakoopa->ChangeToKoopa(grid);
+		}
 		GetColliableObjects(object, coObjects);
 		object->Update(dt, &coObjects);
 	}
@@ -371,7 +390,7 @@ void PlayScene::Update(DWORD dt)
 	SetInactivation();
 
 	UpdateCameraPosition();
-	
+	hud->Update(dt);
 	UpdateGrid();
 }
 void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& coObjects)
@@ -391,11 +410,11 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 		{
 			if (dynamic_cast<Enemy*>(obj))
 			{
-				if (dynamic_cast<Enemy*>(obj)->isDead == true)
+				if (!dynamic_cast<KoopaTroopa*>(obj))
 					continue;
 			}
-			if (dynamic_cast<Ground*>(obj) || 
-				dynamic_cast<InvisibleBrick*>(obj))
+			if (dynamic_cast<Ground*>(obj) || 	dynamic_cast<InvisibleBrick*>(obj) ||
+				dynamic_cast<FireBall*>(obj))
 				coObjects.push_back(obj);
 		}
 	}
@@ -409,7 +428,8 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 		{
 			if (dynamic_cast<Enemy*>(obj))
 			{
-				if (dynamic_cast<Enemy*>(obj)->isDead == true)
+				if (dynamic_cast<Enemy*>(obj)->isDead == true ||
+					dynamic_cast<Enemy*>(obj)->IsInactive())
 					continue;
 			}
 			if (!dynamic_cast<FirePlantBullet*>(obj) && !dynamic_cast<Item*>(obj)
@@ -424,7 +444,7 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 			if (dynamic_cast<Enemy*>(obj))
 			{
 				// tránh trường hợp quái rớt trúng đầu và bị rớt xuống
-				if (dynamic_cast<Enemy*>(obj)->isDead == true)
+				if (!dynamic_cast<KoopaTroopa*>(obj))
 					continue;
 			}
 			if (!dynamic_cast<Block*>(obj) && !dynamic_cast<FirePlantBullet*>(obj) 
@@ -438,7 +458,7 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 		{
 			if (dynamic_cast<Enemy*>(obj))
 			{
-				if (dynamic_cast<Enemy*>(obj)->isDead == true)
+				if (!dynamic_cast<KoopaTroopa*>(obj))
 					continue;
 			}
 			if (!dynamic_cast<Block*>(obj) && !dynamic_cast<FirePlantBullet*>(obj)
@@ -446,11 +466,38 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 				coObjects.push_back(obj);
 		}
 	}
+	else if (dynamic_cast<KoopaParaTroopa*>(curObj))
+	{
+		for (auto obj : objects)
+		{
+			if (!dynamic_cast<KoopaTroopa*>(obj))
+				continue;
+			if (!dynamic_cast<FirePlantBullet*>(obj)&& !dynamic_cast<Item*>(obj) 
+				&& !dynamic_cast<InvisibleBrick*>(obj))
+				coObjects.push_back(obj);
+		}
+	}
+	else if (dynamic_cast<FireBall*>(curObj))
+	{
+		for (auto obj : objects)
+		{
+			if (dynamic_cast<Enemy*>(obj))
+			{
+				if (dynamic_cast<Enemy*>(obj)->IsInactive())
+					continue;
+				else 
+					coObjects.push_back(obj);
+			}
+			if (!dynamic_cast<FirePlantBullet*>(obj) && !dynamic_cast<Item*>(obj)
+				&& !dynamic_cast<InvisibleBrick*>(obj))
+				coObjects.push_back(obj);
+		}
+	}
 	else if (dynamic_cast<Mario*>(curObj))
 	{
 		for (auto obj : objects)
 		{
-			if ( dynamic_cast<Ground*>(obj) ||dynamic_cast<Block*>(obj)
+				if ( dynamic_cast<Ground*>(obj) ||dynamic_cast<Block*>(obj)
 				|| dynamic_cast<Brick*>(obj) || dynamic_cast<Item*>(obj) ||
 				dynamic_cast<Pipe*>(obj))
 				coObjects.push_back(obj);
@@ -492,6 +539,7 @@ void PlayScene::Render()
 		obj->Render();
 	}
 	player->Render();
+	hud->Render();
 }
 void PlayScene::UpdatePlayer(DWORD dt)
 {
@@ -543,8 +591,9 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	
 		if (flag == 1)
 		{
-			GameObject* fireBall = mario->ShootFireBall();
-			//((PlayScene*)scence)->AddObject((FireBall*)fireBall);
+
+			Grid* grid = ((PlayScene*)scence)->GetGrid();
+			mario->ShootFireBall(grid);
 		}
 		if (flag == 2)
 		{
@@ -675,9 +724,9 @@ void PlayScene::UpdateCameraPosition()
 	{
 		Sx = (float)(mapWidth - 16.0f) - screenWidth;
 	}
-	if (player->y + screenHeight > 448)
+	if (player->y + screenHeight > 490)
 	{
-		Sy = (float)(448.0f - screenHeight);
+		Sy = (float)(490.0f - screenHeight);
 	}
 	if (player->y - screenHeight / 2 < 16)
 		Sy = (float)16.0f;
@@ -686,7 +735,8 @@ void PlayScene::UpdateCameraPosition()
 		if (isTurnCamY)
 			Sy = cy;
 	}
-	Game::GetInstance()->SetCamPos(round(Sx), round(Sy));
+	if(player->isSwingTail == false)
+		Game::GetInstance()->SetCamPos(round(Sx), round(Sy));
 };
 void PlayScene::GetObjectFromGrid()
 {
@@ -709,14 +759,15 @@ void PlayScene::GetObjectFromGrid()
 		LPGAMEOBJECT obj = listUnits[i]->GetObj();
 		objects.push_back(obj);
 
-		if (dynamic_cast<Ground*>(obj) || dynamic_cast<Block*>(obj) ||
+		if (  dynamic_cast<Block*>(obj) || dynamic_cast<Ground*>(obj)||
 			dynamic_cast<InvisibleBrick*>(obj))
 			continue;
 		else if (dynamic_cast<Brick*>(obj)|| dynamic_cast<Pipe*>(obj))
 			listStaticObjectsToRender.push_back(obj);
 	/*	else if (dynamic_cast<Pipe*>(obj))
 			listPipeToRender.push_back(obj);*/
-		else if (dynamic_cast<Enemy*>(obj)|| dynamic_cast<FirePlantBullet*>(obj))
+		else if (dynamic_cast<Enemy*>(obj)|| dynamic_cast<FirePlantBullet*>(obj) ||
+			dynamic_cast<FireBall*>(obj))
 			listMovingObjectsToRender.push_back(obj);
 		else if (dynamic_cast<Item*>(obj))
 			listMovingObjectsToRender.push_back(obj);

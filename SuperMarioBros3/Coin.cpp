@@ -6,22 +6,10 @@ void Coin::GetBoundingBox(float& left, float& top,
 	float& right, float& bottom,
 	bool isEnable)
 {
-	if (isEnable == true)
-	{
-
 		left = x;
 		top = y;
 		right = x + COIN_BBOX_WIDTH;
 		bottom = y + COIN_BBOX_HEIGHT;
-	}
-
-	else
-	{
-		left = 0;
-		top = 0;
-		right = 0;
-		bottom = 0;
-	}
 }
 
 void Coin::Update(DWORD dt,
@@ -123,6 +111,8 @@ Coin::Coin(int type)
 }
 void Coin::Used()
 {
+	LPSCENE scence = Game::GetInstance()->GetCurrentScene();
+	Mario* mario = ((PlayScene*)scence)->GetPlayer();
 	this->SetState(COIN_STATE_INACTIVE);
-
+	mario->GainMoney(1);
 }

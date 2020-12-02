@@ -18,6 +18,10 @@
 #pragma region Các hàm cập nhật tọa độ, animation
 void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+	if (GetTickCount64() - tailAttackTime >
+		MARIO_TAIL_ATTACK_TIME)
+		isSwingTail = false;
+	UpdateStageOfTailAttack();
 	if (dt > 64)
 		dt = 16;
 	// Calculate dx, dy 
@@ -34,14 +38,6 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	else
 		vy += MARIO_GRAVITY * dt;
 	Friction();
-	//if (isFloating)
-	//{
-	//	if (GetTickCount() - floatingTime > MARIO_FLOATING_TIME)
-	//	{
-	//		floatingTime = 0;
-	//		isFloating = false;
-	////	}
-	//}
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
@@ -54,6 +50,11 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		untouchableStart = 0;
 		untouchable = 0;
+	}
+	if (GetTickCount() - shootingTime> MARIO_SHOOTING_TIME
+		&& state == MARIO_STATE_SHOOT_FIREBALL)
+	{
+		this->SetState(MARIO_STATE_IDLE);
 	}
 	// No collision occured, proceed normally
 	if (coEvents.size() == 0)
@@ -72,38 +73,32 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		FilterCollision(coEvents, coEventsResult, 
 			min_tx, min_ty,
 			nex, ney);
-		float x0 = x, y0 = y;
-		x = x0 + dx;
-		y = y0 + dy;
-	/*	x += min_tx * dx + nex * 0.4f;
-		y += min_ty * dy + ney * 0.4f;*/
-		
+		x += min_tx * dx + nex * 0.4f;
+		y += min_ty * dy + ney * 0.4f;
+		if (ney != 0)
+		{
+			vy = 0;
+			if (ney < 0)
+			{
+				isInGround = true;
+				isFlying = false;
+				isFloating = false;
+			}
+		}
 		// Collision logic 
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
-			//if (e->ny != 0)
-			//{
-			//	vy = 0;
-			//	if (e->ny < 0)    // Handle Jumping
-			//	{
-			//		isInGround = true;
-			//		isFlying = false;
-			//		isFloating = false;
-			//	}
-			//}
 			if (dynamic_cast<Enemy*>(e->obj))
 			{
 				Enemy* enemy = dynamic_cast<Enemy*>(e->obj);
 				if (e->ny < 0)
 				{
-					if (enemy->IsDead() != true && 
-					!dynamic_cast<PiranhaPlant*>(enemy)&&
-					!dynamic_cast<FirePiranhaPlant*>(enemy))
+					if (enemy->IsDead() != true && !dynamic_cast<PiranhaPlant*>(enemy) &&
+						!dynamic_cast<FirePiranhaPlant*>(enemy))
 					{
 						enemy->SetBeingStromped();
-						isInGround = true;
-						isFloating = false;
+						score += 100;
 						vy = -MARIO_JUMP_DEFLECT_SPEED;
 						vx = nx * MARIO_WALK_DEFELCT_SPEED;
 					}
@@ -111,19 +106,15 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					{
 						if (dynamic_cast<KoopaTroopa*>(enemy))
 						{
-							if (enemy->state ==
-								KOOPATROOPA_STATE_HIDING)
+							if (enemy->state == KOOPATROOPA_STATE_HIDING)
 							{
-									dynamic_cast<KoopaTroopa*>(enemy)->
-										IsKicked(nx);
-									vy = -MARIO_JUMP_DEFLECT_SPEED;
-									this->y = y0 + min_ty * this->dy
-										+ ney * 0.4f;
+								dynamic_cast<KoopaTroopa*>(enemy)->IsKicked(nx);
+								vy = -MARIO_JUMP_DEFLECT_SPEED;
 							}
 						}
 					}
 					else if (dynamic_cast<PiranhaPlant*>(enemy) ||
-						 dynamic_cast<FirePiranhaPlant*>(enemy))
+						dynamic_cast<FirePiranhaPlant*>(enemy))
 					{
 						if (untouchable == 0)
 						{
@@ -142,7 +133,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				}
 				else if (e->nx != 0)
 				{
-					if (untouchable == 0 )
+					if (untouchable == 0)
 					{
 						if (enemy->IsDead() != true)
 						{
@@ -155,11 +146,10 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 								SetState(MARIO_STATE_DEATH);
 							enemy->ChangeDirect();
 						}
-						else if(dynamic_cast<KoopaTroopa*>(enemy))
+						else if (dynamic_cast<KoopaTroopa*>(enemy))
 						{
 							KoopaTroopa* koopa = dynamic_cast<KoopaTroopa*>(enemy);
-							if (koopa->state ==
-								KOOPATROOPA_STATE_HIDING)
+							if (koopa->state ==KOOPATROOPA_STATE_HIDING)
 							{
 								if (isPressedJ == true)
 								{
@@ -168,31 +158,17 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 								}
 								else if (isPressedJ == false)
 								{
-									dynamic_cast<KoopaTroopa*>(enemy)->
-										IsKicked(this->nx);
+									dynamic_cast<KoopaTroopa*>(enemy)->IsKicked(this->nx);
 									this->SetState(MARIO_STATE_KICK);
-									HandleCollision(min_tx, min_ty,
-										e->nx, e->ny,
-										x0, y0);
+									score += 100;
 								}
 							}
-							
+						}
+						else
+						{
+							x += dx;
 						}
 					}
-				}
-			}
-			else if (dynamic_cast<Block*>(e->obj))
-			{
-				if (e->ny < 0)
-				{
-					HandleCollision(min_tx, min_ty,
-						e->nx, e->ny,
-						x0, y0);
-					vy = 0;
-				}
-				else
-				{
-					y = y0 + dy;
 				}
 			}
 			else if (dynamic_cast<FirePlantBullet*>(e->obj))
@@ -213,52 +189,52 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				Brick* brick = dynamic_cast<Brick*>(e->obj);
 				if (!brick->CanUsed())
 				{
-					if (e->ny > 0)
+					if (e->ny > 0 && nex == 0)
 					{
 						//Nếu là Breakable thì Small Form ko thể làm vỡ
 						// Các Brick còn lại thì có thể tác động
-						if(brick->Breakable() && form != MARIO_SMALL_FORM ||
+						if (brick->Breakable() && form != MARIO_SMALL_FORM ||
 							!brick->Breakable())
-						brick->SetEmpty();
-						this->y = y0 + min_ty * this->dy + ney * 0.4f;
+						{
+							brick->SetEmpty();
+							if (brick->state != BRICK_STATE_INACTIVE)
+								this->GainPoint(10);
+						}
+							
 					}
-					else 
-					{
-						HandleCollision(min_tx, min_ty,
-							e->nx, e->ny,
-							x0, y0);
-					}
+				}
+				// nếu viên gạch Breakable ở trạng thái 
+				// COIN hay là Empty
+				else
+				{
+					brick->Used();
+					this->GainPoint(10);
+					this->GainMoney(1);
+				}
+			
 			}
-			// nếu viên gạch Breakable ở trạng thái 
-			// COIN hay là Empty
-			else
+			else if (dynamic_cast<Block*>(e->obj))
 			{
-				brick->Used();
-			}
+				x += dx;
+				if (e->ny > 0 && nex == 0)
+					y += dy;
 			}
 			else if (dynamic_cast<Item*>(e->obj))
 			{
 				dynamic_cast<Item*>(e->obj)->Used();
-				HandleCollision(min_tx, min_ty,
-					e->nx, e->ny,
-					x0, y0);
+				x += dx;
+				y += dy;
 			}
-			else 
-			{
-				HandleCollision(min_tx, min_ty,
-				e->nx, e->ny,
-				x0, y0);
-			}
-			
 		}
 	}
+
 	// clean up collision events
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 }
 void Mario::Render()
 {
 	int ani = -1;
-	if (vx == 0)
+	if (vx == 0 )
 	{
 		if (!isPickingUp)
 		{
@@ -305,7 +281,6 @@ void Mario::Render()
 			{
 				switch (form)
 				{
-
 				case MARIO_SMALL_FORM:
 					ani = MARIO_ANI_SMALL_WALKING;
 					break;
@@ -501,15 +476,15 @@ void Mario::Render()
 	{
 		ani = MARIO_ANI_FLYING;
 	}
-	else if (state == MARIO_STATE_TAILATTACK)
+	else if (isSwingTail)
 		ani = MARIO_ANI_TAILATTACK;
 	else if (state == MARIO_STATE_SHOOT_FIREBALL)
 		ani = MARIO_ANI_SHOOT_FIRE_BALL;
 	int alpha = 255;
-	//DebugOut(L"Ani: %d\n", ani);
+	/*DebugOut(L"Ani: %d\n", ani);*/
 	if (untouchable) alpha = 128;
 	animation_set->at(ani)->Render(nx, round(x), round(y), alpha);
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 void Mario::SetState(int state)
 {
@@ -563,6 +538,7 @@ void Mario::SetState(int state)
 			(BUFF_SPEED * powerMelterStack)) * nx;
 		break;
 	}
+
 }
 void Mario::GetBoundingBox(float& left, float& top, float& right,
 	float& bottom, bool isEnable)
@@ -594,9 +570,11 @@ void Mario::GetBoundingBox(float& left, float& top, float& right,
 		}
 		else if (form == MARIO_RACCOON_FORM)
 		{
-			right = x + MARIO_RACCOON_BBOX_WIDTH;
-			if (state == MARIO_STATE_TAILATTACK)
-				right = x + MARIO_RACCOON_TAILATTACK_WIDTH;
+			if (nx > 0)
+				left = x + MARIO_TAIL_BBOX_WIDTH;
+			right = left + MARIO_RACCOON_BBOX_WIDTH;
+			if (isSwingTail)
+				right += MARIO_TAIL_BBOX_WIDTH;
 			bottom = y + MARIO_RACCOON_BBOX_HEIGHT;
 		}
 	}
@@ -739,19 +717,34 @@ void Mario::Friction()
 
 	}
 }
-GameObject* Mario::ShootFireBall()
+void Mario::ShootFireBall(Grid* grid)
 {
-	this->SetState(MARIO_STATE_SHOOT_FIREBALL);
-	FireBall* fireBall;
-	if (nx > 0)
-		fireBall = new FireBall(this->x + MARIO_FIRE_BBOX_WIDTH, 
-			this->y + MARIO_FIRE_BBOX_WIDTH /3,
-			this->nx);
+	// TODO: sửa để hạn chế tạo ra nhiều đối tượng fireball
+	// hạn chế việc tăng ram
+	if (++indexFireBall <= MARIO_MAX_BULLET)
+	{
+		if (indexFireBall == 1)
+		{
+			shootingTime = GetTickCount();
+		}
+		this->SetState(MARIO_STATE_SHOOT_FIREBALL);
+		FireBall* fireBall;
+		if (nx > 0)
+			fireBall = new FireBall(this->x + MARIO_FIRE_BBOX_WIDTH,
+				this->y + MARIO_FIRE_BBOX_WIDTH / 3,
+				this->nx);
+		else
+			fireBall = new FireBall(this->x - MARIO_FIRE_BBOX_WIDTH,
+				this->y + MARIO_FIRE_BBOX_WIDTH / 3,
+				this->nx);
+		Unit* unit = new Unit(grid, fireBall, this->x - MARIO_FIRE_BBOX_WIDTH,
+			this->y + MARIO_FIRE_BBOX_WIDTH / 3);
+	}
 	else
-		fireBall = new FireBall(this->x - MARIO_FIRE_BBOX_WIDTH, 
-			this->y + MARIO_FIRE_BBOX_WIDTH / 3,
-			this->nx);
-	return fireBall;
+	{
+		indexFireBall = 0;
+	}
+	
 }
 void Mario::Float()
 {
@@ -765,7 +758,48 @@ void Mario::Float()
 void Mario::TailAttack()
 {
 	//this->nx = - this->nx;
-	this->SetState(MARIO_STATE_TAILATTACK);
+	/*this->SetState(MARIO_STATE_TAILATTACK);*/
+	if (GetTickCount() - tailAttackTime > MARIO_TAIL_ATTACK_TIME)
+	{
+		isSwingTail = true;
+		tailAttackTime = GetTickCount();
+		stageOfSwingTail = 0;
+	}
+}
+void Mario::UpdateStageOfTailAttack()
+{
+	if (isSwingTail)
+	{
+		int stage =(int) (GetTickCount64() - tailAttackTime) /
+			MARIO_EACH_STAGE_IN_SWING_TAIL_TIME;
+		switch (stage)
+		{
+		case 0:
+				if (stageOfSwingTail == 0)
+				{
+					x = x + nx*(MARIO_TAIL_BBOX_WIDTH - 2);
+					stageOfSwingTail++;
+					//DebugOut(L"[INFO] case 0, x = %f \n", x);
+				}
+				break;
+		case 1:
+				if (stageOfSwingTail == 1)
+					stageOfSwingTail++;
+				break;
+		case 2:
+				if (stageOfSwingTail == 2)
+					stageOfSwingTail++;
+				break;
+		case 3:
+				if (stageOfSwingTail == 3)
+				{
+					x = x - nx *( MARIO_TAIL_BBOX_WIDTH - 2) ;
+					stageOfSwingTail = 0;
+					//DebugOut(L"[INFO] case 3, x = %f \n", x);
+				}
+				break;
+		}
+	}
 }
 void Mario::Fly()
 {
@@ -803,27 +837,6 @@ void Mario::Fly()
 
 
 
-void Mario::HandleCollision(float min_tx, float min_ty,
-	float nex, float ney, float x0, float y0)
-{
-	if (nex != 0)
-	{
-		this->vx = 0;
-		this->x = x0 + min_tx * this->dx + nex * 0.1f;
-	}
-	if (ney != 0)
-	{
-		this->vy = 0;
-		this->y = y0 + min_ty * this->dy + ney * 0.1f;
-		if (ney == -1)
-		{
-			isInGround = true;
-			isFlying = false;
-			isFloating = false;
-		}
-			
-	}
-}
 void Mario::UpForm()
 {
 	int diffy = 0;
@@ -876,6 +889,10 @@ Mario::Mario()
 	flyTimeStart = 0;
 	turnFriction = false;
 	isPickingUp = false;
+	indexFireBall = 0;
+	score = 0;
+	money = 0;
+	life = 4;
 }
 void Mario::ReleaseJ()
 {

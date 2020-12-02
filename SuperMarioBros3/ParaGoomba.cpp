@@ -29,7 +29,10 @@ void ParaGoomba::Update(DWORD dt,
 		return;
 	HandleTimeSwitchState();
 	Enemy::Update(dt, coObjects);
-	vy += dt * PARAGOOMBA_GRAVITY;
+	if (vy > -0.2 && vy < 0.2)
+		vy += MARIO_LOWER_GRAVITY * dt;
+	else
+		vy += PARAGOOMBA_GRAVITY * dt;
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 

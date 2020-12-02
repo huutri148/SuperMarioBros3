@@ -109,7 +109,11 @@ void Mushroom::Used()
 	this->SetState(MUSHROOM_STATE_INACTIVE);
 	LPSCENE scence = Game::GetInstance()->GetCurrentScene();
 	Mario* mario = ((PlayScene*)scence)->GetPlayer();
-	mario->TurnBigForm();
+	if (type == MUSHROOM_TYPE_POWERUP)
+		mario->TurnBigForm();
+	else
+		mario->GainLife();
+	mario->GainPoint(1000);
 }
 Mushroom::Mushroom(int type)
 {
