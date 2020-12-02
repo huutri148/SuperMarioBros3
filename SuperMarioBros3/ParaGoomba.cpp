@@ -173,11 +173,12 @@ void ParaGoomba::Inactive()
 }
 void ParaGoomba::Active()
 {
-	this->SetState(PARAGOOMBA_STATE_WALKING);
+	if(goomba == NULL)
+		this->SetState(PARAGOOMBA_STATE_WALKING);
 }
 void ParaGoomba::ChangeToGoomba(Grid* grid)
 {
-	Goomba* goomba = new Goomba();
+	goomba = new Goomba();
 	goomba->SetPosition(x, y);
 	this->SetState(PARAGOOMBA_STATE_INACTIVE);
 	Unit* unit = new Unit(grid, goomba, x, y);

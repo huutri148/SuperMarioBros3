@@ -5,6 +5,7 @@
 class ParaGoomba :public Enemy
 {
 	DWORD switchStateTime;
+	Goomba* goomba;
 	virtual void GetBoundingBox(float& left, float& top,
 		float& right, float& bottom, bool isEnable);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
