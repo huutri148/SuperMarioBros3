@@ -19,6 +19,7 @@ class Mario : public GameObject
 	DWORD floatingTime = 0;
 	DWORD shootingTime = 0;
 	DWORD tailAttackTime = 0;
+	DWORD transformTime = 0;
 
 	int powerMelterStack = 0;
 	int indexFireBall = 0;
@@ -35,8 +36,7 @@ class Mario : public GameObject
 	bool isFloating = false;
 	bool canBrake = false;
 	bool isPickingUp = false;
-	
-
+	bool isTransform = false;
 public:
 	// Chuyển thành hàm
 	//vector<FireBall*> fireBall;

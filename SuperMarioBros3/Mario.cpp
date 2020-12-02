@@ -19,8 +19,14 @@
 void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	if (GetTickCount64() - tailAttackTime >
-		MARIO_TAIL_ATTACK_TIME)
+		MARIO_TAIL_ATTACK_TIME && isSwingTail == true)
 		isSwingTail = false;
+	if (GetTickCount64() - transformTime >
+		MARIO_BIG_FORM_TRANSFORM_TIME && isTransform == true) {
+		isTransform = false;
+		transformTime = 0;
+		this->SetLevel(MARIO_BIG_FORM);
+	}
 	UpdateStageOfTailAttack();
 	if (dt > 64)
 		dt = 16;
@@ -480,6 +486,8 @@ void Mario::Render()
 		ani = MARIO_ANI_TAILATTACK;
 	else if (state == MARIO_STATE_SHOOT_FIREBALL)
 		ani = MARIO_ANI_SHOOT_FIRE_BALL;
+	else if (isTransform == true)
+		ani = MARIO_ANI_TURN_TO_BIG_FORM;
 	int alpha = 255;
 	/*DebugOut(L"Ani: %d\n", ani);*/
 	if (untouchable) alpha = 128;
@@ -933,7 +941,10 @@ bool Mario::IsInGround()
 void Mario::TurnBigForm()
 {
 	this->SetLevel(MARIO_BIG_FORM);
+	transformTime = GetTickCount();
+	isTransform = true;
 	y -= (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT + 2);
+	
 }
 void Mario::TurnRaccoonForm()
 {

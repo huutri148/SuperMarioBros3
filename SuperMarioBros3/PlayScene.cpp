@@ -595,6 +595,9 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	case DIK_I:
 		mario->Information();
 		break;
+	case DIK_B:
+		mario->TurnBigForm();
+		break;
 	case DIK_J:
 		int flag = mario->Skill();
 	
