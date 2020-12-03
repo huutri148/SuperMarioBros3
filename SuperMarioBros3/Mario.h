@@ -19,6 +19,8 @@ class Mario : public GameObject
 	DWORD floatingTime = 0;
 	DWORD shootingTime = 0;
 	DWORD tailAttackTime = 0;
+	DWORD transformTime = 0;
+	DWORD turnRaccoonTime = 0;
 
 	int powerMelterStack = 0;
 	int indexFireBall = 0;
@@ -35,8 +37,8 @@ class Mario : public GameObject
 	bool isFloating = false;
 	bool canBrake = false;
 	bool isPickingUp = false;
-	
-
+	bool isTransform = false;
+	bool isTurnRaccoon = false;
 public:
 	// Chuyển thành hàm
 	//vector<FireBall*> fireBall;
@@ -48,6 +50,10 @@ public:
 	bool IsFlying();
 	bool IsFloating();
 	bool IsInGround();
+	bool IsTransform()
+	{
+		return isTransform;
+	};
 	
 	Mario();
 
@@ -87,7 +93,9 @@ public:
 	void Reset();
 	void TurnBigForm();
 	void TurnFireForm();
+	void DecreaseForm();
 	void TurnRaccoonForm();
+	void HandleSwitchTime();
 
 	//Thay đổi PowerMelter
 	void FillUpPowerMelter();

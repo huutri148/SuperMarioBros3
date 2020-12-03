@@ -19,11 +19,33 @@
 void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	if (GetTickCount64() - tailAttackTime >
-		MARIO_TAIL_ATTACK_TIME)
+		MARIO_TAIL_ATTACK_TIME && isSwingTail == true)
 		isSwingTail = false;
+	if (GetTickCount64() - transformTime >
+		MARIO_BIG_FORM_TRANSFORM_TIME && isTransform == true) {
+		isTransform = false;
+		transformTime = 0;
+		if (untouchable == 0)
+		{
+			this->SetLevel(MARIO_BIG_FORM);
+		}
+		else
+		{
+			this->SetLevel(MARIO_SMALL_FORM);
+		}
+	}
+	if (GetTickCount64() - turnRaccoonTime >
+		MARIO_BIG_FORM_TRANSFORM_TIME && isTurnRaccoon == true) {
+		isTurnRaccoon = false;
+		turnRaccoonTime = 0;
+		if (untouchable == 1)
+			form = MARIO_BIG_FORM;
+	}
 	UpdateStageOfTailAttack();
 	if (dt > 64)
 		dt = 16;
+	if (isTransform)
+		return;
 	// Calculate dx, dy 
 	GameObject::Update(dt);
 	// fall down slower 
@@ -46,7 +68,8 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	if (state != MARIO_STATE_DEATH)
 		CalcPotentialCollisions(coObjects, coEvents);
 	// reset untouchable timer if untouchable time has passed
-	if (GetTickCount64() - untouchableStart > MARIO_UNTOUCHABLE_TIME)
+	if (GetTickCount64() - untouchableStart > MARIO_UNTOUCHABLE_TIME
+		&& untouchable == 1)
 	{
 		untouchableStart = 0;
 		untouchable = 0;
@@ -122,8 +145,9 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							{
 								if (form > MARIO_SMALL_FORM)
 								{
-									form -= 1;
-									StartUntouchable();
+									//form -= 1;
+									//StartUntouchable();
+									DecreaseForm();
 								}
 								else
 									SetState(MARIO_STATE_DEATH);
@@ -139,8 +163,9 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						{
 							if (form > MARIO_SMALL_FORM)
 							{
-								form -= 1;
-								StartUntouchable();
+								//form -= 1;
+								//StartUntouchable();
+								DecreaseForm();
 							}
 							else
 								SetState(MARIO_STATE_DEATH);
@@ -177,8 +202,9 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				{
 					if (form > MARIO_SMALL_FORM)
 					{
-						form -= 1;
-						StartUntouchable();
+						//form -= 1;
+						//StartUntouchable();
+						DecreaseForm();
 					}
 					else
 						SetState(MARIO_STATE_DEATH);
@@ -480,9 +506,20 @@ void Mario::Render()
 		ani = MARIO_ANI_TAILATTACK;
 	else if (state == MARIO_STATE_SHOOT_FIREBALL)
 		ani = MARIO_ANI_SHOOT_FIRE_BALL;
+	else if (isTransform == true)
+		ani = MARIO_ANI_TURN_TO_BIG_FORM;
+	else if (isTurnRaccoon == true)
+		ani = MARIO_ANI_TURN_TO_RACCOON;
 	int alpha = 255;
 	/*DebugOut(L"Ani: %d\n", ani);*/
-	if (untouchable) alpha = 128;
+	if (untouchable)
+	{
+		if((GetTickCount64() - untouchableStart) % 2 == 0)
+				alpha = 0;
+		if (form == MARIO_BIG_FORM)
+			ani = MARIO_ANI_TURN_TO_SMALL_FORM;
+			
+	}
 	animation_set->at(ani)->Render(nx, round(x), round(y), alpha);
 	//RenderBoundingBox();
 }
@@ -933,11 +970,16 @@ bool Mario::IsInGround()
 void Mario::TurnBigForm()
 {
 	this->SetLevel(MARIO_BIG_FORM);
+	transformTime = GetTickCount();
+	isTransform = true;
 	y -= (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT + 2);
+	
 }
 void Mario::TurnRaccoonForm()
 {
 	this->SetLevel(MARIO_RACCOON_FORM);
+	turnRaccoonTime = GetTickCount();
+	isTurnRaccoon = true;
 	y -= (MARIO_RACCOON_BBOX_HEIGHT - MARIO_BIG_BBOX_HEIGHT + 2);
 }
 void Mario::TurnFireForm()
@@ -966,4 +1008,18 @@ bool Mario::Brake()
 		canBrake = false;
 	}
 	return false;
+}
+void Mario::DecreaseForm()
+{
+	StartUntouchable();
+	if (form == MARIO_RACCOON_FORM)
+	{
+		isTurnRaccoon = true;
+		turnRaccoonTime = GetTickCount();
+	}
+	if (form == MARIO_BIG_FORM)
+	{
+		isTransform = true; 
+		transformTime = GetTickCount();
+	}
 }

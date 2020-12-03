@@ -350,44 +350,44 @@ void PlayScene::Update(DWORD dt)
 	UpdatePlayer(dt);
 
 	ActiveEnemiesInViewport();
-
-	//DebugOut(L"\nSize of obj: %d", objects.size());
-	for (UINT i = 0; i < objects.size(); i++)
-	{
-		LPGAMEOBJECT object = objects[i];
-		vector<LPGAMEOBJECT> coObjects;
-		if (dynamic_cast<Enemy*>(object))
-			dynamic_cast<Enemy*>(object)->GetPlayerPosition(player->x, player->y);
-		if (dynamic_cast<FirePiranhaPlant*>(object))
+	if (!player->IsTransform()) {
+		//DebugOut(L"\nSize of obj: %d", objects.size());
+		for (UINT i = 0; i < objects.size(); i++)
 		{
-			FirePiranhaPlant* plant = dynamic_cast<FirePiranhaPlant*>(object);
-			if (plant->canShoot == true)
+			LPGAMEOBJECT object = objects[i];
+			vector<LPGAMEOBJECT> coObjects;
+			if (dynamic_cast<Enemy*>(object))
+				dynamic_cast<Enemy*>(object)->GetPlayerPosition(player->x, player->y);
+			if (dynamic_cast<FirePiranhaPlant*>(object))
 			{
-				plant->Shooting(grid);
+				FirePiranhaPlant* plant = dynamic_cast<FirePiranhaPlant*>(object);
+				if (plant->canShoot == true)
+				{
+					plant->Shooting(grid);
+				}
 			}
+			else if (dynamic_cast<Brick*>(object))
+			{
+				Brick* brick = dynamic_cast<Brick*>(object);
+				if (brick->isUsed == true)
+					brick->DropItem(grid);
+			}
+			else if (dynamic_cast<ParaGoomba*>(object))
+			{
+				ParaGoomba* goomba = dynamic_cast<ParaGoomba*>(object);
+				if (goomba->state == PARAGOOMBA_STATE_GOOMBA)
+					goomba->ChangeToGoomba(grid);
+			}
+			else if (dynamic_cast<KoopaParaTroopa*>(object))
+			{
+				KoopaParaTroopa* parakoopa = dynamic_cast<KoopaParaTroopa*>(object);
+				if (parakoopa->state == PARATROOPA_STATE_KOOPA)
+					parakoopa->ChangeToKoopa(grid);
+			}
+			GetColliableObjects(object, coObjects);
+			object->Update(dt, &coObjects);
 		}
-		else if (dynamic_cast<Brick*>(object))
-		{
-			Brick* brick = dynamic_cast<Brick*>(object);
-			if (brick->isUsed == true )
-				brick->DropItem(grid);
-		}
-		else if (dynamic_cast<ParaGoomba*>(object))
-		{
-			ParaGoomba* goomba = dynamic_cast<ParaGoomba*>(object);
-			if (goomba->state == PARAGOOMBA_STATE_GOOMBA)
-				goomba->ChangeToGoomba(grid);
-		}
-		else if (dynamic_cast<KoopaParaTroopa*>(object))
-		{
-			KoopaParaTroopa* parakoopa = dynamic_cast<KoopaParaTroopa*>(object);
-			if (parakoopa->state == PARATROOPA_STATE_KOOPA)
-				parakoopa->ChangeToKoopa(grid);
-		}
-		GetColliableObjects(object, coObjects);
-		object->Update(dt, &coObjects);
 	}
-
 	// Update camera to follow mario
 	SetInactivation();
 
@@ -402,7 +402,7 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 	{
 		for (auto obj : objects)
 		{
-			if (!dynamic_cast<Enemy*>(obj))
+			if (!dynamic_cast<Enemy*>(obj) || !dynamic_cast<Mario*>(obj))
 				coObjects.push_back(obj);
 		}
 	}
@@ -594,6 +594,9 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		break;
 	case DIK_I:
 		mario->Information();
+		break;
+	case DIK_B:
+		mario->TurnBigForm();
 		break;
 	case DIK_J:
 		int flag = mario->Skill();

@@ -63,7 +63,7 @@ void Brick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	if(state != BRICK_STATE_NORMAL)
 		vy += BRICK_GRAVITY * dt;
 	y += dy;
-	if (y > entryY && 
+	if (y > entryY  && 
 		state == BRICK_STATE_EMPTY)
 	{
 		vy = 0;
@@ -138,7 +138,7 @@ void Brick::DropItem(Grid* grid)
 	case BRICK_ITEM_COIN_TYPE:
 	{
 		item = new Coin(COIN_TYPE_1);
-		item->Appear(x, y);
+		item->Appear(entryX, entryY);
 		mario->GainMoney(1);
 		Unit* unit = new Unit(grid, item, x, y);
 		break;
