@@ -78,6 +78,9 @@ void RaccoonLeaf::Used()
 {
 	LPSCENE scence = Game::GetInstance()->GetCurrentScene();
 	Mario* mario = ((PlayScene*)scence)->GetPlayer();
+	Grid* grid = ((PlayScene*)scence)->GetGrid();
+	PointEffect* effect = new PointEffect(x, y, POINT_TYPE_1000);
+	Unit* unit = new Unit(grid, effect, x, y);
 	mario->TurnRaccoonForm();
 	this->SetState(RACCOONLEAF_STATE_INACTIVE);
 	mario->GainPoint(1000);

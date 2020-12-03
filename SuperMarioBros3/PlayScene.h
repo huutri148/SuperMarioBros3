@@ -23,6 +23,7 @@
 #include"ParaGoomba.h"
 #include "Grid.h"
 #include"KoopaParaTroopa.h"
+#include"PointEffect.h"
 #include"Hud.h"
 class PlayScene : public Scene
 {

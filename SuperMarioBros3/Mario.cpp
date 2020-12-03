@@ -1042,6 +1042,7 @@ bool Mario::IsInGround()
 }
 void Mario::TurnBigForm()
 {
+	
 	this->SetLevel(MARIO_BIG_FORM);
 	transformTime = GetTickCount();
 	isTransform = true;
@@ -1050,10 +1051,13 @@ void Mario::TurnBigForm()
 }
 void Mario::TurnRaccoonForm()
 {
-	this->SetLevel(MARIO_RACCOON_FORM);
-	turnRaccoonTime = GetTickCount();
-	isTurnRaccoon = true;
-	y -= (MARIO_RACCOON_BBOX_HEIGHT - MARIO_BIG_BBOX_HEIGHT + 2);
+	if (form != MARIO_RACCOON_FORM)
+	{
+		this->SetLevel(MARIO_RACCOON_FORM);
+		turnRaccoonTime = GetTickCount();
+		isTurnRaccoon = true;
+		y -= (MARIO_RACCOON_BBOX_HEIGHT - MARIO_BIG_BBOX_HEIGHT + 2);
+	}
 }
 void Mario::TurnFireForm()
 {

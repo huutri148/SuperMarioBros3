@@ -407,6 +407,10 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 				coObjects.push_back(obj);
 		}
 	}
+	else if (dynamic_cast<PointEffect*>(curObj))
+	{
+		return;
+	}
 	else if (dynamic_cast<FirePiranhaPlant*>(curObj) || 
 		dynamic_cast<PiranhaPlant*>(curObj))
 	{
@@ -534,7 +538,7 @@ void PlayScene::Render()
 		this->map->Render(cam_x, cam_y, screenWidth, screenHeight);
 		for (auto obj : listMovingObjectsToRender)
 		{
-			if (obj->IsEnable() == false || obj == NULL)
+			if (obj->IsEnable() == false )
 			{
 				continue;
 			}
@@ -813,7 +817,7 @@ void PlayScene::GetObjectFromGrid()
 		else if (dynamic_cast<Enemy*>(obj)|| dynamic_cast<FirePlantBullet*>(obj) ||
 			dynamic_cast<FireBall*>(obj))
 			listMovingObjectsToRender.push_back(obj);
-		else if (dynamic_cast<Item*>(obj))
+		else if (dynamic_cast<Item*>(obj) || dynamic_cast<PointEffect*>(obj))
 			listMovingObjectsToRender.push_back(obj);
 	}
  }

@@ -72,15 +72,7 @@ void Grid::Move(Unit* unit, float x, float y)
 	if (newRow < 0 || newRow >= numRows || newCol < 0 ||
 		newCol >= numCols)
 	{
-		if (dynamic_cast<FireBall*>(unit->GetObj()))
-		{
-			DebugOut(L"\nThat was my fucking fireball! Bitch!");
-			GameObject* obj = unit->GetObj();
-			delete obj;
-			obj = NULL;
-			DebugOut(L"\nAnd i fucking destroy it");
-		}
-		
+				
 		return;
 	}
 	

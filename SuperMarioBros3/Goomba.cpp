@@ -125,6 +125,10 @@ bool Goomba::IsDead()
 void Goomba::SetBeingStromped()
 {
 	this->SetState(GOOMBA_STATE_BEING_STROMPED);
+	Game* game = Game::GetInstance();
+	Grid* grid = ((PlayScene*)game->GetCurrentScene())->GetGrid();
+	PointEffect* effect = new PointEffect(x, y, POINT_TYPE_100);
+	Unit* unit = new Unit(grid, effect, x, y);
 	deathTime = GetTickCount();
 }
 void Goomba::SetBeingSkilled(int nx)
