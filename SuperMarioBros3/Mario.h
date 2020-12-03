@@ -21,6 +21,7 @@ class Mario : public GameObject
 	DWORD tailAttackTime = 0;
 	DWORD transformTime = 0;
 	DWORD turnRaccoonTime = 0;
+	DWORD teleportTime = 0;
 
 	int powerMelterStack = 0;
 	int indexFireBall = 0;
@@ -29,6 +30,7 @@ class Mario : public GameObject
 	int life = 4;
 	int type = 0;
 	int stageOfSwingTail;
+	float teleportY = 0;// Vị trí ở cổng tele
 
 	//Các biến cờ ở các trạng thái
 	bool isInGround ;
@@ -39,12 +41,15 @@ class Mario : public GameObject
 	bool isPickingUp = false;
 	bool isTransform = false;
 	bool isTurnRaccoon = false;
-public:
-	// Chuyển thành hàm
-	//vector<FireBall*> fireBall;
+	bool isTeleport = false;// bật cờ khi ở cổng Tele
 	
+public:
+
+	bool isInTeleport = false;
+	bool isInExtraMap = false;
 	bool turnFriction;
 	bool isPressedJ;
+	bool isPressS;
 	bool isSwingTail = false;
 	bool GetisPickUp() { return isPickingUp; }
 	bool IsFlying();

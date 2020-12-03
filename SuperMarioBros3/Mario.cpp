@@ -22,7 +22,8 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		MARIO_TAIL_ATTACK_TIME && isSwingTail == true)
 		isSwingTail = false;
 	if (GetTickCount64() - transformTime >
-		MARIO_BIG_FORM_TRANSFORM_TIME && isTransform == true) {
+		MARIO_BIG_FORM_TRANSFORM_TIME && isTransform == true) 
+	{
 		isTransform = false;
 		transformTime = 0;
 		if (untouchable == 0)
@@ -41,6 +42,46 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		if (untouchable == 1)
 			form = MARIO_BIG_FORM;
 	}
+	if (isTeleport)
+	{
+		// Nếu vy > 0 thì MARIO đang di chuyển vào Extra map ở worldmap
+		if (y - teleportY > MARIO_RACCOON_BBOX_HEIGHT && vy > 0)
+		{
+			isInTeleport = true;
+			teleportTime = GetTickCount();
+			isTeleport = false;
+		}
+		// nếu vy < 0 thì Mario đang di chuyển từ extramap về map cũ
+		else if (teleportY - y > MARIO_RACCOON_BBOX_HEIGHT && vy < 0)
+		{
+			isInTeleport = true;
+			teleportTime = GetTickCount();
+			isTeleport = false;
+		}
+	}
+	//DebugOut(L"\nteleportTime:\t%d", teleportTime);
+	if (isInTeleport && GetTickCount() - teleportTime >
+		MARIO_TELEPORT_TIME)
+	{
+		// có thể nói đây là thời gian ở trong teleport
+		isInTeleport = false;
+		teleportTime = 0;
+		if (isInExtraMap == false)
+		{
+		///Thông tin về teleport cần được khởi tạo riêng mỗi map
+		/// phải khởi tạo số này khi load map
+		/// Todo: khởi tạo lại khi làm thêm map mới
+			x = 2282;
+			y = 520;
+			isInExtraMap = true;
+		}
+		else if (isInExtraMap == true)
+		{
+			x = 2344;
+			y = 362;
+			isInExtraMap = false;
+		}
+	}
 	UpdateStageOfTailAttack();
 	if (dt > 64)
 		dt = 16;
@@ -48,24 +89,26 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		return;
 	// Calculate dx, dy 
 	GameObject::Update(dt);
-	// fall down slower 
-	if (isInGround == false)
-	{
-		if (vy > -0.2 && 
-			vy < 0.2)
-			vy += MARIO_LOWER_GRAVITY * dt;
+	// fall down slower
+	if (isTeleport == false) {
+		if (isInGround == false)
+		{
+			if (vy > -0.2 &&
+				vy < 0.2)
+				vy += MARIO_LOWER_GRAVITY * dt;
+			else
+				vy += MARIO_GRAVITY * dt;
+		}
 		else
 			vy += MARIO_GRAVITY * dt;
 	}
-	else
-		vy += MARIO_GRAVITY * dt;
 	Friction();
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
 	coEvents.clear();
 	// turn off collision when die 
-	if (state != MARIO_STATE_DEATH)
+	if (state != MARIO_STATE_DEATH && !isTeleport)
 		CalcPotentialCollisions(coObjects, coEvents);
 	// reset untouchable timer if untouchable time has passed
 	if (GetTickCount64() - untouchableStart > MARIO_UNTOUCHABLE_TIME
@@ -249,7 +292,35 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				dynamic_cast<Item*>(e->obj)->Used();
 				x += dx;
-				y += dy;
+				if (e->ny != 0 && nex == 0)
+					y += dy;
+			}
+			else if (dynamic_cast<Pipe*>(e->obj))
+			{
+				if (dynamic_cast<Pipe*>(e->obj)->type == PIPE_EXTRAMAP_PORT_TYPE)
+				{
+					if (e->ny < 0)
+					{
+						// Nếu ấn phím S trên teleport
+						// thì sẽ dẫn đến extraMap
+						if (isPressS)
+						{
+							isTeleport = true;
+							vy = MARIO_SPEED_TELEPORT;
+							teleportY = y;
+						}
+					}
+					else if (e->ny > 0)
+					{
+						if (!isInGround)
+						{
+							isTeleport = true;
+							vy = - MARIO_SPEED_TELEPORT;
+							teleportY = y;
+						}
+					}
+				}
+				
 			}
 		}
 	}
@@ -510,6 +581,8 @@ void Mario::Render()
 		ani = MARIO_ANI_TURN_TO_BIG_FORM;
 	else if (isTurnRaccoon == true)
 		ani = MARIO_ANI_TURN_TO_RACCOON;
+	else if (isTeleport)
+		ani = MARIO_ANI_RACCOON_TELEPORT;
 	int alpha = 255;
 	/*DebugOut(L"Ani: %d\n", ani);*/
 	if (untouchable)
