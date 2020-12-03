@@ -190,7 +190,8 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 	}
 	case OBJECT_TYPE_PIPES: 
 	{
-		obj = new Pipe();
+		int set_type = atoi(tokens[4].c_str());
+		obj = new Pipe(set_type);
 		unit = new Unit(grid, obj, x, y);
 		break;
 	}
@@ -522,33 +523,42 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 void PlayScene::Render()
 {
 	Game* game = Game::GetInstance();
-
 	int screenWidth = game->GetScreenWidth();
 	int screenHeight = game->GetScreenHeight();
 	float cam_x = game->GetCamX();
 	float cam_y = game->GetCamY();
-
-	//DebugOut(L"\nListMoving Obj: %d", listMovingObjectsToRender.size());
-	this->map->Render(cam_x,cam_y,screenWidth,screenHeight);
-	for (auto obj : listMovingObjectsToRender)
+	// Khi không ở trong teleport
+	if (!player->isInTeleport)
 	{
-		if (obj->IsEnable() == false || obj == NULL)
+		//DebugOut(L"\nListMoving Obj: %d", listMovingObjectsToRender.size());
+		this->map->Render(cam_x, cam_y, screenWidth, screenHeight);
+		for (auto obj : listMovingObjectsToRender)
 		{
-			continue;
+			if (obj->IsEnable() == false || obj == NULL)
+			{
+				continue;
+			}
+			obj->Render();
 		}
-			
-		obj->Render();
+		player->Render();
+		for (auto obj : listStaticObjectsToRender)
+		{
+			if (obj->IsEnable() == false)
+				continue;
+			obj->Render();
+		}
+		hud->Render();
 	}
-	
-	for (auto obj : listStaticObjectsToRender)
+	else
 	{
-		if (obj->IsEnable() == false)
-			continue;
-		
-		obj->Render();
+		// Khi ở trong teleport thì màn hình chuyển sang màu đen
+		// một khoảng thời gian
+		LPDIRECT3DTEXTURE9 bbox = Textures::GetInstance()->Get(ID_TEX_BBOX);
+		Game* game = Game::GetInstance();
+		Game::GetInstance()->Draw(cam_x,cam_y
+			, bbox, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT
+			, 255);
 	}
-	player->Render();
-	hud->Render();
 }
 void PlayScene::UpdatePlayer(DWORD dt)
 {
@@ -598,6 +608,9 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	case DIK_B:
 		mario->TurnBigForm();
 		break;
+	case DIK_S:
+		mario->isPressS = true;
+		break;
 	case DIK_J:
 		int flag = mario->Skill();
 	
@@ -634,6 +647,8 @@ void PlayScenceKeyHandler::OnKeyUp(int KeyCode)
 		break;
 	case DIK_S:
 		mario->SetState(MARIO_STATE_IDLE);
+		mario->isPressS = false;
+		break;
 	}
 		
 }
@@ -724,6 +739,11 @@ void PlayScene::UpdateCameraPosition()
 	float Sx = 16, Sy = oldCamY;
 	cx -= screenWidth / 2;
 	cy -= screenHeight / 2;
+	float edgeBottom = 0;
+	if (player->isInExtraMap == false)
+		edgeBottom = BOTTOM_EDGE_WORLD;
+	else
+		edgeBottom = BOTTOM_EDGE_EXTRAMAP;
 	// Ở đây xét số cứng 
 	// Cần phải sửa vì còn extra map ở dưới
 	// nếu có thể chia thành hai map thì sẽ để theo 
@@ -736,9 +756,9 @@ void PlayScene::UpdateCameraPosition()
 	{
 		Sx = (float)(mapWidth - 16.0f) - screenWidth;
 	}
-	if (player->y + screenHeight > 490)
+	if (player->y + screenHeight > edgeBottom)
 	{
-		Sy = (float)(490.0f - screenHeight);
+		Sy = (float)(edgeBottom - screenHeight);
 	}
 	if (player->y - screenHeight / 2 < 16)
 		Sy = (float)16.0f;
@@ -746,6 +766,18 @@ void PlayScene::UpdateCameraPosition()
 	{
 		if (isTurnCamY)
 			Sy = cy;
+	}
+	if (player->isInExtraMap)
+	{
+		Sx = 2143;
+		if (player->x > 2143 + screenWidth / 2)
+		{
+			Sx = cx;
+		}
+		if (player->x + screenWidth / 2 > 2656)
+		{
+			Sx = (float)(2656) - screenWidth;
+		}
 	}
 	if(player->isSwingTail == false)
 		Game::GetInstance()->SetCamPos(round(Sx), round(Sy));
