@@ -48,6 +48,7 @@ public:
 	bool IsFlying();
 	bool IsFloating();
 	bool IsInGround();
+	bool IsTransform() { return isTransform; };
 	
 	Mario();
 
@@ -87,7 +88,9 @@ public:
 	void Reset();
 	void TurnBigForm();
 	void TurnFireForm();
+	void DecreaseForm();
 	void TurnRaccoonForm();
+	void HandleSwitchTime();
 
 	//Thay đổi PowerMelter
 	void FillUpPowerMelter();

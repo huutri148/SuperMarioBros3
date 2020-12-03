@@ -30,6 +30,8 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	UpdateStageOfTailAttack();
 	if (dt > 64)
 		dt = 16;
+	if (isTransform)
+		return;
 	// Calculate dx, dy 
 	GameObject::Update(dt);
 	// fall down slower 
@@ -52,10 +54,17 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	if (state != MARIO_STATE_DEATH)
 		CalcPotentialCollisions(coObjects, coEvents);
 	// reset untouchable timer if untouchable time has passed
-	if (GetTickCount64() - untouchableStart > MARIO_UNTOUCHABLE_TIME)
+	if (GetTickCount64() - untouchableStart > MARIO_UNTOUCHABLE_TIME
+		&& untouchable == 1)
 	{
 		untouchableStart = 0;
 		untouchable = 0;
+		if (form == MARIO_BIG_FORM )
+		{
+			form = MARIO_SMALL_FORM;
+			y += MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT;
+		}
+			
 	}
 	if (GetTickCount() - shootingTime> MARIO_SHOOTING_TIME
 		&& state == MARIO_STATE_SHOOT_FIREBALL)
@@ -128,7 +137,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							{
 								if (form > MARIO_SMALL_FORM)
 								{
-									form -= 1;
+									//form -= 1;
 									StartUntouchable();
 								}
 								else
@@ -145,7 +154,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						{
 							if (form > MARIO_SMALL_FORM)
 							{
-								form -= 1;
+								//form -= 1;
 								StartUntouchable();
 							}
 							else
@@ -183,7 +192,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				{
 					if (form > MARIO_SMALL_FORM)
 					{
-						form -= 1;
+						//form -= 1;
 						StartUntouchable();
 					}
 					else
@@ -490,7 +499,14 @@ void Mario::Render()
 		ani = MARIO_ANI_TURN_TO_BIG_FORM;
 	int alpha = 255;
 	/*DebugOut(L"Ani: %d\n", ani);*/
-	if (untouchable) alpha = 128;
+	if (untouchable)
+	{
+		if((GetTickCount64() - untouchableStart) % 2 == 0)
+				alpha = 0;
+		if (form == MARIO_BIG_FORM)
+			ani = MARIO_ANI_TURN_TO_SMALL_FORM;
+			
+	}
 	animation_set->at(ani)->Render(nx, round(x), round(y), alpha);
 	//RenderBoundingBox();
 }
@@ -977,4 +993,8 @@ bool Mario::Brake()
 		canBrake = false;
 	}
 	return false;
+}
+void Mario::DecreaseForm()
+{
+	
 }
