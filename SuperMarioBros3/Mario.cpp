@@ -13,6 +13,7 @@
 #include "FireBall.h"
 #include "PiranhaPlant.h"
 #include "Coin.h"
+#include "HitEffect.h"
 
 
 #pragma region Các hàm cập nhật tọa độ, animation
@@ -204,15 +205,27 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					{
 						if (enemy->IsDead() != true)
 						{
-							if (form > MARIO_SMALL_FORM)
+							if(!isSwingTail)
 							{
-								//form -= 1;
-								//StartUntouchable();
-								DecreaseForm();
+								if (form > MARIO_SMALL_FORM)
+								{
+									//form -= 1;
+									//StartUntouchable();
+									DecreaseForm();
+								}
+								else
+									SetState(MARIO_STATE_DEATH);
+								enemy->ChangeDirect();
 							}
 							else
-								SetState(MARIO_STATE_DEATH);
-							enemy->ChangeDirect();
+							{
+								enemy->SetBeingSkilled(nx);
+								Game* game = Game::GetInstance();
+								Grid* grid = ((PlayScene*)game->GetCurrentScene())->GetGrid();
+								HitEffect* effect = new HitEffect(x + this->nx * 16, y);
+								Unit* unit = new Unit(grid, effect, x  + this->nx * 16, y);
+							}
+							
 						}
 						else if (dynamic_cast<KoopaTroopa*>(enemy))
 						{
@@ -270,6 +283,15 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 								this->GainPoint(10);
 						}
 							
+					}
+					else if (e->nx != 0)
+					{
+						if (isSwingTail)
+						{
+							brick->SetEmpty();
+							if (brick->state != BRICK_STATE_INACTIVE)
+								this->GainPoint(10);
+						}
 					}
 				}
 				// nếu viên gạch Breakable ở trạng thái 
@@ -680,12 +702,19 @@ void Mario::GetBoundingBox(float& left, float& top, float& right,
 		}
 		else if (form == MARIO_RACCOON_FORM)
 		{
-			if (nx > 0)
-				left = x + MARIO_TAIL_BBOX_WIDTH;
-			right = left + MARIO_RACCOON_BBOX_WIDTH;
 			if (isSwingTail)
-				right += MARIO_TAIL_BBOX_WIDTH;
-			bottom = y + MARIO_RACCOON_BBOX_HEIGHT;
+			{
+				 if (nx < 0)
+					left = x - MARIO_TAIL_BBOX_WIDTH;
+				 right = left + 2 * MARIO_TAIL_BBOX_WIDTH + MARIO_RACCOON_BBOX_WIDTH;
+			}
+			else
+			{
+				if (nx > 0)
+					left = x + MARIO_TAIL_BBOX_WIDTH;
+				right = left + MARIO_RACCOON_BBOX_WIDTH;
+			}
+			bottom = top + MARIO_RACCOON_BBOX_HEIGHT;
 		}
 	}
 }
@@ -1042,6 +1071,7 @@ bool Mario::IsInGround()
 }
 void Mario::TurnBigForm()
 {
+	
 	this->SetLevel(MARIO_BIG_FORM);
 	transformTime = GetTickCount();
 	isTransform = true;
@@ -1050,10 +1080,13 @@ void Mario::TurnBigForm()
 }
 void Mario::TurnRaccoonForm()
 {
-	this->SetLevel(MARIO_RACCOON_FORM);
-	turnRaccoonTime = GetTickCount();
-	isTurnRaccoon = true;
-	y -= (MARIO_RACCOON_BBOX_HEIGHT - MARIO_BIG_BBOX_HEIGHT + 2);
+	if (form != MARIO_RACCOON_FORM)
+	{
+		this->SetLevel(MARIO_RACCOON_FORM);
+		turnRaccoonTime = GetTickCount();
+		isTurnRaccoon = true;
+		y -= (MARIO_RACCOON_BBOX_HEIGHT - MARIO_BIG_BBOX_HEIGHT + 2);
+	}
 }
 void Mario::TurnFireForm()
 {

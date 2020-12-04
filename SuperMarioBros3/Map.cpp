@@ -50,12 +50,13 @@ void Map::Render(float cam_x,float cam_y, int screenWidth,int screenHeight)
 {
 	int FirstColumn =(int) floor(cam_x/ TILE_WIDTH);
 	int FirstRow =(int) floor(cam_y / TILE_HEIGHT);
-	int LastRow =(int) floor((cam_y + screenHeight - 40) / TILE_HEIGHT);
+	// i don't really know what the f*** iam writting
+	int LastRow =(int)floor( (cam_y + screenHeight - 24) / TILE_HEIGHT);
 	int LastColumn =(int) ceil((cam_x + screenWidth ) / TILE_WIDTH);
 	if (LastColumn >= TotalColsOfMap)
 		LastColumn = TotalColsOfMap - 1;
 	if (LastRow >= TotalRowsOfMap)
-		LastColumn = TotalRowsOfMap - 1;
+		LastRow = TotalRowsOfMap - 1;
 	for (int iRow = FirstRow; iRow < LastRow; iRow++)
 	{
 		for (int iColumn = FirstColumn; iColumn < LastColumn; iColumn++)

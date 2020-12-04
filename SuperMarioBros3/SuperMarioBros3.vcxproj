@@ -158,6 +158,7 @@
     <ClInclude Include="Goomba.h" />
     <ClInclude Include="Grid.h" />
     <ClInclude Include="Ground.h" />
+    <ClInclude Include="HitEffect.h" />
     <ClInclude Include="Hud.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="KeyEventHandler.h" />
@@ -170,6 +171,7 @@
     <ClInclude Include="Pipe.h" />
     <ClInclude Include="PiranhaPlant.h" />
     <ClInclude Include="PlayScene.h" />
+    <ClInclude Include="PointEffect.h" />
     <ClInclude Include="PowerMelter.h" />
     <ClInclude Include="PSwitch.h" />
     <ClInclude Include="RaccoonLeaf.h" />
@@ -193,6 +195,7 @@
     <ClCompile Include="Goomba.cpp" />
     <ClCompile Include="Grid.cpp" />
     <ClCompile Include="Ground.cpp" />
+    <ClCompile Include="HitEffect.cpp" />
     <ClCompile Include="Hud.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="KoopaParaTroopa.cpp" />
@@ -205,6 +208,7 @@
     <ClCompile Include="Pipe.cpp" />
     <ClCompile Include="PiranhaPlant.cpp" />
     <ClCompile Include="PlayScene.cpp" />
+    <ClCompile Include="PointEffect.cpp" />
     <ClCompile Include="PowerMelter.cpp" />
     <ClCompile Include="PSwitch.cpp" />
     <ClCompile Include="RaccoonLeaf.cpp" />
