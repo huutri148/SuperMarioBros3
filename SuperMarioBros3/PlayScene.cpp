@@ -407,7 +407,7 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 				coObjects.push_back(obj);
 		}
 	}
-	else if (dynamic_cast<PointEffect*>(curObj))
+	else if (dynamic_cast<PointEffect*>(curObj) || dynamic_cast<HitEffect*>(curObj))
 	{
 		return;
 	}
@@ -817,7 +817,8 @@ void PlayScene::GetObjectFromGrid()
 		else if (dynamic_cast<Enemy*>(obj)|| dynamic_cast<FirePlantBullet*>(obj) ||
 			dynamic_cast<FireBall*>(obj))
 			listMovingObjectsToRender.push_back(obj);
-		else if (dynamic_cast<Item*>(obj) || dynamic_cast<PointEffect*>(obj))
+		else if (dynamic_cast<Item*>(obj) || dynamic_cast<PointEffect*>(obj) ||
+			dynamic_cast<HitEffect*>(obj))
 			listMovingObjectsToRender.push_back(obj);
 	}
  }

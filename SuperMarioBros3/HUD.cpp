@@ -45,7 +45,7 @@ void Hud::Render()
 {
 	LPDIRECT3DTEXTURE9 bbox = Textures::GetInstance()->Get(ID_TEX_BBOX);
 	Game* game = Game::GetInstance();
-	Game::GetInstance()->Draw(x + 5, y - 84
+	Game::GetInstance()->Draw(x , y - 84
 		, bbox, 0, 0, game->GetScreenWidth() - 5, 40, 255);
 	hud1->Draw(-1, x + 40, y - 78);
 	hud2->Draw(-1, x + 220, y  - 78);

@@ -39,6 +39,8 @@ void PointEffect::Render()
 		ani = POINT_ANI_4000;
 	case POINT_TYPE_8000:
 		ani = POINT_ANI_8000;
+	case POINT_TYPE_1UP:
+		ani = POINT_ANI_1UP;
 		break;
 	}
 	animation_set->at(ani)->Render(-1, round(x), round(y));

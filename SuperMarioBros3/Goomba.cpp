@@ -78,6 +78,7 @@ void Goomba::Render()
 			ani = GOOMBA_ANI_DIE;
 		animation_set->at(ani)->Render(nx, ny, round(x), round(y));
 	}
+	//RenderBoundingBox();
 }
 void Goomba::SetState(int state)
 {
@@ -135,6 +136,10 @@ void Goomba::SetBeingSkilled(int nx)
 {
 	this->nx = nx;
 	this->SetState(GOOMBA_STATE_BEING_SKILLED);
+	Game* game = Game::GetInstance();
+	Grid* grid = ((PlayScene*)game->GetCurrentScene())->GetGrid();
+	PointEffect* effect = new PointEffect(x, y, POINT_TYPE_100);
+	Unit* unit = new Unit(grid, effect, x, y);
 	deathTime = GetTickCount();
 }
 void Goomba::HandleTimeSwitchState()

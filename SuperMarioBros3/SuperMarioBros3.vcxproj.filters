@@ -120,6 +120,9 @@
     <ClInclude Include="PointEffect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="HitEffect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">
@@ -222,6 +225,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PointEffect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HitEffect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

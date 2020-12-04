@@ -118,6 +118,7 @@ void Mushroom::Used()
 		mario->TurnBigForm();
 		PointEffect* effect = new PointEffect(x, y, POINT_TYPE_1000);
 		Unit* unit = new Unit(grid, effect, x, y);
+		mario->GainPoint(1000);
 	}
 	else
 	{
@@ -126,7 +127,7 @@ void Mushroom::Used()
 		Unit* unit = new Unit(grid, effect, x, y);
 	}
 	
-	mario->GainPoint(1000);
+
 }
 Mushroom::Mushroom(int type)
 {

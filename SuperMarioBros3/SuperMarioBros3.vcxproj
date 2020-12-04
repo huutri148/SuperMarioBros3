@@ -158,6 +158,7 @@
     <ClInclude Include="Goomba.h" />
     <ClInclude Include="Grid.h" />
     <ClInclude Include="Ground.h" />
+    <ClInclude Include="HitEffect.h" />
     <ClInclude Include="Hud.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="KeyEventHandler.h" />
@@ -194,6 +195,7 @@
     <ClCompile Include="Goomba.cpp" />
     <ClCompile Include="Grid.cpp" />
     <ClCompile Include="Ground.cpp" />
+    <ClCompile Include="HitEffect.cpp" />
     <ClCompile Include="Hud.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="KoopaParaTroopa.cpp" />
