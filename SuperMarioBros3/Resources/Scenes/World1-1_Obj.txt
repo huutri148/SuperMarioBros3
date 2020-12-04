@@ -9,6 +9,7 @@
 50	Resources\textures\tiles.png	127	255	142
 70	Resources\textures\enemies.png	68	145	190
 80	Resources\textures\HUD&Font.png	0	224	142
+90	Resources\textures\GoalRoulette.png	0	183	239
 
 
 #ID	TolRowTile	TolColTile	TolRowMap	TolColMap	TotalTiles	Matrix_path
@@ -464,7 +465,23 @@
 #============HIT EFFECT======================
 50058	379	1	395	17	0
 50059	397	1	413	17	0
-
+#============PORTAL=========================
+#CARD
+50060	435	347	461	373	90
+50061	379	347	405	373	90
+50062	407	347	433	373	90
+#PICKED 
+#MUSHROOM
+50063	257	373	273	389	90
+50064	319	375	329	390	90
+#STARMAN
+50065	297	374	313	390	90
+50066	347	374	357	391	90
+#FLOWER
+50067	277	374	293	390	90
+50068	332	375	342	391	90
+#CONGRATULATE
+50069	4	348	252	421	90
 
 
 
@@ -618,6 +635,11 @@
 611	50057	100
 #HIT
 612	50058	100	50059	100
+#=========PORTAL========
+613	50060	100	50061	100	50062	100
+614	50063	100	50064	100
+615	50065	100	50066	100
+616	50067	100	50068	100
 
 
 
@@ -830,6 +852,8 @@
 74	603	604	605	606	607	608	609	610	611
 #HIT effect
 75	612
+#PORTAL
+76	613	614	615	616
 #invisible brick
 99	899
 
@@ -839,7 +863,7 @@
 #6 = Pipe,5 = block,7 = Invisible Brick
 #8 = PiranhaPlant,9 = Coin,10 = FirePiranhaPlant,11 ParaGoomba
 # MARIO
-0	940.0	390	1
+0	2542.0	390	1
 #PiranhaPlant
 8	1816	399	5	0
 #Fire PiranhaPlant
@@ -1021,3 +1045,5 @@
 9	2369	640	70	2
 9	2385	640	70	2
 13	0	0	7
+#PORTAL
+50	2701	348	76

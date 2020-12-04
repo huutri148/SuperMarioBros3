@@ -26,18 +26,19 @@
 #include"PointEffect.h"
 #include"Hud.h"
 #include"HitEffect.h"
+#include"Portal.h"
 class PlayScene : public Scene
 {
 protected:
+	Portal* portal;
 	Mario* player = NULL;
 	Map* map = NULL ;
 	bool isTurnCamY = false;// Camera Y được bật khi Mario bay 
 	bool isGameOver = false;
 	Hud* hud = NULL;
-
 	Unit* unit;
 	Grid* grid;
-
+	
 	vector<LPGAMEOBJECT> objects;
 	vector<Unit*> listUnits;
 	vector<LPGAMEOBJECT> listItems;

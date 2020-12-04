@@ -29,6 +29,7 @@ class Mario : public GameObject
 	int money = 0;
 	int life = 4;
 	int type = 0;
+	vector<int> card;
 	int stageOfSwingTail;
 	float teleportY = 0;// Vị trí ở cổng tele
 

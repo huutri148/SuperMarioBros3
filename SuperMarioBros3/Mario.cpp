@@ -344,6 +344,13 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				}
 				
 			}
+			else if (dynamic_cast<Portal*>(e->obj))
+			{
+				x += dx;
+				y += dy;
+				card.push_back(dynamic_cast<Portal*>(e->obj)->GetPortal());
+				vx = MARIO_WALK_DEFELCT_SPEED;
+			}
 		}
 	}
 
