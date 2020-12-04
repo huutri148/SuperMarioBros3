@@ -6,7 +6,7 @@
 Hud::Hud()
 {
 	// Shoud I make it an instance so i won't have to 
-	// access all of this thing ????
+	// access all of these thing ????
 	Textures* textures = Textures::GetInstance();
 	Sprites* sprites = Sprites::GetInstance();
 	Game* game = Game::GetInstance();
