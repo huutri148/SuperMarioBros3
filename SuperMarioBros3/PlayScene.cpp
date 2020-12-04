@@ -357,8 +357,8 @@ void PlayScene::Update(DWORD dt)
 		{
 			LPGAMEOBJECT object = objects[i];
 			vector<LPGAMEOBJECT> coObjects;
-			if (dynamic_cast<Enemy*>(object))
-				dynamic_cast<Enemy*>(object)->GetPlayerPosition(player->x, player->y);
+		/*	if (dynamic_cast<Enemy*>(object))
+				dynamic_cast<Enemy*>(object)->GetPlayerPosition(player->x, player->y);*/
 			if (dynamic_cast<FirePiranhaPlant*>(object))
 			{
 				FirePiranhaPlant* plant = dynamic_cast<FirePiranhaPlant*>(object);
@@ -893,7 +893,13 @@ void PlayScene::ActiveEnemiesInViewport()
 			{
 				if (IsInViewport(enemy) == true
 					&& enemy->isAbleToActive == true)
+				{
 					enemy->Active();
+				/*	if (dynamic_cast<KoopaTroopa*>(enemy))
+						DebugOut(L"\nDebug");*/
+				}
+				
+				
 			}
 		}
 	}

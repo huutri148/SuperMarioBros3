@@ -22,10 +22,11 @@ void Goomba::GetBoundingBox(float& left, float& top,
 void Goomba::Update(DWORD dt,
 	vector<LPGAMEOBJECT>* coObjects)
 {
+	//DebugOut(L"\nState: %d", state);
 	HandleTimeSwitchState();
 	if (state == GOOMBA_STATE_INACTIVE || isEnable == false)
 		return;
-
+	//DebugOut(L"\nvx: %f, vy:%f", vx, vy);
 	Enemy::Update(dt, coObjects);
 	if (this->state != GOOMBA_STATE_BEING_STROMPED)
 		vy += dt * GOOMBA_GRAVITY;

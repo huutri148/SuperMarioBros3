@@ -16,11 +16,12 @@ void KoopaTroopa::GetBoundingBox(float& left, float& top,
 void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	HandleTimeSwitchState();
+	//DebugOut(L"\nState: %d",state);
 	if (state == KOOPATROOPA_STATE_INACTIVE || isEnable == false)
 		return;
 	Enemy::Update(dt, coObjects);
 	vy += KOOPATROOPA_GRAVITY * dt;
-
+	//DebugOut(L"\nx: %f, y:%f", x, y);
 	if (state != KOOPATROOPA_STATE_WALKING)
 		CanPullBack = false;
 	//Xét nếu đang bị cầm ở dạng shell
@@ -220,7 +221,6 @@ void KoopaTroopa::SetState(int state)
 	case KOOPATROOPA_STATE_INACTIVE:
 		x = entryX;
 		y = entryY;
-		vx = 0;
 		break;
 	case KOOPATROOPA_STATE_EXIT_SHELL:
 		isEnable = true;

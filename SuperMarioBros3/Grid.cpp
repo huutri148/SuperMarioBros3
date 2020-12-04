@@ -104,7 +104,9 @@ void Grid::Get(float cam_x,float cam_y, vector<Unit*>& listUnits)
 {
 	int startCol = (int)(cam_x / cellWidth);
 	int endCol =(int) ceil((cam_x + SCREEN_WIDTH) / cellWidth);
-
+	int ENDCOL = (int)ceil((mapWidth) / cellWidth);
+	if (endCol >= ENDCOL)
+		endCol -= 1;
 	for (int i = 0; i < numRows; i++)
 	{
 		for (int j = startCol; j < endCol; j++)

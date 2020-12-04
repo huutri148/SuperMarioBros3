@@ -53,6 +53,7 @@ void Map::Render(float cam_x,float cam_y, int screenWidth,int screenHeight)
 	// i don't really know what the f*** iam writting
 	int LastRow =(int)floor( (cam_y + screenHeight - 24) / TILE_HEIGHT);
 	int LastColumn =(int) ceil((cam_x + screenWidth ) / TILE_WIDTH);
+	//DebugOut(L"\nF: %d - L:  %d", FirstColumn, LastColumn);
 	if (LastColumn >= TotalColsOfMap)
 		LastColumn = TotalColsOfMap - 1;
 	if (LastRow >= TotalRowsOfMap)
