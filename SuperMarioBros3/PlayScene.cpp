@@ -216,13 +216,13 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 		unit = new Unit(grid, obj, x, y);
 		break;
 	}
-	/*case OBJECT_TYPE_PORTAL:
+	case OBJECT_TYPE_PORTAL:
 	{
-		float r = atof(tokens[4].c_str());
-		float b = atof(tokens[5].c_str());
-		int scene_id = atoi(tokens[6].c_str());
-		obj = new CPortal(x, y, r, b, scene_id);
-	}*/
+		obj = new Portal();
+		portal =(Portal*)obj;
+		unit = new Unit(grid, obj, x, y);
+		break;
+	}
 	case OBJECT_TYPE_COIN:
 	{
 		int set_type = atoi(tokens[4].c_str());
@@ -488,11 +488,11 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 				coObjects.push_back(obj);
 		}
 	}
-	else if (dynamic_cast<FireBall*>(curObj))
+	else if (dynamic_cast<FireBall*>(curObj)|| dynamic_cast<RaccoonTail*>(curObj))
 	{
 		for (auto obj : objects)
 		{
-			if (dynamic_cast<Enemy*>(obj))
+			if (dynamic_cast<Enemy*>(obj) )
 			{
 				if (dynamic_cast<Enemy*>(obj)->IsInactive())
 					continue;
@@ -510,7 +510,7 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 		{
 				if ( dynamic_cast<Ground*>(obj) ||dynamic_cast<Block*>(obj)
 				|| dynamic_cast<Brick*>(obj) || dynamic_cast<Item*>(obj) ||
-				dynamic_cast<Pipe*>(obj))
+				dynamic_cast<Pipe*>(obj) || dynamic_cast<Portal*>(obj))
 				coObjects.push_back(obj);
 			else 
 			{
@@ -538,14 +538,20 @@ void PlayScene::Render()
 		this->map->Render(cam_x, cam_y, screenWidth, screenHeight);
 		for (auto obj : listMovingObjectsToRender)
 		{
-			if (obj->IsEnable() == false )
+			if (obj->IsEnable() == false)
 			{
 				continue;
 			}
 			obj->Render();
 		}
-		player->Render();
 		for (auto obj : listStaticObjectsToRender)
+		{
+			if (obj->IsEnable() == false)
+				continue;
+			obj->Render();
+		}
+		player->Render();
+		for (auto obj : listPipeToRender)
 		{
 			if (obj->IsEnable() == false)
 				continue;
@@ -810,15 +816,15 @@ void PlayScene::GetObjectFromGrid()
 		if (  dynamic_cast<Block*>(obj) || dynamic_cast<Ground*>(obj)||
 			dynamic_cast<InvisibleBrick*>(obj))
 			continue;
-		else if (dynamic_cast<Brick*>(obj)|| dynamic_cast<Pipe*>(obj))
+		else if (dynamic_cast<Brick*>(obj)|| dynamic_cast<Portal*>(obj))
 			listStaticObjectsToRender.push_back(obj);
-	/*	else if (dynamic_cast<Pipe*>(obj))
-			listPipeToRender.push_back(obj);*/
+		else if (dynamic_cast<Pipe*>(obj) )
+			listPipeToRender.push_back(obj);
 		else if (dynamic_cast<Enemy*>(obj)|| dynamic_cast<FirePlantBullet*>(obj) ||
 			dynamic_cast<FireBall*>(obj))
 			listMovingObjectsToRender.push_back(obj);
 		else if (dynamic_cast<Item*>(obj) || dynamic_cast<PointEffect*>(obj) ||
-			dynamic_cast<HitEffect*>(obj))
+			dynamic_cast<HitEffect*>(obj) )
 			listMovingObjectsToRender.push_back(obj);
 	}
  }
