@@ -176,6 +176,7 @@
     <ClInclude Include="PowerMelter.h" />
     <ClInclude Include="PSwitch.h" />
     <ClInclude Include="RaccoonLeaf.h" />
+    <ClInclude Include="RaccoonTail.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Sprites.h" />
     <ClInclude Include="Textures.h" />
@@ -214,6 +215,7 @@
     <ClCompile Include="PowerMelter.cpp" />
     <ClCompile Include="PSwitch.cpp" />
     <ClCompile Include="RaccoonLeaf.cpp" />
+    <ClCompile Include="RaccoonTail.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Sprites.cpp" />
     <ClCompile Include="Textures.cpp" />

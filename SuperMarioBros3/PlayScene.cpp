@@ -488,11 +488,11 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 				coObjects.push_back(obj);
 		}
 	}
-	else if (dynamic_cast<FireBall*>(curObj))
+	else if (dynamic_cast<FireBall*>(curObj)|| dynamic_cast<RaccoonTail*>(curObj))
 	{
 		for (auto obj : objects)
 		{
-			if (dynamic_cast<Enemy*>(obj))
+			if (dynamic_cast<Enemy*>(obj) )
 			{
 				if (dynamic_cast<Enemy*>(obj)->IsInactive())
 					continue;
@@ -538,14 +538,20 @@ void PlayScene::Render()
 		this->map->Render(cam_x, cam_y, screenWidth, screenHeight);
 		for (auto obj : listMovingObjectsToRender)
 		{
-			if (obj->IsEnable() == false )
+			if (obj->IsEnable() == false)
 			{
 				continue;
 			}
 			obj->Render();
 		}
-		player->Render();
 		for (auto obj : listStaticObjectsToRender)
+		{
+			if (obj->IsEnable() == false)
+				continue;
+			obj->Render();
+		}
+		player->Render();
+		for (auto obj : listPipeToRender)
 		{
 			if (obj->IsEnable() == false)
 				continue;
@@ -810,16 +816,15 @@ void PlayScene::GetObjectFromGrid()
 		if (  dynamic_cast<Block*>(obj) || dynamic_cast<Ground*>(obj)||
 			dynamic_cast<InvisibleBrick*>(obj))
 			continue;
-		else if (dynamic_cast<Brick*>(obj)|| dynamic_cast<Pipe*>(obj)
-			|| dynamic_cast<Portal*>(obj))
+		else if (dynamic_cast<Brick*>(obj)|| dynamic_cast<Portal*>(obj))
 			listStaticObjectsToRender.push_back(obj);
-	/*	else if (dynamic_cast<Pipe*>(obj))
-			listPipeToRender.push_back(obj);*/
+		else if (dynamic_cast<Pipe*>(obj) )
+			listPipeToRender.push_back(obj);
 		else if (dynamic_cast<Enemy*>(obj)|| dynamic_cast<FirePlantBullet*>(obj) ||
 			dynamic_cast<FireBall*>(obj))
 			listMovingObjectsToRender.push_back(obj);
 		else if (dynamic_cast<Item*>(obj) || dynamic_cast<PointEffect*>(obj) ||
-			dynamic_cast<HitEffect*>(obj))
+			dynamic_cast<HitEffect*>(obj) )
 			listMovingObjectsToRender.push_back(obj);
 	}
  }

@@ -21,7 +21,11 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	if (GetTickCount64() - tailAttackTime >
 		MARIO_TAIL_ATTACK_TIME && isSwingTail == true)
+	{
 		isSwingTail = false;
+		tail->SetState(RACCOONTAIL_STATE_INACTIVE);
+	}
+		
 	if (GetTickCount64() - transformTime >
 		MARIO_BIG_FORM_TRANSFORM_TIME && isTransform == true) 
 	{
@@ -205,26 +209,15 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					{
 						if (enemy->IsDead() != true)
 						{
-							if(!isSwingTail)
+							if (form > MARIO_SMALL_FORM)
 							{
-								if (form > MARIO_SMALL_FORM)
-								{
-									//form -= 1;
-									//StartUntouchable();
-									DecreaseForm();
-								}
-								else
-									SetState(MARIO_STATE_DEATH);
-								enemy->ChangeDirect();
+								//form -= 1;
+								//StartUntouchable();
+								DecreaseForm();
 							}
 							else
-							{
-								enemy->SetBeingSkilled(nx);
-								Game* game = Game::GetInstance();
-								Grid* grid = ((PlayScene*)game->GetCurrentScene())->GetGrid();
-								HitEffect* effect = new HitEffect(x + this->nx * 16, y);
-								Unit* unit = new Unit(grid, effect, x  + this->nx * 16, y);
-							}
+								SetState(MARIO_STATE_DEATH);
+								enemy->ChangeDirect();
 							
 						}
 						else if (dynamic_cast<KoopaTroopa*>(enemy))
@@ -283,15 +276,6 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 								this->GainPoint(10);
 						}
 							
-					}
-					else if (e->nx != 0)
-					{
-						if (isSwingTail)
-						{
-							brick->SetEmpty();
-							if (brick->state != BRICK_STATE_INACTIVE)
-								this->GainPoint(10);
-						}
 					}
 				}
 				// nếu viên gạch Breakable ở trạng thái 
@@ -709,18 +693,9 @@ void Mario::GetBoundingBox(float& left, float& top, float& right,
 		}
 		else if (form == MARIO_RACCOON_FORM)
 		{
-			if (isSwingTail)
-			{
-				 if (nx < 0)
-					left = x - MARIO_TAIL_BBOX_WIDTH;
-				 right = left + 2 * MARIO_TAIL_BBOX_WIDTH + MARIO_RACCOON_BBOX_WIDTH;
-			}
-			else
-			{
-				if (nx > 0)
-					left = x + MARIO_TAIL_BBOX_WIDTH;
-				right = left + MARIO_RACCOON_BBOX_WIDTH;
-			}
+			if (nx > 0)
+				left = x + MARIO_TAIL_BBOX_WIDTH;
+			right = left + MARIO_RACCOON_BBOX_WIDTH;
 			bottom = top + MARIO_RACCOON_BBOX_HEIGHT;
 		}
 	}
@@ -903,13 +878,29 @@ void Mario::Float()
 }
 void Mario::TailAttack()
 {
-	//this->nx = - this->nx;
-	/*this->SetState(MARIO_STATE_TAILATTACK);*/
+	vx = 0;
 	if (GetTickCount() - tailAttackTime > MARIO_TAIL_ATTACK_TIME)
 	{
 		isSwingTail = true;
 		tailAttackTime = GetTickCount();
 		stageOfSwingTail = 0;
+		Game* game = Game::GetInstance();
+		Grid* grid = ((PlayScene*)game->GetCurrentScene())->GetGrid();
+		if (nx > 0)
+		{
+			tail->Attack(x + MARIO_TAIL_BBOX_WIDTH ,
+				y + MARIO_RACCOON_BBOX_HEIGHT - RACCOONTAIL_BBOX_HEIGHT,
+				this->nx,grid);
+		}
+			
+		if (nx < 0)
+		{
+			tail->Attack(x + MARIO_TAIL_BBOX_WIDTH,
+				y + MARIO_RACCOON_BBOX_HEIGHT - RACCOONTAIL_BBOX_HEIGHT,
+				this->nx,grid);
+		}
+			
+		
 	}
 }
 void Mario::UpdateStageOfTailAttack()
@@ -1039,6 +1030,8 @@ Mario::Mario()
 	score = 0;
 	money = 0;
 	life = 4;
+	tail = new RaccoonTail();
+	tail->isEnable = false;
 }
 void Mario::ReleaseJ()
 {

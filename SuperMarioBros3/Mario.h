@@ -3,7 +3,7 @@
 #include"Define.h"
 #include"FireBall.h"
 #include"Grid.h"
-
+#include"RaccoonTail.h"
 
 
 class Mario : public GameObject
@@ -43,6 +43,9 @@ class Mario : public GameObject
 	bool isTransform = false;
 	bool isTurnRaccoon = false;
 	bool isTeleport = false;// bật cờ khi ở cổng Tele
+
+
+	RaccoonTail* tail;
 	
 public:
 
