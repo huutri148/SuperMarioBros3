@@ -16,12 +16,12 @@ void KoopaTroopa::GetBoundingBox(float& left, float& top,
 void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	HandleTimeSwitchState();
-	//DebugOut(L"\nState: %d",state);
+	//DebugOut(L"\nVx: %f",vx);
 	if (state == KOOPATROOPA_STATE_INACTIVE || isEnable == false)
 		return;
 	Enemy::Update(dt, coObjects);
 	vy += KOOPATROOPA_GRAVITY * dt;
-	//DebugOut(L"\nx: %f, y:%f", x, y);
+	
 	if (state != KOOPATROOPA_STATE_WALKING)
 		CanPullBack = false;
 	//Xét nếu đang bị cầm ở dạng shell
@@ -59,8 +59,10 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	coEvents.clear();
 	if(isDead != true)
 		CalcPotentialCollisions(coObjects, coEvents);
+	//DebugOut(L"\nCollision size: %d", coEvents.size());
 	if (coEvents.size() == 0)
 	{
+		
 		x += dx;
 		y += dy;
 		//Nếu Koopa rời khỏi mặt đất

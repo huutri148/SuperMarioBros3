@@ -28,6 +28,7 @@ public:
 	void AbleToActive();
 
 	virtual void SetEntryPosition(float x, float y);
+	void GetEntryPosition(float& ex, float& ey) { ex = entryX; ey = entryY; };
 	virtual void SetState(int state);
 
 	void SetEnable(bool _enable) { this->isEnable = _enable; };

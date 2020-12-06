@@ -176,15 +176,13 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 	{
 		float width = (float)atof(tokens[4].c_str());
 		float height = (float)atof(tokens[5].c_str());
-		obj = new Block(x,y,width,height); 
+		obj = new Block(x, y, width, height);
 		unit = new Unit(grid, obj, x, y);
 		break;
 	}
 	case OBJECT_TYPE_GROUNDS:
 	{
-		float width = (float)atof(tokens[4].c_str());
-		float height = (float)atof(tokens[5].c_str());
-		obj = new Ground(x ,y, width, height);
+		obj = new Ground();
 		unit = new Unit(grid, obj, x, y);
 		break;
 	}
@@ -518,7 +516,11 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 					coObjects.push_back(obj);
 				else if ((dynamic_cast<Enemy*>(obj))
 					&& obj->isEnable == true)
-					coObjects.push_back(obj);
+				{
+					if(!dynamic_cast<Enemy*>(obj)->IsInactive())
+						coObjects.push_back(obj);
+				}
+				
 			}
 		}
 	}
@@ -551,12 +553,12 @@ void PlayScene::Render()
 			obj->Render();
 		}
 		player->Render();
-		for (auto obj : listPipeToRender)
+	/*	for (auto obj : listPipeToRender)
 		{
 			if (obj->IsEnable() == false)
 				continue;
 			obj->Render();
-		}
+		}*/
 		hud->Render();
 	}
 	else
@@ -816,10 +818,12 @@ void PlayScene::GetObjectFromGrid()
 		if (  dynamic_cast<Block*>(obj) || dynamic_cast<Ground*>(obj)||
 			dynamic_cast<InvisibleBrick*>(obj))
 			continue;
-		else if (dynamic_cast<Brick*>(obj)|| dynamic_cast<Portal*>(obj))
+			/*listStaticObjectsToRender.push_back(obj);*/
+		else if (dynamic_cast<Brick*>(obj)|| dynamic_cast<Portal*>(obj)||
+			dynamic_cast<Pipe*>(obj))
 			listStaticObjectsToRender.push_back(obj);
-		else if (dynamic_cast<Pipe*>(obj) )
-			listPipeToRender.push_back(obj);
+	/*	else if (dynamic_cast<Pipe*>(obj) )
+			listPipeToRender.push_back(obj);*/
 		else if (dynamic_cast<Enemy*>(obj)|| dynamic_cast<FirePlantBullet*>(obj) ||
 			dynamic_cast<FireBall*>(obj))
 			listMovingObjectsToRender.push_back(obj);
@@ -849,10 +853,12 @@ bool PlayScene::IsInViewport(LPGAMEOBJECT object)
 	cam_y = game->GetCamY();
 	if (cam_x == 0 && cam_y == 0)
 		UpdateCameraPosition();
+	cam_x = game->GetCamX();
+	cam_y = game->GetCamY();
 	float obj_x, obj_y;
 	object->GetPosition(obj_x, obj_y);
 	
-	return obj_x >= cam_x && obj_x < cam_x + SCREEN_WIDTH
+	return obj_x >= cam_x  && obj_x < cam_x + game->GetScreenWidth()
 		&& obj_y >= cam_y && obj_y < cam_y + SCREEN_HEIGHT;
 };
 
@@ -870,10 +876,6 @@ void PlayScene::SetInactivation()
 				dynamic_cast<Enemy*>(object)->Inactive();
 				dynamic_cast<Enemy*>(object)->AbleToActive();
 			}
-		/*	else if (dynamic_cast<Item*>(object) && object->IsEnable() == true)
-			{
-				dynamic_cast<Item*>(object)->SetEnable(false);
-			}*/
 		}
 		else
 		{
@@ -901,8 +903,6 @@ void PlayScene::ActiveEnemiesInViewport()
 					&& enemy->isAbleToActive == true)
 				{
 					enemy->Active();
-				/*	if (dynamic_cast<KoopaTroopa*>(enemy))
-						DebugOut(L"\nDebug");*/
 				}
 				
 				
