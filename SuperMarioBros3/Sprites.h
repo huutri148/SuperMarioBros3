@@ -18,8 +18,10 @@ class Sprite
 public:
 	Sprite(int id, int left, int top, int right, int bottom, LPDIRECT3DTEXTURE9 tex);
 
-	void Draw(int nx,float x, float y, int alpha = 255);
+	void Draw(int nx,float x, float y, int alpha = 255, float translateX = 0.0f,
+		float translateY = 0.0f);
 	void Draw(int nx,int ny, float x, float y, int alpha = 255);
+
 };
 
 typedef Sprite* LPSPRITE;

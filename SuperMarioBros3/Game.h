@@ -15,6 +15,7 @@
 #include"Animations.h"
 #include"Textures.h"
 #include"PlayScene.h"
+#include"WorldMap.h"
 class Game
 {
 	static Game* __instance;
@@ -53,6 +54,8 @@ public:
 	void Draw(int nx, float x, float y, LPDIRECT3DTEXTURE9 texture, int left, int top, int right, int bottom, int alpha);
 	void Draw(int nx, int ny,float x, float y, LPDIRECT3DTEXTURE9 texture, int left, int top,
 		int right, int bottom, int alpha);
+	void Draw(int nx, float x, float y, LPDIRECT3DTEXTURE9 texture, int left, int top,
+		int right, int bottom, int alpha,float translateX = 0.0f, float translateY = 0.0f);
 	int IsKeyDown(int KeyCode);
 	void ProcessKeyboard();
 
