@@ -64,7 +64,7 @@ void Game::Draw(float x, float y, LPDIRECT3DTEXTURE9 texture, int left, int top,
 	r.top = top;
 	r.right = right;
 	r.bottom = bottom;
-	spriteHandler->Draw(texture, &r, NULL, &p, D3DCOLOR_ARGB(alpha, 255, 255, 255));
+	spriteHandler->Draw(texture, &r, NULL, &p, D3DCOLOR_ARGB(alpha, 0, 0, 0));
 	
 }
 void Game::Draw( int nx,float x, float y, LPDIRECT3DTEXTURE9 texture, int left, int top, int right, int bottom, int alpha)
@@ -86,9 +86,9 @@ void Game::Draw( int nx,float x, float y, LPDIRECT3DTEXTURE9 texture, int left, 
 	spriteHandler->GetTransform(&oldTransform);
 
 	D3DXVECTOR2 center = D3DXVECTOR2(p.x + (right - left) / 2, p.y + (bottom - top) / 2);
-	D3DXVECTOR2 rotate = D3DXVECTOR2(nx > 0 ? -1.0f : 1.0f, 1);
+	D3DXVECTOR2 rotate = D3DXVECTOR2(nx > 0 ? -1.0f : 1.0f, 1.0f);
 
-
+	
 	// Xây dựng một ma trận 2D lưu thông tin biến đổi (scale, rotate)
 	D3DXMatrixTransformation2D(&newTransform, &center, 0.0f, &rotate, NULL, 0.0f, NULL);
 
@@ -111,7 +111,7 @@ void Game::Draw(int nx,int ny, float x, float y, LPDIRECT3DTEXTURE9 texture, int
 	rect.right = right;
 	rect.bottom = bottom;
 
-	// flip sprite, using nx parameter
+	// flip sprite, using nx,ny parameter
 
 	D3DXMATRIX oldTransform;
 	D3DXMATRIX newTransform;

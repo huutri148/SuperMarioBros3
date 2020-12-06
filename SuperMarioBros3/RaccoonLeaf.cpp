@@ -7,7 +7,7 @@ void RaccoonLeaf::Render()
 	if (isEnable == true)
 	{
 		int ani = RACCOONLEAF_ANI_NORMAL;
-		animation_set->at(ani)->Render(this->nx, x, y);
+		animation_set->at(ani)->Render(this->nx, round(x), round(y));
 	}
 	//RenderBoundingBox();
 }
@@ -15,21 +15,10 @@ void RaccoonLeaf::Render()
 void RaccoonLeaf::GetBoundingBox(float& l, float& t, float& r,
 	float& b, bool isEnable)
 {
-	if (isEnable == true)
-	{
-		l = x;
-		t = y;
-		r = x + RACCOONLEAF_BBOX_WIDTH;
-		b = y + RACCOONLEAF_BBOX_HEIGHT;
-	}
-	else
-	{
-		l = 0;
-		t = 0;
-		r = 0;
-		b = 0;
-	}
-	
+	l = x;
+	t = y;
+	r = x + RACCOONLEAF_BBOX_WIDTH;
+	b = y + RACCOONLEAF_BBOX_HEIGHT;
 }
 void RaccoonLeaf::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
@@ -84,16 +73,21 @@ void RaccoonLeaf::Appear(float x, float y)
 {
 	this->SetPosition(x, y);
 	this->SetState(RACCOONLEAF_STATE_APPEARANCE);
-	this->isEnable = true;
 }
 void RaccoonLeaf::Used()
 {
-	
 	LPSCENE scence = Game::GetInstance()->GetCurrentScene();
 	Mario* mario = ((PlayScene*)scence)->GetPlayer();
+	Grid* grid = ((PlayScene*)scence)->GetGrid();
+	PointEffect* effect = new PointEffect(x, y, POINT_TYPE_1000);
+	Unit* unit = new Unit(grid, effect, x, y);
 	mario->TurnRaccoonForm();
 	this->SetState(RACCOONLEAF_STATE_INACTIVE);
+	mario->GainPoint(1000);
 }
 RaccoonLeaf::RaccoonLeaf()
 {
+	AnimationSets* animation_sets = AnimationSets::GetInstance();
+	LPANIMATION_SET ani_set = animation_sets->Get(71);
+	this->SetAnimationSet(ani_set);
 }

@@ -1,7 +1,9 @@
 ﻿#pragma once
 #include "GameObject.h"
 #include"Define.h"
-
+#include"FireBall.h"
+#include"Grid.h"
+#include"RaccoonTail.h"
 
 
 class Mario : public GameObject
@@ -15,7 +17,21 @@ class Mario : public GameObject
 	DWORD flyTimeStart = 0;
 	DWORD jumpTimeStart = 0;// pressing jumping time
 	DWORD floatingTime = 0;
+	DWORD shootingTime = 0;
+	DWORD tailAttackTime = 0;
+	DWORD transformTime = 0;
+	DWORD turnRaccoonTime = 0;
+	DWORD teleportTime = 0;
+
 	int powerMelterStack = 0;
+	int indexFireBall = 0;
+	int score = 0;
+	int money = 0;
+	int life = 4;
+	int type = 0;
+	vector<int> card;
+	int stageOfSwingTail;
+	float teleportY = 0;// Vị trí ở cổng tele
 
 	//Các biến cờ ở các trạng thái
 	bool isInGround ;
@@ -24,15 +40,29 @@ class Mario : public GameObject
 	bool isFloating = false;
 	bool canBrake = false;
 	bool isPickingUp = false;
+	bool isTransform = false;
+	bool isTurnRaccoon = false;
+	bool isTeleport = false;// bật cờ khi ở cổng Tele
+
+
+	RaccoonTail* tail;
 	
 public:
-	// Chuyển thành hàm
+
+	bool isInTeleport = false;
+	bool isInExtraMap = false;
 	bool turnFriction;
 	bool isPressedJ;
+	bool isPressS;
+	bool isSwingTail = false;
 	bool GetisPickUp() { return isPickingUp; }
 	bool IsFlying();
 	bool IsFloating();
 	bool IsInGround();
+	bool IsTransform()
+	{
+		return isTransform;
+	};
 	
 	Mario();
 
@@ -49,15 +79,21 @@ public:
 	void SetLevel(int l) { form = l; }
 	void SetDirect(bool nx);// Set hướng di chuyển cho mario
 
+
+
 	int GetWidth();
 	int GetHeight();
 	void Information();
 	int GetForm() { return form; };
+	int GetMoney() { return money; };
+	int GetScore() { return score; };
+	int GetLife() { return life; };
+	int GetPowerMelter() { return powerMelterStack; };
 
 	//Xử Lí
 	void Friction();
-	void HandleCollision(float min_tx, float min_ty,
-		float nx, float ny, float x0, float y0);
+	/*void HandleCollision(float min_tx, float min_ty,
+		float nx, float ny, float x0, float y0);*/
 	void StartUntouchable() 
 	{ untouchable = 1; untouchableStart = GetTickCount(); }
 	void UpForm();
@@ -66,14 +102,16 @@ public:
 	void Reset();
 	void TurnBigForm();
 	void TurnFireForm();
+	void DecreaseForm();
 	void TurnRaccoonForm();
+	void HandleSwitchTime();
 
 	//Thay đổi PowerMelter
 	void FillUpPowerMelter();
 	void LosePowerMelter();
 
 	//Các hành động của Mario
-	GameObject* ShootFireBall();
+	void ShootFireBall(Grid* grid);
 	int Skill();
 	void Squat();
 	void TailAttack();
@@ -84,4 +122,12 @@ public:
 	void SuperJump();
 	void PickUp();
 	bool Brake();
+	void UpdateStageOfTailAttack();
+
+	void GainMoney(int pMoney) { money += pMoney; };
+	void GainPoint(int pPoint) { score += pPoint; };
+	void GainLife() { life += 1; };
+
+
+
 };

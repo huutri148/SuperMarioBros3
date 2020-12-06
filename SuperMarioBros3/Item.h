@@ -9,5 +9,6 @@ public:
 		float& right, float& bottom, bool isEnable) = 0;
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects) = 0;
 	virtual void Render() = 0;
+	void SetEnable(bool _enable) { this->isEnable = _enable; };
 };
 

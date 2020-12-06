@@ -1,4 +1,7 @@
 ﻿#include "Grid.h"
+#include "Utils.h"
+#include"Item.h"
+#include "FireBall.h"
 Unit::Unit(Grid* grid, LPGAMEOBJECT obj,
 	float x, float y)
 {
@@ -9,7 +12,7 @@ Unit::Unit(Grid* grid, LPGAMEOBJECT obj,
 
 	this->prev = NULL;
 	this->next = NULL;
-
+	
 	grid->Add(this);
 }
 
@@ -48,11 +51,9 @@ void Grid::Add(Unit* unit)
 {
 	int row = (int)(unit->y / cellHeight);
 	int col = (int)(unit->x / cellWidth);
-
 	// thêm vào đầu cell - add head
 	unit->prev = NULL;
 	unit->next = cells[row][col];
-
 	cells[row][col] = unit;
 	if (unit->next != NULL)
 		unit->next->prev = unit;
@@ -70,7 +71,11 @@ void Grid::Move(Unit* unit, float x, float y)
 	// nếu object ra khỏi vùng viewport-> không cần cập nhật 
 	if (newRow < 0 || newRow >= numRows || newCol < 0 ||
 		newCol >= numCols)
+	{
+				
 		return;
+	}
+	
 
 	// cập nhật tọa độ mới
 	unit->x = x;
@@ -95,11 +100,13 @@ void Grid::Move(Unit* unit, float x, float y)
 	Add(unit);
 }
 
-void Grid::Get(D3DVECTOR camPosition, vector<Unit*>& listUnits)
+void Grid::Get(float cam_x,float cam_y, vector<Unit*>& listUnits)
 {
-	int startCol = (int)(camPosition.x / cellWidth);
-	int endCol = ceil((camPosition.x + SCREEN_WIDTH) / cellWidth);
-
+	int startCol = (int)(cam_x / cellWidth);
+	int endCol =(int) ceil((cam_x + SCREEN_WIDTH) / cellWidth);
+	int ENDCOL = (int)ceil((mapWidth) / cellWidth);
+	if (endCol > ENDCOL)
+		endCol = ENDCOL;
 	for (int i = 0; i < numRows; i++)
 	{
 		for (int j = startCol; j < endCol; j++)

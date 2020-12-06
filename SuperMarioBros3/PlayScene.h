@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Game.h"
 #include "Textures.h"
 #include "GameObject.h"
@@ -20,19 +20,35 @@
 #include"Mushroom.h"
 #include"Item.h"
 #include"PSwitch.h"
-
+#include"ParaGoomba.h"
+#include "Grid.h"
+#include"KoopaParaTroopa.h"
+#include"PointEffect.h"
+#include"Hud.h"
+#include"HitEffect.h"
+#include"Portal.h"
+#include"RaccoonTail.h"
 class PlayScene : public Scene
 {
 protected:
+	Portal* portal;
 	Mario* player = NULL;
-	vector<LPGAMEOBJECT> objects ;
 	Map* map = NULL ;
-	bool _turnCamY = false;
-	FirePlantBullet* firebullet = NULL;
-	RaccoonLeaf* leaf = NULL;
-	Mushroom* mushroom = NULL;
-	Coin* coin = NULL;
-	PSwitch* pSwitch = NULL;
+	bool isTurnCamY = false;// Camera Y được bật khi Mario bay 
+	bool isGameOver = false;
+	Hud* hud = NULL;
+	Unit* unit;
+	Grid* grid;
+	
+	vector<LPGAMEOBJECT> objects;
+	vector<Unit*> listUnits;
+	vector<LPGAMEOBJECT> listItems;
+	vector<LPGAMEOBJECT> listStaticObjectsToRender;
+	vector<LPGAMEOBJECT> listMovingObjectsToRender;
+
+	/*vector<LPGAMEOBJECT> listPipeToRender; */// Pipe phải vẽ đè lên plant
+
+
 	//LPFireBall fireball;
 	void _ParseSection_TEXTURES(string line);
 	void _ParseSection_SPRITES(string line);
@@ -40,6 +56,7 @@ protected:
 	void _ParseSection_ANIMATION_SETS(string line);
 	void _ParseSection_OBJECTS(string line);
 	void _ParseSection_MAPS(string line);
+	void _ParseSection_GRID(string line);
 
 public:
 	PlayScene(int id, LPCWSTR filePath);
@@ -48,19 +65,30 @@ public:
 	virtual void Update(DWORD dt);
 	virtual void Render();
 	virtual void Unload();
+
+
+
 	void TurnCamY(float _playerY, bool isFlying, int ScreenHeight, int MapHeight);
 	Mario* GetPlayer() { return player; }
-	FirePlantBullet* GetPlantBullet() { return firebullet; }
-	void AddObject(GameObject* obj);
-	RaccoonLeaf* GetLeaf() { return leaf; }
-	Mushroom* GetMushroom() { return mushroom; }
-	Coin* GetCoin() { return coin; };
-	PSwitch* GetSwitch() { return pSwitch; };
-	//LPFireBall GetFireBall() { return fireball; }
-	void GetColliableObj(LPGAMEOBJECT curObj,
-		vector<LPGAMEOBJECT>& coObjects);
-	friend class CPlayScenceKeyHandler;
+	
 
+	// Bật tắt quái khi không nằm trong viewport
+	void ActiveEnemiesInViewport();
+	void SetInactivation();
+	bool IsInViewport(LPGAMEOBJECT object);
+
+	void UpdateCameraPosition();
+	
+	// Nhận các đối tượng cần xét
+	void GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& coObjects);
+	void GetObjectFromGrid();
+	Grid* GetGrid() { return grid; };
+	void UpdateGrid();
+	
+	void UpdatePlayer(DWORD dt);
+
+
+	friend class CPlayScenceKeyHandler;
 };
 
 class PlayScenceKeyHandler : public ScenceKeyHandler
