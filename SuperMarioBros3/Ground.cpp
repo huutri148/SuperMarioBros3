@@ -10,13 +10,6 @@ void Ground::GetBoundingBox(float& l, float& t, float& r, float& b, bool isEnabl
 {
 	l = x;
 	t = y;
-	r = x + width;
-	b = y + height;
-}
-Ground::Ground(float x, float y, float width, float height)
-{
-	this->x = x;
-	this->y = y;
-	this->width = width;
-	this->height = height;
+	r = l + GROUND_BBOX_WIDTH;
+	b = t + GROUND_BBOX_HEIGHT;
 }

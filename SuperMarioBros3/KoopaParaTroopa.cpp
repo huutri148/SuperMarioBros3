@@ -14,6 +14,7 @@ void KoopaParaTroopa::GetBoundingBox(float& left, float& top,
 void KoopaParaTroopa::Update(DWORD dt,
 	vector<LPGAMEOBJECT>* coObjects)
 {
+	//DebugOut(L"\nState: %d", state);
 	if (state == PARATROOPA_STATE_INACTIVE)
 		return;
 	HandleTimeSwitchState();
@@ -33,6 +34,7 @@ void KoopaParaTroopa::Update(DWORD dt,
 	coEvents.clear();
 
 	CalcPotentialCollisions(coObjects, coEvents);
+	//DebugOut(L"\ncoEvent size: %d", coEvents.size());
 	if (coEvents.size() == 0)
 	{
 		x += dx;
@@ -146,8 +148,15 @@ void KoopaParaTroopa::Inactive()
 }
 void KoopaParaTroopa::Active()
 {
-	if(kooPa->IsInactive() && kooPa->isEnable == true)
+	if(kooPa->state == KOOPATROOPA_STATE_WALKING &&
+		kooPa->isEnable == false)
 		this->SetState(PARATROOPA_STATE_JUMPING);
+	else if (kooPa->IsInactive() && kooPa->isEnable == true)
+	{
+		this->SetState(PARATROOPA_STATE_JUMPING);
+		kooPa->isEnable = false;
+	}
+		
 }
 void KoopaParaTroopa::ChangeToKoopa(Grid* grid)
 {

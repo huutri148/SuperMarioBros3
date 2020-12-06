@@ -21,7 +21,8 @@ void ParaGoomba::GetBoundingBox(float& left, float& top,
 void ParaGoomba::Update(DWORD dt,
 	vector<LPGAMEOBJECT>* coObjects)
 {
-	if (state == GOOMBA_STATE_INACTIVE)
+	//DebugOut(L"\nState: %d", state);
+	if (state == PARAGOOMBA_STATE_INACTIVE)
 		return;
 /* Hoàn thành cơ bản về di chuyển của ParaKoopa
 * nhưng cần bổ sung thêm về hướng di chuyển (Chasing Mario)
@@ -176,7 +177,11 @@ void ParaGoomba::Inactive()
 }
 void ParaGoomba::Active()
 {
-	if (goomba->IsInactive() && goomba->isEnable == true)
+	if (goomba->state == GOOMBA_STATE_WALKING && goomba->isEnable == false)
+	{
+		this->SetState(PARAGOOMBA_STATE_WALKING);
+	}
+	else if (goomba->IsInactive() && goomba->isEnable == true)
 	{
 		this->SetState(PARAGOOMBA_STATE_WALKING);
 		goomba->isEnable = false;
