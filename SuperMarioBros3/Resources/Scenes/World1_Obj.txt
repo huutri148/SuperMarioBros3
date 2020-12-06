@@ -1,0 +1,13 @@
+# id	file_path	transparent_color_r	g	b
+[TEXTURES]
+-100	Resources\textures\bbox.png	255	255	255
+0	Resources\Map\World1_bank.png	255	255	255
+#ID	TolColTile	TolRowTile	TolColMap	TolRowMap	TotalTiles	Matrix_path
+[MAP]
+0	8	4	16	11	32	Resources\Map\World1.txt
+# id	left	top	right	bottom	texture_id
+#[SPRITES]
+# ani_id	sprite1_id	time1	sprite2_id	time2	...
+#[ANIMATIONS]
+#[OBJECTS]
+# type	x	y	ani_set_id	extra_settings per object type	type
