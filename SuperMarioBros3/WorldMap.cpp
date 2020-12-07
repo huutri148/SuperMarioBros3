@@ -227,9 +227,9 @@ void WorldMap::Render()
 		translateX,translateY);
 	for (auto obj : objects)
 	{
-		obj->Render(round(translateX + obj->x), round(translateY + obj->y));
+		obj->Render(round(translateX), round(translateY));
 	}
-	player->Render(round(translateX + player->x), round(translateY + player->y));
+	player->Render(round(translateX ), round(translateY ));
 }
 
 
