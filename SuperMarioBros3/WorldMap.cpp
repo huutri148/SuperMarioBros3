@@ -47,7 +47,7 @@ void WorldMap::_ParseSection_ANIMATIONS(string line)
 
 	if (tokens.size() < 3) return; // skip invalid lines - an animation must at least has 1 frame and 1 frame time
 
-	//DebugOut(L"--> %s\n",ToWSTR(line).c_str());
+	DebugOut(L"--> %s\n",ToWSTR(line).c_str());
 
 	LPANIMATION ani = new Animation();
 
@@ -69,9 +69,9 @@ void WorldMap::_ParseSection_ANIMATION_SETS(string line)
 	if (tokens.size() < 2) return; // skip invalid lines - an animation set must at least id and one animation id
 
 	int ani_set_id = atoi(tokens[0].c_str());
-
+	DebugOut(L"--> %s\n", ToWSTR(line).c_str());
 	LPANIMATION_SET s = new AnimationSet();
-
+	
 	Animations* animations = Animations::GetInstance();
 
 	for (unsigned int i = 1; i < tokens.size(); i++)
@@ -88,7 +88,7 @@ void WorldMap::_ParseSection_OBJECTS(string line)
 {
 	vector<string> tokens = split(line);
 
-	//DebugOut(L"--> %s\n",ToWSTR(line).c_str());
+	DebugOut(L"--> %s\n",ToWSTR(line).c_str());
 
 	if (tokens.size() < 3) return; // skip invalid lines - an object set must have at least id, x, y
 
@@ -105,7 +105,17 @@ void WorldMap::_ParseSection_OBJECTS(string line)
 
 	switch (object_type)
 	{
-	case OBJECT_TYPE_MARIO:
+	case OBJECT_TYPE_BUSH:
+		obj = new WorldMapBush();
+		objects.push_back(obj);
+		break;
+	case OBJECT_TYPE_PANEL:
+		obj = new WorldMapPanel();
+		objects.push_back(obj);
+		break;
+	case OBJECT_TYPE_PLAYER:
+		obj = new WorldMapPlayer();
+		player =(WorldMapPlayer*)obj;
 		break;
 	default:
 		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
@@ -201,6 +211,7 @@ void WorldMap::Load()
 
 void WorldMap::Update(DWORD dt)
 {
+	player->Update(dt);
 }
 
 void WorldMap::Render()
@@ -208,10 +219,17 @@ void WorldMap::Render()
 	Game* game = Game::GetInstance();
 	int screenWidth = game->GetScreenWidth();
 	int screenHeight = game->GetScreenHeight();
-	
+	float translateX = (float)screenWidth / 2 - 130;
+	float translateY = (float)screenHeight / 2 - 110;
 	float cam_x = game->GetCamX();
 	float cam_y = game->GetCamY();
-	this->tileMap->Render(cam_x, cam_y, screenWidth, screenHeight,(float)screenWidth/2 -130,(float)screenHeight/2 - 110);
+	this->tileMap->Render(cam_x, cam_y, screenWidth, screenHeight,
+		translateX,translateY);
+	for (auto obj : objects)
+	{
+		obj->Render(round(translateX + obj->x), round(translateY + obj->y));
+	}
+	player->Render(round(translateX + player->x), round(translateY + player->y));
 }
 
 
@@ -227,7 +245,27 @@ void WorldMap::Unload()
 }
 void WorldMapKeyHandler::OnKeyDown(int KeyCode)
 {
-
+	//DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);
+	WorldMapPlayer* player = ((WorldMap*)scence)->GetPlayer();
+	switch (KeyCode)
+	{
+	case DIK_A:
+		player->Left();
+		break;
+	case DIK_S:
+		player->Down();
+		break;
+	case DIK_D:
+		player->Right();
+		break;
+	case DIK_W:
+		player->Up();
+		break;
+	case DIK_J:
+		break;
+	case DIK_K:
+		break;
+	}
 }
 void WorldMapKeyHandler::OnKeyUp(int KeyCode)
 {

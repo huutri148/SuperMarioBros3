@@ -20,7 +20,8 @@ void Animation::Add(int spriteId, DWORD time)
 }
 
 // NOTE: sometimes Animation object is NULL ??? HOW ??? 
-void Animation::Render(int nx,float x, float y, int alpha)
+void Animation::Render(int nx,float x, float y, int alpha
+	,float translateX, float translateY)
 {
 	DWORD now = GetTickCount();
 	if (currentFrame == -1)
@@ -39,7 +40,7 @@ void Animation::Render(int nx,float x, float y, int alpha)
 		}
 	}
 
-	frames[currentFrame]->GetSprite()->Draw(nx,x, y, alpha);
+	frames[currentFrame]->GetSprite()->Draw(nx,x, y, alpha,translateX,translateY);
 }
 void Animation::Render(int nx,int ny, float x, float y, int alpha)
 {

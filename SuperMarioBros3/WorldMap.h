@@ -4,12 +4,16 @@
 #include"Map.h"
 #include"Utils.h"
 #include"Game.h"
+#include"WorldMapBush.h"
+#include"WorldMapPanel.h"
+#include"WorldMapPlayer.h"
 class WorldMap : public Scene
 {
 protected:
 	Hud* hud = NULL;
 	Map* tileMap = NULL;
-	//vector<LPGAMEOBJECT> objects;
+	WorldMapPlayer* player;
+	vector<LPGAMEOBJECT> objects;
 
 	void _ParseSection_TEXTURES(string line);
 	void _ParseSection_SPRITES(string line);
@@ -25,6 +29,8 @@ public:
 	virtual void Update(DWORD dt);
 	virtual void Render();
 	virtual void Unload();
+	
+	WorldMapPlayer* GetPlayer() { return player; };
 
 	friend class WorldMapKeyHandler;
 };
