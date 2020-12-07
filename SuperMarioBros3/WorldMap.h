@@ -7,6 +7,7 @@
 #include"WorldMapBush.h"
 #include"WorldMapPanel.h"
 #include"WorldMapPlayer.h"
+#include"Hud.h"
 class WorldMap : public Scene
 {
 protected:

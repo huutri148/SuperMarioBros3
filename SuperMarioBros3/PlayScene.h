@@ -39,7 +39,10 @@ protected:
 	Hud* hud = NULL;
 	Unit* unit;
 	Grid* grid;
-	
+
+	bool switchScene = false;
+	bool isGameDone = false;
+
 	vector<LPGAMEOBJECT> objects;
 	vector<Unit*> listUnits;
 	vector<LPGAMEOBJECT> listItems;

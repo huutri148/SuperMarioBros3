@@ -512,6 +512,8 @@
 #define SCENE_SECTION_GRID				8
 #define BOTTOM_EDGE_WORLD				490
 #define BOTTOM_EDGE_EXTRAMAP			756
+// HUD
+#define FONT_BBOX_WIDTH					8
 
 
 // PLAY SCENE

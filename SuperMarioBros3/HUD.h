@@ -7,6 +7,7 @@ class Hud : public GameObject
 	Font* font;
 
 
+
 	LPSPRITE hud1;
 	LPSPRITE hud2;
 	LPSPRITE playerSprite;
@@ -31,5 +32,5 @@ public:
 		float& right, float& bottom, bool isEnable) {};
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects = NULL);
 	virtual void Render();
-	};
+};
 

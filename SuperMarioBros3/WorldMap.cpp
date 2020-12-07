@@ -117,6 +117,10 @@ void WorldMap::_ParseSection_OBJECTS(string line)
 		obj = new WorldMapPlayer();
 		player =(WorldMapPlayer*)obj;
 		break;
+	case OBJECT_TYPE_HUD:
+		obj = new Hud();
+		hud =(Hud*) obj;
+		break;
 	default:
 		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
 		return;
@@ -212,6 +216,7 @@ void WorldMap::Load()
 void WorldMap::Update(DWORD dt)
 {
 	player->Update(dt);
+	hud->Update(dt);
 }
 
 void WorldMap::Render()
@@ -220,7 +225,7 @@ void WorldMap::Render()
 	int screenWidth = game->GetScreenWidth();
 	int screenHeight = game->GetScreenHeight();
 	float translateX = (float)screenWidth / 2 - 130;
-	float translateY = (float)screenHeight / 2 - 110;
+	float translateY = (float)screenHeight / 2 - 100;
 	float cam_x = game->GetCamX();
 	float cam_y = game->GetCamY();
 	this->tileMap->Render(cam_x, cam_y, screenWidth, screenHeight,
@@ -230,6 +235,7 @@ void WorldMap::Render()
 		obj->Render(round(translateX), round(translateY));
 	}
 	player->Render(round(translateX ), round(translateY ));
+	hud->Render();
 }
 
 
