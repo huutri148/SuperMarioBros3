@@ -5,8 +5,7 @@
 class Hud : public GameObject
 {
 	Font* font;
-
-
+	static Hud* hud;
 
 	LPSPRITE hud1;
 	LPSPRITE hud2;
