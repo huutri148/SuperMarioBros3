@@ -1,4 +1,6 @@
 #include "KoopaParaTroopa.h"
+
+
 void KoopaParaTroopa::GetBoundingBox(float& left, float& top,
 	float& right, float& bottom,
 	bool isEnable)
@@ -12,6 +14,7 @@ void KoopaParaTroopa::GetBoundingBox(float& left, float& top,
 void KoopaParaTroopa::Update(DWORD dt,
 	vector<LPGAMEOBJECT>* coObjects)
 {
+	//DebugOut(L"\nState: %d", state);
 	if (state == PARATROOPA_STATE_INACTIVE)
 		return;
 	HandleTimeSwitchState();
@@ -31,6 +34,7 @@ void KoopaParaTroopa::Update(DWORD dt,
 	coEvents.clear();
 
 	CalcPotentialCollisions(coObjects, coEvents);
+	//DebugOut(L"\ncoEvent size: %d", coEvents.size());
 	if (coEvents.size() == 0)
 	{
 		x += dx;
@@ -66,6 +70,7 @@ void KoopaParaTroopa::Update(DWORD dt,
 			}
 		}
 	}
+
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 }
 void KoopaParaTroopa::Render()
@@ -86,7 +91,7 @@ void KoopaParaTroopa::SetState(int state)
 	case PARATROOPA_STATE_JUMPING:
 		vx = -PARAGOOMBA_WALKING_SPEED;
 		nx = -1;
-		vy = - PARATROOPA_JUMP_SPEED;
+		vy =  0;
 		break;
 	case PARAGOOMBA_STATE_INACTIVE:
 		x = entryX;
@@ -143,12 +148,33 @@ void KoopaParaTroopa::Inactive()
 }
 void KoopaParaTroopa::Active()
 {
-	this->SetState(PARATROOPA_STATE_JUMPING);
+	if(kooPa->state == KOOPATROOPA_STATE_WALKING &&
+		kooPa->isEnable == false)
+		this->SetState(PARATROOPA_STATE_JUMPING);
+	else if (kooPa->IsInactive() && kooPa->isEnable == true)
+	{
+		this->SetState(PARATROOPA_STATE_JUMPING);
+		kooPa->isEnable = false;
+	}
+		
 }
 void KoopaParaTroopa::ChangeToKoopa(Grid* grid)
 {
-	KoopaTroopa* koopa = new KoopaTroopa();
-	koopa->SetPosition(x, y);
+	kooPa->SetPosition(x, y);
+	kooPa->isEnable = true;
 	this->SetState(PARATROOPA_STATE_INACTIVE);
-	Unit* unit = new Unit(grid, koopa, x, y);
+	Unit* unit = new Unit(grid, kooPa, x, y);
+}
+KoopaParaTroopa::KoopaParaTroopa(float x, float y) :Enemy(x, y)
+{
+	this->SetState(PARATROOPA_STATE_JUMPING);
+	kooPa = new KoopaTroopa();
+	kooPa->isEnable = false;
+
+}
+KoopaParaTroopa::KoopaParaTroopa() :Enemy()
+{
+	this->SetState(PARATROOPA_STATE_JUMPING);
+	kooPa = new KoopaTroopa();
+	kooPa->isEnable = false;
 }

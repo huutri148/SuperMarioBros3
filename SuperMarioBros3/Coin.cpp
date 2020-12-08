@@ -2,6 +2,8 @@
 #include <algorithm>
 #include "Mario.h"
 #include"Brick.h"
+#include"PointEffect.h"
+#include"Grid.h"
 void Coin::GetBoundingBox(float& left, float& top,
 	float& right, float& bottom,
 	bool isEnable)
@@ -45,6 +47,10 @@ void Coin::Update(DWORD dt,
 				if (e->ny < 0)
 				{
 					this->SetState(COIN_STATE_INACTIVE);
+					Game* game = Game::GetInstance();
+					Grid* grid = ((PlayScene*)game->GetCurrentScene())->GetGrid();
+					PointEffect* effect = new PointEffect(x, y, POINT_TYPE_100);
+					Unit* unit = new Unit(grid, effect, x, y);
 				}
 				else
 				{

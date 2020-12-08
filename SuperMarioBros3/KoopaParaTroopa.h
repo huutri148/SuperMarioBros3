@@ -1,9 +1,13 @@
 #pragma once
+#include"Enemy.h"
+#include"Grid.h"
 #include"KoopaTroopa.h"
 
 class KoopaParaTroopa :public Enemy
 {
-	//float lastStandingY;
+	// It's a lame way !!!
+	// Todo: find a way to specify KoopaTroopa instead of Enemy
+	Enemy* kooPa;
 	virtual void GetBoundingBox(float& left, float& top,
 		float& right, float& bottom, bool isEnable);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
@@ -20,13 +24,7 @@ public:
 	virtual void Inactive();
 	void ChangeToKoopa(Grid* grid);
 
-	KoopaParaTroopa(float x, float y) :Enemy(x, y)
-	{
-		this->SetState(PARATROOPA_STATE_JUMPING);
-	}
-	KoopaParaTroopa() :Enemy()
-	{
-		this->SetState(PARATROOPA_STATE_JUMPING);
-	}
+	KoopaParaTroopa(float x, float y);
+	KoopaParaTroopa();
 };
 

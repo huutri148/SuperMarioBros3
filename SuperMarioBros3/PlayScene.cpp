@@ -176,21 +176,20 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 	{
 		float width = (float)atof(tokens[4].c_str());
 		float height = (float)atof(tokens[5].c_str());
-		obj = new Block(x,y,width,height); 
+		obj = new Block(x, y, width, height);
 		unit = new Unit(grid, obj, x, y);
 		break;
 	}
 	case OBJECT_TYPE_GROUNDS:
 	{
-		float width = (float)atof(tokens[4].c_str());
-		float height = (float)atof(tokens[5].c_str());
-		obj = new Ground(x ,y, width, height);
+		obj = new Ground();
 		unit = new Unit(grid, obj, x, y);
 		break;
 	}
 	case OBJECT_TYPE_PIPES: 
 	{
-		obj = new Pipe();
+		int set_type = atoi(tokens[4].c_str());
+		obj = new Pipe(set_type);
 		unit = new Unit(grid, obj, x, y);
 		break;
 	}
@@ -215,13 +214,13 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 		unit = new Unit(grid, obj, x, y);
 		break;
 	}
-	/*case OBJECT_TYPE_PORTAL:
+	case OBJECT_TYPE_PORTAL:
 	{
-		float r = atof(tokens[4].c_str());
-		float b = atof(tokens[5].c_str());
-		int scene_id = atoi(tokens[6].c_str());
-		obj = new CPortal(x, y, r, b, scene_id);
-	}*/
+		obj = new Portal();
+		portal =(Portal*)obj;
+		unit = new Unit(grid, obj, x, y);
+		break;
+	}
 	case OBJECT_TYPE_COIN:
 	{
 		int set_type = atoi(tokens[4].c_str());
@@ -345,53 +344,64 @@ void PlayScene::Load()
 
 void PlayScene::Update(DWORD dt)
 {
-	GetObjectFromGrid();
 
+	GetObjectFromGrid();
 	UpdatePlayer(dt);
 
 	ActiveEnemiesInViewport();
-
-	//DebugOut(L"\nSize of obj: %d", objects.size());
-	for (UINT i = 0; i < objects.size(); i++)
+	if (portal->state == PORTAL_STATE_CONGRATULATE)
 	{
-		LPGAMEOBJECT object = objects[i];
-		vector<LPGAMEOBJECT> coObjects;
-		if (dynamic_cast<FirePiranhaPlant*>(object))
-		{
-			FirePiranhaPlant* plant = dynamic_cast<FirePiranhaPlant*>(object);
-			if (plant->canShoot == true)
-			{
-				plant->Shooting(grid);
-			}
-		}
-		else if (dynamic_cast<Brick*>(object))
-		{
-			Brick* brick = dynamic_cast<Brick*>(object);
-			if (brick->isUsed == true )
-				brick->DropItem(grid);
-		}
-		else if (dynamic_cast<ParaGoomba*>(object))
-		{
-			ParaGoomba* goomba = dynamic_cast<ParaGoomba*>(object);
-			if (goomba->state == PARAGOOMBA_STATE_GOOMBA)
-				goomba->ChangeToGoomba(grid);
-		}
-		else if (dynamic_cast<KoopaParaTroopa*>(object))
-		{
-			KoopaParaTroopa* parakoopa = dynamic_cast<KoopaParaTroopa*>(object);
-			if (parakoopa->state == PARATROOPA_STATE_KOOPA)
-				parakoopa->ChangeToKoopa(grid);
-		}
-		GetColliableObjects(object, coObjects);
-		object->Update(dt, &coObjects);
+		this->isGameDone = true;
+		Game* game = Game::GetInstance();
+		game->SetCamPos(0.0f, 0.0f);
+		game->SwitchScene(1);
+		return;
 	}
-
+	if (!player->IsTransform()) {
+		//DebugOut(L"\nSize of obj: %d", objects.size());
+		for (UINT i = 0; i < objects.size(); i++)
+		{
+			LPGAMEOBJECT object = objects[i];
+			vector<LPGAMEOBJECT> coObjects;
+		/*	if (dynamic_cast<Enemy*>(object))
+				dynamic_cast<Enemy*>(object)->GetPlayerPosition(player->x, player->y);*/
+			if (dynamic_cast<FirePiranhaPlant*>(object))
+			{
+				FirePiranhaPlant* plant = dynamic_cast<FirePiranhaPlant*>(object);
+				if (plant->canShoot == true)
+				{
+					plant->Shooting(grid);
+				}
+			}
+			else if (dynamic_cast<Brick*>(object))
+			{
+				Brick* brick = dynamic_cast<Brick*>(object);
+				if (brick->isUsed == true)
+					brick->DropItem(grid);
+			}
+			else if (dynamic_cast<ParaGoomba*>(object))
+			{
+				ParaGoomba* goomba = dynamic_cast<ParaGoomba*>(object);
+				if (goomba->state == PARAGOOMBA_STATE_GOOMBA)
+					goomba->ChangeToGoomba(grid);
+			}
+			else if (dynamic_cast<KoopaParaTroopa*>(object))
+			{
+				KoopaParaTroopa* parakoopa = dynamic_cast<KoopaParaTroopa*>(object);
+				if (parakoopa->state == PARATROOPA_STATE_KOOPA)
+					parakoopa->ChangeToKoopa(grid);
+			}
+			GetColliableObjects(object, coObjects);
+			object->Update(dt, &coObjects);
+		}
+	}
 	// Update camera to follow mario
 	SetInactivation();
 
 	UpdateCameraPosition();
 	hud->Update(dt);
 	UpdateGrid();
+	
 }
 void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& coObjects)
 {
@@ -399,9 +409,13 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 	{
 		for (auto obj : objects)
 		{
-			if (!dynamic_cast<Enemy*>(obj))
+			if (!dynamic_cast<Enemy*>(obj) || !dynamic_cast<Mario*>(obj))
 				coObjects.push_back(obj);
 		}
+	}
+	else if (dynamic_cast<PointEffect*>(curObj) || dynamic_cast<HitEffect*>(curObj))
+	{
+		return;
 	}
 	else if (dynamic_cast<FirePiranhaPlant*>(curObj) || 
 		dynamic_cast<PiranhaPlant*>(curObj))
@@ -470,18 +484,21 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 	{
 		for (auto obj : objects)
 		{
-			if (!dynamic_cast<KoopaTroopa*>(obj))
-				continue;
+			if (dynamic_cast<Enemy*>(obj))
+			{
+				if (!dynamic_cast<KoopaTroopa*>(obj))
+					continue;
+			}
 			if (!dynamic_cast<FirePlantBullet*>(obj)&& !dynamic_cast<Item*>(obj) 
 				&& !dynamic_cast<InvisibleBrick*>(obj))
 				coObjects.push_back(obj);
 		}
 	}
-	else if (dynamic_cast<FireBall*>(curObj))
+	else if (dynamic_cast<FireBall*>(curObj)|| dynamic_cast<RaccoonTail*>(curObj))
 	{
 		for (auto obj : objects)
 		{
-			if (dynamic_cast<Enemy*>(obj))
+			if (dynamic_cast<Enemy*>(obj) )
 			{
 				if (dynamic_cast<Enemy*>(obj)->IsInactive())
 					continue;
@@ -499,7 +516,7 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 		{
 				if ( dynamic_cast<Ground*>(obj) ||dynamic_cast<Block*>(obj)
 				|| dynamic_cast<Brick*>(obj) || dynamic_cast<Item*>(obj) ||
-				dynamic_cast<Pipe*>(obj))
+				dynamic_cast<Pipe*>(obj) || dynamic_cast<Portal*>(obj))
 				coObjects.push_back(obj);
 			else 
 			{
@@ -507,7 +524,11 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 					coObjects.push_back(obj);
 				else if ((dynamic_cast<Enemy*>(obj))
 					&& obj->isEnable == true)
-					coObjects.push_back(obj);
+				{
+					if(!dynamic_cast<Enemy*>(obj)->IsInactive())
+						coObjects.push_back(obj);
+				}
+				
 			}
 		}
 	}
@@ -516,30 +537,48 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 void PlayScene::Render()
 {
 	Game* game = Game::GetInstance();
-
 	int screenWidth = game->GetScreenWidth();
 	int screenHeight = game->GetScreenHeight();
 	float cam_x = game->GetCamX();
 	float cam_y = game->GetCamY();
-
-
-	this->map->Render(cam_x,cam_y,screenWidth,screenHeight);
-	for (auto obj : listMovingObjectsToRender)
+	// Khi không ở trong teleport
+	if (!player->isInTeleport)
 	{
-		if (obj->IsEnable() == false)
-			continue;
-		obj->Render();
+		//DebugOut(L"\nListMoving Obj: %d", listMovingObjectsToRender.size());
+		this->map->Render(cam_x, cam_y, screenWidth, screenHeight);
+		for (auto obj : listMovingObjectsToRender)
+		{
+			if (obj->IsEnable() == false)
+			{
+				continue;
+			}
+			obj->Render();
+		}
+		for (auto obj : listStaticObjectsToRender)
+		{
+			if (obj->IsEnable() == false)
+				continue;
+			obj->Render();
+		}
+		player->Render();
+	/*	for (auto obj : listPipeToRender)
+		{
+			if (obj->IsEnable() == false)
+				continue;
+			obj->Render();
+		}*/
+		hud->Render();
 	}
-	
-	for (auto obj : listStaticObjectsToRender)
+	else
 	{
-		if (obj->IsEnable() == false)
-			continue;
-		
-		obj->Render();
+		// Khi ở trong teleport thì màn hình chuyển sang màu đen
+		// một khoảng thời gian
+		LPDIRECT3DTEXTURE9 bbox = Textures::GetInstance()->Get(ID_TEX_BBOX);
+		Game* game = Game::GetInstance();
+		Game::GetInstance()->Draw(cam_x,cam_y
+			, bbox, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT
+			, 255);
 	}
-	player->Render();
-	hud->Render();
 }
 void PlayScene::UpdatePlayer(DWORD dt)
 {
@@ -561,7 +600,13 @@ void PlayScene::Unload()
 		delete objects[i];
 
 	objects.clear();
+	listStaticObjectsToRender.clear();
+	listMovingObjectsToRender.clear();
+	listItems.clear();
+	grid = NULL;
+	unit = NULL;
 	player = NULL;
+	//delete hud;
 
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
 }
@@ -585,6 +630,12 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		break;
 	case DIK_I:
 		mario->Information();
+		break;
+	case DIK_B:
+		mario->TurnBigForm();
+		break;
+	case DIK_S:
+		mario->isPressS = true;
 		break;
 	case DIK_J:
 		int flag = mario->Skill();
@@ -622,6 +673,8 @@ void PlayScenceKeyHandler::OnKeyUp(int KeyCode)
 		break;
 	case DIK_S:
 		mario->SetState(MARIO_STATE_IDLE);
+		mario->isPressS = false;
+		break;
 	}
 		
 }
@@ -712,6 +765,11 @@ void PlayScene::UpdateCameraPosition()
 	float Sx = 16, Sy = oldCamY;
 	cx -= screenWidth / 2;
 	cy -= screenHeight / 2;
+	float edgeBottom = 0;
+	if (player->isInExtraMap == false)
+		edgeBottom = BOTTOM_EDGE_WORLD;
+	else
+		edgeBottom = BOTTOM_EDGE_EXTRAMAP;
 	// Ở đây xét số cứng 
 	// Cần phải sửa vì còn extra map ở dưới
 	// nếu có thể chia thành hai map thì sẽ để theo 
@@ -724,9 +782,9 @@ void PlayScene::UpdateCameraPosition()
 	{
 		Sx = (float)(mapWidth - 16.0f) - screenWidth;
 	}
-	if (player->y + screenHeight > 490)
+	if (player->y + screenHeight > edgeBottom)
 	{
-		Sy = (float)(490.0f - screenHeight);
+		Sy = (float)(edgeBottom - screenHeight);
 	}
 	if (player->y - screenHeight / 2 < 16)
 		Sy = (float)16.0f;
@@ -735,7 +793,20 @@ void PlayScene::UpdateCameraPosition()
 		if (isTurnCamY)
 			Sy = cy;
 	}
-	Game::GetInstance()->SetCamPos(round(Sx), round(Sy));
+	if (player->isInExtraMap)
+	{
+		Sx = 2143;
+		if (player->x > 2143 + screenWidth / 2)
+		{
+			Sx = cx;
+		}
+		if (player->x + screenWidth / 2 > 2656)
+		{
+			Sx = (float)(2656) - screenWidth;
+		}
+	}
+	if(player->isSwingTail == false)
+		Game::GetInstance()->SetCamPos(round(Sx), round(Sy));
 };
 void PlayScene::GetObjectFromGrid()
 {
@@ -761,14 +832,17 @@ void PlayScene::GetObjectFromGrid()
 		if (  dynamic_cast<Block*>(obj) || dynamic_cast<Ground*>(obj)||
 			dynamic_cast<InvisibleBrick*>(obj))
 			continue;
-		else if (dynamic_cast<Brick*>(obj)|| dynamic_cast<Pipe*>(obj))
+			/*listStaticObjectsToRender.push_back(obj);*/
+		else if (dynamic_cast<Brick*>(obj)|| dynamic_cast<Portal*>(obj)||
+			dynamic_cast<Pipe*>(obj))
 			listStaticObjectsToRender.push_back(obj);
-	/*	else if (dynamic_cast<Pipe*>(obj))
+	/*	else if (dynamic_cast<Pipe*>(obj) )
 			listPipeToRender.push_back(obj);*/
 		else if (dynamic_cast<Enemy*>(obj)|| dynamic_cast<FirePlantBullet*>(obj) ||
 			dynamic_cast<FireBall*>(obj))
 			listMovingObjectsToRender.push_back(obj);
-		else if (dynamic_cast<Item*>(obj))
+		else if (dynamic_cast<Item*>(obj) || dynamic_cast<PointEffect*>(obj) ||
+			dynamic_cast<HitEffect*>(obj) )
 			listMovingObjectsToRender.push_back(obj);
 	}
  }
@@ -793,10 +867,12 @@ bool PlayScene::IsInViewport(LPGAMEOBJECT object)
 	cam_y = game->GetCamY();
 	if (cam_x == 0 && cam_y == 0)
 		UpdateCameraPosition();
+	cam_x = game->GetCamX();
+	cam_y = game->GetCamY();
 	float obj_x, obj_y;
 	object->GetPosition(obj_x, obj_y);
 	
-	return obj_x >= cam_x && obj_x < cam_x + SCREEN_WIDTH
+	return obj_x >= cam_x  && obj_x < cam_x + game->GetScreenWidth()
 		&& obj_y >= cam_y && obj_y < cam_y + SCREEN_HEIGHT;
 };
 
@@ -814,10 +890,6 @@ void PlayScene::SetInactivation()
 				dynamic_cast<Enemy*>(object)->Inactive();
 				dynamic_cast<Enemy*>(object)->AbleToActive();
 			}
-		/*	else if (dynamic_cast<Item*>(object) && object->IsEnable() == true)
-			{
-				dynamic_cast<Item*>(object)->SetEnable(false);
-			}*/
 		}
 		else
 		{
@@ -843,7 +915,11 @@ void PlayScene::ActiveEnemiesInViewport()
 			{
 				if (IsInViewport(enemy) == true
 					&& enemy->isAbleToActive == true)
+				{
 					enemy->Active();
+				}
+				
+				
 			}
 		}
 	}

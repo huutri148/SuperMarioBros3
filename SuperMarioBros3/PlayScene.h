@@ -23,18 +23,25 @@
 #include"ParaGoomba.h"
 #include "Grid.h"
 #include"KoopaParaTroopa.h"
+#include"PointEffect.h"
 #include"Hud.h"
+#include"HitEffect.h"
+#include"Portal.h"
+#include"RaccoonTail.h"
 class PlayScene : public Scene
 {
 protected:
+	Portal* portal;
 	Mario* player = NULL;
 	Map* map = NULL ;
 	bool isTurnCamY = false;// Camera Y được bật khi Mario bay 
 	bool isGameOver = false;
 	Hud* hud = NULL;
-
 	Unit* unit;
 	Grid* grid;
+
+	bool switchScene = false;
+	bool isGameDone = false;
 
 	vector<LPGAMEOBJECT> objects;
 	vector<Unit*> listUnits;

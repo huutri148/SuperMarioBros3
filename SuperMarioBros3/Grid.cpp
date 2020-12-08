@@ -1,6 +1,7 @@
 ﻿#include "Grid.h"
 #include "Utils.h"
 #include"Item.h"
+#include "FireBall.h"
 Unit::Unit(Grid* grid, LPGAMEOBJECT obj,
 	float x, float y)
 {
@@ -70,7 +71,11 @@ void Grid::Move(Unit* unit, float x, float y)
 	// nếu object ra khỏi vùng viewport-> không cần cập nhật 
 	if (newRow < 0 || newRow >= numRows || newCol < 0 ||
 		newCol >= numCols)
+	{
+				
 		return;
+	}
+	
 
 	// cập nhật tọa độ mới
 	unit->x = x;
@@ -99,7 +104,9 @@ void Grid::Get(float cam_x,float cam_y, vector<Unit*>& listUnits)
 {
 	int startCol = (int)(cam_x / cellWidth);
 	int endCol =(int) ceil((cam_x + SCREEN_WIDTH) / cellWidth);
-
+	int ENDCOL = (int)ceil((mapWidth) / cellWidth);
+	if (endCol > ENDCOL)
+		endCol = ENDCOL;
 	for (int i = 0; i < numRows; i++)
 	{
 		for (int j = startCol; j < endCol; j++)

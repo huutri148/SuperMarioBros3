@@ -19,10 +19,10 @@ Sprites* Sprites::GetInstance()
 	return __instance;
 }
 
-void Sprite::Draw(/*int accordingcam*/int nx,float x, float y, int alpha)
+void Sprite::Draw(/*int accordingcam*/int nx,float x, float y, int alpha, float translateX, float translateY)
 {
 	Game* game = Game::GetInstance();
-	game->Draw(nx,x,y, texture, left, top, right, bottom, alpha);
+	game->Draw(nx,x,y, texture, left, top, right, bottom, alpha, translateX, translateY);
 }
 void Sprite::Draw(/*int accordingcam*/int nx,int ny, float x, float y, int alpha)
 {

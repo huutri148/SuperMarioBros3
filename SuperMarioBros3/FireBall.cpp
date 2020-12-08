@@ -71,6 +71,10 @@ void FireBall :: Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						dynamic_cast<Enemy*>(e->obj)->SetBeingSkilled(this->nx);
 							this->SetState(FIREBALL_STATE_EXPLODE);
 							explodeTime = GetTickCount();
+							Game* game = Game::GetInstance();
+							Grid* grid = ((PlayScene*)game->GetCurrentScene())->GetGrid();
+							PointEffect* effect = new PointEffect(x, y, POINT_TYPE_100);
+							Unit* unit = new Unit(grid, effect, x, y);
 					}
 					else
 					{

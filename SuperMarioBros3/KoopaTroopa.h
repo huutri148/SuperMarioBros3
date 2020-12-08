@@ -13,7 +13,6 @@
 
 class KoopaTroopa :public Enemy
 {
-	//Mario* mario;
 	int type;
 	bool isBumped;
 	DWORD hidingTime = 0;

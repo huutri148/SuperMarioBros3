@@ -2,13 +2,17 @@
 #include"GameObject.h"
 #include"Sprites.h"
 #include"Font.h"
+#include"Mario.h"
 class Hud : public GameObject
 {
 	Font* font;
+	Mario* mario;
+
 
 
 	LPSPRITE hud1;
 	LPSPRITE hud2;
+	vector<LPSPRITE> cardSprite;
 	LPSPRITE playerSprite;
 	LPSPRITE lifeSprite;
 	vector<LPSPRITE> moneySprite;
@@ -25,11 +29,12 @@ class Hud : public GameObject
 	int world = 1;
 	int time = 0;
 	int powerMelterStack = 0;
+	vector<int> card;
 public:
 	Hud();
 	virtual void GetBoundingBox(float& left, float& top,
 		float& right, float& bottom, bool isEnable) {};
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects = NULL);
 	virtual void Render();
-	};
+};
 
