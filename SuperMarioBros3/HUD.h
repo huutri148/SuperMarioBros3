@@ -2,10 +2,13 @@
 #include"GameObject.h"
 #include"Sprites.h"
 #include"Font.h"
+#include"Mario.h"
 class Hud : public GameObject
 {
 	Font* font;
-	static Hud* hud;
+	Mario* mario;
+
+
 
 	LPSPRITE hud1;
 	LPSPRITE hud2;

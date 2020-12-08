@@ -53,7 +53,7 @@ vector<LPSPRITE> Font::StringToSprite(string str)
 	vector<LPSPRITE> sprites;
 	LPSPRITE sprite;
 	char c;
-	for (int i = 0; i < str.size(); i++)
+	for (unsigned int i = 0; i < str.size(); i++)
 	{
 		c = (char)str[i];
 		sprite = mapping(c);

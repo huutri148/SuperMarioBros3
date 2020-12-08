@@ -7,20 +7,21 @@ Hud::Hud()
 	Textures* textures = Textures::GetInstance();
 	Sprites* sprites = Sprites::GetInstance();
 	Game* game = Game::GetInstance();
-	Scene* scene = game->GetCurrentScene();
-
-	if(dynamic_cast<PlayScene*>(scene))
+	powerMelterStack = 0;
+	money = game->money;
+	score = game->score;
+	nlife = game->life;
+	remainTime = DEFAULT_TIME;
+	if (dynamic_cast<PlayScene*>(game->GetCurrentScene()))
 	{
-		Mario* mario = ((PlayScene*)game->GetCurrentScene())->GetPlayer();
-		powerMelterStack = mario->GetPowerMelter();
-		money = mario->GetMoney();
-		score = mario->GetScore();
-		nlife = mario->GetLife();
+		PlayScene* scene =(PlayScene*)game->GetCurrentScene();
+		mario = scene->GetPlayer();
 	}
-	
+
 	font = new Font();
 	hud1 = sprites->Get(SPRITE_HUD1_ID);
 	hud2 = sprites->Get(SPRITE_HUD2_ID);
+
 	lifeSprite = font->mapping(nlife +'0');
 	worldSprite = font->mapping(world + '0');
 	// Sẽ cập nhật player từ scene hiện tại 
@@ -106,24 +107,25 @@ void Hud::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		Mario* mario = ((PlayScene*)game->GetCurrentScene())->GetPlayer();
 		powerMelterStack = mario->GetPowerMelter();
 		money = mario->GetMoney();
+		game->money = mario->GetMoney();
+		DebugOut(L"\nGame Money:%d", game->money);
 		score = mario->GetScore();
+		game->score = mario->GetScore();
 		nlife = mario->GetLife();
-
+		game->life = mario->GetLife();
 		time += dt;
 		remainTime = DEFAULT_TIME - time / 1000;
-	
-
-		lifeSprite = font->mapping(nlife + '0');
-
-		string time_str = to_string(remainTime);
-		while (time_str.length() < 3) time_str = "0" + time_str;
-		remainTimeSprites = font->StringToSprite(time_str);
-
-		string score_str = to_string(score);
-		while (score_str.length() < 7) score_str = "0" + score_str;
-		scoreSprite = font->StringToSprite(score_str);
-
-		string money_str = to_string(money);
-		moneySprite = font->StringToSprite(money_str);
 	}
+	lifeSprite = font->mapping(nlife + '0');
+
+	string time_str = to_string(remainTime);
+	while (time_str.length() < 3) time_str = "0" + time_str;
+	remainTimeSprites = font->StringToSprite(time_str);
+
+	string score_str = to_string(score);
+	while (score_str.length() < 7) score_str = "0" + score_str;
+	scoreSprite = font->StringToSprite(score_str);
+
+	string money_str = to_string(money);
+	moneySprite = font->StringToSprite(money_str);
 }
