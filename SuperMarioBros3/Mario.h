@@ -78,6 +78,7 @@ public:
 	void SetState(int state);
 	void SetLevel(int l) { form = l; }
 	void SetDirect(bool nx);// Set hướng di chuyển cho mario
+	void SetAutoWalk();
 
 
 

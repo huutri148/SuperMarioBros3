@@ -2,9 +2,12 @@
 #include"GameObject.h"
 #include"Sprites.h"
 #include"Font.h"
+#include"Mario.h"
 class Hud : public GameObject
 {
 	Font* font;
+	Mario* mario;
+
 
 
 	LPSPRITE hud1;
@@ -31,5 +34,5 @@ public:
 		float& right, float& bottom, bool isEnable) {};
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects = NULL);
 	virtual void Render();
-	};
+};
 

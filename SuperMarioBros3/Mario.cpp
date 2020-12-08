@@ -406,7 +406,7 @@ void Mario::Render()
 				}
 			}
 			else if (powerMelterStack >= POWER_MELTER_BUFF_SPEED_LEVEL
-				&& powerMelterStack < POWER_METER_FULL)
+				&& powerMelterStack < POWER_MELTER_FULL)
 			{
 				switch (form)
 				{
@@ -424,7 +424,7 @@ void Mario::Render()
 					break;
 				}
 			}
-			else if (powerMelterStack == POWER_METER_FULL)
+			else if (powerMelterStack == POWER_MELTER_FULL)
 			{
 				switch (form)
 				{
@@ -739,7 +739,7 @@ void Mario::FillUpPowerMelter()// Tăng stack năng lượng của Mario
 		else
 		{
 			if (current - stackTimeStart > STACK_TIME 
-				&& powerMelterStack < POWER_METER_FULL)
+				&& powerMelterStack < POWER_MELTER_FULL)
 			{
 				powerMelterStack += 1;
 				stackTimeStart = 0;
@@ -945,7 +945,7 @@ void Mario::Fly()
 	{
 		DWORD current = GetTickCount();
 		/*	DebugOut(L"Power melter stack: %d\n", power_melter_stack);*/
-		if (powerMelterStack == POWER_METER_FULL && 
+		if (powerMelterStack == POWER_MELTER_FULL && 
 			current - flyTimeStart < MARIO_FLYING_LIMITED_TIME)
 		{
 			this->SetState(MARIO_STATE_FLYING);
@@ -962,7 +962,7 @@ void Mario::Fly()
 			isFlying = false;
 		}
 		else if (flyTimeStart == 0 &&
-			powerMelterStack == POWER_METER_FULL)
+			powerMelterStack == POWER_MELTER_FULL)
 		{
 			flyTimeStart = current;
 			this->SetState(MARIO_STATE_FLYING);

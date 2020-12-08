@@ -106,7 +106,7 @@ public:
 		float& bottom,bool isEnable) = 0;
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects = NULL);
 	virtual void Render() = 0;
-
+	virtual void Render(float translateX , float translateY ) {};
 	~GameObject();
 };
 

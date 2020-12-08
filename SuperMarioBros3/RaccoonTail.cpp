@@ -51,7 +51,7 @@ void RaccoonTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 			else if (dynamic_cast<Enemy*>(e->obj))
 			{
-				dynamic_cast<Enemy*>(e->obj)->SetBeingSkilled(-e->nx);
+				dynamic_cast<Enemy*>(e->obj)->SetBeingSkilled((int)(-e->nx));
 			}
 		}
 	}

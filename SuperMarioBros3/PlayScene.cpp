@@ -349,6 +349,14 @@ void PlayScene::Update(DWORD dt)
 	UpdatePlayer(dt);
 
 	ActiveEnemiesInViewport();
+	if (portal->state == PORTAL_STATE_CONGRATULATE)
+	{
+		this->isGameDone = true;
+		Game* game = Game::GetInstance();
+		game->SetCamPos(0.0f, 0.0f);
+		game->SwitchScene(1);
+		return;
+	}
 	if (!player->IsTransform()) {
 		//DebugOut(L"\nSize of obj: %d", objects.size());
 		for (UINT i = 0; i < objects.size(); i++)

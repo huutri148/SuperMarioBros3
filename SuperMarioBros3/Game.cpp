@@ -71,7 +71,7 @@ void Game::Draw( int nx,float x, float y, LPDIRECT3DTEXTURE9 texture, int left, 
 {
 	// calculate position of object in real world
 	D3DXVECTOR3 p(x - cam_x , y - cam_y , 0);
-
+	
 	RECT rect;
 	rect.left = left;
 	rect.top = top;
@@ -82,18 +82,19 @@ void Game::Draw( int nx,float x, float y, LPDIRECT3DTEXTURE9 texture, int left, 
 
 	D3DXMATRIX oldTransform;
 	D3DXMATRIX newTransform;
-
+	//D3DXMATRIX translateMax;
 	spriteHandler->GetTransform(&oldTransform);
 
 	D3DXVECTOR2 center = D3DXVECTOR2(p.x + (right - left) / 2, p.y + (bottom - top) / 2);
 	D3DXVECTOR2 rotate = D3DXVECTOR2(nx > 0 ? -1.0f : 1.0f, 1.0f);
+	//D3DXMatrixTranslation(&translateMax, 64.0f, 0.0f, 0.0f);
 
 	
 	// Xây dựng một ma trận 2D lưu thông tin biến đổi (scale, rotate)
 	D3DXMatrixTransformation2D(&newTransform, &center, 0.0f, &rotate, NULL, 0.0f, NULL);
 
 	// Cần nhân với ma trận cũ để tính ma trận biến đổi cuối cùng
-	D3DXMATRIX finalTransform = newTransform * oldTransform;
+	D3DXMATRIX finalTransform =  oldTransform * newTransform;
 	spriteHandler->SetTransform(&finalTransform);
 
 	spriteHandler->Draw(texture, &rect, NULL, &p, D3DCOLOR_ARGB(alpha, 255, 255, 255));
@@ -126,6 +127,43 @@ void Game::Draw(int nx,int ny, float x, float y, LPDIRECT3DTEXTURE9 texture, int
 	D3DXMatrixTransformation2D(&newTransform, &center, 0.0f, &rotate, NULL, 0.0f, NULL);
 	// Cần nhân với ma trận cũ để tính ma trận biến đổi cuối cùng
 	D3DXMATRIX finalTransform = newTransform * oldTransform;
+	spriteHandler->SetTransform(&finalTransform);
+
+	spriteHandler->Draw(texture, &rect, NULL, &p, D3DCOLOR_ARGB(alpha, 255, 255, 255));
+
+	spriteHandler->SetTransform(&oldTransform);
+}
+
+void Game::Draw(int nx, float x, float y, LPDIRECT3DTEXTURE9 texture,
+	int left, int top, int right, int bottom, int alpha,
+	float translateX, float translateY)
+{
+	// calculate position of object in real world
+	D3DXVECTOR3 p(x - cam_x, y - cam_y, 0);
+
+	RECT rect;
+	rect.left = left;
+	rect.top = top;
+	rect.right = right;
+	rect.bottom = bottom;
+
+	// flip sprite, using nx,ny parameter
+
+	D3DXMATRIX oldTransform;
+	D3DXMATRIX newTransform;
+	D3DXMATRIX translateMax;
+
+	spriteHandler->GetTransform(&oldTransform);
+
+	D3DXVECTOR2 center = D3DXVECTOR2(p.x + (right - left) / 2, p.y + (bottom - top) / 2);
+	D3DXVECTOR2 rotate = D3DXVECTOR2(nx > 0 ? -1.0f : 1.0f, 1.0f );
+	D3DXMatrixTranslation(&translateMax, translateX, translateY,0.0f);
+
+
+	// Xây dựng một ma trận 2D lưu thông tin biến đổi (scale, rotate)
+	D3DXMatrixTransformation2D(&newTransform, &center, 0.0f, &rotate, NULL, 0.0f, NULL);
+	// Cần nhân với ma trận cũ để tính ma trận biến đổi cuối cùng
+	D3DXMATRIX finalTransform = oldTransform * translateMax * newTransform;
 	spriteHandler->SetTransform(&finalTransform);
 
 	spriteHandler->Draw(texture, &rect, NULL, &p, D3DCOLOR_ARGB(alpha, 255, 255, 255));
@@ -439,7 +477,17 @@ void Game::_ParseSection_SCENES(string line)
 	if (tokens.size() < 2) return;
 	int id = atoi(tokens[0].c_str());
 	LPCWSTR path = ToLPCWSTR(tokens[1]);
-	LPSCENE scene = new PlayScene(id, path);
-	scenes[id] = scene;
+	LPSCENE scene;
+	if (id == 1)
+	{
+		scene = new WorldMap(id, path);
+		scenes[id] = scene;
+	}
+	else if (id == 2)
+	{
+		scene = new PlayScene(id, path);
+		scenes[id] = scene;
+	}
+
 }
 
