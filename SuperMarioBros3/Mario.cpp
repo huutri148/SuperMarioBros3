@@ -1047,7 +1047,7 @@ void Mario::PressK()
 }
 void Mario::Reset()
 {
-	SetPosition(16, 400);
+	SetPosition(2100, 400);
 	vx = vy = 0;
 	nx = 1;
 	powerMelterStack = 0;

@@ -600,7 +600,13 @@ void PlayScene::Unload()
 		delete objects[i];
 
 	objects.clear();
+	listStaticObjectsToRender.clear();
+	listMovingObjectsToRender.clear();
+	listItems.clear();
+	grid = NULL;
+	unit = NULL;
 	player = NULL;
+	//delete hud;
 
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
 }

@@ -2,7 +2,7 @@
 #include"GameObject.h"
 class WorldMapPanel : public GameObject
 {
-	int panelId;
+	int sceneId;
 	int* possibleDirect;
 public:
 	virtual void Render();

@@ -12,6 +12,11 @@ Hud::Hud()
 	score = game->score;
 	nlife = game->life;
 	remainTime = DEFAULT_TIME;
+	for (int i: game->card)
+	{
+		this->card.push_back(i);
+		this->cardSprite.push_back(sprites->Get(i));
+	}
 	if (dynamic_cast<PlayScene*>(game->GetCurrentScene()))
 	{
 		PlayScene* scene =(PlayScene*)game->GetCurrentScene();
@@ -21,12 +26,13 @@ Hud::Hud()
 	font = new Font();
 	hud1 = sprites->Get(SPRITE_HUD1_ID);
 	hud2 = sprites->Get(SPRITE_HUD2_ID);
-
+	
 	lifeSprite = font->mapping(nlife +'0');
 	worldSprite = font->mapping(world + '0');
 	// Sẽ cập nhật player từ scene hiện tại 
 	// Là Lugi hoặc Mario sẽ chọn icon ở cuối góc trái màn hình
 	playerSprite = sprites->Get(SPRITE_MARIO_PLAYER_ID);
+
 	for (unsigned int i = 0; i < POWER_MELTER_FULL; i++)
 	{
 		if (i != POWER_MELTER_FULL - 1)
@@ -95,6 +101,11 @@ void Hud::Render()
 		filledPowerMelterSprite[i]->Draw(-1, x, y,255,
 			80.0f + FONT_BBOX_WIDTH * i,-73.0f);
 	}
+	for (int i = 0; i < cardSprite.size(); i++)
+	{
+		this->cardSprite[i]->Draw(-1, x, y, 255,
+			195 + 24* i, -79);
+	}
 }
 void Hud::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
@@ -108,13 +119,14 @@ void Hud::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		powerMelterStack = mario->GetPowerMelter();
 		money = mario->GetMoney();
 		game->money = mario->GetMoney();
-		DebugOut(L"\nGame Money:%d", game->money);
+		//DebugOut(L"\nGame Money:%d", game->money);
 		score = mario->GetScore();
 		game->score = mario->GetScore();
 		nlife = mario->GetLife();
 		game->life = mario->GetLife();
 		time += dt;
 		remainTime = DEFAULT_TIME - time / 1000;
+		game->card = mario->card;
 	}
 	lifeSprite = font->mapping(nlife + '0');
 
