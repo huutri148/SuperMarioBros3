@@ -1,6 +1,7 @@
 [SETTINGS]
-start	2
+start	0
 #scene list
 [SCENES]
+0	Resources\Scenes\IntroScene.txt
 1	Resources\Scenes\World1_Obj.txt
 2	Resources\Scenes\World1-1_Obj.txt

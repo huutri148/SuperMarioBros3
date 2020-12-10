@@ -21,6 +21,7 @@ class KoopaTroopa :public Enemy
 public:
 	//chuyển thành hàm
 	bool isPickedUp;
+	bool forceShell = false;
 	
 	float lastStanding_Y;
 	bool CanPullBack = false;

@@ -19,6 +19,12 @@
 #pragma region Các hàm cập nhật tọa độ, animation
 void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+	//if (isPickingUp)
+	//	DebugOut(L"\n Is Picking up ");
+	//else
+	//	DebugOut(L"\n Not Pick Up");
+	if (isEnable == false)
+		return;
 	if (GetTickCount64() - tailAttackTime >
 		MARIO_TAIL_ATTACK_TIME && isSwingTail == true)
 	{
@@ -46,6 +52,11 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		turnRaccoonTime = 0;
 		if (untouchable == 1)
 			form = MARIO_BIG_FORM;
+	}
+	if (GetTickCount() - kickTime > 300
+		&& isKickShell == true)
+	{
+		isKickShell = false;
 	}
 	if (isTeleport)
 	{
@@ -171,7 +182,11 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						enemy->SetBeingStromped();
 						score += 100;
 						vy = -MARIO_JUMP_DEFLECT_SPEED;
-						vx = nx * MARIO_WALK_DEFELCT_SPEED;
+						if (vx > 0)
+							vx = MARIO_WALK_DEFELCT_SPEED;
+						else
+							vx = -MARIO_WALK_DEFELCT_SPEED;
+						isInGround = true;
 					}
 					else if (enemy->IsDead() == true)
 					{
@@ -207,20 +222,8 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				{
 					if (untouchable == 0)
 					{
-						if (enemy->IsDead() != true)
-						{
-							if (form > MARIO_SMALL_FORM)
-							{
-								//form -= 1;
-								//StartUntouchable();
-								DecreaseForm();
-							}
-							else
-								SetState(MARIO_STATE_DEATH);
-								enemy->ChangeDirect();
-							
-						}
-						else if (dynamic_cast<KoopaTroopa*>(enemy))
+					
+						if (dynamic_cast<KoopaTroopa*>(enemy))
 						{
 							KoopaTroopa* koopa = dynamic_cast<KoopaTroopa*>(enemy);
 							if (koopa->state ==KOOPATROOPA_STATE_HIDING)
@@ -230,19 +233,63 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 									koopa->PickUpBy();
 									isPickingUp = true;
 								}
-								else if (isPressedJ == false)
+								else if (isPressedJ == false
+									&& enemy->vx == 0)
 								{
 									dynamic_cast<KoopaTroopa*>(enemy)->IsKicked(this->nx);
 									this->SetState(MARIO_STATE_KICK);
 									score += 100;
 								}
+								else
+								{
+									if (form > MARIO_SMALL_FORM)
+									{
+										//form -= 1;
+										//StartUntouchable();
+										DecreaseForm();
+									}
+									else
+										SetState(MARIO_STATE_DEATH);
+									//enemy->ChangeDirect();
+								}
 							}
+							else
+							{
+								if (form > MARIO_SMALL_FORM)
+								{
+									//form -= 1;
+									//StartUntouchable();
+									DecreaseForm();
+								}
+								else
+									SetState(MARIO_STATE_DEATH);
+								enemy->ChangeDirect();
+							}
+						}
+						else if (enemy->IsDead() != true)
+						{
+							if (form > MARIO_SMALL_FORM)
+							{
+								//form -= 1;
+								//StartUntouchable();
+								DecreaseForm();
+							}
+							else
+								SetState(MARIO_STATE_DEATH);
+							enemy->ChangeDirect();
 						}
 						else
 						{
 							x += dx;
 						}
 					}
+				}
+				else if (e->ny > 0)
+				{
+					y -= min_ty * dy + ney * 0.4f;
+					enemy->vy = -0.2f;
+					enemy->vx = -0.05f;
+					isHitted = true;
 				}
 			}
 			else if (dynamic_cast<FirePlantBullet*>(e->obj))
@@ -297,9 +344,11 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			else if (dynamic_cast<Item*>(e->obj))
 			{
 				dynamic_cast<Item*>(e->obj)->Used();
-				x += dx;
+			/*	x += dx;
 				if (e->ny != 0 && nex == 0)
-					y += dy;
+					y += dy;*/
+				if(e->ny > 0)
+					y -= min_ty * dy + ney * 0.4f;
 			}
 			else if (dynamic_cast<Pipe*>(e->obj))
 			{
@@ -335,6 +384,20 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				card.push_back(dynamic_cast<Portal*>(e->obj)->GetPortal());
 				vx = MARIO_WALK_DEFELCT_SPEED;
 			}
+			else if (dynamic_cast<Mario*>(e->obj))
+			{
+				if (e->ny > 0)
+				{
+					this->Squat();
+					isAutoWalk = false;
+					vx = 0;
+					y -= min_ty * dy + ney * 0.4f;
+				}
+				else if (e->ny < 0)
+				{
+					this->SetAutoJump(-0.75f);
+				}
+			}
 		}
 	}
 
@@ -343,6 +406,8 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 }
 void Mario::Render()
 {
+	if (isEnable == false)
+		return;
 	int ani = -1;
 	if (vx == 0 )
 	{
@@ -383,7 +448,7 @@ void Mario::Render()
 			}
 		}
 	}
-	if (vx != 0 && isInGround == true)
+	if (vx != 0 && isInGround == true || isAutoWalk == true)
 	{
 		if (isPickingUp == false)
 		{
@@ -556,7 +621,7 @@ void Mario::Render()
 			break;
 		}
 	}
-	if (state == MARIO_STATE_KICK)
+	if (isKickShell)
 	{
 		switch (form)
 		{
@@ -596,12 +661,18 @@ void Mario::Render()
 		ani = MARIO_ANI_TURN_TO_RACCOON;
 	else if (isTeleport)
 		ani = MARIO_ANI_RACCOON_TELEPORT;
+	else if (isHitted)
+		ani = MARIO_ANI_HITTED;
+	else if (isLookUp)
+		ani = MARIO_ANI_LOOKUP;
 	int alpha = 255;
 	/*DebugOut(L"Ani: %d\n", ani);*/
 	if (untouchable)
 	{
 		if((GetTickCount64() - untouchableStart) % 2 == 0)
 				alpha = 0;
+		if (isTransform == true)
+			alpha = 255;
 		if (form == MARIO_BIG_FORM)
 			ani = MARIO_ANI_TURN_TO_SMALL_FORM;
 			
@@ -630,6 +701,7 @@ void Mario::SetState(int state)
 	case MARIO_STATE_IDLE:
 		vx = 0;
 		isKickShell = false;
+		isAutoWalk = false;
 		break;
 	case MARIO_STATE_DEATH:
 		vy = -MARIO_DIE_DEFLECT_SPEED;
@@ -650,6 +722,7 @@ void Mario::SetState(int state)
 		break;
 	case MARIO_STATE_KICK:
 		isKickShell = true;
+		kickTime = GetTickCount();
 		break;
 	case MARIO_STATE_FLOATING:
 		this->vy =- MARIO_FLOATING_SPEED_Y;
@@ -1118,14 +1191,23 @@ bool Mario::Brake()
 void Mario::DecreaseForm()
 {
 	StartUntouchable();
-	if (form == MARIO_RACCOON_FORM)
+	if (turnToSmallForm == false)
 	{
-		isTurnRaccoon = true;
-		turnRaccoonTime = GetTickCount();
+		if (form == MARIO_RACCOON_FORM)
+		{
+			isTurnRaccoon = true;
+			turnRaccoonTime = GetTickCount();
+		}
+		if (form == MARIO_BIG_FORM)
+		{
+			isTransform = true;
+			transformTime = GetTickCount();
+		}
 	}
-	if (form == MARIO_BIG_FORM)
+	else
 	{
-		isTransform = true; 
+		form = MARIO_BIG_FORM;
+		isTransform = true;
 		transformTime = GetTickCount();
 	}
 }

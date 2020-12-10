@@ -7,4 +7,9 @@ class Ground : public GameObject
 public:
 	virtual void Render();
 	virtual void GetBoundingBox(float& l, float& t, float& r, float& b, bool isEnable);
+	Ground(float width = 16.0f, float height = 16.0f)
+	{
+		this->width = width;
+		this->height = height;
+	};
 };

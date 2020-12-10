@@ -9,20 +9,6 @@ IntroScene::IntroScene(int id, LPCWSTR filePath)
 	key_handler = new IntroSceneKeyHandler(this);
 }
 
-void IntroScene::_ParseSection_GRID(string line)
-{
-	vector<string> tokens = split(line);
-
-	if (tokens.size() < 4) return; // skip invalid lines
-
-	int W = atoi(tokens[0].c_str());
-	int H = atoi(tokens[1].c_str());
-	int x = atoi(tokens[2].c_str());
-	int y = atoi(tokens[3].c_str());
-
-	grid = new Grid(W, H, x, y);
-	DebugOut(L"\nParseSection_GRID: Done");
-}
 void IntroScene::_ParseSection_TEXTURES(string line)
 {
 	vector<string> tokens = split(line);
@@ -38,7 +24,7 @@ void IntroScene::_ParseSection_TEXTURES(string line)
 	Textures::GetInstance()->Add(texID, path.c_str(), D3DCOLOR_XRGB(R, G, B));
 }
 
-void PlayScene::_ParseSection_SPRITES(string line)
+void IntroScene::_ParseSection_SPRITES(string line)
 {
 	vector<string> tokens = split(line);
 
@@ -61,13 +47,13 @@ void PlayScene::_ParseSection_SPRITES(string line)
 	Sprites::GetInstance()->Add(ID, l, t, r, b, tex);
 }
 
-void PlayScene::_ParseSection_ANIMATIONS(string line)
+void IntroScene::_ParseSection_ANIMATIONS(string line)
 {
 	vector<string> tokens = split(line);
 
 	if (tokens.size() < 3) return; // skip invalid lines - an animation must at least has 1 frame and 1 frame time
 
-	//DebugOut(L"--> %s\n",ToWSTR(line).c_str());
+	DebugOut(L"--> %s\n",ToWSTR(line).c_str());
 
 	LPANIMATION ani = new Animation();
 
@@ -82,7 +68,7 @@ void PlayScene::_ParseSection_ANIMATIONS(string line)
 	Animations::GetInstance()->Add(ani_id, ani);
 }
 
-void PlayScene::_ParseSection_ANIMATION_SETS(string line)
+void IntroScene::_ParseSection_ANIMATION_SETS(string line)
 {
 	vector<string> tokens = split(line);
 
@@ -108,11 +94,11 @@ void PlayScene::_ParseSection_ANIMATION_SETS(string line)
 /*
 	Parse a line in section [OBJECTS]
 */
-void PlayScene::_ParseSection_OBJECTS(string line)
+void IntroScene::_ParseSection_OBJECTS(string line)
 {
 	vector<string> tokens = split(line);
 
-	//DebugOut(L"--> %s\n",ToWSTR(line).c_str());
+	DebugOut(L"--> %s\n",ToWSTR(line).c_str());
 
 	if (tokens.size() < 3) return; // skip invalid lines - an object set must have at least id, x, y
 
@@ -130,109 +116,66 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 	switch (object_type)
 	{
 	case OBJECT_TYPE_MARIO:
-		if (player != NULL)
-		{
-			DebugOut(L"[ERROR] MARIO object was created before!\n");
-			return;
-		}
 		obj = new Mario();
-		player = (Mario*)obj;
-		DebugOut(L"[INFO] Player object created!\n");
+		mario = (Mario*)obj;
+		mario->SetDirect(false);
+		mario->SetLevel(MARIO_BIG_FORM);
+		mario->isEnable = false;
+		DebugOut(L"[INFO] Player1 object created!\n");
 		break;
-	case OBJECT_TYPE_GOOMBA:
-	{
-		obj = new Goomba(x, y);
-		unit = new Unit(grid, obj, x, y);
+	case OBJECT_TYPE_LUGI:
+		obj = new Mario();
+		lugi = (Mario*)obj;	
+		lugi->SetLevel(MARIO_BIG_FORM);
+		lugi->isEnable = false;
+		DebugOut(L"[INFO] Player2 object created!\n");
 		break;
-	}
-	case OBJECT_TYPE_BRICK:
-	{
-		int set_type = atoi(tokens[4].c_str());
-		obj = new Brick(x, y, set_type);
-		unit = new Unit(grid, obj, x, y);
-		break;
-	}
-	case OBJECT_TYPE_KOOPAS:
-	{
-		int set_type = atoi(tokens[4].c_str());
-		obj = new KoopaTroopa(x, y, set_type);
-		unit = new Unit(grid, obj, x, y);
-		break;
-	}
-	case OBJECT_TYPE_BLOCKS:
-	{
-		float width = (float)atof(tokens[4].c_str());
-		float height = (float)atof(tokens[5].c_str());
-		obj = new Block(x, y, width, height);
-		unit = new Unit(grid, obj, x, y);
-		break;
-	}
 	case OBJECT_TYPE_GROUNDS:
 	{
 		float width = (float)atof(tokens[4].c_str());
 		float height = (float)atof(tokens[5].c_str());
-		obj = new Ground(x, y, width, height);
-		unit = new Unit(grid, obj, x, y);
+		obj = new Ground( width, height);
 		break;
 	}
-	case OBJECT_TYPE_PIPES:
-	{
-		obj = new Pipe();
-		unit = new Unit(grid, obj, x, y);
+	case OBJECT_TYPE_GOOMBA:
+		obj = new Goomba(x,y);
+		goomba = (Goomba*)obj;
+		obj->isEnable = false;
+		obj->vx = 0;
+		fallingObjects.push_back(obj);
 		break;
-	}
-	case OBJECT_TYPE_INVISIBLEBRICK:
-	{
-		int set_type = atoi(tokens[4].c_str());
-		obj = new InvisibleBrick(set_type);
-		unit = new Unit(grid, obj, x, y);
+	case OBJECT_TYPE_RACCOONLEAF:
+		obj = new RaccoonLeaf(x, y);
+		fallingObjects.push_back(obj);
 		break;
-	}
-	case OBJECT_TYPE_PIRANHAPLANT:
-	{
-		int set_type = atoi(tokens[4].c_str());
-		obj = new PiranhaPlant(x, y, set_type);
-		unit = new Unit(grid, obj, x, y);
+	case OBJECT_TYPE_MUSHROOM:
+		obj = new Mushroom();
+		obj->isEnable = false;
+		fallingObjects.push_back(obj);
 		break;
-	}
-	case OBJECT_TYPE_FIREPIRANHAPLANT:
-	{
-		int set_type = atoi(tokens[4].c_str());
-		obj = new FirePiranhaPlant(x, y, set_type);
-		unit = new Unit(grid, obj, x, y);
+	case OBJECT_TYPE_SHELL:
+		obj = new KoopaTroopa();
+		((KoopaTroopa*)obj)->SetState(KOOPATROOPA_STATE_HIDING);
+		((KoopaTroopa*)obj)->isEnable = false;
+		((KoopaTroopa*)obj)->forceShell = true;
+		if (koopa == NULL)
+			koopa = (KoopaTroopa*)obj;
+		fallingObjects.push_back(obj);
 		break;
-	}
-	/*case OBJECT_TYPE_PORTAL:
-	{
-		float r = atof(tokens[4].c_str());
-		float b = atof(tokens[5].c_str());
-		int scene_id = atoi(tokens[6].c_str());
-		obj = new CPortal(x, y, r, b, scene_id);
-	}*/
-	case OBJECT_TYPE_COIN:
-	{
-		int set_type = atoi(tokens[4].c_str());
-		obj = new Coin(set_type);
-		unit = new Unit(grid, obj, x, y);
+	case OBJECT_TYPE_BACKGROUND_INTRO_SCENE:
+		obj = new BackGroundIntroScene();
+		backGround = (BackGroundIntroScene*)obj;
+		DebugOut(L"[INFO] BackGround  object created!\n");
 		break;
-	}
-	case OBJECT_TYPE_PARAGOOMBA:
-	{
-		obj = new ParaGoomba(x, y);
-		unit = new Unit(grid, obj, x, y);
+	case OBJECT_TYPE_KOOPAS:
+		obj = new KoopaTroopa();
+		koopas.push_back(obj);
+		obj->nx = 1;
+		obj->vx = 0.03f;
+		if (koopas.size() == 4)
+			obj->vx = 0.05f;
+		obj->isEnable = false;
 		break;
-	}
-	case OBJECT_TYPE_PARATROOPA:
-	{
-		obj = new KoopaParaTroopa(x, y);
-		unit = new Unit(grid, obj, x, y);
-		break;
-	}
-	case OBJECT_TYPE_HUD:
-	{
-		hud = new Hud();
-		return;
-	}
 	default:
 		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
 		return;
@@ -241,29 +184,10 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 	obj->SetPosition(x, y);
 	LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
 	obj->SetAnimationSet(ani_set);
+	objects.push_back(obj);
 }
 
-void PlayScene::_ParseSection_MAPS(string line)
-{
-	vector<string> tokens = split(line);
-
-	if (tokens.size() < 7) return; // skip invalid lines
-
-	int idMap = atoi(tokens[0].c_str());
-	int tolRowTileSet = atoi(tokens[1].c_str());
-	int tolColTileSet = atoi(tokens[2].c_str());
-	int tolRowMap = atoi(tokens[3].c_str());
-	int tolColMap = atoi(tokens[4].c_str());
-	int totalTiles = atoi(tokens[5].c_str());
-	wstring MatrixPath = ToWSTR(tokens[6]);
-
-	this->map = new Map(idMap, tolRowTileSet, tolColTileSet, tolRowMap, tolColMap, totalTiles);
-	map->LoadMatrix(MatrixPath.c_str());
-	map->CreateTilesFromTileSet();
-	DebugOut(L"\nParseSection_MAPS: Done");
-}
-
-void PlayScene::Load()
+void IntroScene::Load()
 {
 	DebugOut(L"[INFO] Start loading scene resources from : %s \n", sceneFilePath);
 	ifstream f;
@@ -317,9 +241,6 @@ void PlayScene::Load()
 		case SCENE_SECTION_ANIMATIONS: _ParseSection_ANIMATIONS(line); break;
 		case SCENE_SECTION_ANIMATION_SETS: _ParseSection_ANIMATION_SETS(line); break;
 		case SCENE_SECTION_OBJECTS: _ParseSection_OBJECTS(line); break;
-		case SCENE_SECTION_MAPS:	_ParseSection_MAPS(line); break;
-		case SCENE_SECTION_GRID: _ParseSection_GRID(line); break;
-
 		}
 	}
 
@@ -330,328 +251,322 @@ void PlayScene::Load()
 	DebugOut(L"[INFO] Done loading scene resources %s\n", sceneFilePath);
 }
 
-void PlayScene::Update(DWORD dt)
+void IntroScene::Update(DWORD dt)
 {
-	GetObjectFromGrid();
-
-	UpdatePlayer(dt);
-
-	ActiveEnemiesInViewport();
-
-	//DebugOut(L"\nSize of obj: %d", objects.size());
-	for (UINT i = 0; i < objects.size(); i++)
-	{
-		LPGAMEOBJECT object = objects[i];
-		vector<LPGAMEOBJECT> coObjects;
-	
-		GetColliableObjects(object, coObjects);
-		object->Update(dt, &coObjects);
-	}
-
-	// Update camera to follow mario
-	SetInactivation();
-	UpdateCameraPosition();
-	hud->Update(dt);
-	UpdateGrid();
-}
-void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& coObjects)
-{
-	if (dynamic_cast<Item*>(curObj))
-	{
-		for (auto obj : objects)
-		{
-			if (!dynamic_cast<Enemy*>(obj))
-				coObjects.push_back(obj);
-		}
-	}
-	else if (dynamic_cast<FirePiranhaPlant*>(curObj) ||
-		dynamic_cast<PiranhaPlant*>(curObj))
-	{
-		for (auto obj : objects)
-		{
-			if (dynamic_cast<Enemy*>(obj))
-			{
-				if (!dynamic_cast<KoopaTroopa*>(obj))
-					continue;
-			}
-			if (dynamic_cast<Ground*>(obj) || dynamic_cast<InvisibleBrick*>(obj) ||
-				dynamic_cast<FireBall*>(obj))
-				coObjects.push_back(obj);
-		}
-	}
-	else if (dynamic_cast<FirePlantBullet*>(curObj))
-	{
+	if (mario == NULL || lugi == NULL)
 		return;
-	}
-	else if (dynamic_cast<KoopaTroopa*>(curObj))
+
+	// Đàn rùa ở cuối cảnh
+	ShowKoopas();
+
+	HandleBehaviourOfMario();
+
+	HandleBehaviourOfLugi();
+
+
+	// SECTION1 của IntroScene
+	if (backGround->isBeginSection1 == true)
 	{
-		for (auto obj : objects)
+		mario->isEnable = true;
+		lugi->isEnable = true;
+		// Khi Intro vừa bắt đầu thì MARIO và LUGI ở trạng thái Run nhưng
+		// tọa độ không thay đổi
+		lugi->SetAutoWalk(1, 0.0f);
+		mario->SetAutoWalk(-1, 0.0f);
+	}
+
+	// SECTION2 của Intro Scene
+	if (backGround->isBeginSection2 == true)
+	{
+		if (mario->vx == 0 && lugi->vx == 0)
 		{
-			if (dynamic_cast<Enemy*>(obj))
+			lugi->SetAutoWalk(1, MARIO_WALKING_SPEED);
+			mario->SetAutoWalk(-1, -MARIO_WALKING_SPEED);
+		}
+		else if (GetTickCount() -backGround->beginSection2Time > SECTION2_TIME &&
+			backGround->beginSection2Time != 0)
+		{
+			lugi->SetAutoJump(-MARIO_SUPER_JUMP_SPEED);
+			lugi->isAutoWalk = false;
+			backGround->beginSection2Time = 0;
+		}
+		else
+		{
+			float x, y;
+			lugi->GetPosition(x, y);
+			// LUGI nhảy đụng vào góc trên màn hình sẽ bật cờ để 
+			// Section 3 bắt đầu
+			if (y < 10)
 			{
-				if (dynamic_cast<Enemy*>(obj)->isDead == true ||
-					dynamic_cast<Enemy*>(obj)->IsInactive())
-					continue;
+				backGround->isBeginSection2 = false;
+				backGround->isBeginSection3 = true;
+				mario->SetState(MARIO_STATE_IDLE);
 			}
-			if (!dynamic_cast<FirePlantBullet*>(obj) && !dynamic_cast<Item*>(obj)
-				&& !dynamic_cast<InvisibleBrick*>(obj))
-				coObjects.push_back(obj);
 		}
 	}
-	else if (dynamic_cast<Goomba*>(curObj))
+
+	// SECTION3 của IntroScene
+	if (backGround->isBeginSection3 == true &&
+		backGround->isDoneSection3 == false)
 	{
-		for (auto obj : objects)
+		if (GetTickCount() - backGround->section3Time > SECTION3_TIME
+			&& backGround->section3Time != 0)
 		{
-			if (dynamic_cast<Enemy*>(obj))
+			for (size_t i = 0; i < fallingObjects.size(); i++)
 			{
-				// tránh trường hợp quái rớt trúng đầu và bị rớt xuống
-				if (!dynamic_cast<KoopaTroopa*>(obj))
-					continue;
+				fallingObjects[i]->isEnable = true;
 			}
-			if (!dynamic_cast<Block*>(obj) && !dynamic_cast<FirePlantBullet*>(obj)
-				&& !dynamic_cast<Item*>(obj) && !dynamic_cast<InvisibleBrick*>(obj))
-				coObjects.push_back(obj);
 		}
 	}
-	else if (dynamic_cast<ParaGoomba*>(curObj))
+
+	mario->Update(dt, &objects);
+
+	// Nếu mario ở trạng thái transform 
+	// dừng cập nhật các đội tượng còn lại
+	if (!mario->IsTransform())
 	{
-		for (auto obj : objects)
+		backGround->Update(dt, &objects);
+		for (size_t i = 5; i < objects.size(); i++)
 		{
-			if (dynamic_cast<Enemy*>(obj))
-			{
-				if (!dynamic_cast<KoopaTroopa*>(obj))
-					continue;
-			}
-			if (!dynamic_cast<Block*>(obj) && !dynamic_cast<FirePlantBullet*>(obj)
-				&& !dynamic_cast<Item*>(obj) && !dynamic_cast<InvisibleBrick*>(obj))
-				coObjects.push_back(obj);
+			if (objects[i]->isEnable == true)
+				objects[i]->Update(dt, &objects);
 		}
 	}
-	else if (dynamic_cast<KoopaParaTroopa*>(curObj))
+
+
+}
+void IntroScene::ShowBush()
+{
+	showingBush = true;
+	if (bushsSprite.size() == 0)
 	{
-		for (auto obj : objects)
+		Sprites* sprites = Sprites::GetInstance();
+		bushsSprite.push_back(sprites->Get(SPRITE_BUSH1_ID));
+		bushsSprite.push_back(sprites->Get(SPRITE_BUSH2_ID));
+	}
+}
+
+void IntroScene::ShowMenu()
+{
+	showingMenu = true;
+	if (menuSprites.size() == 0)
+	{
+		Sprites* sprites = Sprites::GetInstance();
+		menuSprites.push_back(sprites->Get(SPRITE_MENU_PICKED_PLAYER1_ID));
+		menuSprites.push_back(sprites->Get(SPRITE_MENU_PICKED_PLAYER2_ID));
+	}
+}
+void IntroScene::SwitchMenu()
+{
+	indexMenu++;
+	if(indexMenu >= menuSprites.size())
+		indexMenu = 0;
+}
+void IntroScene::ShowKoopas()
+{
+	if (koopas[0]->x > -30 && koopas[0]->isEnable == true)
+	{
+		// Mario bắt đầu chạy ngay khi rùa xuất hiện
+		mario->SetAutoWalk(1, MARIO_WALKING_SPEED);
+		ShowMenu();
+		ShowBush();
+	}
+	if (showingKoopas == true)
+	{
+		for (size_t i = 0; i < koopas.size(); i++)
 		{
-			if (!dynamic_cast<KoopaTroopa*>(obj))
-				continue;
-			if (!dynamic_cast<FirePlantBullet*>(obj) && !dynamic_cast<Item*>(obj)
-				&& !dynamic_cast<InvisibleBrick*>(obj))
-				coObjects.push_back(obj);
+			koopas[i]->isEnable = true;
 		}
 	}
-	else if (dynamic_cast<FireBall*>(curObj))
+	if (koopas[0]->x > 32 && koopas[0]->isEnable == true)
 	{
-		for (auto obj : objects)
+		showingBush = false;
+	}
+}
+
+
+void IntroScene::HandleBehaviourOfMario()
+{
+	// Chuyển trạng thái khi bị Shell đụng đầu thành nhìn lên trời
+	if (mario->isHitted == true)
+	{
+		if (changeAniTime == 0)
+			changeAniTime = GetTickCount();
+		else if (GetTickCount() - changeAniTime > CHANGE_STATE_TIME)
 		{
-			if (dynamic_cast<Enemy*>(obj))
-			{
-				if (dynamic_cast<Enemy*>(obj)->IsInactive())
-					continue;
-				else
-					coObjects.push_back(obj);
-			}
-			if (!dynamic_cast<FirePlantBullet*>(obj) && !dynamic_cast<Item*>(obj)
-				&& !dynamic_cast<InvisibleBrick*>(obj))
-				coObjects.push_back(obj);
+			mario->isHitted = false;
+			mario->isLookUp = true;
+			changeAniTime = GetTickCount();
 		}
 	}
-	else if (dynamic_cast<Mario*>(curObj))
+	if (mario->isLookUp == true)
 	{
-		for (auto obj : objects)
+		if (GetTickCount() - changeAniTime > 800)
 		{
-			if (dynamic_cast<Ground*>(obj) || dynamic_cast<Block*>(obj)
-				|| dynamic_cast<Brick*>(obj) || dynamic_cast<Item*>(obj) ||
-				dynamic_cast<Pipe*>(obj))
-				coObjects.push_back(obj);
-			else
-			{
-				if (dynamic_cast<FirePlantBullet*>(obj) && obj->IsEnable() == true)
-					coObjects.push_back(obj);
-				else if ((dynamic_cast<Enemy*>(obj))
-					&& obj->isEnable == true)
-					coObjects.push_back(obj);
-			}
+			mario->SetAutoJump(-MARIO_SUPER_JUMP_SPEED);
+			mario->isLookUp = false;
+		}
+	}
+	if (mario->form == MARIO_RACCOON_FORM &&
+		mario->IsInGround() == false)
+	{
+		if (mario->x > goomba->x && !goomba->isDead)
+		{
+			if (mario->vy > SPEED_TO_AUTOFLOATING)
+				mario->Float();
+			goomba->SetState(GOOMBA_STATE_WALKING);
+			mario->vx = -0.04f;
+		}
+	}
+	// Bật cờ cho sự kiện Đàn Koopas xuất hiện
+	if (koopa->x > SCREEN_HEIGHT && marioPickShell == false
+		&& mario->form == MARIO_SMALL_FORM && koopa->isEnable == true)
+	{
+		if (mario->x < SCREEN_HEIGHT - MARIO_SMALL_BBOX_WIDTH - BUSH2_BBOX_WIDTH / 2)
+		{
+			mario->SetAutoWalk(1, 0.08f);
+			mario->powerMelterStack = POWER_MELTER_FULL;
+		}
+		else
+		{
+			/// <summary>
+			///Chỗ này phải cập nhật lại brake vì brake lỗi 
+			/// không nhạy cả khi sử dụng phím và tự chỉnh biến cờ
+			/// </summary>
+			mario->powerMelterStack = 0;
+			mario->SetAutoWalk(-1, -0.08f);
+			koopa->isEnable = false;
+			showingKoopas = true;
+		}
+	}
+	if (canJumpToCounter == true)
+	{
+		if (mario->x - MARIO_BIG_BBOX_WIDTH < koopa->x
+			&& koopa->x < SCREEN_HEIGHT / 2)
+		{
+			mario->isAutoWalk = false;
+			mario->vx = -0.02f;
+			mario->SetDirect(true);
+			mario->SetAutoJump(-MARIO_JUMP_SPEED_Y);
+			canJumpToCounter = false;
+			marioPickShell = true;
+			mario->isPressedJ = true;
+		}
+	}
+	// Sự kiện Mario cầm mai rùa để đẩy
+	if (marioPickShell == true)
+	{
+		if (mario->vy == 0)
+		{
+			mario->SetAutoWalk(1, 0.1f);
+			mario->isPressedJ = true;
+		}
+		if (mario->x > SCREEN_HEIGHT / 2 - MARIO_BIG_BBOX_WIDTH)
+		{
+			mario->SetState(MARIO_STATE_IDLE);
+			mario->isPressedJ = false;
+			lugi->SetAutoWalk(1, 0.1f);
+		}
+		if (koopa->x > SCREEN_HEIGHT)
+		{
+			koopa->x = 16;
+			mario->turnToSmallForm = true;
+			marioPickShell = false;
 		}
 	}
 }
 
-void PlayScene::Render()
+
+void IntroScene::HandleBehaviourOfLugi()
 {
-	Game* game = Game::GetInstance();
-
-	int screenWidth = game->GetScreenWidth();
-	int screenHeight = game->GetScreenHeight();
-	float cam_x = game->GetCamX();
-	float cam_y = game->GetCamY();
-
-
-	this->map->Render(cam_x, cam_y, screenWidth, screenHeight);
-	for (auto obj : listMovingObjectsToRender)
+	// Bật cờ cho lugi cầm mai rùa
+	if (goomba->isDead && goomba->isEnable == true)
 	{
-		if (obj->IsEnable() == false)
-			continue;
-		obj->Render();
+		if (mario->vx < 0)
+		{
+			//mario->canBrake = true;
+			mario->SetAutoWalk(1, 0.06f);
+		}
+		lugi->SetPosition(SCREEN_HEIGHT, 160);
+		lugi->SetAutoWalk(-1, 0.0f);
+		lugi->isPressedJ = true;
 	}
 
-	for (auto obj : listStaticObjectsToRender)
+	// Sự kiện Lugi cầm mai rùa
+	if (lugi->IsPickingShell())
 	{
-		if (obj->IsEnable() == false)
-			continue;
-
-		obj->Render();
+		lugi->SetAutoWalk(-1, -0.08f);
+		mario->SetState(MARIO_STATE_IDLE);
+		if (lugi->x < SCREEN_WIDTH - BUSH2_BBOX_WIDTH - MARIO_BIG_BBOX_WIDTH)
+		{
+			lugi->isPressedJ = false;
+			lugi->SetState(MARIO_STATE_IDLE);
+			mario->SetAutoWalk(-1, -0.1f);
+			canJumpToCounter = true;
+		}
 	}
-	player->Render();
-	hud->Render();
 }
-void PlayScene::UpdatePlayer(DWORD dt)
-{
-	if (player->state == MARIO_STATE_DEATH)
-	{
-		isGameOver = true;
-	}
 
-	vector<LPGAMEOBJECT> coObjects;
-	GetColliableObjects(player, coObjects);
-	player->Update(dt, &coObjects);
+
+void IntroScene::Render()
+{
+	backGround->Render();
+	if (showingMenu == true)
+		menuSprites.at(indexMenu)->Draw(-1, 16 + BACKGROUND_BBOX_WIDTH/2 - MENU_BBOX_WIDTH /2,
+			SCREEN_WIDTH / 2);
+	for (size_t i = 1; i < objects.size(); i++)
+	{
+		if (objects[i]->x >= 16 && objects[i]->x < 258)
+		{
+			if (objects[i]->isEnable == true)
+				objects[i]->Render();
+		}
+	
+	}
+	if (showingBush == true)
+	{
+		bushsSprite.at(1)->Draw(-1, 209, 101);
+	}
+}
+
+Mario* IntroScene::GetHoldingPlayer()
+{
+	if (lugi->IsPickingShell())
+		return lugi;
+	if (mario->IsPickingShell())
+		return mario;
+	DebugOut(L"\nNo one holding shell!, it's a bug here");
+	return NULL;
 }
 /*
 	Unload current scene
 */
-void PlayScene::Unload()
+void IntroScene::Unload()
 {
 	for (unsigned int i = 0; i < objects.size(); i++)
 		delete objects[i];
 
 	objects.clear();
-	player = NULL;
 
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
 }
 
-void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
+void IntroSceneKeyHandler::OnKeyDown(int KeyCode)
 {
-	//DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);
-}
-void PlayScenceKeyHandler::OnKeyUp(int KeyCode)
-{
-
-}
-void PlayScenceKeyHandler::KeyState(BYTE* states)
-{
-
-}
-//Bật Camera khi Mario bay 
-void PlayScene::TurnCamY(float _playerY, bool isFlying, int ScreenHeight, int MapHeight)
-{
-};
-void PlayScene::GetObjectFromGrid()
-{
-	listUnits.clear();
-	listStaticObjectsToRender.clear();
-	listMovingObjectsToRender.clear();
-	/*listPipeToRender.clear();*/
-	objects.clear();
-
-	Game* game = Game::GetInstance();
-	float cam_x, cam_y;
-
-	cam_x = game->GetCamX();
-	cam_y = game->GetCamY();
-
-	grid->Get(cam_x, cam_y, listUnits);
-
-	for (UINT i = 0; i < listUnits.size(); i++)
+	IntroScene* scene = (IntroScene*)this->scence;
+	switch (KeyCode)
 	{
-		LPGAMEOBJECT obj = listUnits[i]->GetObj();
-		objects.push_back(obj);
-
-		if (dynamic_cast<Block*>(obj) || dynamic_cast<Ground*>(obj) ||
-			dynamic_cast<InvisibleBrick*>(obj))
-			continue;
-		else if (dynamic_cast<Brick*>(obj) || dynamic_cast<Pipe*>(obj))
-			listStaticObjectsToRender.push_back(obj);
-		/*	else if (dynamic_cast<Pipe*>(obj))
-				listPipeToRender.push_back(obj);*/
-		else if (dynamic_cast<Enemy*>(obj) || dynamic_cast<FirePlantBullet*>(obj) ||
-			dynamic_cast<FireBall*>(obj))
-			listMovingObjectsToRender.push_back(obj);
-		else if (dynamic_cast<Item*>(obj))
-			listMovingObjectsToRender.push_back(obj);
+	case DIK_U:
+		scene->SwitchMenu();
+		break;
 	}
+	DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);
 }
-void PlayScene::UpdateGrid()
+void IntroSceneKeyHandler::OnKeyUp(int KeyCode)
 {
-	for (unsigned int i = 0; i < listUnits.size(); i++)
-	{
-		LPGAMEOBJECT obj = listUnits[i]->GetObj();
 
-		if (obj->IsEnable() == false)
-			continue;
-		float newPos_x, newPos_y;
-		obj->GetPosition(newPos_x, newPos_y);
-		listUnits[i]->Move(newPos_x, newPos_y);
-	}
 }
-bool PlayScene::IsInViewport(LPGAMEOBJECT object)
+void IntroSceneKeyHandler::KeyState(BYTE * states)
 {
-	Game* game = Game::GetInstance();
-	float cam_x, cam_y;
-	cam_x = game->GetCamX();
-	cam_y = game->GetCamY();
-	if (cam_x == 0 && cam_y == 0)
-		UpdateCameraPosition();
-	float obj_x, obj_y;
-	object->GetPosition(obj_x, obj_y);
-
-	return obj_x >= cam_x && obj_x < cam_x + SCREEN_WIDTH
-		&& obj_y >= cam_y && obj_y < cam_y + SCREEN_HEIGHT;
-};
-
-// Inactive các quái khi ra khỏi Viewport
-void PlayScene::SetInactivation()
-{
-	Game* game = Game::GetInstance();
-
-	for (auto object : objects)
-	{
-		if (!IsInViewport(object))
-		{
-			if (dynamic_cast<Enemy*>(object))
-			{
-				dynamic_cast<Enemy*>(object)->Inactive();
-				dynamic_cast<Enemy*>(object)->AbleToActive();
-			}
-			/*	else if (dynamic_cast<Item*>(object) && object->IsEnable() == true)
-				{
-					dynamic_cast<Item*>(object)->SetEnable(false);
-				}*/
-		}
-		else
-		{
-			if (dynamic_cast<Enemy*>(object))
-			{
-				dynamic_cast<Enemy*>(object)->isAbleToActive = false;
-			}
-		}
-	};
+		// disable control key when Mario die 
 }
-
-
-// Active các đối tượng quái khi entryPoint gặp Viewport
-void PlayScene::ActiveEnemiesInViewport()
-{
-	Game* game = Game::GetInstance();
-	for (auto obj : objects)
-	{
-		if (dynamic_cast<Enemy*>(obj))
-		{
-			Enemy* enemy = dynamic_cast<Enemy*>(obj);
-			if (enemy->IsInactive() && enemy->IsEnable())
-			{
-				if (IsInViewport(enemy) == true
-					&& enemy->isAbleToActive == true)
-					enemy->Active();
-			}
-		}
-	}
-}
-

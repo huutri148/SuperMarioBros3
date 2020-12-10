@@ -8,7 +8,7 @@
 
 class Mario : public GameObject
 {
-	int form = 0;
+
 	int untouchable = 0;
 
 	// Thời gian bắt đầu các trạng thái
@@ -22,8 +22,9 @@ class Mario : public GameObject
 	DWORD transformTime = 0;
 	DWORD turnRaccoonTime = 0;
 	DWORD teleportTime = 0;
+	DWORD kickTime = 0;
 
-	int powerMelterStack = 0;
+	
 	int indexFireBall = 0;
 	int score = 0;
 	int money = 0;
@@ -38,8 +39,8 @@ class Mario : public GameObject
 	bool isKickShell = false;
 	bool isFlying = false;
 	bool isFloating = false;
-	bool canBrake = false;
-	bool isPickingUp = false;
+	
+
 	bool isTransform = false;
 	bool isTurnRaccoon = false;
 	bool isTeleport = false;// bật cờ khi ở cổng Tele
@@ -49,12 +50,20 @@ class Mario : public GameObject
 	
 public:
 	vector<int> card;
+	int form = 0;
 	bool isInTeleport = false;
 	bool isInExtraMap = false;
+	bool isAutoWalk = false;
 	bool turnFriction;
 	bool isPressedJ;
 	bool isPressS;
+	bool isPickingUp = false;
+	bool turnToSmallForm = false;
 	bool isSwingTail = false;
+	bool isHitted = false;
+	bool isLookUp = false;
+	bool canBrake = false;
+	int powerMelterStack = 0;
 	bool GetisPickUp() { return isPickingUp; }
 	bool IsFlying();
 	bool IsFloating();
@@ -63,6 +72,10 @@ public:
 	{
 		return isTransform;
 	};
+	bool IsPickingShell()
+	{
+		return isPickingUp;
+	}
 	
 	Mario();
 
@@ -78,8 +91,8 @@ public:
 	void SetState(int state);
 	void SetLevel(int l) { form = l; }
 	void SetDirect(bool nx);// Set hướng di chuyển cho mario
-	void SetAutoWalk();
-
+	void SetAutoWalk(int nx, float vx) { this->nx = nx; this->vx = vx; this->isAutoWalk = true; };
+	void SetAutoJump(float vy) { this->vy = vy; isInGround = false;}
 
 
 	int GetWidth();
@@ -124,6 +137,8 @@ public:
 	void PickUp();
 	bool Brake();
 	void UpdateStageOfTailAttack();
+	
+
 
 	void GainMoney(int pMoney) { money += pMoney; };
 	void GainPoint(int pPoint) { score += pPoint; };

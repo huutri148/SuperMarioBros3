@@ -86,7 +86,7 @@ void Mushroom::SetState(int _state)
 		vx = 0;
 		break;
 	case MUSHROOM_STATE_WALKING:
-		vx = nx * MUSHROOM_SPEED_X;
+		vx = -nx * MUSHROOM_SPEED_X;
 		break;
 	}
 }

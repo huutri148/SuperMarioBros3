@@ -11,6 +11,12 @@ class RaccoonLeaf :public Item
 public:
 	virtual void Render();
 	RaccoonLeaf();
+	RaccoonLeaf(float x, float y) { 
+		this->x = x; 
+		this->y = y;
+		this->SetState(RACCOONLEAF_STATE_APPEARANCE);
+		this->isEnable = false;
+	}
 	virtual void Appear(float x, float y);
 	virtual void Update(DWORD dt, 
 		vector<LPGAMEOBJECT>* coObjects);

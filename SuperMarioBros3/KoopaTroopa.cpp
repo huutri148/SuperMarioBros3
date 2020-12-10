@@ -29,29 +29,41 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		Game* game = Game::GetInstance();
 		LPSCENE scence = game->GetCurrentScene();
-		Mario* mario = ((PlayScene*)scence)->GetPlayer();
-		if (mario->GetisPickUp())
+		Mario* mario = NULL;
+		if(dynamic_cast<PlayScene*>(scence))
+			mario = ((PlayScene*)scence)->GetPlayer();
+		if (dynamic_cast<IntroScene*>(scence))
+			mario = ((IntroScene*)scence)->GetHoldingPlayer();
+		if (mario != NULL)
 		{
-			if (mario->nx > 0)
+			if (mario->GetisPickUp())
 			{
-				this->x = mario->x + mario->GetWidth() - 
+				if (mario->nx > 0)
+				{
+					this->x = mario->x + mario->GetWidth() -
+						KOOPATROOPA_DEFLECT_HOLDING_X;
+					if(mario->form == MARIO_RACCOON_FORM)
+					this->x = mario->x + RACCOONTAIL_BBOX_WIDTH+ mario->GetWidth() -
+							KOOPATROOPA_DEFLECT_HOLDING_X;
+				}
+				else
+					this->x = mario->x - KOOPATROOPA_BBOX_WIDTH +
 					KOOPATROOPA_DEFLECT_HOLDING_X;
+				if (mario->GetHeight() > MARIO_SMALL_BBOX_HEIGHT)
+					this->y = mario->y + (float)mario->GetHeight() *
+					KOOPATROOPA_DEFLECT_HOLDING_Y;
+				else
+					this->y = mario->y;
+				vx = 0;
+				vy = 0;
 			}
-			else
-				this->x = mario->x - KOOPATROOPA_BBOX_WIDTH + 
-				KOOPATROOPA_DEFLECT_HOLDING_X;
-			if (mario->GetHeight() > MARIO_SMALL_BBOX_HEIGHT)
-				this->y = mario->y +  (float) mario->GetHeight()* 
-				KOOPATROOPA_DEFLECT_HOLDING_Y;
-			else
-				this->y = mario->y;
-			vy = 0;
-		}
-		else // nếu người chơi nhả nút giữ sẽ trở về Hiding
-		{
-			isPickedUp = false;
-			this->SetState(KOOPATROOPA_STATE_HIDING);
-			IsKicked(mario->nx);
+			if(mario->isPressedJ == false) // nếu người chơi nhả nút giữ sẽ trở về Hiding
+			{
+				isPickedUp = false;
+				mario->isPickingUp = false;
+				this->SetState(KOOPATROOPA_STATE_HIDING);
+				IsKicked(mario->nx);
+			}
 		}
 	}
 	vector<LPCOLLISIONEVENT> coEvents;
@@ -87,33 +99,45 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			nx, ny);
 		x += min_tx * dx + nx * 0.4f;
 		y += min_ty * dy + ny * 0.4f;
-		if (ny != 0)
-		{
-			vy = 0;
-			if (hidingTime != 0 && !isBumped)
-				vx = 0;
-		}
+	
 		
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
+			if (ny != 0 && !dynamic_cast<Mario*>(e->obj))
+			{
+				vy = 0;
+				if (hidingTime != 0 && !isBumped || forceShell == true)
+					vx = 0;
+			}
 			//Xử lí khi Koopa trong trạng thái bị đá và cầm
 			if (dynamic_cast<Enemy*>(e->obj))
 			{
 				Enemy* enemy = dynamic_cast<Enemy*>(e->obj);
-				if (isPickedUp == true || isBumped == true)
+				if (enemy->isDead == false)
 				{
-					enemy->SetBeingSkilled(this->nx);
-					enemy->SetDead();
-										
-					if (isPickedUp == true)
+					if (isPickedUp == true || isBumped == true)
 					{
-						this->SetState(KOOPATROOPA_STATE_DEATH);
+						enemy->SetBeingSkilled(this->nx);
+						enemy->SetDead();
+
+						if (isPickedUp == true)
+						{
+							this->SetState(KOOPATROOPA_STATE_DEATH);
+						}
+
 					}
-					
+					else
+					{
+						x += dx;
+					}
 				}
 				else
 				{
+					if (e->ny > 0)
+					{
+						y -= min_ty * dy + ny * 0.4f;
+					}					
 					x += dx;
 				}
 			}
@@ -153,6 +177,19 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				{
 					x += dx;
 					y += dy;
+				}
+			}
+			else if (dynamic_cast<Item*>(e->obj))
+			{
+				x += dx;
+				y += dy;
+			}
+			else if (dynamic_cast<Mario*>(e->obj))
+			{
+				if (e->ny > 0)
+				{
+					vy = 0;
+					y -= min_ty * dy + ny * 0.4f;
 				}
 			}
 		}
@@ -244,6 +281,7 @@ void KoopaTroopa::IsKicked(int n)
 {
 	this->nx = n;
 	isBumped = true;
+	forceShell = false;
 	vx = nx *KOOPATROOPA_BUMP_SPEED;
 }
 bool KoopaTroopa::IsHiding()
@@ -297,39 +335,43 @@ void KoopaTroopa::HandleTimeSwitchState()
 		isEnable = true;
 		return;
 	}
-	// Ở trạng thái hiding chuyển sang walking
-	if (GetTickCount64() - turnWalkingTime >
-		KOOPATROOPA_TURN_WALKING_TIME &&
-		this->state == KOOPATROOPA_STATE_EXIT_SHELL)
-	{			
-		this->SetState(KOOPATROOPA_STATE_WALKING);
-		this->y -= KOOPATROOPA_BBOX_HEIGHT -
-			KOOPATROOPA_BBOX_HEIGHT_HIDING;
-
-		// Nếu mario còn giữ sẽ đẩy BoundingBox ra một chút
-		if (isPickedUp == true)
+	if (forceShell == false)
+	{
+		// Ở trạng thái hiding chuyển sang walking
+		if (GetTickCount64() - turnWalkingTime >
+			KOOPATROOPA_TURN_WALKING_TIME &&
+			this->state == KOOPATROOPA_STATE_EXIT_SHELL)
 		{
-			this->x -= nx * KOOPATROOPA_DEFLECT_HOLDING_X;
-			isPickedUp = false;
+			this->SetState(KOOPATROOPA_STATE_WALKING);
+			this->y -= KOOPATROOPA_BBOX_HEIGHT -
+				KOOPATROOPA_BBOX_HEIGHT_HIDING;
+
+			// Nếu mario còn giữ sẽ đẩy BoundingBox ra một chút
+			if (isPickedUp == true)
+			{
+				this->x -= nx * KOOPATROOPA_DEFLECT_HOLDING_X;
+				isPickedUp = false;
+			}
+			turnWalkingTime = 0;
 		}
-		turnWalkingTime = 0;
+
+		// Chuyển sang Exit shell 
+		if (GetTickCount64() - hidingTime >
+			KOOPATROOPA_EXIT_SHELL_TIME && !isBumped &&
+			this->state == KOOPATROOPA_STATE_HIDING)
+		{
+			this->SetState(KOOPATROOPA_STATE_EXIT_SHELL);
+			hidingTime = 0;
+			turnWalkingTime = GetTickCount();
+		}
+		// Khi vận tốc về 0 sẽ tự động tính thời gian hiding
+		if (this->state == KOOPATROOPA_STATE_HIDING
+			&& vx == 0 && hidingTime == 0 && forceShell == false)
+		{
+			hidingTime = GetTickCount();
+			isBumped = false;
+		}
 	}
 
-	// Chuyển sang Exit shell 
-	if (GetTickCount64() - hidingTime >
-		KOOPATROOPA_EXIT_SHELL_TIME && !isBumped &&
-		this->state == KOOPATROOPA_STATE_HIDING)
-	{
-		this->SetState(KOOPATROOPA_STATE_EXIT_SHELL);
-		hidingTime = 0;
-		turnWalkingTime = GetTickCount();
-	}
-	// Khi vận tốc về 0 sẽ tự động tính thời gian hiding
-	if (this->state == KOOPATROOPA_STATE_HIDING 
-		&& vx == 0 && hidingTime == 0)
-	{
-		hidingTime = GetTickCount();
-		isBumped = false;
-	}
 
 }

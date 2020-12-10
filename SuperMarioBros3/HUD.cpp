@@ -101,10 +101,10 @@ void Hud::Render()
 		filledPowerMelterSprite[i]->Draw(-1, x, y,255,
 			80.0f + FONT_BBOX_WIDTH * i,-73.0f);
 	}
-	for (int i = 0; i < cardSprite.size(); i++)
+	for (unsigned int i = 0; i < cardSprite.size(); i++)
 	{
 		this->cardSprite[i]->Draw(-1, x, y, 255,
-			195 + 24* i, -79);
+			195 + 24.0f* i, -79.0f);
 	}
 }
 void Hud::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
