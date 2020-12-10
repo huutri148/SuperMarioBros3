@@ -364,6 +364,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					y += dy;*/
 				if(e->ny > 0)
 					y -= min_ty * dy + ney * 0.4f;
+				y += dy;
 			}
 			else if (dynamic_cast<Pipe*>(e->obj))
 			{

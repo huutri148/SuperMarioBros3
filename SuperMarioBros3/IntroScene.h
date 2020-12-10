@@ -13,7 +13,7 @@ class IntroScene :public Scene
 	vector<LPGAMEOBJECT> koopas;
 	vector<LPSPRITE> bushsSprite;
 	vector<LPSPRITE> menuSprites;
-	int indexMenu = 0;
+	unsigned int indexMenu = 0;
 	Goomba* goomba;
 	Enemy* koopa;
 	bool canJumpToCounter = false;

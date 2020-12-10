@@ -9,8 +9,8 @@ class FirePiranhaPlant :public Enemy
 	bool isOutOfPipe;
 	int type;
 	bool isShooted = false;
-	
 	bool shootInGround;
+	float lastStateY;
 	virtual void HandleTimeSwitchState();
 
 	void GetDirect();

@@ -5,6 +5,7 @@ class PiranhaPlant :public Enemy
 {
 	DWORD switchTime;
 	bool isOutOfPipe;
+	float lastStateY;
 	int type;
 	virtual void HandleTimeSwitchState();
 public:

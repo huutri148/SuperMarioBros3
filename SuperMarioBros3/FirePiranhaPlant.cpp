@@ -37,6 +37,14 @@ void FirePiranhaPlant::Update(DWORD dt,
 	{
 		x += dx;
 		y += dy;
+		if (lastStateY - y > 48)
+		{
+			y = lastStateY - 48;
+			lastStateY = y;
+			isOutOfPipe = true;
+			this->SetState(FIREPIRANHAPLANT_STATE_SHOOTING);
+			switchTime = GetTickCount();
+		}
 	}
 	else
 	{
@@ -57,11 +65,13 @@ void FirePiranhaPlant::Update(DWORD dt,
 					switchTime = GetTickCount();
 					vy = 0;
 					this->y = y0 + e->t * dy + e->ny * 0.4f;
+					lastStateY = y;
 				}
 
 			}
-			else if (dynamic_cast<InvisibleBrick*>(e->obj))
+		/*	else if (dynamic_cast<InvisibleBrick*>(e->obj))
 			{
+				DebugOut(L"\n[Fire Piranha] AAAAAAAA");
 				if (e->ny != 0)
 				{
 					isOutOfPipe = true;
@@ -69,7 +79,7 @@ void FirePiranhaPlant::Update(DWORD dt,
 					switchTime = GetTickCount();
 					this->y = y0 + e->t * dy + e->ny * 0.4f;
 				}
-			}
+			}*/
 		}
 	}
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
