@@ -120,12 +120,14 @@ void IntroScene::_ParseSection_OBJECTS(string line)
 		mario = (Mario*)obj;
 		mario->SetDirect(false);
 		mario->SetLevel(MARIO_BIG_FORM);
+		mario->isInIntroScene = true;
 		mario->isEnable = false;
 		DebugOut(L"[INFO] Player1 object created!\n");
 		break;
 	case OBJECT_TYPE_LUGI:
 		obj = new Mario();
 		lugi = (Mario*)obj;	
+		lugi->isInIntroScene = true;
 		lugi->SetLevel(MARIO_BIG_FORM);
 		lugi->isEnable = false;
 		DebugOut(L"[INFO] Player2 object created!\n");

@@ -68,6 +68,7 @@ void KoopaParaTroopa::Update(DWORD dt,
 					vx = -vx;
 				}
 			}
+
 		}
 	}
 
@@ -78,8 +79,8 @@ void KoopaParaTroopa::Render()
 	if (state != PARATROOPA_STATE_INACTIVE)
 	{
 		int ani = PARATROOPA_ANI_FLAPPING;
-		if (state == PARATROOPA_STATE_DEATH || isDead == true)
-			ani = PARATROOPA_ANI_DEATH;
+	/*	if (state == PARATROOPA_STATE_DEATH || isDead == true)
+			ani = PARATROOPA_ANI_DEATH;*/
 		animation_set->at(ani)->Render(nx, ny, round(x), round(y));
 	}
 }

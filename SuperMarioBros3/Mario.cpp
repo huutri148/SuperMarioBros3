@@ -184,7 +184,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						vy = -MARIO_JUMP_DEFLECT_SPEED;
 						if (vx > 0)
 							vx = MARIO_WALK_DEFELCT_SPEED;
-						else
+						else if(vx < 0)
 							vx = -MARIO_WALK_DEFELCT_SPEED;
 						isInGround = true;
 					}
@@ -287,9 +287,24 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				else if (e->ny > 0)
 				{
 					y -= min_ty * dy + ney * 0.4f;
-					enemy->vy = -0.2f;
-					enemy->vx = -0.05f;
-					isHitted = true;
+					if (isInIntroScene == true)
+					{
+						enemy->vy = -0.2f;
+						enemy->vx = -0.05f;
+						isHitted = true;
+					}
+					else
+					{
+						if (form > MARIO_SMALL_FORM)
+						{
+							//form -= 1;
+							//StartUntouchable();
+							DecreaseForm();
+						}
+						else
+							SetState(MARIO_STATE_DEATH);
+						enemy->ChangeDirect();
+					}
 				}
 			}
 			else if (dynamic_cast<FirePlantBullet*>(e->obj))
@@ -1201,6 +1216,7 @@ void Mario::DecreaseForm()
 		if (form == MARIO_BIG_FORM)
 		{
 			isTransform = true;
+			x += nx * (MARIO_BIG_BBOX_WIDTH);
 			transformTime = GetTickCount();
 		}
 	}
@@ -1208,6 +1224,7 @@ void Mario::DecreaseForm()
 	{
 		form = MARIO_BIG_FORM;
 		isTransform = true;
+		//x += nx * (MARIO_BIG_BBOX_WIDTH - 6);
 		transformTime = GetTickCount();
 	}
 }

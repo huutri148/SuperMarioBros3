@@ -64,6 +64,7 @@ public:
 	bool isLookUp = false;
 	bool canBrake = false;
 	int powerMelterStack = 0;
+	bool isInIntroScene = false;
 	bool GetisPickUp() { return isPickingUp; }
 	bool IsFlying();
 	bool IsFloating();
