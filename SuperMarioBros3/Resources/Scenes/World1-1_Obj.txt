@@ -6,7 +6,7 @@
 20	Resources\textures\misc.png	166	185	255
 30	Resources\Map\map1-1_bank.png	255	255	255
 40	Resources\textures\tiles.png	255	127	93
-50	Resources\textures\tiles.png	127	255	142
+50	Resources\textures\tiles.png	224	163	216
 70	Resources\textures\enemies.png	68	145	190
 80	Resources\textures\HUD&Font.png	0	224	142
 90	Resources\textures\GoalRoulette.png	0	183	239
@@ -482,6 +482,8 @@
 50068	332	375	342	391	90
 #CONGRATULATE
 50069	4	348	252	421	90
+#==========BROKEN-BRICK EFFECT=============
+50070	1088	102	1097	111	50
 
 
 
@@ -863,7 +865,7 @@
 #6 = Pipe,5 = block,7 = Invisible Brick
 #8 = PiranhaPlant,9 = Coin,10 = FirePiranhaPlant,11 ParaGoomba
 # MARIO
-0	2280.0	100	1
+0	16.0	400	1
 #PiranhaPlant
 8	1816	398	5	0
 #Fire PiranhaPlant

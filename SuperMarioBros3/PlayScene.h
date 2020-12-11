@@ -28,6 +28,7 @@
 #include"HitEffect.h"
 #include"Portal.h"
 #include"RaccoonTail.h"
+#include"BrokenBrickEffect.h"
 class PlayScene : public Scene
 {
 protected:

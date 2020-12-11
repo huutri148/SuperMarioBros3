@@ -38,7 +38,22 @@ void Brick::SetEmpty()
 	}
 	else if(type == BRICK_BREAKABLE_TYPE)
 	{
-		this->SetState(BRICK_STATE_BREAK);
+		this->Broken();
+	}
+}
+void Brick::Broken()
+{
+	this->SetState(BRICK_STATE_BREAK);
+	Game* game = Game::GetInstance();
+	PlayScene* scene ;
+	if (dynamic_cast<PlayScene*>(game->GetCurrentScene()))
+	{
+		scene = (PlayScene*)(game->GetCurrentScene());
+		Grid* grid = scene->GetGrid();
+		if (grid == NULL)
+			return;
+		BrokenBrickEffect* brokenBrick = new BrokenBrickEffect(x, y);
+		Unit* unit = new Unit(grid, brokenBrick, x, y);
 	}
 }
 void Brick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)

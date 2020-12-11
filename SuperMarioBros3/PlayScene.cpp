@@ -842,7 +842,7 @@ void PlayScene::GetObjectFromGrid()
 			dynamic_cast<FireBall*>(obj))
 			listMovingObjectsToRender.push_back(obj);
 		else if (dynamic_cast<Item*>(obj) || dynamic_cast<PointEffect*>(obj) ||
-			dynamic_cast<HitEffect*>(obj) )
+			dynamic_cast<HitEffect*>(obj) || dynamic_cast<BrokenBrickEffect*>(obj))
 			listMovingObjectsToRender.push_back(obj);
 	}
  }
