@@ -6,24 +6,15 @@ void PiranhaPlant::GetBoundingBox(float& left, float& top,
 	float& right, float& bottom,
 	bool isEnable)
 {
-			if (state != PIRANHAPLANT_STATE_DEATH)
-		{
-			left = x;
-			top = y;
-			right = x + PIRANHAPLANT_BBOX_WIDTH;
-			bottom = y + PIRANHAPLANT_BBOX_HEIGHT;
-		}
-		else
-		{
-			left = x;
-			top = y;
-			right = x + PIRANHAPLANT_BBOX_DEATH_WIDTH;
-			bottom = y + PIRANHAPLANT_BBOX_DEATH_HEIGHT;
-		}
+	left = x;
+	top = y;
+	right = x + PIRANHAPLANT_BBOX_WIDTH;
+	bottom = y + PIRANHAPLANT_BBOX_HEIGHT;
 }
 void PiranhaPlant::Update(DWORD dt,
 	vector<LPGAMEOBJECT>* coObjects)
 {
+
 	// Nếu Mario ở trên ống sẽ không Plant sẽ không lao ra
 	PlayScene* playscene = ((PlayScene*)Game::GetInstance()->GetCurrentScene());
 	Mario* mario = playscene->GetPlayer();
@@ -36,7 +27,7 @@ void PiranhaPlant::Update(DWORD dt,
 	HandleTimeSwitchState();
 	if (state == PIRANHAPLANT_STATE_INACTIVE)
 		return;
-
+	//DebugOut(L"\ny: %f", y);
 	Enemy::Update(dt, coObjects);
 	//if (this->state != PIRANHAPLANT_STATE_DEATH)
 	//	vy += dt * GOOMBA_GRAVITY;
@@ -50,6 +41,14 @@ void PiranhaPlant::Update(DWORD dt,
 	{
 		x += dx;
 		y += dy;
+		if (lastStateY - y > 32)
+		{
+			y = lastStateY - 32;
+			lastStateY = y;
+			isOutOfPipe = true;
+			this->SetState(PIRANHAPLANT_STATE_BITING);
+			switchTime = GetTickCount();
+		}
 	}
 	else
 	{
@@ -66,14 +65,16 @@ void PiranhaPlant::Update(DWORD dt,
 			{
 				if (e->ny != 0)
 				{
+					//DebugOut(L"\nAAAAAAAA");
 					isOutOfPipe = false;
 					this->SetState(PIRANHAPLANT_STATE_BITING);
 					switchTime = GetTickCount();
 					this->y = y0 + e->t * dy + e->ny * 0.4f;
+					lastStateY = y;
 				}
 				
 			}
-			if (dynamic_cast<InvisibleBrick*>(e->obj))
+			/*if (dynamic_cast<InvisibleBrick*>(e->obj))
 			{
 				if (e->ny != 0)
 				{
@@ -84,7 +85,7 @@ void PiranhaPlant::Update(DWORD dt,
 				}
 			
 				
-			}
+			}*/
 		}
 
 	}
@@ -115,6 +116,7 @@ void PiranhaPlant::Render()
 		}
 		animation_set->at(ani)->Render(-1,round( x),round( y));
 	}
+	//RenderBoundingBox();
 }
 PiranhaPlant::PiranhaPlant(float x, float y, int _type) :Enemy(x, y)
 {
@@ -146,14 +148,13 @@ void PiranhaPlant::SetState(int _state)
 	case PIRANHAPLANT_STATE_INACTIVE:
 		x = entryX;
 		y = entryY;
-		/*isEnable = false;*/
+	/*	isEnable = false;*/
 		break;
 	}
 }
 bool PiranhaPlant::IsDead()
 {
-	if (state == PIRANHAPLANT_STATE_DEATH ||
-		state == PIRANHAPLANT_STATE_INACTIVE)
+	if (isDead == true)
 	{
 		return true;
 	}
@@ -178,13 +179,14 @@ void PiranhaPlant::HandleTimeSwitchState()
 		&& switchTime != 0)
 	{
 		switchTime = 0;
-		isEnable = false;
+		this->SetState(PIRANHAPLANT_STATE_DARTING);
+	/*	isEnable = false;*/
 	}
 	if (state == PIRANHAPLANT_STATE_DEATH &&
 		GetTickCount() - deathTime > PIRANHAPLANT_INACTIVE_TIME
 		&& deathTime != 0)
 	{
-		this->SetState(PIRANHAPLANT_STATE_INACTIVE);
+		isEnable = false;
 		deathTime = 0;
 	}
 }

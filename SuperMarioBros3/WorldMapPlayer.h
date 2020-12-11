@@ -1,10 +1,14 @@
 #pragma once
 #include"GameObject.h"
 #include"WorldMapPanel.h"
+#include"WorldMapBush.h"
+
 class WorldMapPlayer : public GameObject
 {
-	WorldMapPanel* nearestClearPanel;
-	WorldMapPanel* currentPanel;
+	WorldMapPanel* nearestClearPanel = 0;
+	
+	
+	WorldMapPanel* nearestPanel;
 public:
 	virtual void Render();
 	virtual void GetBoundingBox(float& l, float& t, float& r, float& b, bool isEnable) {};
@@ -14,6 +18,7 @@ public:
 	void Up();
 	void Left();
 	void Right();
-
+	void FindNearestPanel();
+	WorldMapPanel* currentPanel;
 };
 

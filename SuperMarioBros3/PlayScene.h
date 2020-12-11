@@ -28,6 +28,7 @@
 #include"HitEffect.h"
 #include"Portal.h"
 #include"RaccoonTail.h"
+#include"BrokenBrickEffect.h"
 class PlayScene : public Scene
 {
 protected:
@@ -48,8 +49,8 @@ protected:
 	vector<LPGAMEOBJECT> listItems;
 	vector<LPGAMEOBJECT> listStaticObjectsToRender;
 	vector<LPGAMEOBJECT> listMovingObjectsToRender;
+	vector<LPGAMEOBJECT> listPipesToRender;
 
-	/*vector<LPGAMEOBJECT> listPipeToRender; */// Pipe phải vẽ đè lên plant
 
 
 	//LPFireBall fireball;

@@ -12,7 +12,7 @@ void FireBall::Render()
 			ani = FIREBALL_ANI_NORMAL;
 		else
 			ani = FIREBALL_ANI_EXPLODE;
-		animation_set->at(ani)->Render(-1, x, y);
+		animation_set->at(ani)->Render(-1, round(x), round(y));
 		//RenderBoundingBox();
 	}
 }
@@ -44,22 +44,22 @@ void FireBall :: Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		float min_tx, min_ty, nex = 0, ney;
 		FilterCollision(coEvents, coEventsResult, min_tx, min_ty, nex, ney);
-
+		x += min_tx * dx + nex * 0.4f;
+		y += min_ty * dy + ney * 0.4f;
 			// Collision logic 
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
 			if (dynamic_cast<Ground*>(e->obj))
 			{
-				if (e->ny != 0)
+				if (e->ny != 0 && nex == 0)
 				{
-					vy =0 - FIREBALL_SPEED_NY;
-					this->y +=  min_ty * this->dy + ney * 0.1f;
+					vy = - FIREBALL_SPEED_NY;
 				}
-				else 
+				if (e->nx != 0)
 				{
-					x += dx;
-					y += dy;
+					this->SetState(FIREBALL_STATE_EXPLODE);
+					explodeTime = GetTickCount();
 				}
 			}
 			else if (dynamic_cast<Enemy*>(e->obj))
@@ -71,15 +71,6 @@ void FireBall :: Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						dynamic_cast<Enemy*>(e->obj)->SetBeingSkilled(this->nx);
 							this->SetState(FIREBALL_STATE_EXPLODE);
 							explodeTime = GetTickCount();
-							Game* game = Game::GetInstance();
-							Grid* grid = ((PlayScene*)game->GetCurrentScene())->GetGrid();
-							PointEffect* effect = new PointEffect(x, y, POINT_TYPE_100);
-							Unit* unit = new Unit(grid, effect, x, y);
-					}
-					else
-					{
-						x += dx;
-						y += dy;
 					}
 			}
 			else if (dynamic_cast<Brick*>(e->obj))
@@ -90,8 +81,8 @@ void FireBall :: Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 			else
 			{
-				x += dx;
-				y += dy;
+				this->SetState(FIREBALL_STATE_EXPLODE);
+				explodeTime = GetTickCount();
 			}
 		}
 	}

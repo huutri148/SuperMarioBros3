@@ -488,6 +488,11 @@ void Game::_ParseSection_SCENES(string line)
 		scene = new PlayScene(id, path);
 		scenes[id] = scene;
 	}
+	else if (id == 0)
+	{
+		scene = new IntroScene(id, path);
+		scenes[id] = scene;
+	}
 
 }
 

@@ -68,6 +68,7 @@ void KoopaParaTroopa::Update(DWORD dt,
 					vx = -vx;
 				}
 			}
+
 		}
 	}
 
@@ -97,7 +98,7 @@ void KoopaParaTroopa::SetState(int state)
 		x = entryX;
 		y = entryY;
 		break;
-	case PARAGOOMBA_STATE_DEATH:
+	case PARATROOPA_STATE_DEATH:
 		vy = -GOOMBA_DIE_DEFLECT_SPEED_Y;
 		vx = nx * GOOMBA_DIE_DEFLECT_SPEED_X;
 		isDead = true;
@@ -118,12 +119,28 @@ bool KoopaParaTroopa::IsDead()
 void KoopaParaTroopa::SetBeingStromped()
 {
 	this->SetState(PARATROOPA_STATE_KOOPA);
+	Game* game = Game::GetInstance();
+	LPSCENE scene = game->GetCurrentScene();
+	if (dynamic_cast<PlayScene*>(scene))
+	{
+		Grid* grid = ((PlayScene*)game->GetCurrentScene())->GetGrid();
+		PointEffect* effect = new PointEffect(x, y, POINT_TYPE_100);
+		Unit* unit = new Unit(grid, effect, x, y);
+	}
 }
 void KoopaParaTroopa::SetBeingSkilled(int nx)
 {
 	this->nx = nx;
-	this->SetState(PARAGOOMBA_STATE_DEATH);
+	this->SetState(PARATROOPA_STATE_DEATH);
 	deathTime = GetTickCount();
+	Game* game = Game::GetInstance();
+	LPSCENE scene = game->GetCurrentScene();
+	if (dynamic_cast<PlayScene*>(scene))
+	{
+		Grid* grid = ((PlayScene*)game->GetCurrentScene())->GetGrid();
+		PointEffect* effect = new PointEffect(x, y, POINT_TYPE_200);
+		Unit* unit = new Unit(grid, effect, x, y);
+	}
 }
 void KoopaParaTroopa::HandleTimeSwitchState()
 {

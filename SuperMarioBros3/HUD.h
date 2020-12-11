@@ -12,6 +12,7 @@ class Hud : public GameObject
 
 	LPSPRITE hud1;
 	LPSPRITE hud2;
+	vector<LPSPRITE> cardSprite;
 	LPSPRITE playerSprite;
 	LPSPRITE lifeSprite;
 	vector<LPSPRITE> moneySprite;
@@ -28,6 +29,7 @@ class Hud : public GameObject
 	int world = 1;
 	int time = 0;
 	int powerMelterStack = 0;
+	vector<int> card;
 public:
 	Hud();
 	virtual void GetBoundingBox(float& left, float& top,

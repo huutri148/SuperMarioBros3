@@ -6,6 +6,7 @@
 #include "Block.h"
 #include <algorithm>
 
+
 void Goomba::GetBoundingBox(float& left, float& top, 
 	float& right, float& bottom,
 	bool isEnable)
@@ -128,9 +129,13 @@ void Goomba::SetBeingStromped()
 {
 	this->SetState(GOOMBA_STATE_BEING_STROMPED);
 	Game* game = Game::GetInstance();
-	Grid* grid = ((PlayScene*)game->GetCurrentScene())->GetGrid();
-	PointEffect* effect = new PointEffect(x, y, POINT_TYPE_100);
-	Unit* unit = new Unit(grid, effect, x, y);
+	LPSCENE scene = game->GetCurrentScene();
+	if (dynamic_cast<PlayScene*>(scene))
+	{
+		Grid* grid = ((PlayScene*)game->GetCurrentScene())->GetGrid();
+		PointEffect* effect = new PointEffect(x, y, POINT_TYPE_100);
+		Unit* unit = new Unit(grid, effect, x, y);
+	}
 	deathTime = GetTickCount();
 }
 void Goomba::SetBeingSkilled(int nx)

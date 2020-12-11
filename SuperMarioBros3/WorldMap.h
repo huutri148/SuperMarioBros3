@@ -14,7 +14,8 @@ protected:
 	Hud* hud = NULL;
 	Map* tileMap = NULL;
 	WorldMapPlayer* player;
-	vector<LPGAMEOBJECT> objects;
+	vector<LPGAMEOBJECT> objectsToRender;
+	vector<LPGAMEOBJECT> panels;
 
 	void _ParseSection_TEXTURES(string line);
 	void _ParseSection_SPRITES(string line);
@@ -32,7 +33,7 @@ public:
 	virtual void Unload();
 	
 	WorldMapPlayer* GetPlayer() { return player; };
-
+	vector<LPGAMEOBJECT> GetPanels() { return panels; };
 	friend class WorldMapKeyHandler;
 };
 

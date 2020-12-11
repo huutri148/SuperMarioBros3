@@ -9,8 +9,8 @@ class FirePiranhaPlant :public Enemy
 	bool isOutOfPipe;
 	int type;
 	bool isShooted = false;
-	
 	bool shootInGround;
+	float lastStateY;
 	virtual void HandleTimeSwitchState();
 
 	void GetDirect();
@@ -21,7 +21,7 @@ public:
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	virtual void Render();
 	virtual void SetState(int state);
-	void Shooting(Grid* grid);
+	void Shooting();
 	virtual bool IsDead();
 	virtual void SetBeingStromped();
 	virtual void SetBeingSkilled(int nx);

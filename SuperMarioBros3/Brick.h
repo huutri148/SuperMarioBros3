@@ -5,6 +5,7 @@
 #include"Game.h"
 #include"RaccoonLeaf.h"
 #include"Grid.h"
+#include"BrokenBrickEffect.h"
 
 class Brick : public GameObject
 {
@@ -29,8 +30,8 @@ public:
 	};
 	bool Breakable();
 	bool CanUsed();
-
-	void DropItem(Grid* grid);
+	void Broken();
+	void DropItem();
 	void Used();
 	void SetState(int _state);
 	void SetEmpty();

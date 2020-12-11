@@ -1,7 +1,7 @@
 ﻿#include "ParaGoomba.h"
 #include "Block.h"
 #include"Utils.h"
-
+#include"Game.h"
 
 
 
@@ -135,12 +135,28 @@ bool ParaGoomba::IsDead()
 void ParaGoomba::SetBeingStromped()
 {
 	this->SetState(PARAGOOMBA_STATE_GOOMBA);
+	Game* game = Game::GetInstance();
+	LPSCENE scene = game->GetCurrentScene();
+	if (dynamic_cast<PlayScene*>(scene))
+	{
+		Grid* grid = ((PlayScene*)game->GetCurrentScene())->GetGrid();
+		PointEffect* effect = new PointEffect(x, y, POINT_TYPE_100);
+		Unit* unit = new Unit(grid, effect, x, y);
+	}
 }
 void ParaGoomba::SetBeingSkilled(int nx)
 {
 	this->nx = nx;
 	this->SetState(PARAGOOMBA_STATE_DEATH);
 	deathTime = GetTickCount();
+	Game* game = Game::GetInstance();
+	LPSCENE scene = game->GetCurrentScene();
+	if (dynamic_cast<PlayScene*>(scene))
+	{
+		Grid* grid = ((PlayScene*)game->GetCurrentScene())->GetGrid();
+		PointEffect* effect = new PointEffect(x, y, POINT_TYPE_200);
+		Unit* unit = new Unit(grid, effect, x, y);
+	}
 }
 void ParaGoomba::HandleTimeSwitchState()
 {

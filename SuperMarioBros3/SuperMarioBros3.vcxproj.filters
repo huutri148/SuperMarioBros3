@@ -141,6 +141,15 @@
     <ClInclude Include="WorldMapPlayer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IntroScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BackGroundIntroScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BrokenBrickEffect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">
@@ -264,6 +273,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="WorldMapPlayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IntroScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BackGroundIntroScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BrokenBrickEffect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

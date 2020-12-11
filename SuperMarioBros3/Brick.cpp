@@ -8,7 +8,7 @@ void Brick::Render()
 		ani = BRICK_ANI_NORMAL;
 	else 
 		ani = BRICK_ANI_EMPTY;
-	animation_set->at(ani)->Render(-1, x, y);
+	animation_set->at(ani)->Render(-1, round(x), round(y));
 }
 
 void Brick::GetBoundingBox(float& l, float& t, float& r, float& b,bool isEnable)
@@ -20,11 +20,6 @@ void Brick::GetBoundingBox(float& l, float& t, float& r, float& b,bool isEnable)
 		r = x + BRICK_BBOX_WIDTH;
 		b = y + BRICK_BBOX_HEIGHT;
 	}
-	else
-	{
-		l = t = r = b = 0;
-	}
-
 }
 void Brick::SetEmpty()
 {
@@ -34,11 +29,27 @@ void Brick::SetEmpty()
 		state != BRICK_STATE_EMPTY)
 	{
 		this->SetState(BRICK_STATE_EMPTY);
+		this->DropItem();
 		isUsed = true;
 	}
 	else if(type == BRICK_BREAKABLE_TYPE)
 	{
-		this->SetState(BRICK_STATE_BREAK);
+		this->Broken();
+	}
+}
+void Brick::Broken()
+{
+	this->SetState(BRICK_STATE_BREAK);
+	Game* game = Game::GetInstance();
+	PlayScene* scene ;
+	if (dynamic_cast<PlayScene*>(game->GetCurrentScene()))
+	{
+		scene = (PlayScene*)(game->GetCurrentScene());
+		Grid* grid = scene->GetGrid();
+		if (grid == NULL)
+			return;
+		BrokenBrickEffect* brokenBrick = new BrokenBrickEffect(x, y);
+		Unit* unit = new Unit(grid, brokenBrick, x, y);
 	}
 }
 void Brick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -127,10 +138,11 @@ void InvisibleBrick::GetBoundingBox(float& l, float& t, float& r, float& b, bool
 	r = x + BRICK_BBOX_WIDTH;
 	b = y + BRICK_BBOX_HEIGHT;
 }
-void Brick::DropItem(Grid* grid)
+void Brick::DropItem()
 {
 	LPSCENE scence = Game::GetInstance()->GetCurrentScene();
 	Mario* mario = ((PlayScene*)scence)->GetPlayer();
+	Grid* grid = ((PlayScene*)scence)->GetGrid();
 	Item* item;
 	int form = mario->GetForm();
 	switch (type)

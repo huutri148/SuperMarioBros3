@@ -12,13 +12,6 @@ void FirePiranhaPlant::GetBoundingBox(float& left, float& top,
 		right = x + PIRANHAPLANT_BBOX_WIDTH;
 		bottom = y + PIRANHAPLANT_BBOX_HEIGHT;
 	}
-	else
-	{
-		left = x;
-		top = y;
-		right = x + FIREPIRANHAPLANT_BBOX_DEATH_WIDTH;
-		bottom = y + FIREPIRANHAPLANT_BBOX_DEATH_HEIGHT;
-	}
 }
 void FirePiranhaPlant::Update(DWORD dt,
 	vector<LPGAMEOBJECT>* coObjects)
@@ -37,6 +30,14 @@ void FirePiranhaPlant::Update(DWORD dt,
 	{
 		x += dx;
 		y += dy;
+		if (lastStateY - y > 48)
+		{
+			y = lastStateY - 48;
+			lastStateY = y;
+			isOutOfPipe = true;
+			this->SetState(FIREPIRANHAPLANT_STATE_SHOOTING);
+			switchTime = GetTickCount();
+		}
 	}
 	else
 	{
@@ -57,11 +58,13 @@ void FirePiranhaPlant::Update(DWORD dt,
 					switchTime = GetTickCount();
 					vy = 0;
 					this->y = y0 + e->t * dy + e->ny * 0.4f;
+					lastStateY = y;
 				}
 
 			}
-			else if (dynamic_cast<InvisibleBrick*>(e->obj))
+		/*	else if (dynamic_cast<InvisibleBrick*>(e->obj))
 			{
+				DebugOut(L"\n[Fire Piranha] AAAAAAAA");
 				if (e->ny != 0)
 				{
 					isOutOfPipe = true;
@@ -69,7 +72,7 @@ void FirePiranhaPlant::Update(DWORD dt,
 					switchTime = GetTickCount();
 					this->y = y0 + e->t * dy + e->ny * 0.4f;
 				}
-			}
+			}*/
 		}
 	}
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
@@ -201,7 +204,7 @@ void FirePiranhaPlant::HandleTimeSwitchState()
 		&& current - switchTime < FIREPIRANHAPLANT_SWITCH_TIME
 		&& isShooted== false)
 	{
-		/*Shooting();*/
+		Shooting();
 		canShoot = true;
 	}
 	// Chuyển trạng thái khi ở trên Pipe sang trạng thái đợi bắn
@@ -213,11 +216,12 @@ void FirePiranhaPlant::HandleTimeSwitchState()
 	}
 	
 }
-void FirePiranhaPlant::Shooting(Grid* grid)
+void FirePiranhaPlant::Shooting()
 {
 	Game* game = Game::GetInstance();
 	LPSCENE scence = game->GetCurrentScene();
 	Mario* mario = ((PlayScene*)scence)->GetPlayer();
+	Grid* grid = ((PlayScene*)scence)->GetGrid();
 	float mX, mY;
 	mario->GetPosition(mX, mY);
 	float diffX = mX - x, diffY = mY - y;

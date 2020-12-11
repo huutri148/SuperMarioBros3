@@ -9,12 +9,13 @@ void WorldMapPanel::Render(float translateX, float translateY)
 	animation_set->at(0)->Render(-1, x, y, 255, translateX, translateY);
 	//RenderBoundingBox();
 }
-//WorldMapPanel::WorldMapPanel(int sceneId, int Up,int Down,int Right,int Left)
-//{
-//	possibleDirect = new int[4];
-//	this->sceneId = sceneId;
-//	this->possibleDirect[0] = Up;
-//	this->possibleDirect[1] = Down;
-//	this->possibleDirect[2] = Right;
-//	this->possibleDirect[3] = Left;
-//}
+
+WorldMapPanel::WorldMapPanel(int left, int top, int right, int bottom,int sceneId, int type)
+{
+	this->sceneId = sceneId;
+	this->type = type;
+	possibleTop = top;
+	possibleLeft = left;
+	possibleRight = right;
+	possibleBottom = bottom;
+}

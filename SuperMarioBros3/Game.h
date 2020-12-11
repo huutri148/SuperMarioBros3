@@ -16,6 +16,7 @@
 #include"Textures.h"
 #include"PlayScene.h"
 #include"WorldMap.h"
+#include"IntroScene.h"
 class Game
 {
 	static Game* __instance;

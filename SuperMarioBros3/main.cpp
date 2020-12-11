@@ -51,8 +51,10 @@ void Render()
 		rect.bottom = bottom;
 		D3DXVECTOR3 p(120, 120, 0);*/
 		// Clear back buffer with a color
-		d3ddv->ColorFill(bb, NULL, BACKGROUND_COLOR);
-		
+		if(dynamic_cast<PlayScene*>(Game::GetInstance()->GetCurrentScene()))
+			d3ddv->ColorFill(bb, NULL, BACKGROUND_COLOR_PLAYSCENE);
+		else 
+			d3ddv->ColorFill(bb, NULL, BACKGROUND_COLOR_SCENE);
 		spriteHandler->Begin(D3DXSPRITE_ALPHABLEND);
 		Game::GetInstance()->GetCurrentScene()->Render();
 		spriteHandler->End();
