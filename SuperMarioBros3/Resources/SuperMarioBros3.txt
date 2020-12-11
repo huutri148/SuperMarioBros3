@@ -1,5 +1,5 @@
 [SETTINGS]
-start	1
+start	0
 #scene list
 [SCENES]
 0	Resources\Scenes\IntroScene.txt

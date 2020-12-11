@@ -136,7 +136,7 @@ public:
 	void Jump();
 	void SuperJump();
 	void PickUp();
-	bool Brake();
+	//void Brake(bool brake);
 	void UpdateStageOfTailAttack();
 	
 

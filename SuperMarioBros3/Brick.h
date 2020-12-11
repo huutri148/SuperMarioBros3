@@ -31,7 +31,7 @@ public:
 	bool Breakable();
 	bool CanUsed();
 	void Broken();
-	void DropItem(Grid* grid);
+	void DropItem();
 	void Used();
 	void SetState(int _state);
 	void SetEmpty();

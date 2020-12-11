@@ -561,6 +561,10 @@ void IntroSceneKeyHandler::OnKeyDown(int KeyCode)
 	case DIK_U:
 		scene->SwitchMenu();
 		break;
+	case DIK_I:
+		Game* game = Game::GetInstance();
+		game->SwitchScene(1);
+		break;
 	}
 	DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);
 }
