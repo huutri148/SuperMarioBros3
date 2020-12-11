@@ -15,6 +15,7 @@ protected:
 	Map* tileMap = NULL;
 	WorldMapPlayer* player;
 	vector<LPGAMEOBJECT> objects;
+	vector<LPGAMEOBJECT> panels;
 
 	void _ParseSection_TEXTURES(string line);
 	void _ParseSection_SPRITES(string line);

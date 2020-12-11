@@ -111,7 +111,7 @@ void WorldMap::_ParseSection_OBJECTS(string line)
 		break;
 	case OBJECT_TYPE_PANEL:
 		obj = new WorldMapPanel();
-		objects.push_back(obj);
+		panels.push_back(obj);
 		break;
 	case OBJECT_TYPE_PLAYER:
 		obj = new WorldMapPlayer();
@@ -215,7 +215,7 @@ void WorldMap::Load()
 
 void WorldMap::Update(DWORD dt)
 {
-	player->Update(dt);
+	player->Update(dt,&objects);
 	hud->Update(dt);
 }
 
@@ -234,6 +234,10 @@ void WorldMap::Render()
 	{
 		obj->Render(round(translateX), round(translateY));
 	}
+	for (auto panel : panels)
+	{
+		panel->Render(round(translateX), round(translateY));
+	}
 	player->Render(round(translateX ), round(translateY ));
 	hud->Render();
 }
@@ -241,11 +245,11 @@ void WorldMap::Render()
 
 void WorldMap::Unload()
 {
-	//for (unsigned int i = 0; i < objects.size(); i++)
-	//	delete objects[i];
+	for (unsigned int i = 0; i < objects.size(); i++)
+		delete objects[i];
 
-	//objects.clear();
-	//player = NULL;
+	objects.clear();
+	player = NULL;
 
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
 }
@@ -255,21 +259,21 @@ void WorldMapKeyHandler::OnKeyDown(int KeyCode)
 	WorldMapPlayer* player = ((WorldMap*)scence)->GetPlayer();
 	switch (KeyCode)
 	{
-	case DIK_A:
+	case DIK_LEFT:
 		player->Left();
 		break;
-	case DIK_S:
+	case DIK_DOWN:
 		player->Down();
 		break;
-	case DIK_D:
+	case DIK_RIGHT:
 		player->Right();
 		break;
-	case DIK_W:
+	case DIK_UP:
 		player->Up();
 		break;
-	case DIK_J:
+	case DIK_A:
 		break;
-	case DIK_K:
+	case DIK_S:
 		break;
 	}
 }
