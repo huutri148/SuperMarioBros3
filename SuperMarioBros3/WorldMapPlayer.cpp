@@ -1,5 +1,6 @@
 #include "WorldMapPlayer.h"
 #include"Utils.h"
+#include"WorldMap.h"
 void WorldMapPlayer::Render()
 {
 	animation_set->at(0)->Render(-1, x, y);
@@ -12,65 +13,119 @@ void WorldMapPlayer::Render(float translateX, float translateY)
 }
 void WorldMapPlayer::Up()
 {
-	if(vx == 0 && vy == 0)
+	if (vx == 0 && vy == 0 && currentPanel->possibleTop == 1)
+	{
 		vy = -OBJECT_TYPE_PLAYER_SPEED;
+	}
+		
 }
 void WorldMapPlayer::Down()
 {
-	if (vx == 0 && vy == 0)
+	if (vx == 0 && vy == 0 && currentPanel->possibleBottom == 1)
 		vy = OBJECT_TYPE_PLAYER_SPEED;
 }
 void WorldMapPlayer::Left()
 {
-	if (vx == 0 && vy == 0)
+	if (vx == 0 && vy == 0 && currentPanel->possibleLeft == 1)
 		vx = -OBJECT_TYPE_PLAYER_SPEED;
 }
 void WorldMapPlayer::Right()
 {
-	if (vx == 0 && vy == 0)
+	if (vx == 0 && vy == 0 && currentPanel->possibleRight == 1)
 		vx = OBJECT_TYPE_PLAYER_SPEED;
 }
 void WorldMapPlayer::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	GameObject::Update(dt, coObjects);
-	vector<LPCOLLISIONEVENT> coEvents;
-	vector<LPCOLLISIONEVENT> coEventsResult;
 
-	coEvents.clear();
-	CalcPotentialCollisions(coObjects, coEvents);
-	if (coEvents.size() == 0)
+	FindNearestPanel();
+	/*DebugOut(L"\nNearest Panel: %f, %f", nearestPanel->x, nearestPanel->y);
+	DebugOut(L"\nCurent Panel: %f, %f", currentPanel->x, currentPanel->y);*/
+	if (nearestPanel->x == currentPanel->x && nearestPanel->y == currentPanel->y)
 	{
-		x += dx;
-		y += dy;
+		vx = 0;
+		vy = 0;
+		return;
 	}
-	else
+	
+	if (vx > 0 && vy == 0)
 	{
-		float min_tx, min_ty, nx = 0, ny;
-		FilterCollision(coEvents, coEventsResult,
-			min_tx, min_ty,
-			nx, ny);
-		x += min_tx * dx + nx * 0.4f;
-		y += min_ty * dy + ny * 0.4f;
-		if (ny != 0) vy = 0;
-		for (UINT i = 0; i < coEventsResult.size(); i++)
+		if (x < nearestPanel->x)
+			x += dx;
+		if (x >= nearestPanel->x)
 		{
-			LPCOLLISIONEVENT e = coEventsResult[i];
-			if (dynamic_cast<WorldMapBush*>(e->obj))
+			x = nearestPanel->x;
+			vx = 0;
+			currentPanel = nearestPanel;
+		}
+	}
+	if (vx < 0 && vy == 0)
+	{
+		if (x > nearestPanel->x)
+			x += dx;
+		if (x <= nearestPanel->x)
+		{
+			x = nearestPanel->x;
+			vx = 0;
+			currentPanel = nearestPanel;
+		}
+	}
+	if (vy < 0 && vx == 0)
+	{
+		if (y > nearestPanel->y)
+			y += dy;
+		if (y <= nearestPanel->y)
+		{
+			y = nearestPanel->y;
+			vy = 0;
+			currentPanel = nearestPanel;
+		}
+	}
+	if (vy > 0 && vx == 0)
+	{
+		if (y < nearestPanel->y)
+			y += dy;
+		if (y >= nearestPanel->y)
+		{
+			y = nearestPanel->y;
+			vy = 0;
+			currentPanel = nearestPanel;
+		}
+	}
+}
+void WorldMapPlayer::FindNearestPanel()
+{
+	if (dynamic_cast<WorldMap*>(Game::GetInstance()->GetCurrentScene()))
+	{
+		WorldMap* worldMap = (WorldMap*)Game::GetInstance()->GetCurrentScene();
+		vector<LPGAMEOBJECT> panels = worldMap->GetPanels();
+		if (currentPanel == NULL)
+			currentPanel =(WorldMapPanel*) panels.at(0);
+		float nearestPanelX = currentPanel->x;
+		float nearestPanelY = currentPanel->y;
+		if (vx != 0 && vy == 0)
+		{
+			if (vx > 0)
+				nearestPanelX = currentPanel->x + 32;
+			if (vx < 0)
+				nearestPanelX = currentPanel->x - 32;
+			nearestPanelY = currentPanel->y;
+		}
+		else if (vy != 0 && vx == 0)
+		{
+			if (vy < 0)
+				nearestPanelY = currentPanel->y - 32;
+			if (vy > 0)
+				nearestPanelY = currentPanel->y + 32;
+			nearestPanelX = currentPanel->x;
+		}
+		for (auto obj : panels)
+		{
+			if (obj->x == nearestPanelX && obj->y == nearestPanelY)
 			{
-				DebugOut(L"\nAAAAAAAAAAA");
-				if (e->ny != 0)
-					vy = 0;
-				if (e->nx != 0)
-					vx = 0;
+				nearestPanel = (WorldMapPanel*)obj;
+				return;
 			}
 		}
 	}
-	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
-}
-void WorldMapPlayer::GetBoundingBox(float& l, float& t, float& r, float& b, bool isEnable)
-{
-	l = x;
-	t = y;
-	r = x + 14;
-	b = y + 14;
 }

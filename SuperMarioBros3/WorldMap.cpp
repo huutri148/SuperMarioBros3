@@ -107,12 +107,20 @@ void WorldMap::_ParseSection_OBJECTS(string line)
 	{
 	case OBJECT_TYPE_BUSH:
 		obj = new WorldMapBush();
-		objects.push_back(obj);
+		objectsToRender.push_back(obj);
 		break;
 	case OBJECT_TYPE_PANEL:
-		obj = new WorldMapPanel();
+	{
+		int l = atoi(tokens[4].c_str());
+		int t = atoi(tokens[5].c_str());
+		int r = atoi(tokens[6].c_str());
+		int b = atoi(tokens[7].c_str());
+		int sceneId = atoi(tokens[8].c_str());
+		int type = atoi(tokens[9].c_str());
+		obj = new WorldMapPanel(l, t, r, b, sceneId, type);
 		panels.push_back(obj);
 		break;
+	}
 	case OBJECT_TYPE_PLAYER:
 		obj = new WorldMapPlayer();
 		player =(WorldMapPlayer*)obj;
@@ -215,7 +223,7 @@ void WorldMap::Load()
 
 void WorldMap::Update(DWORD dt)
 {
-	player->Update(dt,&objects);
+	player->Update(dt);
 	hud->Update(dt);
 }
 
@@ -230,7 +238,7 @@ void WorldMap::Render()
 	float cam_y = game->GetCamY();
 	this->tileMap->Render(cam_x, cam_y, screenWidth, screenHeight,
 		translateX,translateY);
-	for (auto obj : objects)
+	for (auto obj : objectsToRender)
 	{
 		obj->Render(round(translateX), round(translateY));
 	}
@@ -245,10 +253,10 @@ void WorldMap::Render()
 
 void WorldMap::Unload()
 {
-	for (unsigned int i = 0; i < objects.size(); i++)
-		delete objects[i];
+	for (unsigned int i = 0; i < objectsToRender.size(); i++)
+		delete objectsToRender[i];
 
-	objects.clear();
+	objectsToRender.clear();
 	player = NULL;
 
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
@@ -259,22 +267,29 @@ void WorldMapKeyHandler::OnKeyDown(int KeyCode)
 	WorldMapPlayer* player = ((WorldMap*)scence)->GetPlayer();
 	switch (KeyCode)
 	{
-	case DIK_LEFT:
+	case DIK_A:
 		player->Left();
 		break;
-	case DIK_DOWN:
+	case DIK_S:
 		player->Down();
 		break;
-	case DIK_RIGHT:
+	case DIK_D:
 		player->Right();
 		break;
-	case DIK_UP:
+	case DIK_W:
 		player->Up();
 		break;
-	case DIK_A:
+	case DIK_J:
 		break;
-	case DIK_S:
+	case DIK_K:
+	{
+		if (player->currentPanel->GetSceneId() == 1)
+		{
+			Game* game = Game::GetInstance();
+			game->SwitchScene(2);
+		}
 		break;
+	}
 	}
 }
 void WorldMapKeyHandler::OnKeyUp(int KeyCode)
@@ -283,6 +298,5 @@ void WorldMapKeyHandler::OnKeyUp(int KeyCode)
 }
 void WorldMapKeyHandler::KeyState(BYTE* states)
 {
-	// disable control key when Mario die 
 }
 
