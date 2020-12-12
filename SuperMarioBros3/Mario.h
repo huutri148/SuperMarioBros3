@@ -145,6 +145,6 @@ public:
 	void GainPoint(int pPoint) { score += pPoint; };
 	void GainLife() { life += 1; };
 
-
+	void SetTele(float x, float y) { this->SetLevel(MARIO_RACCOON_FORM); this->x = x; this->y = y; };
 
 };

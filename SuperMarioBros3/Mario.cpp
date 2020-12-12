@@ -354,7 +354,6 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					y -= (min_ty * dy + ney * 0.4f);
 				if (e->nx != 0)
 					x -= (min_tx * dy + nex * 0.4f);
-				//y += dy;
 			}
 			else if (dynamic_cast<Pipe*>(e->obj))
 			{
@@ -387,7 +386,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				x += dx;
 				y += dy;
-				this->SetAutoWalk(1, 0.01f);
+				this->SetAutoWalk(1, 0.1f);
 				card.push_back(dynamic_cast<Portal*>(e->obj)->GetPortal());
 			}
 			else if (dynamic_cast<Mario*>(e->obj))

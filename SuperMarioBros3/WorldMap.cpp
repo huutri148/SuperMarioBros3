@@ -257,11 +257,11 @@ void WorldMap::Unload()
 	//	delete objectsToRender[i];
 	//for (unsigned int i = 0; i < objectsToRender.size(); i++)
 	//	delete panels[i];
-	////objectsToRender.clear();
+	//objectsToRender.clear();
 	//panels.clear();
 	////tileMap = NULL;
 	////hud = NULL;
-	//player = NULL;
+	player = NULL;
 
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
 }
