@@ -697,7 +697,7 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 	if (mario->GetState() == MARIO_STATE_DEATH) return;
 	if (game->IsKeyDown(DIK_D))
 	{
-		mario->SetDirect(true);
+		//mario->SetDirect(true);
 		//mario->Brake(true);
 		if (!mario->IsFlying() && !mario->IsFloating())
 		{
@@ -706,7 +706,7 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 				mario->FillUpPowerMelter();
 				mario->PickUp();
 			}
-			mario->SetState(MARIO_STATE_WALKING);
+			mario->SetWalkingRight();
 			if (game->IsKeyDown(DIK_K))
 			{
 				mario->SuperJump();
@@ -716,7 +716,7 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 	}
 	if (game->IsKeyDown(DIK_A))
 	{
-		mario->SetDirect(false);
+		//mario->SetDirect(false);
 		
 		if (!mario->IsFlying() && !mario->IsFloating())
 		{
@@ -725,7 +725,7 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 				mario->FillUpPowerMelter();
 				mario->PickUp();
 			}
-			mario->SetState(MARIO_STATE_WALKING);
+			mario->SetWalkingLeft();
 			if (game->IsKeyDown(DIK_K))
 			{
 				mario->SuperJump();
