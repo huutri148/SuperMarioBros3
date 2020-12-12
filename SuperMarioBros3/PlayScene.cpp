@@ -583,24 +583,16 @@ void PlayScene::UpdatePlayer(DWORD dt)
 */
 void PlayScene::Unload()
 {
-	//for (unsigned int i = 0; i < objects.size(); i++)
-	//	delete objects[i];
-	//for (unsigned int i = 0; i < listUnits.size(); i++)
-	//	delete listUnits[i];
-	//for (unsigned int i = 0; i < listStaticObjectsToRender.size(); i++)
-	//	delete listStaticObjectsToRender[i];
-	//for (unsigned int i = 0; i < listMovingObjectsToRender.size(); i++)
-	//	delete listMovingObjectsToRender[i];
-	//for (unsigned int i = 0; i < listPipesToRender.size(); i++)
-	//	delete listPipesToRender[i];
-	//for (unsigned int i = 0; i < listItems.size(); i++)
-	//	delete listItems[i];
-	//objects.clear();
-	//listStaticObjectsToRender.clear();
-	//listMovingObjectsToRender.clear();
-	//listPipesToRender.clear();
-	//listItems.clear();
-	//listUnits.clear();
+	for (unsigned int i = 0; i < objects.size(); i++)
+		delete objects[i];
+	objects.clear();
+	listStaticObjectsToRender.clear();
+	listMovingObjectsToRender.clear();
+	listPipesToRender.clear();
+	listItems.clear();
+	listUnits.clear();
+	portal = NULL;
+	hud = NULL;
 	//grid = NULL;
 	//unit = NULL;
 	//player = NULL;
@@ -634,18 +626,14 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	case DIK_I:
 		mario->Information();
 		break;
-	case DIK_B:
-		mario->TurnBigForm();
-		break;
 	case DIK_S:
 		mario->isPressS = true;
 		break;
 	case DIK_J:
+	{
 		int flag = mario->Skill();
-	
 		if (flag == 1)
 		{
-
 			Grid* grid = ((PlayScene*)scence)->GetGrid();
 			mario->ShootFireBall(grid);
 		}
@@ -653,7 +641,25 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		{
 			mario->TailAttack();
 		}
-			
+		break;
+	}
+	case DIK_Z:
+		mario->SetTele(505, 300);
+		break;
+	case DIK_X:
+		mario->SetTele(735, 380);
+		break;
+	case DIK_C:
+		mario->SetTele(1327, 380);
+		break;
+	case DIK_V:
+		mario->SetTele(1930, 380);
+		break;
+	case DIK_B:
+		mario->SetTele(2275, 90);
+		break;
+	case DIK_N:
+		mario->SetTele(2488, 380);
 		break;
 	}
 }
@@ -691,7 +697,7 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 	if (mario->GetState() == MARIO_STATE_DEATH) return;
 	if (game->IsKeyDown(DIK_D))
 	{
-		mario->SetDirect(true);
+		//mario->SetDirect(true);
 		//mario->Brake(true);
 		if (!mario->IsFlying() && !mario->IsFloating())
 		{
@@ -700,7 +706,7 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 				mario->FillUpPowerMelter();
 				mario->PickUp();
 			}
-			mario->SetState(MARIO_STATE_WALKING);
+			mario->SetWalkingRight();
 			if (game->IsKeyDown(DIK_K))
 			{
 				mario->SuperJump();
@@ -710,7 +716,7 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 	}
 	if (game->IsKeyDown(DIK_A))
 	{
-		mario->SetDirect(false);
+		//mario->SetDirect(false);
 		
 		if (!mario->IsFlying() && !mario->IsFloating())
 		{
@@ -719,7 +725,7 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 				mario->FillUpPowerMelter();
 				mario->PickUp();
 			}
-			mario->SetState(MARIO_STATE_WALKING);
+			mario->SetWalkingLeft();
 			if (game->IsKeyDown(DIK_K))
 			{
 				mario->SuperJump();

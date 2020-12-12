@@ -354,7 +354,6 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					y -= (min_ty * dy + ney * 0.4f);
 				if (e->nx != 0)
 					x -= (min_tx * dy + nex * 0.4f);
-				//y += dy;
 			}
 			else if (dynamic_cast<Pipe*>(e->obj))
 			{
@@ -387,7 +386,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				x += dx;
 				y += dy;
-				this->SetAutoWalk(1, 0.01f);
+				this->SetAutoWalk(1, 0.1f);
 				card.push_back(dynamic_cast<Portal*>(e->obj)->GetPortal());
 			}
 			else if (dynamic_cast<Mario*>(e->obj))
@@ -906,12 +905,19 @@ void Mario::Friction()
 {
 	if (turnFriction == true)
 	{
-		this->vx = nx * this->vx * MARIO_FRICTION;
-		if (abs(this->vx) < 0.06)
+		this->vx -= this->vx * MARIO_FRICTION;
+		if (abs(this->vx) < 0.06 && canBrake == false)
 		{
 			this->SetState(MARIO_STATE_IDLE);
 			turnFriction = false;
-			canBrake = false;
+		}
+		else if (canBrake == true)
+		{
+			if (abs(this->vx) < 0.03)
+			{
+				this->SetState(MARIO_STATE_IDLE);
+				canBrake = false;
+			}
 		}
 	}
 }
@@ -1209,4 +1215,61 @@ void Mario::DecreaseForm()
 		//x += nx * (MARIO_BIG_BBOX_WIDTH - 6);
 		transformTime = GetTickCount();
 	}
+}
+void Mario::SetWalkingRight()
+{
+	//DebugOut(L"\n[Right]nx: %d", nx);
+	//DebugOut(L"\n[Right]vx: %f", vx);
+	if (canBrake == false)
+	{
+		this->nx = 1;
+		if (vx * nx < 0)
+		{
+			if (this->nx < 0 && vx >= 0.1f )
+			{
+				vx += vx / 30;
+				canBrake = true;
+			}
+			else if (nx > 0 && vx <= -0.1f)
+			{
+				vx -= vx / 30;
+				canBrake = true;
+			}
+		
+		}
+		else
+		{
+			this->SetState(MARIO_STATE_WALKING);
+			canBrake = false;
+		}
+	}
+}
+void Mario::SetWalkingLeft()
+{
+	/*DebugOut(L"\n[Left]nx: %d", nx);
+	DebugOut(L"\n[Left]vx: %f", vx);*/
+	if (canBrake == false)
+	{
+		this->nx = -1;
+		if (vx * nx < 0)
+		{
+			if (this->nx < 0 && vx >= 0.1f)
+			{
+				vx += vx / 30;
+				canBrake = true;
+			}
+			else if (nx > 0 && vx <= -0.1f)
+			{
+				vx -= vx / 30;
+				canBrake = true;
+			}
+		
+		}
+		else
+		{
+			this->SetState(MARIO_STATE_WALKING);
+			canBrake = false;
+		}
+	}
+
 }

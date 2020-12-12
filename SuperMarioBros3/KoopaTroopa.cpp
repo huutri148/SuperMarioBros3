@@ -317,19 +317,41 @@ KoopaTroopa::KoopaTroopa()
 }
 void KoopaTroopa::SetBeingStromped()
 {
+	if (state != KOOPATROOPA_STATE_HIDING)
+	{
+		Game* game = Game::GetInstance();
+		LPSCENE scene = game->GetCurrentScene();
+		if (dynamic_cast<PlayScene*>(scene))
+		{
+			Grid* grid = ((PlayScene*)game->GetCurrentScene())->GetGrid();
+			PointEffect* effect = new PointEffect(x, y, POINT_TYPE_100);
+			Unit* unit = new Unit(grid, effect, x, y);
+		}
+	}
 	this->SetState(KOOPATROOPA_STATE_HIDING);
 	hidingTime = GetTickCount();
 }
 void KoopaTroopa::SetBeingSkilled(int _nx)
 {
 	this->nx = _nx;
+	if (state != KOOPATROOPA_STATE_HIDING)
+	{
+		Game* game = Game::GetInstance();
+		LPSCENE scene = game->GetCurrentScene();
+		if (dynamic_cast<PlayScene*>(scene))
+		{
+			Grid* grid = ((PlayScene*)game->GetCurrentScene())->GetGrid();
+			PointEffect* effect = new PointEffect(x, y, POINT_TYPE_100);
+			Unit* unit = new Unit(grid, effect, x, y);
+		}
+	}
 	this->SetState(KOOPATROOPA_STATE_HIDING);
 	hidingTime = GetTickCount();
 	vx = nx *KOOPATROOPA_DIE_DEFLECT_SPEED_X;
 	vy = -KOOPATROOPA_DIE_DEFLECT_SPEED_Y;
 	ny = 1;
 	isBumped = false;
-	isPickedUp = false;	
+	isPickedUp = false;			
 }
 void KoopaTroopa::HandleTimeSwitchState()
 {
@@ -376,6 +398,4 @@ void KoopaTroopa::HandleTimeSwitchState()
 			isBumped = false;
 		}
 	}
-
-
 }
