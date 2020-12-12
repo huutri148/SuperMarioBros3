@@ -123,11 +123,12 @@ void Grid::Get(float cam_x,float cam_y, vector<Unit*>& listUnits)
 }
 void Grid::Out()
 {
+	int c = 0;
 	for (int i = 0; i < numRows; i++)
 	{
 		for (int j = 0; j < numCols; j++)
 		{
-			int c = 0;
+			
 			Unit* unit = cells[i][j];
 			while (unit)
 			{
@@ -136,4 +137,5 @@ void Grid::Out()
 			}
 		}
 	}
+	DebugOut(L"\nNumber of Unit: %d", c);
 }

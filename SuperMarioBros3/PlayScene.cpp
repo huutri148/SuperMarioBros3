@@ -661,6 +661,9 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	case DIK_N:
 		mario->SetTele(2488, 380);
 		break;
+	case DIK_P:
+		((PlayScene*)scence)->GetGrid()->Out();
+		break;
 	}
 }
 void PlayScenceKeyHandler::OnKeyUp(int KeyCode)
