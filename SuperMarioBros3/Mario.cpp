@@ -50,7 +50,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		if (untouchable == 1)
 			form = MARIO_BIG_FORM;
 	}
-	if (GetTickCount() - kickTime > 300
+	if (GetTickCount() - kickTime > MARIO_KICK_LIMIT_TIME
 		&& isKickShell == true)
 	{
 		isKickShell = false;
@@ -1028,13 +1028,12 @@ void Mario::Fly()
 	{
 		DWORD current = GetTickCount();
 		/*	DebugOut(L"Power melter stack: %d\n", power_melter_stack);*/
-		if (powerMelterStack == POWER_MELTER_FULL && 
+		if (powerMelterStack == POWER_MELTER_FULL   && 
 			current - flyTimeStart < MARIO_FLYING_LIMITED_TIME)
 		{
 			this->SetState(MARIO_STATE_FLYING);
 			/*DebugOut(L"Is Flying\n");*/
 			isFlying = true;
-			
 		}
 		else if (current - flyTimeStart >
 			MARIO_FLYING_LIMITED_TIME

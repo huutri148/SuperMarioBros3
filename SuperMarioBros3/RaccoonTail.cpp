@@ -48,10 +48,26 @@ void RaccoonTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			if (dynamic_cast<Brick*>(e->obj))
 			{
 				dynamic_cast<Brick*>(e->obj)->SetEmpty();
+				Game* game = Game::GetInstance();
+				LPSCENE scene = game->GetCurrentScene();
+				if (dynamic_cast<PlayScene*>(scene))
+				{
+					Grid* grid = ((PlayScene*)game->GetCurrentScene())->GetGrid();
+					HitEffect* effect = new HitEffect(x, y);
+					Unit* unit = new Unit(grid, effect, x, y);
+				}
 			}
 			else if (dynamic_cast<Enemy*>(e->obj))
 			{
 				dynamic_cast<Enemy*>(e->obj)->SetBeingSkilled((int)(-e->nx));
+				Game* game = Game::GetInstance();
+				LPSCENE scene = game->GetCurrentScene();
+				if (dynamic_cast<PlayScene*>(scene))
+				{
+					Grid* grid = ((PlayScene*)game->GetCurrentScene())->GetGrid();
+					HitEffect* effect = new HitEffect(x, y);
+					Unit* unit = new Unit(grid, effect, x, y);
+				}
 			}
 		}
 	}
