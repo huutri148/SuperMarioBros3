@@ -41,13 +41,14 @@ class Mario : public GameObject
 	bool isFloating = false;
 	bool isTransform = false;
 	bool isTurnRaccoon = false;
-	bool isTeleport = false;// bật cờ khi ở cổng Tele
+	
 	RaccoonTail* tail;
 	
 public:
 	vector<int> card;
 	int form = 0;
 	bool isInTeleport = false;
+	bool isTeleport = false;// bật cờ khi ở cổng Tele
 	bool isInExtraMap = false;
 	bool isAutoWalk = false;
 	bool isPressedJ;

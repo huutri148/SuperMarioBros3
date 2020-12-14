@@ -689,7 +689,8 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 	Game* game = Game::GetInstance();
 	Mario* mario = ((PlayScene*)scence)->GetPlayer();
 	// disable control key when Mario die 
-	if (mario->GetState() == MARIO_STATE_DEATH || mario->isAutoWalk) return;
+	if (mario->GetState() == MARIO_STATE_DEATH || mario->isAutoWalk ||
+		mario->isInTeleport || mario->isTeleport) return;
 	if (game->IsKeyDown(DIK_S))
 	{
 		mario->SuperJump();

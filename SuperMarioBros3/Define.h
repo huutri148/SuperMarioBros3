@@ -32,7 +32,7 @@
 #define MARIO_BRAKE_DEFLECT_SPEED		0.08f
 #define MARIO_GRAVITY					0.001f
 #define MARIO_LOWER_GRAVITY				0.0005f
-#define MARIO_DIE_DEFLECT_SPEED			0.3f
+#define MARIO_DIE_DEFLECT_SPEED			0.5f
 #define BUFF_SPEED						0.008f	// tốc độ tăng lên khi tích stack
 #define POWER_MELTER_FULL				7		// số stack tối đa		//thời gian để tích 1 stack
 #define POWER_MELTER_MINIMUM			0
@@ -331,9 +331,9 @@
 #define FIREBALL_ANI_EXPLODE	1
 #define FIREBALL_INACTIVE_TIME	200
 //Fireball of PiranhaPlant
-#define FIREBULLET_SPEED_NX		0.05f
+#define FIREBULLET_SPEED_NX		0.06f
 #define FIREBULLET_SPEED_NY_1	0.02f
-#define FIREBULLET_SPEED_NY_2	0.06f
+#define FIREBULLET_SPEED_NY_2	0.04f
 #define FIREBULLET_BBOX_HEIGHT	8
 #define FIREBULLET_BBOX_WIDTH	8
 

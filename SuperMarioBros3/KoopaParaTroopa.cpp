@@ -24,7 +24,7 @@ void KoopaParaTroopa::Update(DWORD dt,
 	GameObject::Update(dt);
 	// fall down slower 
 	if (vy > -0.2 && vy < 0.2)
-			vy += 0.001 * dt;
+			vy += 0.001f * dt;
 		else
 			vy += PARATROOPA_GRAVITY * dt;
 	vector<LPCOLLISIONEVENT> coEvents;

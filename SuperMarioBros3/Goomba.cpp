@@ -62,7 +62,7 @@ void Goomba::Update(DWORD dt,
 			}
 			else if (dynamic_cast<Ground*>(e->obj))
 			{
-				if (nx != 0 && ny == 0)
+				if (e->nx != 0 && ny == 0)
 				{
 					this->ChangeDirect();
 				}

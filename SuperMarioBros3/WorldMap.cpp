@@ -271,21 +271,21 @@ void WorldMapKeyHandler::OnKeyDown(int KeyCode)
 	WorldMapPlayer* player = ((WorldMap*)scence)->GetPlayer();
 	switch (KeyCode)
 	{
-	case DIK_A:
+	case DIK_LEFT:
 		player->Left();
 		break;
-	case DIK_S:
+	case DIK_DOWN:
 		player->Down();
 		break;
-	case DIK_D:
+	case DIK_RIGHT:
 		player->Right();
 		break;
-	case DIK_W:
+	case DIK_UP:
 		player->Up();
 		break;
-	case DIK_J:
+	case DIK_A:
 		break;
-	case DIK_K:
+	case DIK_S:
 	{
 		if (player->currentPanel->GetSceneId() == 1)
 		{
