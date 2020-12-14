@@ -1,5 +1,5 @@
 ﻿#include <algorithm>
-#include "Utils.h"
+
 #include "Enemy.h"
 #include "Mario.h"
 #include "Game.h"
@@ -21,16 +21,8 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	if (isEnable == false)
 		return;
-	
-	if (GetTickCount64() - tailAttackTime >
-		MARIO_TAIL_ATTACK_TIME && isSwingTail == true)
-	{
-		isSwingTail = false;
-		tail->SetState(RACCOONTAIL_STATE_INACTIVE);
-	}
-		
 	if (GetTickCount64() - transformTime >
-		MARIO_BIG_FORM_TRANSFORM_TIME && isTransform == true) 
+		MARIO_BIG_FORM_TRANSFORM_TIME && isTransform == true)
 	{
 		isTransform = false;
 		transformTime = 0;
@@ -43,51 +35,6 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			this->SetLevel(MARIO_SMALL_FORM);
 		}
 	}
-	if (GetTickCount64() - turnRaccoonTime >
-		MARIO_BIG_FORM_TRANSFORM_TIME && isTurnRaccoon == true) {
-		isTurnRaccoon = false;
-		turnRaccoonTime = 0;
-		if (untouchable == 1)
-			form = MARIO_BIG_FORM;
-	}
-	if (GetTickCount() - kickTime > MARIO_KICK_LIMIT_TIME
-		&& isKickShell == true)
-	{
-		isKickShell = false;
-	}
-	if (isTeleport)
-	{
-		if (abs(y - teleportY) > MARIO_RACCOON_BBOX_HEIGHT)
-		{
-			isInTeleport = true;
-			teleportTime = GetTickCount();
-			isTeleport = false;
-		}
-	}
-	//DebugOut(L"\nteleportTime:\t%d", teleportTime);
-	if (isInTeleport && GetTickCount() - teleportTime >
-		MARIO_TELEPORT_TIME)
-	{
-		// có thể nói đây là thời gian ở trong teleport
-		isInTeleport = false;
-		teleportTime = 0;
-		if (isInExtraMap == false)
-		{
-		///Thông tin về teleport cần được khởi tạo riêng mỗi map
-		/// phải khởi tạo số này khi load map
-		/// Todo: khởi tạo lại khi làm thêm map mới
-			x = 2282;
-			y = 520;
-			isInExtraMap = true;
-		}
-		else if (isInExtraMap == true)
-		{
-			x = 2344;
-			y = 362;
-			isInExtraMap = false;
-		}
-	}
-	UpdateStageOfTailAttack();
 	if (dt > 64)
 		dt = 16;
 	if (isTransform)
@@ -98,41 +45,38 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	if (isTeleport == false) {
 		if (isInGround == false)
 		{
-			if (vy > -0.2 &&
-				vy < 0.2)
+			if (vy > -MARIO_FALLING_SPEED && vy < MARIO_FALLING_SPEED)
 				vy += MARIO_LOWER_GRAVITY * dt;
 			else
 				vy += MARIO_GRAVITY * dt;
 		}
 		else
 			vy += MARIO_GRAVITY * dt;
+		if (isFloating)
+		{
+			if(vy > MARIO_GRAVITY * 63)
+				vy = MARIO_GRAVITY * 63;
+			if (vy < MARIO_LOWER_GRAVITY * 63 && vy >MARIO_LOWER_GRAVITY * 63)
+				vy = MARIO_LOWER_GRAVITY * 63;
+		}
+			
 	}
-	Friction();
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
 	coEvents.clear();
-	// turn off collision when die 
+	// turn off collision when die  and in teleport
+
 	if (state != MARIO_STATE_DEATH && !isTeleport)
 		CalcPotentialCollisions(coObjects, coEvents);
-	// reset untouchable timer if untouchable time has passed
-	if (GetTickCount64() - untouchableStart > MARIO_UNTOUCHABLE_TIME
-		&& untouchable == 1)
-	{
-		untouchableStart = 0;
-		untouchable = 0;
-	}
-	if (GetTickCount() - shootingTime> MARIO_SHOOTING_TIME
-		&& state == MARIO_STATE_SHOOT_FIREBALL)
-	{
-		this->SetState(MARIO_STATE_IDLE);
-	}
-	// No collision occured, proceed normally
+
+	HandleSwitchTime();
+
 	if (coEvents.size() == 0)
 	{
 		x += dx;
 		y += dy;
-		if (vy > 0.2)
+		if (vy > MARIO_GRAVITY * 63)
 		{
 			isInGround = false;
 		}
@@ -173,11 +117,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						enemy->SetBeingStromped();
 						score += 100;
 						vy = -MARIO_JUMP_DEFLECT_SPEED;
-						if (vx > 0)
-							vx = MARIO_WALK_DEFELCT_SPEED;
-						else if(vx < 0)
-							vx = -MARIO_WALK_DEFELCT_SPEED;
-						isInGround = true;
+						vx = MARIO_WALK_DEFELCT_SPEED * nx;
 					}
 					else if (enemy->IsDead() == true)
 					{
@@ -199,8 +139,6 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							{
 								if (form > MARIO_SMALL_FORM)
 								{
-									//form -= 1;
-									//StartUntouchable();
 									DecreaseForm();
 								}
 								else
@@ -235,21 +173,16 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 								{
 									if (form > MARIO_SMALL_FORM)
 									{
-										//form -= 1;
-										//StartUntouchable();
 										DecreaseForm();
 									}
 									else
 										SetState(MARIO_STATE_DEATH);
-									//enemy->ChangeDirect();
 								}
 							}
 							else
 							{
 								if (form > MARIO_SMALL_FORM)
 								{
-									//form -= 1;
-									//StartUntouchable();
 									DecreaseForm();
 								}
 								else
@@ -261,8 +194,6 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						{
 							if (form > MARIO_SMALL_FORM)
 							{
-								//form -= 1;
-								//StartUntouchable();
 								DecreaseForm();
 							}
 							else
@@ -288,8 +219,6 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					{
 						if (form > MARIO_SMALL_FORM)
 						{
-							//form -= 1;
-							//StartUntouchable();
 							DecreaseForm();
 						}
 						else
@@ -304,8 +233,6 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				{
 					if (form > MARIO_SMALL_FORM)
 					{
-						//form -= 1;
-						//StartUntouchable();
 						DecreaseForm();
 					}
 					else
@@ -319,8 +246,6 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				{
 					if (e->ny > 0 && nex == 0)
 					{
-						//Nếu là Breakable thì Small Form ko thể làm vỡ
-						// Các Brick còn lại thì có thể tác động
 						if (brick->Breakable() && form != MARIO_SMALL_FORM ||
 							!brick->Breakable())
 						{
@@ -328,23 +253,20 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							if (brick->state != BRICK_STATE_INACTIVE)
 								this->GainPoint(100);
 						}
-							
 					}
 				}
-				// nếu viên gạch Breakable ở trạng thái 
-				// COIN hay là Empty
 				else
 				{
 					brick->Used();
 					this->GainPoint(10);
 					this->GainMoney(1);
 				}
-			
 			}
 			else if (dynamic_cast<Block*>(e->obj))
 			{
-				x += dx;
-				if (e->ny > 0/* && nex == 0*/)
+				if (e->nx != 0 && ney == 0)
+					x += dx;
+				if (e->ny > 0)
 					y += dy;
 			}
 			else if (dynamic_cast<Item*>(e->obj))
@@ -363,7 +285,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					{
 						// Nếu ấn phím S trên teleport
 						// thì sẽ dẫn đến extraMap
-						if (isPressS)
+						if (isSquat)
 						{
 							isTeleport = true;
 							vy = MARIO_SPEED_TELEPORT;
@@ -400,12 +322,11 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				}
 				else if (e->ny < 0)
 				{
-					this->SetAutoJump(-0.75f);
+					this->SetAutoJump(-0.5f);
 				}
 			}
 		}
 	}
-
 	// clean up collision events
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
 }
@@ -611,7 +532,7 @@ void Mario::Render()
 			}
 		}
 	}
-	if (state == MARIO_STATE_SQUAT)
+	if (isSquat)
 	{
 		switch (form)
 		{
@@ -644,7 +565,7 @@ void Mario::Render()
 			break;
 		}
 	}
-	if (state == MARIO_STATE_FLOATING)
+	if (isFloating)
 	{
 		ani = MARIO_ANI_FLOATING;
 	}
@@ -652,7 +573,7 @@ void Mario::Render()
 	{
 		ani = MARIO_ANI_DIE;
 	}	
-	if (state == MARIO_STATE_FLYING)
+	if (isFlying)
 	{
 		ani = MARIO_ANI_FLYING;
 	}
@@ -671,7 +592,6 @@ void Mario::Render()
 	else if (isLookUp)
 		ani = MARIO_ANI_LOOKUP;
 	int alpha = 255;
-	/*DebugOut(L"Ani: %d\n", ani);*/
 	if (untouchable)
 	{
 		if((GetTickCount64() - untouchableStart) % 2 == 0)
@@ -709,10 +629,7 @@ void Mario::SetState(int state)
 		break;
 	case MARIO_STATE_DEATH:
 		vy = -MARIO_DIE_DEFLECT_SPEED;
-		break;
-	case MARIO_STATE_RUNNING:
-		vx = (MARIO_WALKING_SPEED + 
-			(BUFF_SPEED * powerMelterStack)) * nx;
+		vx = 0;
 		break;
 	case MARIO_STATE_BRAKING:
 		if (vx != 0)
@@ -721,21 +638,13 @@ void Mario::SetState(int state)
 			powerMelterStack  = 0;
 		}
 		break;
-	case MARIO_STATE_STOP:
-		vx -=(float) 0.01 * vx;
-		break;
 	case MARIO_STATE_KICK:
 		isKickShell = true;
 		kickTime = GetTickCount();
 		break;
 	case MARIO_STATE_FLOATING:
-		this->vy =- MARIO_FLOATING_SPEED_Y;
 		isFloating = true;
-		break;
-	case MARIO_STATE_FLYING:
-		this->vy = -MARIO_SUPER_JUMP_SPEED;
-		this->vx = (MARIO_WALKING_SPEED +
-			(BUFF_SPEED * powerMelterStack)) * nx;
+		floatingTime = GetTickCount();
 		break;
 	}
 
@@ -744,7 +653,7 @@ void Mario::GetBoundingBox(float& left, float& top, float& right,
 	float& bottom, bool isEnable)
 {
 	left = x;
-	if (state == MARIO_STATE_SQUAT)
+	if (isSquat)
 	{
 		top = y + this->GetHeight() - MARIO_BBOX_SQUAT_HEIGHT;
 		right = x + MARIO_BBOX_SQUAT_WIDTH;
@@ -777,73 +686,31 @@ void Mario::GetBoundingBox(float& left, float& top, float& right,
 		}
 	}
 }
-void Mario::CalcPotentialCollisions(vector<LPGAMEOBJECT>* coObjects,
-	vector<LPCOLLISIONEVENT>& coEvents)
-{
-	for (UINT i = 0; i < coObjects->size(); i++)
-	{
-		LPCOLLISIONEVENT e = SweptAABBEx(coObjects->at(i));
-
-		if (dynamic_cast<InvisibleBrick*>(coObjects->at(i)))
-		{
-			continue;
-		}
-		if (e->t > 0 && e->t <= 1.0f)
-		{
-			coEvents.push_back(e);
-		}
-		else
-			delete e;
-	}
-
-	std::sort(coEvents.begin(), coEvents.end(), 
-		CollisionEvent::compare);
-}
 #pragma endregion
 
 #pragma region Các hành động của MARIO
 void Mario::FillUpPowerMelter()// Tăng stack năng lượng của Mario
 {
-	this->isPressedJ = true;
 	DWORD current = GetTickCount();
-	if (state != MARIO_STATE_FLYING &&
-		isInGround != false)
+	if ( isFlying == false && isInGround != false)
 	{
-		if (stackTimeStart == 0)
+		if (current - stackTimeStart > STACK_TIME 
+			&& powerMelterStack < POWER_MELTER_FULL)
 		{
+			powerMelterStack += 1;
 			stackTimeStart = current;
-		}
-		else
-		{
-			if (current - stackTimeStart > STACK_TIME 
-				&& powerMelterStack < POWER_MELTER_FULL)
-			{
-				powerMelterStack += 1;
-				stackTimeStart = 0;
-			}
 		}
 	}
 }
 void Mario::LosePowerMelter()// Power Stack sẽ cạn theo thời gian
 {
-	if (powerMelterStack > 0 
-		&& state != MARIO_STATE_FLYING)
+	if (powerMelterStack > 0 && isFlying == false)
 	{
 		DWORD current = GetTickCount();
-		if (stackTimeStart == 0)
+		if (current - stackTimeStart > LOSE_STACK_TIME)
 		{
+			powerMelterStack -= 1;
 			stackTimeStart = current;
-			
-		}
-		else
-		{
-			if (current - stackTimeStart > LOSE_STACK_TIME
-			&& powerMelterStack > POWER_MELTER_MINIMUM
-				&& isPressedJ != true)
-			{
-				powerMelterStack -= 1;
-				stackTimeStart = 0;
-			}
 		}
 	}
 }
@@ -867,6 +734,7 @@ void Mario::SuperJump()
 	{
 		this->SetState(MARIO_STATE_SUPER_JUMPING);
 		jumpTimeStart = 0;
+		/*DebugOut(L"\nSuper Jump: %d", current);*/
 	}
 }
 void Mario::Jump()
@@ -878,15 +746,16 @@ void Mario::Jump()
 	{
 		this->SetState(MARIO_STATE_JUMPING);
 		jumpTimeStart = 0;
-	/*	DebugOut(L"Is Jumping\n");*/
+	/*	DebugOut(L"\nJump: %d",current);*/
 	}
 }
 void Mario::Squat()
 {
-	if (form != MARIO_SMALL_FORM)
+	if (form != MARIO_SMALL_FORM && vx == 0 )
 	{
-		this->SetState(MARIO_STATE_SQUAT);
+		isSquat = true;
 	}
+
 }
 int Mario::Skill()
 {
@@ -903,21 +772,22 @@ int Mario::Skill()
 }
 void Mario::Friction()
 {
-	if (turnFriction == true)
+	this->vx -= this->vx * MARIO_FRICTION;
+	if (abs(this->vx) < 0.01f && canBrake == false)
 	{
-		this->vx -= this->vx * MARIO_FRICTION;
-		if (abs(this->vx) < 0.06 && canBrake == false)
+		this->SetState(MARIO_STATE_IDLE);
+	}
+	else if (canBrake == true)
+	{
+		if (abs(this->vx) < 0.02f && powerMelterStack == 0)
 		{
 			this->SetState(MARIO_STATE_IDLE);
-			turnFriction = false;
+			canBrake = false;
 		}
-		else if (canBrake == true)
+		else if (abs(this->vx) < 0.01f)
 		{
-			if (abs(this->vx) < 0.03)
-			{
-				this->SetState(MARIO_STATE_IDLE);
-				canBrake = false;
-			}
+			this->SetState(MARIO_STATE_IDLE);
+			canBrake = false;
 		}
 	}
 }
@@ -953,10 +823,10 @@ void Mario::ShootFireBall(Grid* grid)
 void Mario::Float()
 {
 	if (this->form == MARIO_RACCOON_FORM && 
-		this->isInGround == false && 
-		vy > 0 && isFlying == false)
+		this->isInGround == false && isFlying == false)
 	{
-		this->SetState(MARIO_STATE_FLOATING);
+		isFloating = true;
+		floatingTime = GetTickCount();
 	}
 }
 void Mario::TailAttack()
@@ -999,7 +869,6 @@ void Mario::UpdateStageOfTailAttack()
 				{
 					x = x + nx*(MARIO_TAIL_BBOX_WIDTH - 2);
 					stageOfSwingTail++;
-					//DebugOut(L"[INFO] case 0, x = %f \n", x);
 				}
 				break;
 		case 1:
@@ -1027,12 +896,13 @@ void Mario::Fly()
 	if (form == MARIO_RACCOON_FORM)
 	{
 		DWORD current = GetTickCount();
-		/*	DebugOut(L"Power melter stack: %d\n", power_melter_stack);*/
 		if (powerMelterStack == POWER_MELTER_FULL   && 
 			current - flyTimeStart < MARIO_FLYING_LIMITED_TIME)
 		{
 			this->SetState(MARIO_STATE_FLYING);
-			/*DebugOut(L"Is Flying\n");*/
+			this->vy = -MARIO_SUPER_JUMP_SPEED;
+			this->vx = (MARIO_WALKING_SPEED +
+				(BUFF_SPEED * powerMelterStack)) * nx;
 			isFlying = true;
 		}
 		else if (current - flyTimeStart >
@@ -1047,8 +917,9 @@ void Mario::Fly()
 			powerMelterStack == POWER_MELTER_FULL)
 		{
 			flyTimeStart = current;
-			this->SetState(MARIO_STATE_FLYING);
-			isInGround = false;
+			this->vy = -MARIO_SUPER_JUMP_SPEED;
+			this->vx = (MARIO_WALKING_SPEED +
+				(BUFF_SPEED * powerMelterStack)) * nx;
 		}
 	}
 }
@@ -1106,7 +977,6 @@ Mario::Mario()
 	isPressedJ = false;
 	isInGround = true;
 	flyTimeStart = 0;
-	turnFriction = false;
 	isPickingUp = false;
 	indexFireBall = 0;
 	score = 0;
@@ -1217,58 +1087,113 @@ void Mario::DecreaseForm()
 }
 void Mario::SetWalkingRight()
 {
-	//DebugOut(L"\n[Right]nx: %d", nx);
-	//DebugOut(L"\n[Right]vx: %f", vx);
 	if (canBrake == false)
 	{
 		this->nx = 1;
-		if (vx * nx < 0)
+		if (!isFlying)
 		{
-			if (this->nx < 0 && vx >= 0.1f )
+			if (vx * nx < 0 && abs(vx) >= 0.09f)
 			{
-				vx += vx / 30;
 				canBrake = true;
+				LosePowerMelter();
 			}
-			else if (nx > 0 && vx <= -0.1f)
+			else
 			{
-				vx -= vx / 30;
-				canBrake = true;
+				this->SetState(MARIO_STATE_WALKING);
+				canBrake = false;
 			}
-		
-		}
-		else
-		{
-			this->SetState(MARIO_STATE_WALKING);
-			canBrake = false;
 		}
 	}
 }
 void Mario::SetWalkingLeft()
 {
-	/*DebugOut(L"\n[Left]nx: %d", nx);
-	DebugOut(L"\n[Left]vx: %f", vx);*/
 	if (canBrake == false)
 	{
 		this->nx = -1;
-		if (vx * nx < 0)
+		if (isFlying == false)
 		{
-			if (this->nx < 0 && vx >= 0.1f)
+			if (vx * nx < 0 && abs(vx) >= 0.09f)
 			{
-				vx += vx / 30;
 				canBrake = true;
+				LosePowerMelter();
 			}
-			else if (nx > 0 && vx <= -0.1f)
+			else
 			{
-				vx -= vx / 30;
-				canBrake = true;
+				this->SetState(MARIO_STATE_WALKING);
+				canBrake = false;
 			}
-		
-		}
-		else
-		{
-			this->SetState(MARIO_STATE_WALKING);
-			canBrake = false;
 		}
 	}
+}
+void Mario::HandleSwitchTime()
+{
+	if (GetTickCount64() - tailAttackTime >
+		MARIO_TAIL_ATTACK_TIME && isSwingTail == true)
+	{
+		isSwingTail = false;
+		tail->SetState(RACCOONTAIL_STATE_INACTIVE);
+	}
 
+
+	if (GetTickCount64() - turnRaccoonTime >
+		MARIO_BIG_FORM_TRANSFORM_TIME && isTurnRaccoon == true) {
+		isTurnRaccoon = false;
+		turnRaccoonTime = 0;
+		if (untouchable == 1)
+			form = MARIO_BIG_FORM;
+	}
+	if (GetTickCount() - kickTime > MARIO_KICK_LIMIT_TIME
+		&& isKickShell == true)
+	{
+		isKickShell = false;
+	}
+	if (GetTickCount() - shootingTime > MARIO_SHOOTING_TIME
+		&& state == MARIO_STATE_SHOOT_FIREBALL)
+	{
+		this->SetState(MARIO_STATE_IDLE);
+	}
+	if (GetTickCount64() - untouchableStart > MARIO_UNTOUCHABLE_TIME
+		&& untouchable == 1)
+	{
+		untouchableStart = 0;
+		untouchable = 0;
+	}
+	if (isTeleport)
+	{
+		if (abs(y - teleportY) > MARIO_RACCOON_BBOX_HEIGHT)
+		{
+			isInTeleport = true;
+			teleportTime = GetTickCount();
+			isTeleport = false;
+		}
+	}
+	if (GetTickCount() - floatingTime > 300 &&
+		isFloating == true)
+	{
+		isFloating = false;
+	}
+	//DebugOut(L"\nteleportTime:\t%d", teleportTime);
+	if (isInTeleport && GetTickCount() - teleportTime >
+		MARIO_TELEPORT_TIME)
+	{
+		// có thể nói đây là thời gian ở trong teleport
+		isInTeleport = false;
+		teleportTime = 0;
+		if (isInExtraMap == false)
+		{
+			///Thông tin về teleport cần được khởi tạo riêng mỗi map
+			/// phải khởi tạo số này khi load map
+			/// Todo: khởi tạo lại khi làm thêm map mới
+			x = 2282;
+			y = 520;
+			isInExtraMap = true;
+		}
+		else if (isInExtraMap == true)
+		{
+			x = 2344;
+			y = 362;
+			isInExtraMap = false;
+		}
+	}
+	UpdateStageOfTailAttack();
 }

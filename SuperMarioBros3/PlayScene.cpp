@@ -627,7 +627,7 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		mario->Information();
 		break;
 	case DIK_DOWN:
-		mario->isPressS = true;
+		mario->Squat();
 		break;
 	case DIK_A:
 	{
@@ -674,20 +674,12 @@ void PlayScenceKeyHandler::OnKeyUp(int KeyCode)
 	case DIK_A:
 		mario->ReleaseJ();
 		break;
-	case DIK_LEFT:
-		mario->turnFriction = true;
-	/*	mario->Brake(false);*/
-		break;
-	case DIK_RIGHT:
-	/*	mario->Brake(true);*/
-		mario->turnFriction = true;
-		break;
 	case DIK_S:
 		mario->Jump();
 		break;
 	case DIK_DOWN:
 		mario->SetState(MARIO_STATE_IDLE);
-		mario->isPressS = false;
+		mario->isSquat = false;
 		break;
 	}
 		
@@ -697,60 +689,39 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 	Game* game = Game::GetInstance();
 	Mario* mario = ((PlayScene*)scence)->GetPlayer();
 	// disable control key when Mario die 
-	if (mario->GetState() == MARIO_STATE_DEATH) return;
+	if (mario->GetState() == MARIO_STATE_DEATH || mario->isAutoWalk) return;
+	if (game->IsKeyDown(DIK_S))
+	{
+		mario->SuperJump();
+	}
 	if (game->IsKeyDown(DIK_RIGHT))
 	{
-		//mario->SetDirect(true);
-		//mario->Brake(true);
-		if (!mario->IsFlying() && !mario->IsFloating())
+		if (game->IsKeyDown(DIK_A))
 		{
-			if (game->IsKeyDown(DIK_A))
-			{
-				mario->FillUpPowerMelter();
-				mario->PickUp();
-			}
-			mario->SetWalkingRight();
-			if (game->IsKeyDown(DIK_S))
-			{
-				mario->SuperJump();
-			}
+			mario->FillUpPowerMelter();
+			mario->PickUp();
 		}
-		
+		mario->SetWalkingRight();
+		mario->Friction();
 	}
-	if (game->IsKeyDown(DIK_LEFT))
+	else if (game->IsKeyDown(DIK_LEFT))
 	{
-		//mario->SetDirect(false);
-		
-		if (!mario->IsFlying() && !mario->IsFloating())
+		if (game->IsKeyDown(DIK_A))
 		{
-			if (game->IsKeyDown(DIK_A))
-			{
-				mario->FillUpPowerMelter();
-				mario->PickUp();
-			}
-			mario->SetWalkingLeft();
-			if (game->IsKeyDown(DIK_S))
-			{
-				mario->SuperJump();
-			}
+			mario->FillUpPowerMelter();
+			mario->PickUp();
 		}
-		
+		mario->SetWalkingLeft();
+		mario->Friction();
 	}
 	else if (game->IsKeyDown(DIK_DOWN))
 	{
 		mario->Squat();
 	}
-	else if (game->IsKeyDown(DIK_S))
-	{
-		mario->SuperJump();
-	}
 	else
 	{
 		mario->LosePowerMelter();
-		if (game->IsKeyDown(DIK_A))
-		{
-			mario->PickUp();
-		}
+		mario->Friction();
 	}
 	
 }
