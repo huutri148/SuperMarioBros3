@@ -27,7 +27,6 @@ void Goomba::Update(DWORD dt,
 	HandleTimeSwitchState();
 	if (state == GOOMBA_STATE_INACTIVE || isEnable == false)
 		return;
-	//DebugOut(L"\nvx: %f, vy:%f", vx, vy);
 	Enemy::Update(dt, coObjects);
 	if (this->state != GOOMBA_STATE_BEING_STROMPED)
 		vy += dt * GOOMBA_GRAVITY;
@@ -54,8 +53,14 @@ void Goomba::Update(DWORD dt,
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
-			if (!dynamic_cast<Block*>(e->obj) && !dynamic_cast<Goomba*>(e->obj)&&
-				!dynamic_cast<ParaGoomba*>(e->obj))
+			if (dynamic_cast<Brick*>(e->obj) || dynamic_cast<Pipe*>(e->obj))
+			{
+				if (nx != 0)
+				{
+					this->ChangeDirect();
+				}
+			}
+			else if (dynamic_cast<Ground*>(e->obj))
 			{
 				if (nx != 0 && ny == 0)
 				{

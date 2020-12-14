@@ -29,7 +29,7 @@ void Brick::SetEmpty()
 		state != BRICK_STATE_EMPTY)
 	{
 		this->SetState(BRICK_STATE_EMPTY);
-		this->DropItem();
+		/*this->DropItem();*/
 		isUsed = true;
 	}
 	else if(type == BRICK_BREAKABLE_TYPE)
@@ -79,6 +79,7 @@ void Brick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		vy = 0;
 		y = entryY;
+		this->DropItem();
 		this->SetState(BRICK_STATE_INACTIVE);
 	}
 }

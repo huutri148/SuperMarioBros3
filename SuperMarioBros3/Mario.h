@@ -4,7 +4,7 @@
 #include"FireBall.h"
 #include"Grid.h"
 #include"RaccoonTail.h"
-
+#include "Utils.h"
 
 class Mario : public GameObject
 {
@@ -39,13 +39,9 @@ class Mario : public GameObject
 	bool isKickShell = false;
 	bool isFlying = false;
 	bool isFloating = false;
-	
-
 	bool isTransform = false;
 	bool isTurnRaccoon = false;
 	bool isTeleport = false;// bật cờ khi ở cổng Tele
-
-
 	RaccoonTail* tail;
 	
 public:
@@ -54,9 +50,8 @@ public:
 	bool isInTeleport = false;
 	bool isInExtraMap = false;
 	bool isAutoWalk = false;
-	bool turnFriction;
 	bool isPressedJ;
-	bool isPressS;
+	bool isSquat = false;
 	bool isPickingUp = false;
 	bool turnToSmallForm = false;
 	bool isSwingTail = false;
@@ -77,7 +72,6 @@ public:
 	{
 		return isPickingUp;
 	}
-	
 	Mario();
 
 	virtual void Update(DWORD dt,
@@ -85,9 +79,6 @@ public:
 	virtual void Render();
 	virtual void GetBoundingBox(float& left, float& top,
 		float& right, float& bottom, bool isEnable);
-	virtual void CalcPotentialCollisions(vector<LPGAMEOBJECT>* coObjects,
-		vector<LPCOLLISIONEVENT>& coEvents);
-
 
 	void SetState(int state);
 	void SetLevel(int l) { form = l; }
@@ -109,10 +100,7 @@ public:
 
 	//Xử Lí
 	void Friction();
-	/*void HandleCollision(float min_tx, float min_ty,
-		float nx, float ny, float x0, float y0);*/
-	void StartUntouchable() 
-	{ untouchable = 1; untouchableStart = GetTickCount(); }
+	void StartUntouchable() { untouchable = 1; untouchableStart = GetTickCount(); }
 	void UpForm();
 	void ReleaseJ();
 	void PressK();
@@ -134,19 +122,13 @@ public:
 	void TailAttack();
 	void Float();
 	void Fly();
-	void StartJumping() { jumpTimeStart = GetTickCount(); }
+	void StartJumping() { 	jumpTimeStart = GetTickCount(); }
 	void Jump();
 	void SuperJump();
 	void PickUp();
-	//void Brake(bool brake);
 	void UpdateStageOfTailAttack();
-	
-
-
 	void GainMoney(int pMoney) { money += pMoney; };
 	void GainPoint(int pPoint) { score += pPoint; };
 	void GainLife() { life += 1; };
-
 	void SetTele(float x, float y) { this->SetLevel(MARIO_RACCOON_FORM); this->x = x; this->y = y; };
-
 };

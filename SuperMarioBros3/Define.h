@@ -25,25 +25,24 @@
 //Các chỉ số thời gian và tốc độ
 #define MARIO_UNTOUCHABLE_TIME			1000
 #define MARIO_WALKING_SPEED				0.1f
-#define MARIO_JUMP_SPEED_Y				0.3f
-#define MARIO_SUPER_JUMP_SPEED			0.5f
-#define MARIO_JUMP_DEFLECT_SPEED		0.3f
-#define MARIO_WALK_DEFELCT_SPEED		0.1f
+#define MARIO_JUMP_SPEED_Y				0.2f
+#define MARIO_SUPER_JUMP_SPEED			0.3f
+#define MARIO_JUMP_DEFLECT_SPEED		0.2f
+#define MARIO_WALK_DEFELCT_SPEED		0.08f
 #define MARIO_BRAKE_DEFLECT_SPEED		0.08f
-#define MARIO_GRAVITY					0.002f
-#define MARIO_LOWER_GRAVITY				0.001f
-#define MARIO_DIE_DEFLECT_SPEED			0.5f
+#define MARIO_GRAVITY					0.001f
+#define MARIO_LOWER_GRAVITY				0.0005f
+#define MARIO_DIE_DEFLECT_SPEED			0.3f
 #define BUFF_SPEED						0.008f	// tốc độ tăng lên khi tích stack
 #define POWER_MELTER_FULL				7		// số stack tối đa		//thời gian để tích 1 stack
 #define POWER_MELTER_MINIMUM			0
 #define POWER_MELTER_BUFF_SPEED_LEVEL	3
-#define STACK_TIME						200			//thời gian để tích 1 stack
-#define LOSE_STACK_TIME					100
-#define MARIO_FRICTION					0.08f
+#define STACK_TIME						300			//thời gian để tích 1 stack
+#define LOSE_STACK_TIME					200
+#define MARIO_FRICTION					0.05f
 #define MARIO_SUPER_JUMP_TIME			300
 #define MARIO_FLYING_LIMITED_TIME		2000
-#define MARIO_FLOATING_SPEED_Y			0.05f
-#define MARIO_FALLING_SPEED				0.03f
+#define MARIO_FLOATING_SPEED_Y			0.0f
 #define MARIO_MAX_BULLET				2
 #define MARIO_SHOOTING_TIME				200
 #define MARIO_TAIL_ATTACK_TIME			300
@@ -53,6 +52,7 @@
 #define MARIO_SPEED_TELEPORT				0.02f
 #define MARIO_TELEPORT_TIME					300
 #define MARIO_KICK_LIMIT_TIME				300
+#define MARIO_FALLING_SPEED					0.237f
 
 //Các trạng thái của Mario
 #define MARIO_STATE_IDLE				0

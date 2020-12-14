@@ -282,8 +282,8 @@ void IntroScene::Update(DWORD dt)
 	{
 		if (mario->vx == 0 && lugi->vx == 0)
 		{
-			lugi->SetAutoWalk(1, MARIO_WALKING_SPEED);
-			mario->SetAutoWalk(-1, -MARIO_WALKING_SPEED);
+			lugi->SetAutoWalk(1, 0.08f);
+			mario->SetAutoWalk(-1, -0.08f);
 		}
 		else if (GetTickCount() -backGround->beginSection2Time > SECTION2_TIME &&
 			backGround->beginSection2Time != 0)
@@ -414,10 +414,9 @@ void IntroScene::HandleBehaviourOfMario()
 	{
 		if (mario->x > goomba->x && !goomba->isDead)
 		{
-			if (mario->vy > SPEED_TO_AUTOFLOATING)
-				mario->Float();
+			mario->Float();
 			goomba->SetState(GOOMBA_STATE_WALKING);
-			mario->vx = -0.04f;
+			mario->vx = -0.05f;
 		}
 	}
 	// Bật cờ cho sự kiện Đàn Koopas xuất hiện
@@ -436,23 +435,21 @@ void IntroScene::HandleBehaviourOfMario()
 			/// không nhạy cả khi sử dụng phím và tự chỉnh biến cờ
 			/// </summary>
 			mario->powerMelterStack = 0;
-			mario->SetAutoWalk(-1, -0.08f);
+			mario->SetWalkingLeft();
 			koopa->isEnable = false;
 			showingKoopas = true;
 		}
 	}
 	if (canJumpToCounter == true)
 	{
-		if (mario->x - MARIO_BIG_BBOX_WIDTH < koopa->x
+		if (mario->x + 30 < koopa->x
 			&& koopa->x < SCREEN_HEIGHT / 2)
 		{
 			mario->isAutoWalk = false;
-			mario->vx = -0.02f;
-			mario->SetDirect(true);
-			mario->SetAutoJump(-MARIO_JUMP_SPEED_Y);
+			mario->vx = -0.01f;
+			mario->SetAutoJump(-0.15f);
 			canJumpToCounter = false;
 			marioPickShell = true;
-			mario->isPressedJ = true;
 		}
 	}
 	// Sự kiện Mario cầm mai rùa để đẩy
@@ -486,7 +483,6 @@ void IntroScene::HandleBehaviourOfLugi()
 	{
 		if (mario->vx < 0)
 		{
-			//mario->canBrake = true;
 			mario->SetAutoWalk(1, 0.06f);
 		}
 		lugi->SetPosition(SCREEN_HEIGHT, 160);
@@ -503,7 +499,7 @@ void IntroScene::HandleBehaviourOfLugi()
 		{
 			lugi->isPressedJ = false;
 			lugi->SetState(MARIO_STATE_IDLE);
-			mario->SetAutoWalk(-1, -0.1f);
+			mario->SetAutoWalk(-1, -0.12f);
 			canJumpToCounter = true;
 		}
 	}
@@ -523,7 +519,6 @@ void IntroScene::Render()
 			if (objects[i]->isEnable == true)
 				objects[i]->Render();
 		}
-	
 	}
 	if (showingBush == true)
 	{

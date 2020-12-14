@@ -14,7 +14,6 @@ void KoopaParaTroopa::GetBoundingBox(float& left, float& top,
 void KoopaParaTroopa::Update(DWORD dt,
 	vector<LPGAMEOBJECT>* coObjects)
 {
-	//DebugOut(L"\nState: %d", state);
 	if (state == PARATROOPA_STATE_INACTIVE)
 		return;
 	HandleTimeSwitchState();
@@ -25,7 +24,7 @@ void KoopaParaTroopa::Update(DWORD dt,
 	GameObject::Update(dt);
 	// fall down slower 
 	if (vy > -0.2 && vy < 0.2)
-			vy += MARIO_LOWER_GRAVITY * dt;
+			vy += 0.001 * dt;
 		else
 			vy += PARATROOPA_GRAVITY * dt;
 	vector<LPCOLLISIONEVENT> coEvents;
