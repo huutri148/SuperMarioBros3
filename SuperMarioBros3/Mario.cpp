@@ -289,6 +289,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						{
 							isTeleport = true;
 							vy = MARIO_SPEED_TELEPORT;
+							vx = 0;
 							teleportY = y;
 						}
 					}
@@ -299,6 +300,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							isTeleport = true;
 							vy = - MARIO_SPEED_TELEPORT;
 							teleportY = y;
+							vx = 0;
 						}
 					}
 				}
@@ -630,13 +632,6 @@ void Mario::SetState(int state)
 	case MARIO_STATE_DEATH:
 		vy = -MARIO_DIE_DEFLECT_SPEED;
 		vx = 0;
-		break;
-	case MARIO_STATE_BRAKING:
-		if (vx != 0)
-		{
-			vx = MARIO_BRAKE_DEFLECT_SPEED * -nx;
-			powerMelterStack  = 0;
-		}
 		break;
 	case MARIO_STATE_KICK:
 		isKickShell = true;

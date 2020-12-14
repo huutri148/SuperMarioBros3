@@ -7,6 +7,9 @@ Hud::Hud()
 	Textures* textures = Textures::GetInstance();
 	Sprites* sprites = Sprites::GetInstance();
 	Game* game = Game::GetInstance();
+	AnimationSets * animation_sets = AnimationSets::GetInstance();
+	LPANIMATION_SET ani_set = animation_sets->Get(77);
+	this->SetAnimationSet(ani_set);
 	powerMelterStack = 0;
 	money = game->money;
 	score = game->score;
@@ -100,6 +103,10 @@ void Hud::Render()
 	{
 		filledPowerMelterSprite[i]->Draw(-1, x, y,255,
 			80.0f + FONT_BBOX_WIDTH * i,-73.0f);
+		if (i == 6)
+		{
+			animation_set->at(0)->Render(-1, x, y, 255, 80.0f + FONT_BBOX_WIDTH * 6, -73.0f);
+		}
 	}
 	for (unsigned int i = 0; i < cardSprite.size(); i++)
 	{
