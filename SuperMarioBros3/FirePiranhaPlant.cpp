@@ -62,17 +62,6 @@ void FirePiranhaPlant::Update(DWORD dt,
 				}
 
 			}
-		/*	else if (dynamic_cast<InvisibleBrick*>(e->obj))
-			{
-				DebugOut(L"\n[Fire Piranha] AAAAAAAA");
-				if (e->ny != 0)
-				{
-					isOutOfPipe = true;
-					this->SetState(FIREPIRANHAPLANT_STATE_SHOOTING);
-					switchTime = GetTickCount();
-					this->y = y0 + e->t * dy + e->ny * 0.4f;
-				}
-			}*/
 		}
 	}
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];
@@ -272,6 +261,6 @@ void FirePiranhaPlant::GetDirect()
 	else
 		shootInGround = true;
 	// Nếu Mario ở trên Pipe sẽ không lao ra
-	if (abs(x - mX) <= FIREPIRANHAPLANT_BBOX_WIDTH /2)
+	if (abs(x - mX) <= FIREPIRANHAPLANT_BBOX_WIDTH *2 && isOutOfPipe == false)
 		switchTime = GetTickCount();
 }

@@ -31,7 +31,7 @@ void ParaGoomba::Update(DWORD dt,
 	HandleTimeSwitchState();
 	Enemy::Update(dt, coObjects);
 	if (vy > -0.2 && vy < 0.2)
-		vy += 0.001 * dt;
+		vy += 0.001f * dt;
 	else
 		vy += PARAGOOMBA_GRAVITY * dt;
 	vector<LPCOLLISIONEVENT> coEvents;

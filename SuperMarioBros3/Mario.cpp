@@ -42,7 +42,8 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	// Calculate dx, dy 
 	GameObject::Update(dt);
 	// fall down slower
-	if (isTeleport == false) {
+	if (isTeleport == false) 
+	{
 		if (isInGround == false)
 		{
 			if (vy > -MARIO_FALLING_SPEED && vy < MARIO_FALLING_SPEED)
@@ -126,6 +127,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							if (enemy->state == KOOPATROOPA_STATE_HIDING)
 							{
 								dynamic_cast<KoopaTroopa*>(enemy)->IsKicked(nx);
+								this->SetState(MARIO_STATE_KICK);
 								vy = -MARIO_JUMP_DEFLECT_SPEED;
 							}
 						}
@@ -774,7 +776,7 @@ void Mario::Friction()
 	}
 	else if (canBrake == true)
 	{
-		if (abs(this->vx) < 0.02f && powerMelterStack == 0)
+		if (abs(this->vx) < 0.04f && powerMelterStack == 0)
 		{
 			this->SetState(MARIO_STATE_IDLE);
 			canBrake = false;
@@ -1003,6 +1005,7 @@ void Mario::Reset()
 	isKickShell = false;
 	isPressedJ = false;
 	isInGround = true;
+	this->SetState(MARIO_STATE_IDLE);
 }
 bool Mario::IsFlying()
 {

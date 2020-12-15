@@ -71,7 +71,6 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	coEvents.clear();
 	if(isDead != true)
 		CalcPotentialCollisions(coObjects, coEvents);
-	//DebugOut(L"\nCollision size: %d", coEvents.size());
 	if (coEvents.size() == 0)
 	{
 		
@@ -84,7 +83,6 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		{
 			if (y - lastStanding_Y >= 1.0f)
 			{
-				
 				y -= 4;
 				x -= nx * 13;
 				this->ChangeDirect();
@@ -99,8 +97,6 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			nx, ny);
 		x += min_tx * dx + nx * 0.4f;
 		y += min_ty * dy + ny * 0.4f;
-	
-		
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
@@ -125,7 +121,6 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						{
 							this->SetState(KOOPATROOPA_STATE_DEATH);
 						}
-
 					}
 					else
 					{
@@ -264,6 +259,8 @@ void KoopaTroopa::SetState(int state)
 	case KOOPATROOPA_STATE_INACTIVE:
 		x = entryX;
 		y = entryY;
+		CanPullBack = false;
+		hidingTime = 0;
 		break;
 	case KOOPATROOPA_STATE_EXIT_SHELL:
 		isEnable = true;

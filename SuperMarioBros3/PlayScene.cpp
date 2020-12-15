@@ -525,7 +525,6 @@ void PlayScene::Render()
 	// Khi không ở trong teleport
 	if (!player->isInTeleport)
 	{
-		//DebugOut(L"\nListMoving Obj: %d", listMovingObjectsToRender.size());
 		this->map->Render(cam_x, cam_y, screenWidth, screenHeight);
 		for (auto obj : listItems)
 		{
@@ -593,16 +592,11 @@ void PlayScene::Unload()
 	listUnits.clear();
 	portal = NULL;
 	hud = NULL;
-	//grid = NULL;
+	grid = NULL;
 	//unit = NULL;
-	//player = NULL;
-	//hud = NULL;
+	player = NULL;
+	hud = NULL;
 	//map = NULL;
-	//for (unsigned int i = 0; i < objects.size(); i++)
-	//	delete objects[i];
-
-	//objects.clear();
-	//player = NULL;
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
 }
 

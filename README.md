@@ -9,8 +9,8 @@ Nguyễn Hữu Trí - MSSV: 18521528 - Lớp: SE102.L11
 
 ### HƯỚNG DẪN
 1. Điều khiển Mario:
-- A: Di chuyển qua trái
-- S: Squat
-- D: Di chuyển qua phải
-- J: Ném FireBall, tăng tốc, cầm mai rùa
-- K: Nhảy, Floating, Bay
+- LEFT: Di chuyển qua trái
+- DOWN: Squat
+- RIGHT: Di chuyển qua phải
+- A: Ném FireBall, tăng tốc, cầm mai rùa
+- S: Nhảy, Floating, Bay
