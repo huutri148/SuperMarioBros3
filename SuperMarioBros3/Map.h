@@ -14,6 +14,12 @@ class Map
 	vector<LPSPRITE> Tiles;
 	int Height = 0;
 	int Width = 0;
+
+	//Todo : add information in PlayScene and World_obj.txt
+	float edgeLeft;
+	float edgeRight;
+	float edgeBottomInWorld;
+	float edgeBottomInExtraMap;
 public: 
 	Map(int idMap, int nTitleCols, int nTitleRows, int nMapCols, int nMapRows, int nTotalTiles);
 	~Map();

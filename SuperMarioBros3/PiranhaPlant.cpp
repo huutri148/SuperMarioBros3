@@ -14,23 +14,10 @@ void PiranhaPlant::GetBoundingBox(float& left, float& top,
 void PiranhaPlant::Update(DWORD dt,
 	vector<LPGAMEOBJECT>* coObjects)
 {
-
-	// Nếu Mario ở trên ống sẽ không Plant sẽ không lao ra
-	PlayScene* playscene = ((PlayScene*)Game::GetInstance()->GetCurrentScene());
-	Mario* mario = playscene->GetPlayer();
-	float mX, mY;
-	mario->GetPosition(mX, mY);
-	if (abs(mX - x) <= FIREPIRANHAPLANT_BBOX_WIDTH / 2)
-		switchTime = GetTickCount();
-
-
 	HandleTimeSwitchState();
 	if (state == PIRANHAPLANT_STATE_INACTIVE)
 		return;
-	//DebugOut(L"\ny: %f", y);
 	Enemy::Update(dt, coObjects);
-	//if (this->state != PIRANHAPLANT_STATE_DEATH)
-	//	vy += dt * GOOMBA_GRAVITY;
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
@@ -65,27 +52,13 @@ void PiranhaPlant::Update(DWORD dt,
 			{
 				if (e->ny != 0)
 				{
-					//DebugOut(L"\nAAAAAAAA");
 					isOutOfPipe = false;
 					this->SetState(PIRANHAPLANT_STATE_BITING);
 					switchTime = GetTickCount();
 					this->y = y0 + e->t * dy + e->ny * 0.4f;
 					lastStateY = y;
 				}
-				
 			}
-			/*if (dynamic_cast<InvisibleBrick*>(e->obj))
-			{
-				if (e->ny != 0)
-				{
-					isOutOfPipe = true;
-					this->SetState(PIRANHAPLANT_STATE_BITING);
-					switchTime = GetTickCount();
-					this->y = y0 + e->t * dy + e->ny * 0.4f;
-				}
-			
-				
-			}*/
 		}
 
 	}
@@ -148,7 +121,6 @@ void PiranhaPlant::SetState(int _state)
 	case PIRANHAPLANT_STATE_INACTIVE:
 		x = entryX;
 		y = entryY;
-	/*	isEnable = false;*/
 		break;
 	}
 }
@@ -174,13 +146,18 @@ void PiranhaPlant::SetBeingStromped()
 }
 void PiranhaPlant::HandleTimeSwitchState()
 {
+	Game* game = Game::GetInstance();
+	LPSCENE scence = game->GetCurrentScene();
+	Mario* mario = ((PlayScene*)scence)->GetPlayer();
+	float mX, mY;
+	mario->GetPosition(mX, mY);
+	float diffX = mX - x, diffY = mY - y;
 	if (state == PIRANHAPLANT_STATE_BITING &&
 		GetTickCount() - switchTime > PIRANHAPLANT_SWITCHING_STATE_TIME
 		&& switchTime != 0)
 	{
 		switchTime = 0;
 		this->SetState(PIRANHAPLANT_STATE_DARTING);
-	/*	isEnable = false;*/
 	}
 	if (state == PIRANHAPLANT_STATE_DEATH &&
 		GetTickCount() - deathTime > PIRANHAPLANT_INACTIVE_TIME
@@ -189,4 +166,6 @@ void PiranhaPlant::HandleTimeSwitchState()
 		isEnable = false;
 		deathTime = 0;
 	}
+	if (abs(x - mX) <= FIREPIRANHAPLANT_BBOX_WIDTH * 2 && isOutOfPipe == false)
+		switchTime = GetTickCount();
 }
