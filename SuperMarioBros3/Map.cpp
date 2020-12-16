@@ -3,7 +3,7 @@
 #include "Map.h"
 #include"Utils.h"
 Map::Map(int idMap, int nTitleCols, int nTitleRows, int nMapCols,
-	int nMapRows, int nTotalTiles)
+	int nMapRows, int nTotalTiles, float edgeLeft,float edgeRight, float edgeBottomInWorld, float edgeBottomInExtraMap)
 {
 	this->TileSet = Textures::GetInstance()->Get(idMap);
 	this->TotalColsOfMap = nMapCols;
@@ -11,6 +11,10 @@ Map::Map(int idMap, int nTitleCols, int nTitleRows, int nMapCols,
 	this->TotalRowsOfTileSet = nTitleRows;
 	this->TotalColsOfTitleSet = nTitleCols;
 	this->TotalTiles = nTotalTiles;
+	this->edgeLeft = edgeLeft;
+	this->edgeRight = edgeRight;
+	this->edgeBottomInWorld = edgeBottomInWorld;
+	this->edgeBottomInExtraMap = edgeBottomInExtraMap;
 }
 Map::~Map()
 {

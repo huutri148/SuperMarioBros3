@@ -33,7 +33,6 @@ void KoopaParaTroopa::Update(DWORD dt,
 	coEvents.clear();
 
 	CalcPotentialCollisions(coObjects, coEvents);
-	//DebugOut(L"\ncoEvent size: %d", coEvents.size());
 	if (coEvents.size() == 0)
 	{
 		x += dx;
@@ -67,6 +66,13 @@ void KoopaParaTroopa::Update(DWORD dt,
 					vx = -vx;
 				}
 			}
+			else if (dynamic_cast<Enemy*>(e->obj))
+			{
+				if (e->ny < 0)
+				{
+					y -= (min_ty * dy + ny * 0.4f);
+				}
+			}
 
 		}
 	}
@@ -93,7 +99,7 @@ void KoopaParaTroopa::SetState(int state)
 		nx = -1;
 		vy =  0;
 		break;
-	case PARAGOOMBA_STATE_INACTIVE:
+	case PARATROOPA_STATE_INACTIVE:
 		x = entryX;
 		y = entryY;
 		break;

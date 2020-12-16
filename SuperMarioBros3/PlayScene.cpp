@@ -209,8 +209,9 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 	}
 	case OBJECT_TYPE_FIREPIRANHAPLANT:
 	{
-		int set_type = atoi(tokens[4].c_str());
-		obj = new FirePiranhaPlant(x, y, set_type);
+		float limit =(float) atof(tokens[4].c_str());
+		int set_type = atoi(tokens[5].c_str());
+		obj = new FirePiranhaPlant(x, y,limit, set_type);
 		unit = new Unit(grid, obj, x, y);
 		break;
 	}
@@ -269,7 +270,14 @@ void PlayScene::_ParseSection_MAPS(string line)
 	int totalTiles = atoi(tokens[5].c_str());
 	wstring MatrixPath = ToWSTR(tokens[6]);
 
-	this->map = new Map(idMap, tolRowTileSet, tolColTileSet, tolRowMap, tolColMap, totalTiles);
+
+	float edgeLeft = (float)atof(tokens[7].c_str());
+	float edgeRight = (float)atof(tokens[8].c_str());
+	float edgeBottomInWorld = (float)atof(tokens[9].c_str());
+	float edgeBottomInExtraMap = (float)atof(tokens[10].c_str());
+
+	this->map = new Map(idMap, tolRowTileSet, tolColTileSet, tolRowMap, tolColMap, totalTiles,
+		edgeLeft, edgeRight, edgeBottomInWorld, edgeBottomInExtraMap);
 	map->LoadMatrix(MatrixPath.c_str());
 	map->CreateTilesFromTileSet();
 	DebugOut(L"\nParseSection_MAPS: Done");
@@ -393,16 +401,16 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 	{
 		for (auto obj : objects)
 		{
-			if (!dynamic_cast<Enemy*>(obj) || !dynamic_cast<Mario*>(obj))
+			if (!dynamic_cast<Enemy*>(obj))
 				coObjects.push_back(obj);
 		}
 	}
-	else if (dynamic_cast<PointEffect*>(curObj) || dynamic_cast<HitEffect*>(curObj))
+	else if (dynamic_cast<PointEffect*>(curObj) || dynamic_cast<HitEffect*>(curObj) ||
+		dynamic_cast<BrokenBrickEffect*>(curObj) || dynamic_cast<FirePlantBullet*>(curObj))
 	{
 		return;
 	}
-	else if (dynamic_cast<FirePiranhaPlant*>(curObj) || 
-		dynamic_cast<PiranhaPlant*>(curObj))
+	else if (dynamic_cast<FirePiranhaPlant*>(curObj) || dynamic_cast<PiranhaPlant*>(curObj))
 	{
 		for (auto obj : objects)
 		{
@@ -415,10 +423,6 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 				dynamic_cast<FireBall*>(obj))
 				coObjects.push_back(obj);
 		}
-	}
-	else if (dynamic_cast<FirePlantBullet*>(curObj))
-	{
-		return;
 	}
 	else if (dynamic_cast<KoopaTroopa*>(curObj))
 	{
@@ -593,10 +597,10 @@ void PlayScene::Unload()
 	portal = NULL;
 	hud = NULL;
 	grid = NULL;
-	//unit = NULL;
+	unit = NULL;
 	player = NULL;
 	hud = NULL;
-	//map = NULL;
+	map = NULL;
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
 }
 
@@ -696,6 +700,8 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 			mario->FillUpPowerMelter();
 			mario->PickUp();
 		}
+		else if (!game->IsKeyDown(DIK_A))
+			mario->LosePowerMelter();
 		mario->SetWalkingRight();
 		mario->Friction();
 	}
@@ -706,6 +712,8 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 			mario->FillUpPowerMelter();
 			mario->PickUp();
 		}
+		else if(!game->IsKeyDown(DIK_A))
+			mario->LosePowerMelter();
 		mario->SetWalkingLeft();
 		mario->Friction();
 	}
@@ -723,7 +731,8 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 //Bật Camera khi Mario bay 
 void PlayScene::TurnCamY(float _playerY, bool isFlying, int ScreenHeight, int MapHeight)
 {
-	if (isTurnCamY == true && _playerY > 448 - ScreenHeight/2)
+	
+	if (isTurnCamY == true && _playerY > (map->edgeBottomInWorld + 16) - ScreenHeight/2)
 	{
 		isTurnCamY = false;
 	}
@@ -743,7 +752,7 @@ void PlayScene::UpdateCameraPosition()
 	float oldCamY = game->GetCamY();
 
 	TurnCamY(cy, player->IsFlying(), screenHeight, mapHeight);
-	float Sx = 16, Sy = oldCamY;
+	float Sx = map->edgeLeft, Sy = oldCamY;
 	cx -= screenWidth / 2;
 	cy -= screenHeight / 2;
 	float edgeBottom = 0;
@@ -755,7 +764,7 @@ void PlayScene::UpdateCameraPosition()
 	// Cần phải sửa vì còn extra map ở dưới
 	// nếu có thể chia thành hai map thì sẽ để theo 
 	//chiều dài và chiều rộng của map
-	if (player->x > 16 + screenWidth / 2)
+	if (player->x > map->edgeLeft + screenWidth / 2)
 	{
 		Sx = cx;
 	}

@@ -29,11 +29,11 @@ void ParaGoomba::Update(DWORD dt,
 * tạo và truyền thông tin chung của Mario cho mọi Enemy
 */
 	HandleTimeSwitchState();
+	Chasing();
 	Enemy::Update(dt, coObjects);
-	if (vy > -0.2 && vy < 0.2)
-		vy += 0.001f * dt;
-	else
-		vy += PARAGOOMBA_GRAVITY * dt;
+	if(dt > 64)
+		dt = 16;
+	vy += PARAGOOMBA_GRAVITY * dt;
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
@@ -68,7 +68,7 @@ void ParaGoomba::Update(DWORD dt,
 				{
 					if(state == PARAGOOMBA_STATE_SUPER_JUMPING)
 						this->SetState(PARAGOOMBA_STATE_WALKING);
-					if (state == PARAGOOMBA_STATE_FLAPPING)
+					else if (state == PARAGOOMBA_STATE_FLAPPING)
 						this->SetState(PARAGOOMBA_STATE_FLAPPING);
 				}
 				
@@ -99,15 +99,15 @@ void ParaGoomba::SetState(int state)
 	switch (state)
 	{
 	case PARAGOOMBA_STATE_WALKING:
-		vx =- PARAGOOMBA_WALKING_SPEED;
+		vx = PARAGOOMBA_WALKING_SPEED * nx;
 		nx = -1;
 		vy = 0;
 		break;
 	case PARAGOOMBA_STATE_FLAPPING:
-		vy = -PARAGOOMBA_JUMP_SPEED;
+		vy = -0.1f;
 		break;
 	case PARAGOOMBA_STATE_SUPER_JUMPING:
-		vy = -PARAGOOMBA_SUPER_JUMP_SPEED;
+		vy = -0.2f;
 		break;
 	case PARAGOOMBA_STATE_INACTIVE:
 		x = entryX;
@@ -131,6 +131,19 @@ bool ParaGoomba::IsDead()
 	return false;
 }
 
+void ParaGoomba::Chasing()
+{
+	Game* game = Game::GetInstance();
+	LPSCENE scene = game->GetCurrentScene();
+	if (dynamic_cast<PlayScene*>(scene))
+	{
+		Mario* mario = (dynamic_cast<PlayScene*>(scene))->GetPlayer();
+		if (mario->x - this->x < 0)
+			nx = -1;
+		else
+			nx = 1;
+	}
+}
 
 void ParaGoomba::SetBeingStromped()
 {
@@ -172,9 +185,8 @@ void ParaGoomba::HandleTimeSwitchState()
 		if (state == PARAGOOMBA_STATE_WALKING)
 		{
 			y -= PARAGOOMBA_BBOX_HEIGHT_FLAPPING - PARAGOOMBA_STATE_WALKING;
-			this->SetState(PARAGOOMBA_STATE_FLAPPING);
+			this->SetState(PARAGOOMBA_STATE_SUPER_JUMPING);
 		}
-			
 		else if (state == PARAGOOMBA_STATE_FLAPPING)
 			this->SetState(PARAGOOMBA_STATE_SUPER_JUMPING);
 		switchStateTime = GetTickCount();
