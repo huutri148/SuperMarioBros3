@@ -5,9 +5,9 @@
 10	Resources\textures\WorldMap.png	166	185	255
 20	Resources\textures\Panel.png	255	255	255
 80	Resources\textures\HUD&Font.png	0	224	142
-#ID	TolColTile	TolRowTile	TolColMap	TolRowMap	TotalTiles	Matrix_path
+#ID	TolColTile	TolRowTile	TolColMap	TolRowMap	TotalTiles	Matrix_path	edgeLeft	edgeRight	edgeBottomInWorld	edgeBottomInExtraMap
 [MAP]
-0	8	4	16	11	32	Resources\Map\World1.txt
+0	8	4	16	11	32	Resources\Map\World1.txt	16	718	48	480	0
 
 
 # id	left	top	right	bottom	texture_id

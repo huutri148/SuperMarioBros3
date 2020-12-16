@@ -270,7 +270,14 @@ void PlayScene::_ParseSection_MAPS(string line)
 	int totalTiles = atoi(tokens[5].c_str());
 	wstring MatrixPath = ToWSTR(tokens[6]);
 
-	this->map = new Map(idMap, tolRowTileSet, tolColTileSet, tolRowMap, tolColMap, totalTiles);
+
+	float edgeLeft = (float)atof(tokens[7].c_str());
+	float edgeRight = (float)atof(tokens[8].c_str());
+	float edgeBottomInWorld = (float)atof(tokens[9].c_str());
+	float edgeBottomInExtraMap = (float)atof(tokens[10].c_str());
+
+	this->map = new Map(idMap, tolRowTileSet, tolColTileSet, tolRowMap, tolColMap, totalTiles,
+		edgeLeft, edgeRight, edgeBottomInWorld, edgeBottomInExtraMap);
 	map->LoadMatrix(MatrixPath.c_str());
 	map->CreateTilesFromTileSet();
 	DebugOut(L"\nParseSection_MAPS: Done");
@@ -724,7 +731,8 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 //Bật Camera khi Mario bay 
 void PlayScene::TurnCamY(float _playerY, bool isFlying, int ScreenHeight, int MapHeight)
 {
-	if (isTurnCamY == true && _playerY > 448 - ScreenHeight/2)
+	
+	if (isTurnCamY == true && _playerY > (map->edgeBottomInWorld + 16) - ScreenHeight/2)
 	{
 		isTurnCamY = false;
 	}
@@ -744,7 +752,7 @@ void PlayScene::UpdateCameraPosition()
 	float oldCamY = game->GetCamY();
 
 	TurnCamY(cy, player->IsFlying(), screenHeight, mapHeight);
-	float Sx = 16, Sy = oldCamY;
+	float Sx = map->edgeLeft, Sy = oldCamY;
 	cx -= screenWidth / 2;
 	cy -= screenHeight / 2;
 	float edgeBottom = 0;
@@ -756,7 +764,7 @@ void PlayScene::UpdateCameraPosition()
 	// Cần phải sửa vì còn extra map ở dưới
 	// nếu có thể chia thành hai map thì sẽ để theo 
 	//chiều dài và chiều rộng của map
-	if (player->x > 16 + screenWidth / 2)
+	if (player->x > map->edgeLeft + screenWidth / 2)
 	{
 		Sx = cx;
 	}

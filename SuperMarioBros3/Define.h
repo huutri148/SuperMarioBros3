@@ -53,6 +53,8 @@
 #define MARIO_TELEPORT_TIME					300
 #define MARIO_KICK_LIMIT_TIME				300
 #define MARIO_FALLING_SPEED					0.35f // MARIO JUMPSPEED - Max(dt) * MARIO_GRAVITY
+#define MARIO_FLOATING_TIME					250
+
 
 //Các trạng thái của Mario
 #define MARIO_STATE_IDLE				0

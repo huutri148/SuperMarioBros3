@@ -71,6 +71,7 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	coEvents.clear();
 	if(isDead != true)
 		CalcPotentialCollisions(coObjects, coEvents);
+	
 	if (coEvents.size() == 0)
 	{
 		
@@ -124,12 +125,16 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					}
 					else
 					{
+						if (e->ny != 0)
+						{
+							y -= min_ty * dy + ny * 0.4f;
+						}
 						x += dx;
 					}
 				}
 				else
 				{
-					if (e->ny > 0)
+					if (e->ny != 0)
 					{
 						y -= min_ty * dy + ny * 0.4f;
 					}					
@@ -189,14 +194,6 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				if (e->nx != 0)
 				{
 					x -= min_tx * dx + nx * 0.4f;
-				}
-			}
-			else if (dynamic_cast<Enemy*>(e->obj))
-			{
-				if (e->ny > 0)
-				{
-					vy = 0;
-					y -= min_ty * dy + ny * 0.4f;
 				}
 			}
 		}

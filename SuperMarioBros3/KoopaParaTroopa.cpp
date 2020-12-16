@@ -66,6 +66,13 @@ void KoopaParaTroopa::Update(DWORD dt,
 					vx = -vx;
 				}
 			}
+			else if (dynamic_cast<Enemy*>(e->obj))
+			{
+				if (e->ny < 0)
+				{
+					y -= (min_ty * dy + ny * 0.4f);
+				}
+			}
 
 		}
 	}

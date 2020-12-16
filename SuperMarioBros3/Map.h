@@ -15,13 +15,18 @@ class Map
 	int Height = 0;
 	int Width = 0;
 
+	
+
+public: 
+
 	//Todo : add information in PlayScene and World_obj.txt
 	float edgeLeft;
 	float edgeRight;
 	float edgeBottomInWorld;
 	float edgeBottomInExtraMap;
-public: 
-	Map(int idMap, int nTitleCols, int nTitleRows, int nMapCols, int nMapRows, int nTotalTiles);
+
+	Map(int idMap, int nTitleCols, int nTitleRows, int nMapCols, int nMapRows, int nTotalTiles, float edgeLeft,float edgeRight,
+		float edgeBottomInWorld = 0, float edgeBottomInExtraMap = 0);
 	~Map();
 	void CreateTilesFromTileSet();
 	void LoadMatrix(LPCWSTR path);

@@ -127,7 +127,6 @@ public:
 	void Jump();
 	void SuperJump();
 	void PickUp();
-	void UpdateStageOfTailAttack();
 	void GainMoney(int pMoney) { money += pMoney; };
 	void GainPoint(int pPoint) { score += pPoint; };
 	void GainLife() { life += 1; };

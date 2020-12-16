@@ -150,9 +150,16 @@ void WorldMap::_ParseSection_MAPS(string line)
 	int tolRowMap = atoi(tokens[3].c_str());
 	int tolColMap = atoi(tokens[4].c_str());
 	int totalTiles = atoi(tokens[5].c_str());
+
 	wstring MatrixPath = ToWSTR(tokens[6]);
 
-	this->tileMap = new Map(idMap, tolRowTileSet, tolColTileSet, tolRowMap, tolColMap, totalTiles);
+	float edgeLeft = (float)atof(tokens[7].c_str());
+	float edgeRight = (float)atof(tokens[8].c_str());
+	float edgeBottomInWorld = (float)atof(tokens[9].c_str());
+	float edgeBottomInExtraMap = (float)atof(tokens[10].c_str());
+
+	this->tileMap = new Map(idMap, tolRowTileSet, tolColTileSet, tolRowMap, tolColMap, totalTiles,
+		edgeLeft,edgeRight,edgeBottomInWorld,edgeBottomInExtraMap);
 	tileMap->LoadMatrix(MatrixPath.c_str());
 	tileMap->CreateTilesFromTileSet();
 	DebugOut(L"\nParseSection_MAPS: Done");

@@ -613,7 +613,6 @@ void Mario::Render()
 			
 	}
 	animation_set->at(ani)->Render(nx, round(x), round(y), alpha);
-	//RenderBoundingBox();
 }
 void Mario::SetState(int state)
 {
@@ -858,39 +857,6 @@ void Mario::TailAttack()
 		}
 			
 		
-	}
-}
-void Mario::UpdateStageOfTailAttack()
-{
-	if (isSwingTail)
-	{
-		int stage =(int) (GetTickCount64() - tailAttackTime) /
-			MARIO_EACH_STAGE_IN_SWING_TAIL_TIME;
-		switch (stage)
-		{
-		case 0:
-				if (stageOfSwingTail == 0)
-				{
-					x = x + nx*(MARIO_TAIL_BBOX_WIDTH - 2);
-					stageOfSwingTail++;
-				}
-				break;
-		case 1:
-				if (stageOfSwingTail == 1)
-					stageOfSwingTail++;
-				break;
-		case 2:
-				if (stageOfSwingTail == 2)
-					stageOfSwingTail++;
-				break;
-		case 3:
-				if (stageOfSwingTail == 3)
-				{
-					x = x - nx *( MARIO_TAIL_BBOX_WIDTH - 2) ;
-					stageOfSwingTail = 0;
-				}
-				break;
-		}
 	}
 }
 void Mario::Fly()
@@ -1139,8 +1105,6 @@ void Mario::HandleSwitchTime()
 		isSwingTail = false;
 		tail->SetState(RACCOONTAIL_STATE_INACTIVE);
 	}
-
-
 	if (GetTickCount64() - turnRaccoonTime >
 		MARIO_BIG_FORM_TRANSFORM_TIME && isTurnRaccoon == true) {
 		isTurnRaccoon = false;
@@ -1173,7 +1137,7 @@ void Mario::HandleSwitchTime()
 			isTeleport = false;
 		}
 	}
-	if (GetTickCount() - floatingTime > 250 &&
+	if (GetTickCount() - floatingTime > MARIO_FLOATING_TIME &&
 		isFloating == true)
 	{
 		isFloating = false;
@@ -1200,5 +1164,4 @@ void Mario::HandleSwitchTime()
 			isInExtraMap = false;
 		}
 	}
-	UpdateStageOfTailAttack();
 }

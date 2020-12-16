@@ -12,9 +12,9 @@
 90	Resources\textures\GoalRoulette.png	0	183	239
 
 
-#ID	TolRowTile	TolColTile	TolRowMap	TolColMap	TotalTiles	Matrix_path
+#ID	TolRowTile	TolColTile	TolRowMap	TolColMap	TotalTiles	Matrix_path	edgeLeft	edgeRight	edgeBottomInWorld	edgeBottomInExtraMap
 [MAP]
-30	11	11	178	45	117	Resources\Map\World1-1.txt
+30	11	11	178	45	117	Resources\Map\World1-1.txt	16	2832	432	704	
 
 #grid_width	grid_height	cell_width	cell_height
 [GRID]
