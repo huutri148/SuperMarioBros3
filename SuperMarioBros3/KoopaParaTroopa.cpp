@@ -33,7 +33,6 @@ void KoopaParaTroopa::Update(DWORD dt,
 	coEvents.clear();
 
 	CalcPotentialCollisions(coObjects, coEvents);
-	//DebugOut(L"\ncoEvent size: %d", coEvents.size());
 	if (coEvents.size() == 0)
 	{
 		x += dx;
@@ -93,7 +92,7 @@ void KoopaParaTroopa::SetState(int state)
 		nx = -1;
 		vy =  0;
 		break;
-	case PARAGOOMBA_STATE_INACTIVE:
+	case PARATROOPA_STATE_INACTIVE:
 		x = entryX;
 		y = entryY;
 		break;

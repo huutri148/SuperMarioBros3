@@ -55,10 +55,10 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			vy += MARIO_GRAVITY * dt;
 		if (isFloating)
 		{
-			if(vy > MARIO_GRAVITY * 63)
-				vy = MARIO_GRAVITY * 63;
-			if (vy < MARIO_LOWER_GRAVITY * 63 && vy >MARIO_LOWER_GRAVITY * 63)
-				vy = MARIO_LOWER_GRAVITY * 63;
+			if(vy > MARIO_GRAVITY * 32)
+				vy = MARIO_GRAVITY * 32;
+		/*	if (vy < MARIO_LOWER_GRAVITY * 63 && vy >MARIO_LOWER_GRAVITY * 63)
+				vy = MARIO_LOWER_GRAVITY * 64;*/
 		}
 			
 	}
@@ -128,7 +128,8 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							{
 								dynamic_cast<KoopaTroopa*>(enemy)->IsKicked(nx);
 								this->SetState(MARIO_STATE_KICK);
-								vy = -MARIO_JUMP_DEFLECT_SPEED;
+								y += dy;
+							/*	vy = -MARIO_JUMP_DEFLECT_SPEED;*/
 							}
 						}
 					}
@@ -260,6 +261,10 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				else
 				{
 					brick->Used();
+					if(e->nx != 0)
+						x -= (min_tx * dx + nex * 0.4f);
+					if(e->ny != 0)
+						y -= (min_ty * dy + ney * 0.4f);
 					this->GainPoint(10);
 					this->GainMoney(1);
 				}
@@ -314,6 +319,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				y += dy;
 				this->SetAutoWalk(1, 0.1f);
 				card.push_back(dynamic_cast<Portal*>(e->obj)->GetPortal());
+				Game::GetInstance()->card.push_back(dynamic_cast<Portal*>(e->obj)->GetPortal());
 			}
 			else if (dynamic_cast<Mario*>(e->obj))
 			{
@@ -326,7 +332,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				}
 				else if (e->ny < 0)
 				{
-					this->SetAutoJump(-0.5f);
+					this->SetAutoJump(-0.7f);
 				}
 			}
 		}
@@ -476,9 +482,9 @@ void Mario::Render()
 		}
 		
 	}
-	if (isInGround == false && isFlying == false)
+	if (isInGround == false )
 	{
-		if (!isPickingUp )
+		if (!isPickingUp && isFlying == false )
 		{
 			if (powerMelterStack >= POWER_MELTER_BUFF_SPEED_LEVEL )
 			{
@@ -522,16 +528,16 @@ void Mario::Render()
 			switch (form)
 			{
 			case MARIO_SMALL_FORM:
-				ani = MARIO_ANI_SMALL_HOLD_SHELL_RUNNING;
+				ani = MARIO_ANI_SMALL_HOLD_SHELL_JUMPING;
 				break;
 			case MARIO_BIG_FORM:
-				ani = MARIO_ANI_BIG_HOLD_SHELL_RUNNING;
+				ani = MARIO_ANI_BIG_HOLD_SHELL_JUMPING;
 				break;
 			case MARIO_FIRE_FORM:
-				ani = MARIO_ANI_FIRE_HOLD_SHELL_RUNNING;
+				ani = MARIO_ANI_FIRE_HOLD_SHELL_JUMPING;
 				break;
 			case MARIO_RACCOON_FORM:
-				ani = MARIO_ANI_RACCOON_HOLD_SHELL_RUNNING;
+				ani = MARIO_ANI_RACCOON_HOLD_SHELL_JUMPING;
 				break;
 			}
 		}
@@ -569,7 +575,7 @@ void Mario::Render()
 			break;
 		}
 	}
-	if (isFloating)
+	if (isFloating && !isPickingUp)
 	{
 		ani = MARIO_ANI_FLOATING;
 	}
@@ -577,11 +583,11 @@ void Mario::Render()
 	{
 		ani = MARIO_ANI_DIE;
 	}	
-	if (isFlying)
+	if (isFlying && !isPickingUp)
 	{
 		ani = MARIO_ANI_FLYING;
 	}
-	else if (isSwingTail)
+	else if (isSwingTail && !isPickingUp)
 		ani = MARIO_ANI_TAILATTACK;
 	else if (state == MARIO_STATE_SHOOT_FIREBALL)
 		ani = MARIO_ANI_SHOOT_FIRE_BALL;
@@ -630,6 +636,7 @@ void Mario::SetState(int state)
 		vx = 0;
 		isKickShell = false;
 		isAutoWalk = false;
+		isSquat = false;
 		break;
 	case MARIO_STATE_DEATH:
 		vy = -MARIO_DIE_DEFLECT_SPEED;
@@ -748,7 +755,7 @@ void Mario::Jump()
 }
 void Mario::Squat()
 {
-	if (form != MARIO_SMALL_FORM && vx == 0 )
+	if (form != MARIO_SMALL_FORM && vx == 0 || isInIntroScene)
 	{
 		isSquat = true;
 	}
@@ -881,7 +888,6 @@ void Mario::UpdateStageOfTailAttack()
 				{
 					x = x - nx *( MARIO_TAIL_BBOX_WIDTH - 2) ;
 					stageOfSwingTail = 0;
-					//DebugOut(L"[INFO] case 3, x = %f \n", x);
 				}
 				break;
 		}
@@ -981,6 +987,8 @@ Mario::Mario()
 	life = 4;
 	tail = new RaccoonTail();
 	tail->isEnable = false;
+	Game* game = Game::GetInstance();
+	card = game->card;
 }
 void Mario::ReleaseJ()
 {
@@ -1165,12 +1173,11 @@ void Mario::HandleSwitchTime()
 			isTeleport = false;
 		}
 	}
-	if (GetTickCount() - floatingTime > 300 &&
+	if (GetTickCount() - floatingTime > 250 &&
 		isFloating == true)
 	{
 		isFloating = false;
 	}
-	//DebugOut(L"\nteleportTime:\t%d", teleportTime);
 	if (isInTeleport && GetTickCount() - teleportTime >
 		MARIO_TELEPORT_TIME)
 	{

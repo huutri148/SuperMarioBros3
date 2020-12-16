@@ -11,6 +11,7 @@ class FirePiranhaPlant :public Enemy
 	bool isShooted = false;
 	bool shootInGround;
 	float lastStateY;
+	float limit;
 	virtual void HandleTimeSwitchState();
 
 	void GetDirect();
@@ -33,6 +34,6 @@ public:
 			return true;
 		return false;
 	}
-	FirePiranhaPlant(float x, float y, int _type = PIRANHAPLANT_RED_TYPE);
+	FirePiranhaPlant(float x, float y, float limit , int _type = PIRANHAPLANT_RED_TYPE);
 };
 

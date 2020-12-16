@@ -111,7 +111,7 @@ void Hud::Render()
 	for (unsigned int i = 0; i < cardSprite.size(); i++)
 	{
 		this->cardSprite[i]->Draw(-1, x, y, 255,
-			195 + 24.0f* i, -79.0f);
+			195 + 24.0f* i, -78.0f);
 	}
 }
 void Hud::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -133,7 +133,7 @@ void Hud::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		game->life = mario->GetLife();
 		time += dt;
 		remainTime = DEFAULT_TIME - time / 1000;
-		game->card = mario->card;
+	/*	game->card = mario->card;*/
 	}
 	lifeSprite = font->mapping(nlife + '0');
 

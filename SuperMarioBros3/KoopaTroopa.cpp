@@ -191,6 +191,14 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					x -= min_tx * dx + nx * 0.4f;
 				}
 			}
+			else if (dynamic_cast<Enemy*>(e->obj))
+			{
+				if (e->ny > 0)
+				{
+					vy = 0;
+					y -= min_ty * dy + ny * 0.4f;
+				}
+			}
 		}
 	}
 	for (UINT i = 0; i < coEvents.size(); i++) delete coEvents[i];

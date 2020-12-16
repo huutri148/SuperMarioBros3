@@ -209,8 +209,9 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 	}
 	case OBJECT_TYPE_FIREPIRANHAPLANT:
 	{
-		int set_type = atoi(tokens[4].c_str());
-		obj = new FirePiranhaPlant(x, y, set_type);
+		float limit =(float) atof(tokens[4].c_str());
+		int set_type = atoi(tokens[5].c_str());
+		obj = new FirePiranhaPlant(x, y,limit, set_type);
 		unit = new Unit(grid, obj, x, y);
 		break;
 	}
@@ -393,16 +394,16 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 	{
 		for (auto obj : objects)
 		{
-			if (!dynamic_cast<Enemy*>(obj) || !dynamic_cast<Mario*>(obj))
+			if (!dynamic_cast<Enemy*>(obj))
 				coObjects.push_back(obj);
 		}
 	}
-	else if (dynamic_cast<PointEffect*>(curObj) || dynamic_cast<HitEffect*>(curObj))
+	else if (dynamic_cast<PointEffect*>(curObj) || dynamic_cast<HitEffect*>(curObj) ||
+		dynamic_cast<BrokenBrickEffect*>(curObj) || dynamic_cast<FirePlantBullet*>(curObj))
 	{
 		return;
 	}
-	else if (dynamic_cast<FirePiranhaPlant*>(curObj) || 
-		dynamic_cast<PiranhaPlant*>(curObj))
+	else if (dynamic_cast<FirePiranhaPlant*>(curObj) || dynamic_cast<PiranhaPlant*>(curObj))
 	{
 		for (auto obj : objects)
 		{
@@ -415,10 +416,6 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 				dynamic_cast<FireBall*>(obj))
 				coObjects.push_back(obj);
 		}
-	}
-	else if (dynamic_cast<FirePlantBullet*>(curObj))
-	{
-		return;
 	}
 	else if (dynamic_cast<KoopaTroopa*>(curObj))
 	{
@@ -593,10 +590,10 @@ void PlayScene::Unload()
 	portal = NULL;
 	hud = NULL;
 	grid = NULL;
-	//unit = NULL;
+	unit = NULL;
 	player = NULL;
 	hud = NULL;
-	//map = NULL;
+	map = NULL;
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
 }
 
@@ -696,6 +693,8 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 			mario->FillUpPowerMelter();
 			mario->PickUp();
 		}
+		else if (!game->IsKeyDown(DIK_A))
+			mario->LosePowerMelter();
 		mario->SetWalkingRight();
 		mario->Friction();
 	}
@@ -706,6 +705,8 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 			mario->FillUpPowerMelter();
 			mario->PickUp();
 		}
+		else if(!game->IsKeyDown(DIK_A))
+			mario->LosePowerMelter();
 		mario->SetWalkingLeft();
 		mario->Friction();
 	}

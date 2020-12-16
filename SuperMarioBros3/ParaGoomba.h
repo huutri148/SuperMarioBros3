@@ -21,6 +21,7 @@ public:
 	virtual void Active();
 	virtual void Inactive();
 	void ChangeToGoomba(Grid* grid);
+	void Chasing();
 
 	ParaGoomba(float x, float y) :Enemy(x, y)
 	{

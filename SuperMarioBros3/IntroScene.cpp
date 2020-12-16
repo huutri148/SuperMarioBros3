@@ -282,8 +282,8 @@ void IntroScene::Update(DWORD dt)
 	{
 		if (mario->vx == 0 && lugi->vx == 0)
 		{
-			lugi->SetAutoWalk(1, 0.08f);
-			mario->SetAutoWalk(-1, -0.08f);
+			lugi->SetAutoWalk(1, MARIO_WALKING_SPEED);
+			mario->SetAutoWalk(-1, -MARIO_WALKING_SPEED);
 		}
 		else if (GetTickCount() -backGround->beginSection2Time > SECTION2_TIME &&
 			backGround->beginSection2Time != 0)
@@ -294,11 +294,9 @@ void IntroScene::Update(DWORD dt)
 		}
 		else
 		{
-			float x, y;
-			lugi->GetPosition(x, y);
 			// LUGI nhảy đụng vào góc trên màn hình sẽ bật cờ để 
 			// Section 3 bắt đầu
-			if (y < 10)
+			if (lugi->y < 30)
 			{
 				backGround->isBeginSection2 = false;
 				backGround->isBeginSection3 = true;
@@ -405,7 +403,7 @@ void IntroScene::HandleBehaviourOfMario()
 	{
 		if (GetTickCount() - changeAniTime > 800)
 		{
-			mario->SetAutoJump(-MARIO_SUPER_JUMP_SPEED);
+			mario->SetAutoJump(-MARIO_SUPER_JUMP_SPEED * 1.5f);
 			mario->isLookUp = false;
 		}
 	}
@@ -416,7 +414,7 @@ void IntroScene::HandleBehaviourOfMario()
 		{
 			mario->Float();
 			goomba->SetState(GOOMBA_STATE_WALKING);
-			mario->vx = -0.05f;
+			mario->vx = -0.07f;
 		}
 	}
 	// Bật cờ cho sự kiện Đàn Koopas xuất hiện
@@ -446,8 +444,8 @@ void IntroScene::HandleBehaviourOfMario()
 			&& koopa->x < SCREEN_HEIGHT / 2)
 		{
 			mario->isAutoWalk = false;
-			mario->vx = -0.01f;
-			mario->SetAutoJump(-0.15f);
+			mario->vx = -0.02f;
+			mario->SetAutoJump(-MARIO_JUMP_SPEED_Y);
 			canJumpToCounter = false;
 			marioPickShell = true;
 		}
@@ -499,7 +497,7 @@ void IntroScene::HandleBehaviourOfLugi()
 		{
 			lugi->isPressedJ = false;
 			lugi->SetState(MARIO_STATE_IDLE);
-			mario->SetAutoWalk(-1, -0.12f);
+			mario->SetAutoWalk(-1, -0.1f);
 			canJumpToCounter = true;
 		}
 	}

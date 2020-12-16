@@ -30,9 +30,9 @@ void FirePiranhaPlant::Update(DWORD dt,
 	{
 		x += dx;
 		y += dy;
-		if (lastStateY - y > 48)
+		if (lastStateY - y > limit)
 		{
-			y = lastStateY - 48;
+			y = lastStateY - limit;
 			lastStateY = y;
 			isOutOfPipe = true;
 			this->SetState(FIREPIRANHAPLANT_STATE_SHOOTING);
@@ -111,12 +111,13 @@ void FirePiranhaPlant::Render()
 				animation_set->at(ani)->Render(nx, round(x),round( y));
 			}
 }
-FirePiranhaPlant::FirePiranhaPlant(float x, float y, int _type) :Enemy(x, y)
+FirePiranhaPlant::FirePiranhaPlant(float x, float y,float limit, int _type) :Enemy(x, y)
 {
 	this->state = FIREPIRANHAPLANT_STATE_DARTING;
 	vy = FIREPIRANHAPLANT_DARTING_SPEED;
 	this->isOutOfPipe = true;
 	this->type = _type;
+	this->limit = limit;
 }
 void FirePiranhaPlant::SetState(int _state)
 {
