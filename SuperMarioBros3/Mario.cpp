@@ -21,22 +21,19 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	if (isEnable == false)
 		return;
+
 	if (GetTickCount64() - transformTime >
 		MARIO_BIG_FORM_TRANSFORM_TIME && isTransform == true)
 	{
 		isTransform = false;
 		transformTime = 0;
 		if (untouchable == 0)
-		{
 			this->SetLevel(MARIO_BIG_FORM);
-		}
 		else
-		{
 			this->SetLevel(MARIO_SMALL_FORM);
-		}
 	}
-	if (dt > 64)
-		dt = 16;
+
+
 	if (isTransform)
 		return;
 	// Calculate dx, dy 
@@ -55,19 +52,17 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			vy += MARIO_GRAVITY * dt;
 		if (isFloating)
 		{
-			if(vy > MARIO_GRAVITY * 32)
-				vy = MARIO_GRAVITY * 32;
-		/*	if (vy < MARIO_LOWER_GRAVITY * 63 && vy >MARIO_LOWER_GRAVITY * 63)
-				vy = MARIO_LOWER_GRAVITY * 64;*/
+			if(vy > MARIO_GRAVITY * dt)
+				vy = MARIO_GRAVITY * dt;
 		}
 			
 	}
+
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
-
 	coEvents.clear();
-	// turn off collision when die  and in teleport
 
+	// turn off collision when die  and in teleport
 	if (state != MARIO_STATE_DEATH && !isTeleport)
 		CalcPotentialCollisions(coObjects, coEvents);
 
@@ -77,10 +72,8 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		x += dx;
 		y += dy;
-		if (vy > MARIO_GRAVITY * 63)
-		{
+		if (vy > MARIO_GRAVITY * dt)
 			isInGround = false;
-		}
 	}
 	else
 	{
@@ -129,7 +122,6 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 								dynamic_cast<KoopaTroopa*>(enemy)->IsKicked(nx);
 								this->SetState(MARIO_STATE_KICK);
 								y += dy;
-							/*	vy = -MARIO_JUMP_DEFLECT_SPEED;*/
 							}
 						}
 					}
@@ -286,7 +278,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 			else if (dynamic_cast<Pipe*>(e->obj))
 			{
-				if (dynamic_cast<Pipe*>(e->obj)->type == PIPE_EXTRAMAP_PORT_TYPE)
+				if (dynamic_cast<Pipe*>(e->obj)->type == PIPE_EXTRAMAP_PORT_TYPE_UP)
 				{
 					if (e->ny < 0)
 					{
@@ -298,20 +290,24 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							vy = MARIO_SPEED_TELEPORT;
 							vx = 0;
 							teleportY = y;
+							x = e->obj->x + PIPE_BBOX_WIDTH * 1 / 4;
 						}
 					}
-					else if (e->ny > 0)
+				}
+				else if (dynamic_cast<Pipe*>(e->obj)->type == PIPE_EXTRAMAP_PORT_TYPE_DOWN)
+				{
+					if (e->ny > 0)
 					{
 						if (!isInGround)
 						{
 							isTeleport = true;
-							vy = - MARIO_SPEED_TELEPORT;
+							vy = -MARIO_SPEED_TELEPORT;
 							teleportY = y;
 							vx = 0;
+							x = e->obj->x + PIPE_BBOX_WIDTH * 1 / 4;
 						}
 					}
 				}
-				
 			}
 			else if (dynamic_cast<Portal*>(e->obj))
 			{
@@ -602,6 +598,10 @@ void Mario::Render()
 	else if (isLookUp)
 		ani = MARIO_ANI_LOOKUP;
 	int alpha = 255;
+
+	/// <summary>
+	/// Stupid function
+	/// </summary>
 	if (untouchable)
 	{
 		if((GetTickCount64() - untouchableStart) % 2 == 0)
@@ -613,6 +613,7 @@ void Mario::Render()
 			
 	}
 	animation_set->at(ani)->Render(nx, round(x), round(y), alpha);
+	//RenderBoundingBox();
 }
 void Mario::SetState(int state)
 {
@@ -620,8 +621,7 @@ void Mario::SetState(int state)
 	switch (state)
 	{
 	case MARIO_STATE_WALKING:
-		vx = (MARIO_WALKING_SPEED +
-				(BUFF_SPEED * powerMelterStack))* nx;
+		vx = (MARIO_WALKING_SPEED + (BUFF_SPEED * powerMelterStack))* nx;
 			break;
 	case MARIO_STATE_JUMPING:
 		isInGround = false;
@@ -683,7 +683,7 @@ void Mario::GetBoundingBox(float& left, float& top, float& right,
 		else if (form == MARIO_RACCOON_FORM)
 		{
 			if (nx > 0)
-				left = x + MARIO_TAIL_BBOX_WIDTH;
+				left = x + MARIO_RACCOON_BBOX_WIDTH - MARIO_TAIL_BBOX_WIDTH ;
 			right = left + MARIO_RACCOON_BBOX_WIDTH;
 			bottom = top + MARIO_RACCOON_BBOX_HEIGHT;
 		}
@@ -731,30 +731,26 @@ void Mario::SetDirect(bool nx)
 void Mario::SuperJump()
 {
 	DWORD current = GetTickCount();
-	if (current - jumpTimeStart > MARIO_SUPER_JUMP_TIME
-		&& isInGround == true
-		&& jumpTimeStart != 0)
+	if (current - jumpTimeStart > MARIO_SUPER_JUMP_TIME	&& isInGround == true &&
+		jumpTimeStart != 0)
 	{
 		this->SetState(MARIO_STATE_SUPER_JUMPING);
 		jumpTimeStart = 0;
-		/*DebugOut(L"\nSuper Jump: %d", current);*/
 	}
 }
 void Mario::Jump()
 {
 	DWORD current = GetTickCount();
-	if (current - jumpTimeStart < MARIO_SUPER_JUMP_TIME && 
-		isInGround == true &&
+	if (current - jumpTimeStart < MARIO_SUPER_JUMP_TIME && isInGround == true &&
 		jumpTimeStart != 0)
 	{
 		this->SetState(MARIO_STATE_JUMPING);
 		jumpTimeStart = 0;
-	/*	DebugOut(L"\nJump: %d",current);*/
 	}
 }
 void Mario::Squat()
 {
-	if (form != MARIO_SMALL_FORM && vx == 0 || isInIntroScene)
+	if (form != MARIO_SMALL_FORM && vx == 0 || isInIntroScene )
 	{
 		isSquat = true;
 	}
@@ -768,7 +764,7 @@ int Mario::Skill()
 	}
 	if (form == MARIO_RACCOON_FORM)
 	{
-		return MARIO_SKILL_TAILATTCK;
+		return MARIO_SKILL_TAILATTACK;
 	}
 	else
 		return MARIO_DO_NOTHING;
@@ -808,25 +804,22 @@ void Mario::ShootFireBall(Grid* grid)
 		FireBall* fireBall;
 		if (nx > 0)
 			fireBall = new FireBall(this->x + MARIO_FIRE_BBOX_WIDTH,
-				this->y + MARIO_FIRE_BBOX_WIDTH / 3,
-				this->nx);
+								this->y + MARIO_FIRE_BBOX_WIDTH / 3,
+								this->nx);
 		else
 			fireBall = new FireBall(this->x - MARIO_FIRE_BBOX_WIDTH,
-				this->y + MARIO_FIRE_BBOX_WIDTH / 3,
-				this->nx);
+								this->y + MARIO_FIRE_BBOX_WIDTH / 3,
+								this->nx);
 		Unit* unit = new Unit(grid, fireBall, this->x - MARIO_FIRE_BBOX_WIDTH,
 			this->y + MARIO_FIRE_BBOX_WIDTH / 3);
 	}
 	else
-	{
 		indexFireBall = 0;
-	}
-	
 }
 void Mario::Float()
 {
-	if (this->form == MARIO_RACCOON_FORM && 
-		this->isInGround == false && isFlying == false)
+	if (this->form == MARIO_RACCOON_FORM && this->isInGround == false && 
+		isFlying == false)
 	{
 		isFloating = true;
 		floatingTime = GetTickCount();
@@ -839,24 +832,21 @@ void Mario::TailAttack()
 	{
 		isSwingTail = true;
 		tailAttackTime = GetTickCount();
-		stageOfSwingTail = 0;
+
 		Game* game = Game::GetInstance();
 		Grid* grid = ((PlayScene*)game->GetCurrentScene())->GetGrid();
 		if (nx > 0)
 		{
 			tail->Attack(x + MARIO_TAIL_BBOX_WIDTH ,
 				y + MARIO_RACCOON_BBOX_HEIGHT - RACCOONTAIL_BBOX_HEIGHT,
-				this->nx,grid);
+				this->nx, grid);
 		}
-			
 		if (nx < 0)
 		{
 			tail->Attack(x + MARIO_TAIL_BBOX_WIDTH,
 				y + MARIO_RACCOON_BBOX_HEIGHT - RACCOONTAIL_BBOX_HEIGHT,
-				this->nx,grid);
+				this->nx, grid);
 		}
-			
-		
 	}
 }
 void Mario::Fly()
@@ -865,7 +855,7 @@ void Mario::Fly()
 	if (form == MARIO_RACCOON_FORM)
 	{
 		DWORD current = GetTickCount();
-		if (powerMelterStack == POWER_MELTER_FULL   && 
+		if (powerMelterStack == POWER_MELTER_FULL && 
 			current - flyTimeStart < MARIO_FLYING_LIMITED_TIME)
 		{
 			this->SetState(MARIO_STATE_FLYING);
@@ -874,16 +864,14 @@ void Mario::Fly()
 				(BUFF_SPEED * powerMelterStack)) * nx;
 			isFlying = true;
 		}
-		else if (current - flyTimeStart >
-			MARIO_FLYING_LIMITED_TIME
-			&& flyTimeStart != 0)
+		else if (current - flyTimeStart > MARIO_FLYING_LIMITED_TIME	&& 
+			flyTimeStart != 0)
 		{
 			flyTimeStart = 0;
 			powerMelterStack = 0;
 			isFlying = false;
 		}
-		else if (flyTimeStart == 0 &&
-			powerMelterStack == POWER_MELTER_FULL)
+		else if (flyTimeStart == 0 && powerMelterStack == POWER_MELTER_FULL)
 		{
 			flyTimeStart = current;
 			this->vy = -MARIO_SUPER_JUMP_SPEED;
@@ -900,10 +888,8 @@ void Mario::UpForm()
 {
 	int diffy = 0;
 	if (form == MARIO_SMALL_FORM)
-	{
 		diffy = MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT;
 
-	}
 	form += 1;
 	if (form > MARIO_RACCOON_FORM)
 	{
@@ -917,7 +903,6 @@ void Mario::Information()
 	Game* game = Game::GetInstance();
 	DebugOut(L"\nMario x: %f, y: %f ", x,y);
 	DebugOut(L"Get Cam X: %f", game->GetCamX());
-	//DebugOut(L"\nState %d", state);
 }
 int  Mario::GetWidth()
 {
@@ -995,12 +980,10 @@ bool Mario::IsInGround()
 }
 void Mario::TurnBigForm()
 {
-	
 	this->SetLevel(MARIO_BIG_FORM);
 	transformTime = GetTickCount();
 	isTransform = true;
 	y -= (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT + 2);
-	
 }
 void Mario::TurnRaccoonForm()
 {
@@ -1017,17 +1000,6 @@ void Mario::TurnFireForm()
 	this->SetLevel(MARIO_FIRE_FORM);
 	y -= (MARIO_FIRE_BBOX_HEIGHT - MARIO_BIG_BBOX_HEIGHT + 2);
 }
-//void Mario::Brake(bool brake)
-//{
-//	if (vx > 0 && brake == false)
-//	{
-//		canBrake = true;
-//	}
-//	else if (vx < 0 && brake == true)
-//	{
-//		canBrake = true;
-//	}
-//}
 void Mario::DecreaseForm()
 {
 	StartUntouchable();
@@ -1053,7 +1025,6 @@ void Mario::DecreaseForm()
 	{
 		form = MARIO_BIG_FORM;
 		isTransform = true;
-		//x += nx * (MARIO_BIG_BBOX_WIDTH - 6);
 		transformTime = GetTickCount();
 	}
 }
@@ -1105,29 +1076,30 @@ void Mario::HandleSwitchTime()
 		isSwingTail = false;
 		tail->SetState(RACCOONTAIL_STATE_INACTIVE);
 	}
-	if (GetTickCount64() - turnRaccoonTime >
-		MARIO_BIG_FORM_TRANSFORM_TIME && isTurnRaccoon == true) {
+	if (GetTickCount64() - turnRaccoonTime > MARIO_BIG_FORM_TRANSFORM_TIME &&
+		isTurnRaccoon == true)
+	{
 		isTurnRaccoon = false;
 		turnRaccoonTime = 0;
 		if (untouchable == 1)
 			form = MARIO_BIG_FORM;
 	}
-	if (GetTickCount() - kickTime > MARIO_KICK_LIMIT_TIME
-		&& isKickShell == true)
-	{
+	if (GetTickCount() - kickTime > MARIO_KICK_LIMIT_TIME && 
+		isKickShell == true)
 		isKickShell = false;
-	}
-	if (GetTickCount() - shootingTime > MARIO_SHOOTING_TIME
-		&& state == MARIO_STATE_SHOOT_FIREBALL)
-	{
+
+	if (GetTickCount() - shootingTime > MARIO_SHOOTING_TIME &&
+		state == MARIO_STATE_SHOOT_FIREBALL)
 		this->SetState(MARIO_STATE_IDLE);
-	}
-	if (GetTickCount64() - untouchableStart > MARIO_UNTOUCHABLE_TIME
-		&& untouchable == 1)
+
+	if (GetTickCount64() - untouchableStart > MARIO_UNTOUCHABLE_TIME && 
+		untouchable == 1)
 	{
 		untouchableStart = 0;
 		untouchable = 0;
 	}
+
+
 	if (isTeleport)
 	{
 		if (abs(y - teleportY) > MARIO_RACCOON_BBOX_HEIGHT)
@@ -1137,13 +1109,14 @@ void Mario::HandleSwitchTime()
 			isTeleport = false;
 		}
 	}
+
+
 	if (GetTickCount() - floatingTime > MARIO_FLOATING_TIME &&
 		isFloating == true)
 	{
 		isFloating = false;
 	}
-	if (isInTeleport && GetTickCount() - teleportTime >
-		MARIO_TELEPORT_TIME)
+	if (isInTeleport && GetTickCount() - teleportTime > MARIO_TELEPORT_TIME)
 	{
 		// có thể nói đây là thời gian ở trong teleport
 		isInTeleport = false;

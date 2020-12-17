@@ -127,7 +127,7 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					{
 						if (e->ny != 0)
 						{
-							y -= min_ty * dy + ny * 0.4f;
+							y -= (min_ty * dy + ny * 0.4f);
 						}
 						x += dx;
 					}
@@ -143,13 +143,17 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 			else if (dynamic_cast<Brick*>(e->obj))
 			{
-				CanPullBack = true;
-				lastStanding_Y = y;
-				if (e->nx != 0)
+				
+				if (!dynamic_cast<Brick*>(e->obj)->CanUsed())
 				{
-					if(isBumped == true)
-						dynamic_cast<Brick*>(e->obj)->SetEmpty();
-					this->ChangeDirect();
+					CanPullBack = true;
+					lastStanding_Y = y;
+					if (e->nx != 0)
+					{
+						if (isBumped == true)
+							dynamic_cast<Brick*>(e->obj)->SetEmpty();
+						this->ChangeDirect();
+					}
 				}
 			}
 			else if (dynamic_cast<Block*>(e->obj))

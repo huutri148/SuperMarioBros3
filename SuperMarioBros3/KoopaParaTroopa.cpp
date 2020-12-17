@@ -46,24 +46,33 @@ void KoopaParaTroopa::Update(DWORD dt,
 			nx, ny);
 		x += min_tx * dx + nx * 0.4f;
 		y += min_ty * dy + ny * 0.4f;
-		if (ny != 0) vy = 0;
-
+		
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
-			if (!dynamic_cast<Brick*>(e->obj) )
+			if (dynamic_cast<Block*>(e->obj)  )
 			{
-				if (ny < 0)
+				if (e->ny < 0)
+				{
+					vy = -PARATROOPA_JUMP_SPEED;
+				}
+				if (e->nx != 0 && ny == 0)
+				{
+					x += -(min_tx * dx + nx * 0.4f) + dx;
+				}
+			}
+			else if (dynamic_cast<Ground*>(e->obj))
+			{
+				if (e->ny < 0)
 				{
 					vy = -PARATROOPA_JUMP_SPEED;
 				}
 			}
 			else if(dynamic_cast<Brick*>(e->obj))
 			{
-				if (nx != 0)
+				if (e->nx != 0 )
 				{
-					nx = -nx;
-					vx = -vx;
+					this->ChangeDirect();
 				}
 			}
 			else if (dynamic_cast<Enemy*>(e->obj))
@@ -88,6 +97,7 @@ void KoopaParaTroopa::Render()
 			ani = PARATROOPA_ANI_DEATH;
 		animation_set->at(ani)->Render(nx, ny, round(x), round(y));
 	}
+	/*RenderBoundingBox();*/
 }
 void KoopaParaTroopa::SetState(int state)
 {
@@ -110,6 +120,7 @@ void KoopaParaTroopa::SetState(int state)
 		ny = 1;
 		break;
 	}
+
 }
 bool KoopaParaTroopa::IsDead()
 {
