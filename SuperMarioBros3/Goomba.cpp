@@ -23,7 +23,6 @@ void Goomba::GetBoundingBox(float& left, float& top,
 void Goomba::Update(DWORD dt,
 	vector<LPGAMEOBJECT>* coObjects)
 {
-	//DebugOut(L"\nState: %d", state);
 	HandleTimeSwitchState();
 	if (state == GOOMBA_STATE_INACTIVE || isEnable == false)
 		return;
@@ -85,7 +84,7 @@ void Goomba::Render()
 			ani = GOOMBA_ANI_DIE;
 		animation_set->at(ani)->Render(nx, ny, round(x), round(y));
 	}
-	//RenderBoundingBox();
+	/*RenderBoundingBox();*/
 }
 void Goomba::SetState(int state)
 {

@@ -80,7 +80,7 @@ void PlayScene::_ParseSection_ANIMATIONS(string line)
 
 	if (tokens.size() < 3) return; // skip invalid lines - an animation must at least has 1 frame and 1 frame time
 
-	//DebugOut(L"--> %s\n",ToWSTR(line).c_str());
+	DebugOut(L"--> %s\n",ToWSTR(line).c_str());
 
 	LPANIMATION ani = new Animation();
 
@@ -99,8 +99,8 @@ void PlayScene::_ParseSection_ANIMATION_SETS(string line)
 {
 	vector<string> tokens = split(line);
 
-	if (tokens.size() < 2) return; // skip invalid lines - an animation set must at least id and one animation id
-
+	if (tokens.size() < 2) 
+		return;
 	int ani_set_id = atoi(tokens[0].c_str());
 
 	LPANIMATION_SET s = new AnimationSet();
@@ -274,10 +274,21 @@ void PlayScene::_ParseSection_MAPS(string line)
 	float edgeLeft = (float)atof(tokens[7].c_str());
 	float edgeRight = (float)atof(tokens[8].c_str());
 	float edgeBottomInWorld = (float)atof(tokens[9].c_str());
-	float edgeBottomInExtraMap = (float)atof(tokens[10].c_str());
+	float edgeTop = (float)atof(tokens[10].c_str());
 
-	this->map = new Map(idMap, tolRowTileSet, tolColTileSet, tolRowMap, tolColMap, totalTiles,
-		edgeLeft, edgeRight, edgeBottomInWorld, edgeBottomInExtraMap);
+
+	float edgeLeftInExtraMap = (float)atof(tokens[11].c_str());
+	float edgeRightInExtraMap = (float)atof(tokens[12].c_str());
+	float edgeTopInExtraMap = (float)atof(tokens[13].c_str());
+	float edgeBottomInExtraMap = (float)atof(tokens[14].c_str());
+
+	this->map = new Map(idMap, tolRowTileSet, tolColTileSet,
+		tolRowMap, tolColMap, totalTiles,
+		edgeLeft, edgeRight, edgeTop, edgeBottomInWorld,
+		edgeLeftInExtraMap, edgeRightInExtraMap,
+		edgeTopInExtraMap, edgeBottomInExtraMap);
+
+
 	map->LoadMatrix(MatrixPath.c_str());
 	map->CreateTilesFromTileSet();
 	DebugOut(L"\nParseSection_MAPS: Done");
@@ -355,8 +366,9 @@ void PlayScene::Update(DWORD dt)
 
 	GetObjectFromGrid();
 	UpdatePlayer(dt);
-
 	ActiveEnemiesInViewport();
+
+
 	if (portal->state == PORTAL_STATE_CONGRATULATE)
 	{
 		this->isGameDone = true;
@@ -365,8 +377,8 @@ void PlayScene::Update(DWORD dt)
 		game->SwitchScene(1);
 		return;
 	}
+
 	if (!player->IsTransform()) {
-		//DebugOut(L"\nSize of obj: %d", objects.size());
 		for (UINT i = 0; i < objects.size(); i++)
 		{
 			LPGAMEOBJECT object = objects[i];
@@ -387,9 +399,10 @@ void PlayScene::Update(DWORD dt)
 			object->Update(dt, &coObjects);
 		}
 	}
-	// Update camera to follow mario
-	SetInactivation();
 
+
+	SetInactivation();
+	// Update camera to follow mario
 	UpdateCameraPosition();
 	hud->Update(dt);
 	UpdateGrid();
@@ -416,7 +429,7 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 		{
 			if (dynamic_cast<Enemy*>(obj))
 			{
-				if (!dynamic_cast<KoopaTroopa*>(obj))
+				if (!(dynamic_cast<KoopaTroopa*>(obj) && obj->state == KOOPATROOPA_STATE_HIDING))
 					continue;
 			}
 			if (dynamic_cast<Ground*>(obj) || 	dynamic_cast<InvisibleBrick*>(obj) ||
@@ -430,8 +443,8 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 		{
 			if (dynamic_cast<Enemy*>(obj))
 			{
-				if (dynamic_cast<Enemy*>(obj)->isDead == true ||
-					dynamic_cast<Enemy*>(obj)->IsInactive())
+				
+				if (dynamic_cast<Enemy*>(obj)->isDead || dynamic_cast<Enemy*>(obj)->IsInactive())
 					continue;
 			}
 			if (!dynamic_cast<FirePlantBullet*>(obj) && !dynamic_cast<Item*>(obj))
@@ -444,12 +457,11 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 		{
 			if (dynamic_cast<Enemy*>(obj))
 			{
-				// tránh trường hợp quái rớt trúng đầu và bị rớt xuống
-				if (!dynamic_cast<KoopaTroopa*>(obj))
+				if (!(dynamic_cast<KoopaTroopa*>(obj) && obj->state == KOOPATROOPA_STATE_HIDING))
 					continue;
 			}
-			if (!dynamic_cast<Block*>(obj) && !dynamic_cast<FirePlantBullet*>(obj) 
-				&&!dynamic_cast<Item*>(obj) )
+			if (!dynamic_cast<Block*>(obj) && !dynamic_cast<FirePlantBullet*>(obj) && 
+				!dynamic_cast<Item*>(obj) )
 				coObjects.push_back(obj);
 		}
 	}
@@ -459,11 +471,11 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 		{
 			if (dynamic_cast<Enemy*>(obj))
 			{
-				if (!dynamic_cast<KoopaTroopa*>(obj))
+				if (!(dynamic_cast<KoopaTroopa*>(obj) && obj->state == KOOPATROOPA_STATE_HIDING))
 					continue;
 			}
-			if (!dynamic_cast<Block*>(obj) && !dynamic_cast<FirePlantBullet*>(obj)
-				&& !dynamic_cast<Item*>(obj))
+			if (!dynamic_cast<Block*>(obj) && !dynamic_cast<FirePlantBullet*>(obj) &&
+				!dynamic_cast<Item*>(obj))
 				coObjects.push_back(obj);
 		}
 	}
@@ -473,7 +485,7 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 		{
 			if (dynamic_cast<Enemy*>(obj))
 			{
-				if (!dynamic_cast<KoopaTroopa*>(obj))
+				if (!(dynamic_cast<KoopaTroopa*>(obj) && obj->state == KOOPATROOPA_STATE_HIDING))
 					continue;
 			}
 			if (!dynamic_cast<FirePlantBullet*>(obj)&& !dynamic_cast<Item*>(obj) )
@@ -499,21 +511,19 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 	{
 		for (auto obj : objects)
 		{
-				if ( dynamic_cast<Ground*>(obj) ||dynamic_cast<Block*>(obj)
-				|| dynamic_cast<Brick*>(obj) || dynamic_cast<Item*>(obj) ||
+				if ( dynamic_cast<Ground*>(obj) ||dynamic_cast<Block*>(obj) ||
+				 dynamic_cast<Brick*>(obj) || dynamic_cast<Item*>(obj) ||
 				dynamic_cast<Pipe*>(obj) || dynamic_cast<Portal*>(obj))
 				coObjects.push_back(obj);
 			else 
 			{
 				if (dynamic_cast<FirePlantBullet*>(obj) && obj->IsEnable() == true)
 					coObjects.push_back(obj);
-				else if ((dynamic_cast<Enemy*>(obj))
-					&& obj->isEnable == true)
+				else if ((dynamic_cast<Enemy*>(obj)) && obj->isEnable == true)
 				{
 					if(!dynamic_cast<Enemy*>(obj)->IsInactive())
 						coObjects.push_back(obj);
 				}
-				
 			}
 		}
 	}
@@ -524,12 +534,12 @@ void PlayScene::Render()
 	Game* game = Game::GetInstance();
 	int screenWidth = game->GetScreenWidth();
 	int screenHeight = game->GetScreenHeight();
-	float cam_x = game->GetCamX();
-	float cam_y = game->GetCamY();
+	float camX = game->GetCamX();
+	float camY = game->GetCamY();
 	// Khi không ở trong teleport
 	if (!player->isInTeleport)
 	{
-		this->map->Render(cam_x, cam_y, screenWidth, screenHeight);
+		this->map->Render(camX, camY, screenWidth, screenHeight);
 		for (auto obj : listItems)
 		{
 			if (obj->IsEnable() == false)
@@ -565,7 +575,7 @@ void PlayScene::Render()
 		// một khoảng thời gian
 		LPDIRECT3DTEXTURE9 bbox = Textures::GetInstance()->Get(ID_TEX_BBOX);
 		Game* game = Game::GetInstance();
-		Game::GetInstance()->Draw(cam_x,cam_y
+		Game::GetInstance()->Draw(camX,camY
 			, bbox, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT
 			, 255);
 	}
@@ -670,7 +680,7 @@ void PlayScenceKeyHandler::OnKeyUp(int KeyCode)
 	switch (KeyCode)
 	{
 	case DIK_A:
-		mario->ReleaseJ();
+		mario->TurnOffSkill();
 		break;
 	case DIK_S:
 		mario->Jump();
@@ -729,10 +739,10 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 	
 }
 //Bật Camera khi Mario bay 
-void PlayScene::TurnCamY(float _playerY, bool isFlying, int ScreenHeight, int MapHeight)
+void PlayScene::TurnCamY(float playerY, bool isFlying, int ScreenHeight, int MapHeight)
 {
 	
-	if (isTurnCamY == true && _playerY > (map->edgeBottomInWorld + 16) - ScreenHeight/2)
+	if (isTurnCamY == true && playerY > (map->edgeBottomInWorld + 16) - ScreenHeight/2)
 	{
 		isTurnCamY = false;
 	}
@@ -742,61 +752,67 @@ void PlayScene::TurnCamY(float _playerY, bool isFlying, int ScreenHeight, int Ma
 }
 void PlayScene::UpdateCameraPosition()
 {
-	float cx, cy;
-	player->GetPosition(cx, cy);
+	float centerCamX, centerCamY;
+	player->GetPosition(centerCamX, centerCamY);
 	Game* game = Game::GetInstance();
+
 	int screenWidth = game->GetScreenWidth();
 	int screenHeight = game->GetScreenHeight();
 	int mapWidth = map->GetMapWidth();
 	int mapHeight = map->GetMapHeiht();
 	float oldCamY = game->GetCamY();
 
-	TurnCamY(cy, player->IsFlying(), screenHeight, mapHeight);
-	float Sx = map->edgeLeft, Sy = oldCamY;
-	cx -= screenWidth / 2;
-	cy -= screenHeight / 2;
+	TurnCamY(centerCamY, player->IsFlying(), screenHeight, mapHeight);
+
+	float camX = map->edgeLeft, camY = oldCamY;
+	centerCamX -= screenWidth / 2;
+	centerCamY -= screenHeight / 2;
 	float edgeBottom = 0;
+
+
 	if (player->isInExtraMap == false)
-		edgeBottom = BOTTOM_EDGE_WORLD;
+		edgeBottom = map->edgeBottomInWorld + HUD_BBOX_HEIGHT;
 	else
-		edgeBottom = BOTTOM_EDGE_EXTRAMAP;
-	// Ở đây xét số cứng 
-	// Cần phải sửa vì còn extra map ở dưới
-	// nếu có thể chia thành hai map thì sẽ để theo 
-	//chiều dài và chiều rộng của map
+		edgeBottom = map->edgeBottomInExtraMap + HUD_BBOX_HEIGHT;
+
+
+	// CamX
 	if (player->x > map->edgeLeft + screenWidth / 2)
 	{
-		Sx = cx;
+		camX = centerCamX;
 	}
-	if (player->x + screenWidth / 2 > mapWidth - 16)
+	if (player->x + screenWidth / 2 > mapWidth - map->edgeLeft)
 	{
-		Sx = (float)(mapWidth - 16.0f) - screenWidth;
+		camX = (float)(mapWidth - map->edgeLeft) - screenWidth;
 	}
+
+	// CAMY
 	if (player->y + screenHeight > edgeBottom)
 	{
-		Sy = (float)(edgeBottom - screenHeight);
+		camY = (float)(edgeBottom - screenHeight);
 	}
-	if (player->y - screenHeight / 2 < 16)
-		Sy = (float)16.0f;
+	if (player->y - screenHeight / 2 < map->edgeTop)
+		camY = (float)map->edgeTop;
 	else
 	{
 		if (isTurnCamY)
-			Sy = cy;
+			camY = centerCamY;
 	}
+
+	// Cam ở extraMap
 	if (player->isInExtraMap)
 	{
-		Sx = 2143;
-		if (player->x > 2143 + screenWidth / 2)
+		camX = map->edgeLeftInExtraMap;
+		if (player->x > map->edgeLeftInExtraMap + screenWidth / 2)
 		{
-			Sx = cx;
+			camX = centerCamX;
 		}
-		if (player->x + screenWidth / 2 > 2656)
+		if (player->x + screenWidth / 2 > map->edgeRight)
 		{
-			Sx = (float)(2656) - screenWidth;
+			camX = (float)(map->edgeRightInExtraMap) - screenWidth;
 		}
 	}
-	if(player->isSwingTail == false)
-		Game::GetInstance()->SetCamPos(round(Sx), round(Sy));
+	Game::GetInstance()->SetCamPos(round(camX), round(camY));
 };
 void PlayScene::GetObjectFromGrid()
 {
@@ -808,12 +824,12 @@ void PlayScene::GetObjectFromGrid()
 	objects.clear();
 
 	Game* game = Game::GetInstance();
-	float cam_x,cam_y;
+	float camX,camY;
 
-	cam_x = game->GetCamX();
-	cam_y = game->GetCamY();
+	camX = game->GetCamX();
+	camY = game->GetCamY();
 
-	grid->Get(cam_x,cam_y, listUnits);
+	grid->Get(camX,camY, listUnits);
 
 	for (UINT i = 0; i < listUnits.size(); i++)
 	{
@@ -822,16 +838,22 @@ void PlayScene::GetObjectFromGrid()
 
 		if (dynamic_cast<Block*>(obj) || dynamic_cast<Ground*>(obj))
 			continue;
+
 		else if (dynamic_cast<Brick*>(obj) || dynamic_cast<Portal*>(obj))
 			listStaticObjectsToRender.push_back(obj);
+
 		else if (dynamic_cast<Enemy*>(obj) || dynamic_cast<FirePlantBullet*>(obj) ||
 			dynamic_cast<FireBall*>(obj))
 			listMovingObjectsToRender.push_back(obj);
-		else if (dynamic_cast<PointEffect*>(obj) ||
-			dynamic_cast<HitEffect*>(obj) || dynamic_cast<BrokenBrickEffect*>(obj))
+
+		else if (dynamic_cast<PointEffect*>(obj) ||	dynamic_cast<HitEffect*>(obj) ||
+			dynamic_cast<BrokenBrickEffect*>(obj))
 			listMovingObjectsToRender.push_back(obj);
+
+
 		else if (dynamic_cast<Item*>(obj))
 			listItems.push_back(obj);
+
 		else if (dynamic_cast<Pipe*>(obj))
 			listPipesToRender.push_back(obj);
 	}
@@ -844,26 +866,32 @@ void PlayScene::UpdateGrid()
 
 		if (obj->IsEnable() == false)
 			continue;
-		float newPos_x, newPos_y;
-		obj->GetPosition(newPos_x, newPos_y);
-		listUnits[i]->Move(newPos_x, newPos_y);
+		float newPosX, newPosY;
+
+		obj->GetPosition(newPosX, newPosY);
+		listUnits[i]->Move(newPosX, newPosY);
 	}
 }
 bool PlayScene::IsInViewport(LPGAMEOBJECT object)
 {
 	Game* game = Game::GetInstance();
-	float cam_x, cam_y;
-	cam_x =game->GetCamX();
-	cam_y = game->GetCamY();
-	if (cam_x == 0 && cam_y == 0)
+	float camX, camY;
+	float objX, objY;
+
+	camX = game->GetCamX();
+	camY = game->GetCamY();
+
+	if (camX == 0 && camY == 0)
+	{
 		UpdateCameraPosition();
-	cam_x = game->GetCamX();
-	cam_y = game->GetCamY();
-	float obj_x, obj_y;
-	object->GetPosition(obj_x, obj_y);
+		camX = game->GetCamX();
+		camY = game->GetCamY();
+	}
 	
-	return obj_x >= cam_x  && obj_x < cam_x + game->GetScreenWidth()
-		&& obj_y >= cam_y && obj_y < cam_y + SCREEN_HEIGHT;
+	object->GetPosition(objX, objY);
+	
+	return objX >= camX  && objX < camX + SCREEN_WIDTH
+		&& objY >= camY && objY < camY + SCREEN_HEIGHT;
 };
 
 // Inactive các quái khi ra khỏi Viewport
@@ -880,10 +908,10 @@ void PlayScene::SetInactivation()
 				dynamic_cast<Enemy*>(object)->Inactive();
 				dynamic_cast<Enemy*>(object)->AbleToActive();
 			}
-			else if (dynamic_cast<FireBall*>(object) ||
-				dynamic_cast<PointEffect*>(object) || dynamic_cast<FirePiranhaPlant*>(object) ||
-				dynamic_cast<BrokenBrickEffect*>(object))
+			else if (dynamic_cast<FireBall*>(object) ||dynamic_cast<PointEffect*>(object) || 
+				dynamic_cast<FirePiranhaPlant*>(object) || dynamic_cast<BrokenBrickEffect*>(object))
 				object->isEnable = false;
+
 			else if (dynamic_cast<Item*>(object))
 			{
 				if (!dynamic_cast<Coin*>(object))
@@ -918,8 +946,6 @@ void PlayScene::ActiveEnemiesInViewport()
 					enemy->Active();
 				}
 			}
-		
-
 		}
 	}
 }

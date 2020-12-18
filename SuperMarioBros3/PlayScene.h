@@ -74,6 +74,8 @@ public:
 
 	void TurnCamY(float _playerY, bool isFlying, int ScreenHeight, int MapHeight);
 	Mario* GetPlayer() { return player; }
+	float GetEdgeLeft() { return map->edgeLeft; }
+	float GetEdgeRight() { return map->edgeRight; }
 	
 
 	// Bật tắt quái khi không nằm trong viewport

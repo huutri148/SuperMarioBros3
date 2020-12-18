@@ -16,7 +16,6 @@ void KoopaTroopa::GetBoundingBox(float& left, float& top,
 void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	HandleTimeSwitchState();
-	//DebugOut(L"\nVx: %f",vx);
 	if (state == KOOPATROOPA_STATE_INACTIVE || isEnable == false)
 		return;
 	Enemy::Update(dt, coObjects);
@@ -42,9 +41,6 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				{
 					this->x = mario->x + mario->GetWidth() -
 						KOOPATROOPA_DEFLECT_HOLDING_X;
-					if(mario->form == MARIO_RACCOON_FORM)
-					this->x = mario->x + RACCOONTAIL_BBOX_WIDTH+ mario->GetWidth() -
-							KOOPATROOPA_DEFLECT_HOLDING_X;
 				}
 				else
 					this->x = mario->x - KOOPATROOPA_BBOX_WIDTH +
@@ -57,7 +53,7 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				vx = 0;
 				vy = 0;
 			}
-			if(mario->isPressedJ == false) // nếu người chơi nhả nút giữ sẽ trở về Hiding
+			if(mario->useSkill == false) // nếu người chơi nhả nút giữ sẽ trở về Hiding
 			{
 				isPickedUp = false;
 				mario->isPickingUp = false;
@@ -117,7 +113,6 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					{
 						enemy->SetBeingSkilled(this->nx);
 						enemy->SetDead();
-
 						if (isPickedUp == true)
 						{
 							this->SetState(KOOPATROOPA_STATE_DEATH);
@@ -127,7 +122,7 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					{
 						if (e->ny != 0)
 						{
-							y -= min_ty * dy + ny * 0.4f;
+							y -= (min_ty * dy + ny * 0.4f);
 						}
 						x += dx;
 					}
@@ -143,13 +138,17 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 			else if (dynamic_cast<Brick*>(e->obj))
 			{
-				CanPullBack = true;
-				lastStanding_Y = y;
-				if (e->nx != 0)
+				
+				if (!dynamic_cast<Brick*>(e->obj)->CanUsed())
 				{
-					if(isBumped == true)
-						dynamic_cast<Brick*>(e->obj)->SetEmpty();
-					this->ChangeDirect();
+					CanPullBack = true;
+					lastStanding_Y = y;
+					if (e->nx != 0)
+					{
+						if (isBumped == true)
+							dynamic_cast<Brick*>(e->obj)->SetEmpty();
+						this->ChangeDirect();
+					}
 				}
 			}
 			else if (dynamic_cast<Block*>(e->obj))
@@ -236,6 +235,7 @@ void KoopaTroopa::Render()
 		}
 		animation_set->at(ani)->Render(nx,ny, round(x), round(y));
 	}
+	//RenderBoundingBox();
 }
 void KoopaTroopa::SetState(int state)
 {

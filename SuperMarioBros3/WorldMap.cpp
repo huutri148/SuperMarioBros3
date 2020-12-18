@@ -156,10 +156,19 @@ void WorldMap::_ParseSection_MAPS(string line)
 	float edgeLeft = (float)atof(tokens[7].c_str());
 	float edgeRight = (float)atof(tokens[8].c_str());
 	float edgeBottomInWorld = (float)atof(tokens[9].c_str());
-	float edgeBottomInExtraMap = (float)atof(tokens[10].c_str());
+	float edgeTop = (float)atof(tokens[10].c_str());
 
-	this->tileMap = new Map(idMap, tolRowTileSet, tolColTileSet, tolRowMap, tolColMap, totalTiles,
-		edgeLeft,edgeRight,edgeBottomInWorld,edgeBottomInExtraMap);
+	float edgeLeftInExtraMap = (float)atof(tokens[11].c_str());
+	float edgeRightInExtraMap = (float)atof(tokens[12].c_str());
+	float edgeTopInExtraMap = (float)atof(tokens[13].c_str());
+	float edgeBottomInExtraMap = (float)atof(tokens[14].c_str());
+
+	this->tileMap = new Map(idMap, tolRowTileSet, tolColTileSet,
+		tolRowMap, tolColMap, totalTiles,
+		edgeLeft, edgeRight, edgeBottomInWorld, edgeTop,
+		edgeLeftInExtraMap, edgeRightInExtraMap,
+		edgeTopInExtraMap, edgeBottomInExtraMap);
+
 	tileMap->LoadMatrix(MatrixPath.c_str());
 	tileMap->CreateTilesFromTileSet();
 	DebugOut(L"\nParseSection_MAPS: Done");
@@ -239,20 +248,28 @@ void WorldMap::Render()
 	Game* game = Game::GetInstance();
 	int screenWidth = game->GetScreenWidth();
 	int screenHeight = game->GetScreenHeight();
+	float camX = game->GetCamX();
+	float camY = game->GetCamY();
+
+
 	float translateX = (float)screenWidth / 2 - 130;
 	float translateY = (float)screenHeight / 2 - 100;
-	float cam_x = game->GetCamX();
-	float cam_y = game->GetCamY();
-	this->tileMap->Render(cam_x, cam_y, screenWidth, screenHeight,
+	
+
+	this->tileMap->Render(camX, camY, screenWidth, screenHeight,
 		translateX,translateY);
+
+
 	for (auto obj : objectsToRender)
 	{
 		obj->Render(round(translateX), round(translateY));
 	}
+
 	for (auto panel : panels)
 	{
 		panel->Render(round(translateX), round(translateY));
 	}
+
 	player->Render(round(translateX ), round(translateY ));
 	hud->Render();
 }

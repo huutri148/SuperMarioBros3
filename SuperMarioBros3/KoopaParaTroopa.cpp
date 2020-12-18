@@ -18,15 +18,11 @@ void KoopaParaTroopa::Update(DWORD dt,
 		return;
 	HandleTimeSwitchState();
 	Enemy::Update(dt, coObjects);
-	if (dt > 64)
-		dt = 16;
+
 	// Calculate dx, dy 
 	GameObject::Update(dt);
-	// fall down slower 
-	if (vy > -0.2 && vy < 0.2)
-			vy += 0.001f * dt;
-		else
-			vy += PARATROOPA_GRAVITY * dt;
+	// fall down slower
+	vy += PARATROOPA_GRAVITY * dt;
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
@@ -45,25 +41,34 @@ void KoopaParaTroopa::Update(DWORD dt,
 			min_tx, min_ty,
 			nx, ny);
 		x += min_tx * dx + nx * 0.4f;
-		y += min_ty * dy + ny * 0.4f;
-		if (ny != 0) vy = 0;
-
+		y += min_ty * dy + ny * 0.1f;
+		
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
-			if (!dynamic_cast<Brick*>(e->obj) )
+			if (dynamic_cast<Block*>(e->obj)  )
 			{
-				if (ny < 0)
+				if (e->ny < 0)
+				{
+					vy = -PARATROOPA_JUMP_SPEED;
+				}
+				if (e->nx != 0 && ny == 0)
+				{
+					x += -(min_tx * dx + nx * 0.4f) + dx;
+				}
+			}
+			else if (dynamic_cast<Ground*>(e->obj))
+			{
+				if (e->ny < 0)
 				{
 					vy = -PARATROOPA_JUMP_SPEED;
 				}
 			}
 			else if(dynamic_cast<Brick*>(e->obj))
 			{
-				if (nx != 0)
+				if (e->nx != 0 )
 				{
-					nx = -nx;
-					vx = -vx;
+					this->ChangeDirect();
 				}
 			}
 			else if (dynamic_cast<Enemy*>(e->obj))
@@ -88,6 +93,7 @@ void KoopaParaTroopa::Render()
 			ani = PARATROOPA_ANI_DEATH;
 		animation_set->at(ani)->Render(nx, ny, round(x), round(y));
 	}
+	//RenderBoundingBox();
 }
 void KoopaParaTroopa::SetState(int state)
 {
@@ -110,6 +116,7 @@ void KoopaParaTroopa::SetState(int state)
 		ny = 1;
 		break;
 	}
+
 }
 bool KoopaParaTroopa::IsDead()
 {
@@ -184,6 +191,7 @@ void KoopaParaTroopa::ChangeToKoopa(Grid* grid)
 {
 	kooPa->SetPosition(x, y);
 	kooPa->isEnable = true;
+	kooPa->isAbleToActive = true;
 	this->SetState(PARATROOPA_STATE_INACTIVE);
 	Unit* unit = new Unit(grid, kooPa, x, y);
 }

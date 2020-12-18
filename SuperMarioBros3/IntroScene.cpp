@@ -456,12 +456,12 @@ void IntroScene::HandleBehaviourOfMario()
 		if (mario->vy == 0)
 		{
 			mario->SetAutoWalk(1, 0.1f);
-			mario->isPressedJ = true;
+			mario->useSkill = true;
 		}
 		if (mario->x > SCREEN_HEIGHT / 2 - MARIO_BIG_BBOX_WIDTH)
 		{
 			mario->SetState(MARIO_STATE_IDLE);
-			mario->isPressedJ = false;
+			mario->useSkill = false;
 			lugi->SetAutoWalk(1, 0.1f);
 		}
 		if (koopa->x > SCREEN_HEIGHT)
@@ -485,7 +485,7 @@ void IntroScene::HandleBehaviourOfLugi()
 		}
 		lugi->SetPosition(SCREEN_HEIGHT, 160);
 		lugi->SetAutoWalk(-1, 0.0f);
-		lugi->isPressedJ = true;
+		lugi->useSkill = true;
 	}
 
 	// Sự kiện Lugi cầm mai rùa
@@ -495,7 +495,7 @@ void IntroScene::HandleBehaviourOfLugi()
 		mario->SetState(MARIO_STATE_IDLE);
 		if (lugi->x < SCREEN_WIDTH - BUSH2_BBOX_WIDTH - MARIO_BIG_BBOX_WIDTH)
 		{
-			lugi->isPressedJ = false;
+			lugi->useSkill = false;
 			lugi->SetState(MARIO_STATE_IDLE);
 			mario->SetAutoWalk(-1, -0.1f);
 			canJumpToCounter = true;

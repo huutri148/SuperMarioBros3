@@ -37,7 +37,7 @@
 #define POWER_MELTER_FULL				7		// số stack tối đa		//thời gian để tích 1 stack
 #define POWER_MELTER_MINIMUM			0
 #define POWER_MELTER_BUFF_SPEED_LEVEL	3
-#define STACK_TIME						300			//thời gian để tích 1 stack
+#define STACK_TIME						200			//thời gian để tích 1 stack
 #define LOSE_STACK_TIME					300
 #define MARIO_FRICTION					0.05f
 #define MARIO_SUPER_JUMP_TIME			150
@@ -150,7 +150,7 @@
 
 #define MARIO_DO_NOTHING						0
 #define MARIO_SKILL_FIREBALL					1
-#define MARIO_SKILL_TAILATTCK					2
+#define MARIO_SKILL_TAILATTACK					2
 // RACOON TAIL
 #define RACCOONTAIL_BBOX_WIDTH					9
 #define RACCOONTAIL_BBOX_HEIGHT					10
@@ -249,7 +249,7 @@
 //PARATROOPA
 #define PARATROOPA_BBOX_WIDTH			16
 #define PARATROOPA_BBOX_HEIGHT			27
-#define PARATROOPA_GRAVITY				0.002f
+#define PARATROOPA_GRAVITY				0.0012f
 #define PARATROOPA_WALKING_SPEED		0.05f
 #define PARATROOPA_JUMP_SPEED			0.35f
 
@@ -546,6 +546,7 @@
 #define DEFAULT_TIME					300
 #define SPRITE_MARIO_PLAYER_ID			50003
 #define SPRITE_LUGI_PLAYER_ID			50004
+#define HUD_BBOX_HEIGHT					58
 
 //FONT
 
@@ -674,7 +675,8 @@
 
 //Pipe
 #define PIPE_NORMAL_TYPE				0
-#define PIPE_EXTRAMAP_PORT_TYPE	1
+#define PIPE_EXTRAMAP_PORT_TYPE_UP		1
+#define PIPE_EXTRAMAP_PORT_TYPE_DOWN	2
 #define PIPE_BBOX_WIDTH					30
 #define PIPE_BBOX_HEIGHT				16
 //SETTING

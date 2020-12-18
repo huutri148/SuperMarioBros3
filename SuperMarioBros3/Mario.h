@@ -31,8 +31,7 @@ class Mario : public GameObject
 	int life = 4;
 	int type = 0;
 	
-	int stageOfSwingTail;
-	float teleportY = 0;// Vị trí ở cổng tele
+	
 
 	//Các biến cờ ở các trạng thái
 	bool isInGround ;
@@ -41,39 +40,40 @@ class Mario : public GameObject
 	bool isFloating = false;
 	bool isTransform = false;
 	bool isTurnRaccoon = false;
-	
 	RaccoonTail* tail;
+	float teleportY = 0;	// Vị trí ở cổng tele
 	
 public:
+
 	vector<int> card;
+	int powerMelterStack = 0;
 	int form = 0;
+	bool turnToSmallForm = false;
+
 	bool isInTeleport = false;
 	bool isTeleport = false;// bật cờ khi ở cổng Tele
 	bool isInExtraMap = false;
-	bool isAutoWalk = false;
-	bool isPressedJ;
-	bool isSquat = false;
-	bool isPickingUp = false;
-	bool turnToSmallForm = false;
-	bool isSwingTail = false;
+	bool isInIntroScene = false;
 	bool isHitted = false;
 	bool isLookUp = false;
+	bool isAutoWalk = false;
+
+	bool useSkill;
+	bool isSquat = false;
+	bool isPickingUp = false;
+	bool isSwingTail = false;
 	bool canBrake = false;
-	int powerMelterStack = 0;
-	bool isInIntroScene = false;
-	bool GetisPickUp() { return isPickingUp; }
+
+
+
+
 	bool IsFlying();
 	bool IsFloating();
 	bool IsInGround();
-	bool IsTransform()
-	{
-		return isTransform;
-	};
-	bool IsPickingShell()
-	{
-		return isPickingUp;
-	}
-	Mario();
+	bool IsTransform(){	return isTransform; };
+	bool IsPickingShell() { return isPickingUp; };
+
+	
 
 	virtual void Update(DWORD dt,
 		vector<LPGAMEOBJECT>* colliable_objects = NULL);
@@ -86,10 +86,20 @@ public:
 	void SetDirect(bool nx);// Set hướng di chuyển cho mario
 	void SetWalkingLeft();
 	void SetWalkingRight();
-	void SetAutoWalk(int nx, float vx) { this->nx = nx; this->vx = vx; this->isAutoWalk = true; };
+	void SetAutoWalk(int nx, float vx)
+	{	this->nx = nx;
+		this->vx = vx;
+		this->isAutoWalk = true;};
 	void SetAutoJump(float vy) { this->vy = vy; isInGround = false;}
 
 
+	// 1 số Nút Hack
+	void SetTele(float x, float y){	this->SetLevel(MARIO_RACCOON_FORM);
+									this->x = x; this->y = y; };
+	void Reset();
+	void UpForm();
+
+	bool GetisPickUp() { return isPickingUp; }
 	int GetWidth();
 	int GetHeight();
 	void Information();
@@ -98,23 +108,21 @@ public:
 	int GetScore() { return score; };
 	int GetLife() { return life; };
 	int GetPowerMelter() { return powerMelterStack; };
+	void GainMoney(int pMoney) { money += pMoney; };
+	void GainPoint(int pPoint) { score += pPoint; };
+	void GainLife() { life += 1; };
 
 	//Xử Lí
 	void Friction();
 	void StartUntouchable() { untouchable = 1; untouchableStart = GetTickCount(); }
-	void UpForm();
-	void ReleaseJ();
-	void PressK();
-	void Reset();
+	void TurnOffSkill();
 	void TurnBigForm();
 	void TurnFireForm();
 	void DecreaseForm();
 	void TurnRaccoonForm();
 	void HandleSwitchTime();
 
-	//Thay đổi PowerMelter
-	void FillUpPowerMelter();
-	void LosePowerMelter();
+
 
 	//Các hành động của Mario
 	void ShootFireBall(Grid* grid);
@@ -123,12 +131,13 @@ public:
 	void TailAttack();
 	void Float();
 	void Fly();
-	void StartJumping() { 	jumpTimeStart = GetTickCount(); }
+	void StartJumping() { jumpTimeStart = GetTickCount(); }
 	void Jump();
 	void SuperJump();
 	void PickUp();
-	void GainMoney(int pMoney) { money += pMoney; };
-	void GainPoint(int pPoint) { score += pPoint; };
-	void GainLife() { life += 1; };
-	void SetTele(float x, float y) { this->SetLevel(MARIO_RACCOON_FORM); this->x = x; this->y = y; };
+	//Thay đổi PowerMelter
+	void FillUpPowerMelter();
+	void LosePowerMelter();
+
+	Mario();
 };

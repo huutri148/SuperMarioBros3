@@ -6,7 +6,7 @@
 20	Resources\textures\misc.png	166	185	255
 30	Resources\Map\map1-1_bank.png	255	255	255
 40	Resources\textures\tiles.png	255	127	93
-50	Resources\textures\tiles.png	224	163	216
+50	Resources\textures\tiles.png	255	255	255
 70	Resources\textures\enemies.png	68	145	190
 80	Resources\textures\HUD&Font.png	0	224	142
 90	Resources\textures\GoalRoulette.png	0	183	239
@@ -14,7 +14,7 @@
 
 #ID	TolRowTile	TolColTile	TolRowMap	TolColMap	TotalTiles	Matrix_path	edgeLeft	edgeRight	edgeBottomInWorld	edgeBottomInExtraMap
 [MAP]
-30	11	11	178	45	117	Resources\Map\World1-1.txt	16	2832	432	704	
+30	11	11	178	45	117	Resources\Map\World1-1.txt	16	2832	432	16	2143	2656	0	698
 
 #grid_width	grid_height	cell_width	cell_height
 [GRID]
@@ -483,7 +483,7 @@
 #CONGRATULATE
 50069	4	348	252	421	90
 #==========BROKEN-BRICK EFFECT=============
-50070	1088	102	1097	111	50
+50070	1090	103	1097	111	50
 
 
 
@@ -502,7 +502,7 @@
 
 
 #walk small
-404	10000	100	10001	100	10002	100
+404	10000	100	10001	100
 #walk  big
 405	10020	100	10021	100	10022	100
 #walk fire 
@@ -521,7 +521,7 @@
 411	10063	200
 
 #run small
-412	10000	10	10001	10	10002	10
+412	10000	100	10001	100	10002	100
 #run big
 413	10020	10	10021	10	10022	10
 #run fire
@@ -529,7 +529,7 @@
 #run raccoon
 415	10060	10	10061	10	10062	10
 #run full small
-416	10002	50	10004	50
+416	 10002	50	10004	50
 #run full big
 417	10024	10	10025	10	10026	10
 #run full fire
@@ -883,7 +883,7 @@
 #6 = Pipe,5 = block,7 = Invisible Brick
 #8 = PiranhaPlant,9 = Coin,10 = FirePiranhaPlant,11 ParaGoomba
 # MARIO
-0	16.0	380	1
+0	16.0	400	1
 #PiranhaPlant
 8	1816	398	5	0
 #Fire PiranhaPlant
@@ -1192,7 +1192,8 @@
 6	2272	416	51	0
 6	2336	400	50	0
 6	2336	416	51	0
-6	2496	528	52	1
+
+6	2496	528	52	2
 6	2496	512	52	0
 
 # ? Brick

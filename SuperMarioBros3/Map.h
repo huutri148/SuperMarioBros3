@@ -6,34 +6,45 @@
 
 class Map
 {
-	int** Matrix;
-	int TotalColsOfTitleSet, TotalRowsOfTileSet;
-	int TotalColsOfMap, TotalRowsOfMap;
-	int TotalTiles;
-	LPDIRECT3DTEXTURE9 TileSet;
-	vector<LPSPRITE> Tiles;
-	int Height = 0;
-	int Width = 0;
+	int** matrix;
+	int totalColsOfTitleSet, totalRowsOfTileSet;
+	int totalColsOfMap, totalRowsOfMap;
+	int totalTiles;
+	LPDIRECT3DTEXTURE9 tileSet;
+	vector<LPSPRITE> tiles;
+	int height = 0;
+	int width = 0;
 
 	
 
 public: 
 
-	//Todo : add information in PlayScene and World_obj.txt
 	float edgeLeft;
 	float edgeRight;
+	float edgeTop;
 	float edgeBottomInWorld;
 	float edgeBottomInExtraMap;
+	float edgeLeftInExtraMap;
+	float edgeRightInExtraMap;
+	float edgeTopInExtraMap;
 
-	Map(int idMap, int nTitleCols, int nTitleRows, int nMapCols, int nMapRows, int nTotalTiles, float edgeLeft,float edgeRight,
-		float edgeBottomInWorld = 0, float edgeBottomInExtraMap = 0);
+	Map(int idMap, int nTitleCols,
+		int nTitleRows, int nMapCols, int nMapRows,
+		int nTotalTiles, float edgeLeft, float edgeRight,
+		float edgeBottomInWorld, float edgeTop,
+		float edgeLeftInExtraMap,
+		float edgeRightInExtraMap,
+		float edgeBottomInExtraMap,
+		float edgeTopInExtraMap);
+
 	~Map();
+
 	void CreateTilesFromTileSet();
 	void LoadMatrix(LPCWSTR path);
 	void Render(float cam_x, float cam_y,int screenWidth,int screenHeight
 	,float translateX = 0.0f, float translateY = 0.0f);
-	int GetTotalColsOfMap() { return this->TotalColsOfMap; }
-	int GetTotalRowsOfMap() { return this->TotalRowsOfMap; }
+	int GetTotalColsOfMap() { return this->totalColsOfMap; }
+	int GetTotalRowsOfMap() { return this->totalRowsOfMap; }
 	int GetMapHeiht();
 	int GetMapWidth();
 };
