@@ -5,36 +5,23 @@
 void PSwitch::Render()
 {
 
-	if (isEnable == true)
-	{
-		int ani = PSWITCH_ANI_APPEAR;
-		if (state == PSWITCH_STATE_PRESSED)
-			ani = PSWITCH_ANI_PRESSED;
-		animation_set->at(ani)->Render(-1, round(x),round( y));
-	}
+	int ani = PSWITCH_ANI_APPEAR;
+	if (state == PSWITCH_STATE_PRESSED)
+		ani = PSWITCH_ANI_PRESSED;
+	animation_set->at(ani)->Render(-1, round(x),round( y));
+
 }
 
 void PSwitch::GetBoundingBox(float& l, float& t, float& r,
 	float& b, bool isEnable)
 {
-	if (isEnable == true)
-	{
-		l = x;
-		t = y;
-		r = x + PSWITCH_BBOX_WIDTH;
-		if (state == PSWITCH_STATE_PRESSED)
-			b = y + PSWITCH_PRESSED_BBOX_HEIGHT;
-		else
-			b = y + PSWITCH_BBOX_HEIGHT;
-	}
+	l = x;
+	t = y;
+	r = x + PSWITCH_BBOX_WIDTH;
+	if (state == PSWITCH_STATE_PRESSED)
+		b = y + PSWITCH_PRESSED_BBOX_HEIGHT;
 	else
-	{
-		l = 0;
-		t = 0;
-		r = 0;
-		b = 0;
-	}
-
+		b = y + PSWITCH_BBOX_HEIGHT;
 }
 void PSwitch::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
@@ -82,7 +69,6 @@ void PSwitch::Used()
 		this->SetState(PSWITCH_STATE_PRESSED);
 		Brick::isTransForm = true;
 	}
-	
 }
 PSwitch::PSwitch()
 {

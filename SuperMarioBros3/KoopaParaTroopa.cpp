@@ -18,15 +18,11 @@ void KoopaParaTroopa::Update(DWORD dt,
 		return;
 	HandleTimeSwitchState();
 	Enemy::Update(dt, coObjects);
-	if (dt > 64)
-		dt = 16;
+
 	// Calculate dx, dy 
 	GameObject::Update(dt);
-	// fall down slower 
-	if (vy > -0.2 && vy < 0.2)
-			vy += 0.001f * dt;
-		else
-			vy += PARATROOPA_GRAVITY * dt;
+	// fall down slower
+	vy += PARATROOPA_GRAVITY * dt;
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
@@ -45,7 +41,7 @@ void KoopaParaTroopa::Update(DWORD dt,
 			min_tx, min_ty,
 			nx, ny);
 		x += min_tx * dx + nx * 0.4f;
-		y += min_ty * dy + ny * 0.4f;
+		y += min_ty * dy + ny * 0.1f;
 		
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
@@ -97,7 +93,7 @@ void KoopaParaTroopa::Render()
 			ani = PARATROOPA_ANI_DEATH;
 		animation_set->at(ani)->Render(nx, ny, round(x), round(y));
 	}
-	/*RenderBoundingBox();*/
+	//RenderBoundingBox();
 }
 void KoopaParaTroopa::SetState(int state)
 {
@@ -195,6 +191,7 @@ void KoopaParaTroopa::ChangeToKoopa(Grid* grid)
 {
 	kooPa->SetPosition(x, y);
 	kooPa->isEnable = true;
+	kooPa->isAbleToActive = true;
 	this->SetState(PARATROOPA_STATE_INACTIVE);
 	Unit* unit = new Unit(grid, kooPa, x, y);
 }

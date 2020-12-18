@@ -37,7 +37,7 @@
 #define POWER_MELTER_FULL				7		// số stack tối đa		//thời gian để tích 1 stack
 #define POWER_MELTER_MINIMUM			0
 #define POWER_MELTER_BUFF_SPEED_LEVEL	3
-#define STACK_TIME						300			//thời gian để tích 1 stack
+#define STACK_TIME						200			//thời gian để tích 1 stack
 #define LOSE_STACK_TIME					300
 #define MARIO_FRICTION					0.05f
 #define MARIO_SUPER_JUMP_TIME			150
@@ -249,7 +249,7 @@
 //PARATROOPA
 #define PARATROOPA_BBOX_WIDTH			16
 #define PARATROOPA_BBOX_HEIGHT			27
-#define PARATROOPA_GRAVITY				0.002f
+#define PARATROOPA_GRAVITY				0.0012f
 #define PARATROOPA_WALKING_SPEED		0.05f
 #define PARATROOPA_JUMP_SPEED			0.35f
 
@@ -546,6 +546,7 @@
 #define DEFAULT_TIME					300
 #define SPRITE_MARIO_PLAYER_ID			50003
 #define SPRITE_LUGI_PLAYER_ID			50004
+#define HUD_BBOX_HEIGHT					58
 
 //FONT
 

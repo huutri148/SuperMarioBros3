@@ -16,7 +16,6 @@ void KoopaTroopa::GetBoundingBox(float& left, float& top,
 void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	HandleTimeSwitchState();
-	//DebugOut(L"\nVx: %f",vx);
 	if (state == KOOPATROOPA_STATE_INACTIVE || isEnable == false)
 		return;
 	Enemy::Update(dt, coObjects);
@@ -42,9 +41,6 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				{
 					this->x = mario->x + mario->GetWidth() -
 						KOOPATROOPA_DEFLECT_HOLDING_X;
-					if(mario->form == MARIO_RACCOON_FORM)
-					this->x = mario->x + RACCOONTAIL_BBOX_WIDTH+ mario->GetWidth() -
-							KOOPATROOPA_DEFLECT_HOLDING_X;
 				}
 				else
 					this->x = mario->x - KOOPATROOPA_BBOX_WIDTH +
@@ -57,7 +53,7 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				vx = 0;
 				vy = 0;
 			}
-			if(mario->isPressedJ == false) // nếu người chơi nhả nút giữ sẽ trở về Hiding
+			if(mario->useSkill == false) // nếu người chơi nhả nút giữ sẽ trở về Hiding
 			{
 				isPickedUp = false;
 				mario->isPickingUp = false;
@@ -117,7 +113,6 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					{
 						enemy->SetBeingSkilled(this->nx);
 						enemy->SetDead();
-
 						if (isPickedUp == true)
 						{
 							this->SetState(KOOPATROOPA_STATE_DEATH);
@@ -240,6 +235,7 @@ void KoopaTroopa::Render()
 		}
 		animation_set->at(ani)->Render(nx,ny, round(x), round(y));
 	}
+	//RenderBoundingBox();
 }
 void KoopaTroopa::SetState(int state)
 {

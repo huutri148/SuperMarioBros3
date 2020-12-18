@@ -129,7 +129,7 @@ void GameObject::RenderBoundingBox()
 	rect.right = (int)r - (int)l;
 	rect.bottom = (int)b - (int)t;
 	Game::GetInstance()->Draw(x, y, bbox, rect.left, rect.top, 
-		rect.right, rect.bottom, 255);
+		rect.right, rect.bottom, 100);
 }
 
 //void GameObject::AddAnimation(int aniId)

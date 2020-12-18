@@ -3,18 +3,25 @@
 #include "Map.h"
 #include"Utils.h"
 Map::Map(int idMap, int nTitleCols, int nTitleRows, int nMapCols,
-	int nMapRows, int nTotalTiles, float edgeLeft,float edgeRight, float edgeBottomInWorld, float edgeBottomInExtraMap)
+	int nMapRows, int nTotalTiles, float edgeLeft,float edgeRight,
+	float edgeTop, float edgeBottomInWorld, 
+	float edgeLeftInExtraMap, float edgeRightInExtraMap,
+	float edgeTopInExtraMap,  float edgeBottomInExtraMap)
 {
-	this->TileSet = Textures::GetInstance()->Get(idMap);
-	this->TotalColsOfMap = nMapCols;
-	this->TotalRowsOfMap = nMapRows;
-	this->TotalRowsOfTileSet = nTitleRows;
-	this->TotalColsOfTitleSet = nTitleCols;
-	this->TotalTiles = nTotalTiles;
+	this->tileSet = Textures::GetInstance()->Get(idMap);
+	this->totalColsOfMap = nMapCols;
+	this->totalRowsOfMap = nMapRows;
+	this->totalRowsOfTileSet = nTitleRows;
+	this->totalColsOfTitleSet = nTitleCols;
+	this->totalTiles = nTotalTiles;
 	this->edgeLeft = edgeLeft;
 	this->edgeRight = edgeRight;
 	this->edgeBottomInWorld = edgeBottomInWorld;
 	this->edgeBottomInExtraMap = edgeBottomInExtraMap;
+	this->edgeTop = edgeTop;
+	this->edgeLeftInExtraMap = edgeLeftInExtraMap;
+	this->edgeRightInExtraMap = edgeRightInExtraMap;
+	this->edgeTopInExtraMap = edgeTopInExtraMap;
 }
 Map::~Map()
 {
@@ -23,14 +30,14 @@ Map::~Map()
 void Map::CreateTilesFromTileSet()
 {
 	int left, bottom, right, top;
-	for (int tileNum = 0; tileNum < TotalTiles; tileNum++) {
-		left = tileNum % TotalColsOfTitleSet * TILE_WIDTH;
-		top = tileNum / TotalColsOfTitleSet * TILE_HEIGHT;
+	for (int tileNum = 0; tileNum < totalTiles; tileNum++) {
+		left = tileNum % totalColsOfTitleSet * TILE_WIDTH;
+		top = tileNum / totalColsOfTitleSet * TILE_HEIGHT;
 		bottom = top + TILE_HEIGHT;
 		right = left + TILE_WIDTH;
 		LPSPRITE Tile = new Sprite(tileNum, left, top,
-			right, bottom, TileSet);
-		this->Tiles.push_back(Tile);
+			right, bottom, tileSet);
+		this->tiles.push_back(Tile);
 	}
 }
 void Map::LoadMatrix(LPCWSTR path)
@@ -38,54 +45,61 @@ void Map::LoadMatrix(LPCWSTR path)
 	ifstream file;
 
 	file.open(path);
-	this->Matrix = new int* [TotalRowsOfMap];
-	for (int iRow = 0; iRow < TotalRowsOfMap; iRow++)
+	this->matrix = new int* [totalRowsOfMap];
+	for (int iRow = 0; iRow < totalRowsOfMap; iRow++)
 	{
-		this->Matrix[iRow] = new int[TotalColsOfMap];
-		for (int iColumn = 0; iColumn < TotalColsOfMap; iColumn++)
+		this->matrix[iRow] = new int[totalColsOfMap];
+		for (int iColumn = 0; iColumn < totalColsOfMap; iColumn++)
 		{
-			file >> this->Matrix[iRow][iColumn];
+			file >> this->matrix[iRow][iColumn];
 		}
 
 	}
 	file.close();
 }
-void Map::Render(float cam_x,float cam_y, int screenWidth,int screenHeight,
-	float translateX, float translateY)
+void Map::Render(float cam_x,float cam_y, 
+				int screenWidth,int screenHeight,
+				float translateX, float translateY)
 {
 	int FirstColumn =(int) floor(cam_x/ TILE_WIDTH);
+	int LastColumn = (int)ceil((cam_x + screenWidth) / TILE_WIDTH);
+
 	int FirstRow =(int) floor(cam_y / TILE_HEIGHT);
-	// i don't really know what the f*** iam writting
 	int LastRow =(int)floor( (cam_y + screenHeight - 24) / TILE_HEIGHT);
-	int LastColumn =(int) ceil((cam_x + screenWidth ) / TILE_WIDTH);
+	
+
 	float transX = floor(translateX);
 	float transY = floor(translateY);
+
 	//DebugOut(L"\nF: %d - L:  %d", FirstColumn, LastColumn);
-	if (LastColumn >= TotalColsOfMap)
-		LastColumn = TotalColsOfMap ;
-	if (LastRow >= TotalRowsOfMap)
-		LastRow = TotalRowsOfMap ;
+	if (LastColumn >= totalColsOfMap)
+		LastColumn = totalColsOfMap ;
+	if (LastRow >= totalRowsOfMap)
+		LastRow = totalRowsOfMap ;
+
+
 	for (int iRow = FirstRow; iRow < LastRow; iRow++)
 	{
 		for (int iColumn = FirstColumn; iColumn < LastColumn; iColumn++)
 		{
-			this->Tiles[this->Matrix[iRow][iColumn] - 1]->Draw(-1,
+			this->tiles[this->matrix[iRow][iColumn] - 1]->Draw(-1,
 				(float)iColumn * TILE_WIDTH,
-				(float) iRow * TILE_HEIGHT,255,transX,transY);
+				(float) iRow * TILE_HEIGHT,
+				255, transX, transY);
 		}
 	}
 }
 int Map::GetMapHeiht()
 {
-	if (Height == 0)
-		Height = TotalRowsOfMap * TILE_HEIGHT;
-	return Height;
+	if (height == 0)
+		height = totalRowsOfMap * TILE_HEIGHT;
+	return height;
 }
 int Map::GetMapWidth()
 {
-	if (Width == 0)
+	if (width == 0)
 	{
-		Width = TotalColsOfMap * TILE_WIDTH;
+		width = totalColsOfMap * TILE_WIDTH;
 	}
-	return Width;
+	return width;
 }

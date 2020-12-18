@@ -22,8 +22,8 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	if (isEnable == false)
 		return;
 
-	if (GetTickCount64() - transformTime >
-		MARIO_BIG_FORM_TRANSFORM_TIME && isTransform == true)
+	if (GetTickCount64() - transformTime >MARIO_BIG_FORM_TRANSFORM_TIME &&
+		isTransform == true)
 	{
 		isTransform = false;
 		transformTime = 0;
@@ -31,6 +31,17 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			this->SetLevel(MARIO_BIG_FORM);
 		else
 			this->SetLevel(MARIO_SMALL_FORM);
+	}
+	if (!isAutoWalk)
+	{
+		if (dynamic_cast<PlayScene*>(Game::GetInstance()->GetCurrentScene()))
+		{
+			PlayScene* scene = (PlayScene*)Game::GetInstance()->GetCurrentScene();
+			if (x < scene->GetEdgeLeft())
+				x = scene->GetEdgeLeft();
+			else if (x >= scene->GetEdgeRight() - MARIO_BIG_BBOX_WIDTH)
+				x = scene->GetEdgeRight() - MARIO_BIG_BBOX_WIDTH;
+		}
 	}
 
 
@@ -50,6 +61,8 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		}
 		else
 			vy += MARIO_GRAVITY * dt;
+
+
 		if (isFloating)
 		{
 			if(vy > MARIO_GRAVITY * dt)
@@ -152,12 +165,12 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							KoopaTroopa* koopa = dynamic_cast<KoopaTroopa*>(enemy);
 							if (koopa->state ==KOOPATROOPA_STATE_HIDING)
 							{
-								if (isPressedJ == true)
+								if (useSkill == true)
 								{
 									koopa->PickUpBy();
 									isPickingUp = true;
 								}
-								else if (isPressedJ == false
+								else if (useSkill == false
 									&& enemy->vx == 0)
 								{
 									dynamic_cast<KoopaTroopa*>(enemy)->IsKicked(this->nx);
@@ -232,6 +245,11 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					}
 					else
 						SetState(MARIO_STATE_DEATH);
+					if (e->nx != 0)
+						x += -(min_tx * dx + nex * 0.4f);
+					if (e->ny != 0)
+						y += -(min_ty * dy + ney * 0.4f);
+
 				}
 			}
 			else if (dynamic_cast<Brick*>(e->obj))
@@ -253,10 +271,10 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				else
 				{
 					brick->Used();
-					if(e->nx != 0)
-						x -= (min_tx * dx + nex * 0.4f);
+					if (e->nx != 0)
+						x += -(min_tx * dx + nex * 0.4f) ;
 					if(e->ny != 0)
-						y -= (min_ty * dy + ney * 0.4f);
+						y += -(min_ty * dy + ney * 0.4f) ;
 					this->GainPoint(10);
 					this->GainMoney(1);
 				}
@@ -271,13 +289,25 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			else if (dynamic_cast<Item*>(e->obj))
 			{
 				dynamic_cast<Item*>(e->obj)->Used();
-				if(e->ny != 0)
-					y -= (min_ty * dy + ney * 0.4f);
+				if (e->ny != 0)
+					y += -(min_ty * dy + ney * 0.4f) + dy;
 				if (e->nx != 0)
-					x -= (min_tx * dy + nex * 0.4f);
+					x += -(min_tx * dy + nex * 0.4f) + dx;
+			
 			}
 			else if (dynamic_cast<Pipe*>(e->obj))
 			{
+			//Todo: sửa lại cho thích hợp vì bị rung camera và
+			// khi gặp đất rớt
+				/*if (e->nx != 0 && ney != 0)
+				{
+					if(!isInGround)
+						y += dy;
+					if(e->nx < 0)
+						x -= (min_tx * dx + e->nx * 0.4f) + dx;
+					else if (e->nx > 0)
+						x += (min_tx * dx + e->nx * 0.4f) - dx;
+				}*/
 				if (dynamic_cast<Pipe*>(e->obj)->type == PIPE_EXTRAMAP_PORT_TYPE_UP)
 				{
 					if (e->ny < 0)
@@ -290,7 +320,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							vy = MARIO_SPEED_TELEPORT;
 							vx = 0;
 							teleportY = y;
-							x = e->obj->x + PIPE_BBOX_WIDTH * 1 / 4;
+							x = e->obj->x + PIPE_BBOX_WIDTH / 2;
 						}
 					}
 				}
@@ -304,7 +334,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							vy = -MARIO_SPEED_TELEPORT;
 							teleportY = y;
 							vx = 0;
-							x = e->obj->x + PIPE_BBOX_WIDTH * 1 / 4;
+							x = e->obj->x + PIPE_BBOX_WIDTH  / 2;
 						}
 					}
 				}
@@ -338,6 +368,8 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 }
 void Mario::Render()
 {
+	float transX = 0.0f, transY = 0.0f;
+
 	if (isEnable == false)
 		return;
 	int ani = -1;
@@ -402,8 +434,8 @@ void Mario::Render()
 					break;
 				}
 			}
-			else if (powerMelterStack >= POWER_MELTER_BUFF_SPEED_LEVEL
-				&& powerMelterStack < POWER_MELTER_FULL)
+			else if(powerMelterStack >= POWER_MELTER_BUFF_SPEED_LEVEL &&
+					 powerMelterStack < POWER_MELTER_FULL)
 			{
 				switch (form)
 				{
@@ -598,6 +630,8 @@ void Mario::Render()
 	else if (isLookUp)
 		ani = MARIO_ANI_LOOKUP;
 	int alpha = 255;
+	if (form == MARIO_RACCOON_FORM && nx > 0)
+		transX = RACCOONTAIL_BBOX_WIDTH;
 
 	/// <summary>
 	/// Stupid function
@@ -612,8 +646,8 @@ void Mario::Render()
 			ani = MARIO_ANI_TURN_TO_SMALL_FORM;
 			
 	}
-	animation_set->at(ani)->Render(nx, round(x), round(y), alpha);
-	//RenderBoundingBox();
+	animation_set->at(ani)->Render(nx, round(x), round(y), alpha,transX, transY);
+	/*RenderBoundingBox();*/
 }
 void Mario::SetState(int state)
 {
@@ -682,8 +716,6 @@ void Mario::GetBoundingBox(float& left, float& top, float& right,
 		}
 		else if (form == MARIO_RACCOON_FORM)
 		{
-			if (nx > 0)
-				left = x + MARIO_RACCOON_BBOX_WIDTH - MARIO_TAIL_BBOX_WIDTH ;
 			right = left + MARIO_RACCOON_BBOX_WIDTH;
 			bottom = top + MARIO_RACCOON_BBOX_HEIGHT;
 		}
@@ -719,7 +751,7 @@ void Mario::LosePowerMelter()// Power Stack sẽ cạn theo thời gian
 }
 void Mario::PickUp()
 {
-	isPressedJ = true;
+	useSkill = true;
 }
 void Mario::SetDirect(bool nx)
 {
@@ -928,7 +960,7 @@ Mario::Mario()
 	form = MARIO_SMALL_FORM;
 	isEnable = true;
 	isKickShell = false;
-	isPressedJ = false;
+	useSkill = false;
 	isInGround = true;
 	flyTimeStart = 0;
 	isPickingUp = false;
@@ -941,17 +973,13 @@ Mario::Mario()
 	Game* game = Game::GetInstance();
 	card = game->card;
 }
-void Mario::ReleaseJ()
+void Mario::TurnOffSkill()
 {
 	isPickingUp = false;
-	isPressedJ = false;
+	useSkill = false;
 	if (state == MARIO_STATE_SHOOT_FIREBALL ||
 		state ==MARIO_STATE_TAILATTACK)
 		SetState(MARIO_STATE_IDLE);
-}
-void Mario::PressK()
-{
-
 }
 void Mario::Reset()
 {
@@ -962,7 +990,7 @@ void Mario::Reset()
 	form = MARIO_SMALL_FORM;
 	isEnable = true;
 	isKickShell = false;
-	isPressedJ = false;
+	useSkill = false;
 	isInGround = true;
 	this->SetState(MARIO_STATE_IDLE);
 }
