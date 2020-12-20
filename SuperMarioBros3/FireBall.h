@@ -16,7 +16,7 @@ public:
 		this->y = _y;
 		this->isEnable = true;
 		AnimationSets* animation_sets = AnimationSets::GetInstance();
-		LPANIMATION_SET ani_set = animation_sets->Get(60);
+		LPANIMATION_SET ani_set = animation_sets->Get(ANIMATION_SET_FIREBALL);
 		this->SetAnimationSet(ani_set);
 		this->nx = _nx;
 		this->SetState(FIREBALL_STATE_NORMAL);

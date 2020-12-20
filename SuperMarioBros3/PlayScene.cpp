@@ -133,7 +133,7 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 	float x = (float)atof(tokens[1].c_str());
 	float y = (float)atof(tokens[2].c_str());
 
-	int ani_set_id = atoi(tokens[3].c_str());
+
 
 
 	AnimationSets* animation_sets = AnimationSets::GetInstance();
@@ -163,19 +163,22 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 		int set_type = atoi(tokens[4].c_str());
 		obj = new Brick(x, y, set_type);
 		unit = new Unit(grid, obj, x, y);
+		int ani_set_id = atoi(tokens[3].c_str());
+		LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
+		obj->SetAnimationSet(ani_set);
 		break;
 	}
 	case OBJECT_TYPE_KOOPAS:
 	{
-		int set_type = atoi(tokens[4].c_str());
+		int set_type = atoi(tokens[3].c_str());
 		obj = new KoopaTroopa(x, y, set_type);
 		unit = new Unit(grid, obj, x, y);
 		break;
 	}
 	case OBJECT_TYPE_BLOCKS: 
 	{
-		float width = (float)atof(tokens[4].c_str());
-		float height = (float)atof(tokens[5].c_str());
+		float width = (float)atof(tokens[3].c_str());
+		float height = (float)atof(tokens[4].c_str());
 		obj = new Block(x, y, width, height);
 		unit = new Unit(grid, obj, x, y);
 		break;
@@ -188,29 +191,25 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 	}
 	case OBJECT_TYPE_PIPES: 
 	{
+		int ani_set_id = atoi(tokens[3].c_str());
 		int set_type = atoi(tokens[4].c_str());
+		LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
 		obj = new Pipe(set_type);
-		unit = new Unit(grid, obj, x, y);
-		break;
-	}
-	case OBJECT_TYPE_INVISIBLEBRICK:
-	{
-		int set_type = atoi(tokens[4].c_str());
-		obj = new InvisibleBrick(set_type);
+		obj->SetAnimationSet(ani_set);
 		unit = new Unit(grid, obj, x, y);
 		break;
 	}
 	case OBJECT_TYPE_PIRANHAPLANT:
 	{
-		int set_type = atoi(tokens[4].c_str());
+		int set_type = atoi(tokens[3].c_str());
 		obj = new PiranhaPlant(x, y, set_type);
 		unit = new Unit(grid, obj, x, y);
 		break;
 	}
 	case OBJECT_TYPE_FIREPIRANHAPLANT:
 	{
-		float limit =(float) atof(tokens[4].c_str());
-		int set_type = atoi(tokens[5].c_str());
+		float limit =(float) atof(tokens[3].c_str());
+		int set_type = atoi(tokens[4].c_str());
 		obj = new FirePiranhaPlant(x, y,limit, set_type);
 		unit = new Unit(grid, obj, x, y);
 		break;
@@ -224,7 +223,7 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 	}
 	case OBJECT_TYPE_COIN:
 	{
-		int set_type = atoi(tokens[4].c_str());
+		int set_type = atoi(tokens[3].c_str());
 		obj = new Coin(set_type);
 		unit = new Unit(grid, obj, x, y);
 		break;
@@ -252,8 +251,7 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 	}
 	// General object setup
 	obj->SetPosition(x, y);
-	LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
-	obj->SetAnimationSet(ani_set);
+
 }
 
 void PlayScene::_ParseSection_MAPS(string line)
@@ -598,12 +596,19 @@ void PlayScene::Unload()
 {
 	for (unsigned int i = 0; i < objects.size(); i++)
 		delete objects[i];
+	for (unsigned int i = 0; i < listUnits.size(); i++)
+		delete listUnits[i];
+
 	objects.clear();
 	listStaticObjectsToRender.clear();
 	listMovingObjectsToRender.clear();
 	listPipesToRender.clear();
 	listItems.clear();
 	listUnits.clear();
+
+	delete map;
+	delete hud;
+
 	portal = NULL;
 	hud = NULL;
 	grid = NULL;
@@ -908,14 +913,18 @@ void PlayScene::SetInactivation()
 				dynamic_cast<Enemy*>(object)->Inactive();
 				dynamic_cast<Enemy*>(object)->AbleToActive();
 			}
-			else if (dynamic_cast<FireBall*>(object) ||dynamic_cast<PointEffect*>(object) || 
-				dynamic_cast<FirePiranhaPlant*>(object) || dynamic_cast<BrokenBrickEffect*>(object))
+			else if (dynamic_cast<FireBall*>(object) || dynamic_cast<PointEffect*>(object) ||
+				dynamic_cast<FirePlantBullet*>(object) || dynamic_cast<BrokenBrickEffect*>(object))
+			{
 				object->isEnable = false;
-
+			}
 			else if (dynamic_cast<Item*>(object))
 			{
 				if (!dynamic_cast<Coin*>(object))
+				{
 					object->isEnable = false;
+				}
+				
 			}
 		}
 		else

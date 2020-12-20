@@ -107,4 +107,7 @@ Portal::Portal()
 	Sprites* sprites = Sprites::GetInstance();
 	this->SetState(PORTAL_STATE_ROULETTE);
 	congratulate = sprites->Get(SPRITE_CONGRATULATE);
+	AnimationSets* animation_sets = AnimationSets::GetInstance();
+	LPANIMATION_SET ani_set = animation_sets->Get(ANIMATION_SET_PORTAL_ID);
+	this->SetAnimationSet(ani_set);
 }

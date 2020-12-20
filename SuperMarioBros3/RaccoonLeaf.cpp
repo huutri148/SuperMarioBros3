@@ -97,6 +97,6 @@ void RaccoonLeaf::Used()
 RaccoonLeaf::RaccoonLeaf()
 {
 	AnimationSets* animation_sets = AnimationSets::GetInstance();
-	LPANIMATION_SET ani_set = animation_sets->Get(71);
+	LPANIMATION_SET ani_set = animation_sets->Get(ANIMATION_SET_RACCOONLEAF);
 	this->SetAnimationSet(ani_set);
 }

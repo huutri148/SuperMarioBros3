@@ -112,7 +112,7 @@ Coin::Coin(int type)
 	if (type == COIN_TYPE_1)
 		this->SetState(COIN_STATE_INACTIVE);
 	AnimationSets* animation_sets = AnimationSets::GetInstance();
-	LPANIMATION_SET ani_set = animation_sets->Get(70);
+	LPANIMATION_SET ani_set = animation_sets->Get(ANIMATION_SET_COIN_ID);
 	this->SetAnimationSet(ani_set);
 }
 void Coin::Used()

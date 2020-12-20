@@ -4,7 +4,7 @@ HitEffect::HitEffect(float x, float y)
 	this->x = x;
 	this->y = y;
 	AnimationSets* animation_sets = AnimationSets::GetInstance();
-	LPANIMATION_SET ani_set = animation_sets->Get(75);
+	LPANIMATION_SET ani_set = animation_sets->Get(ANIMATION_SET_HIT_EFFECT);
 	this->SetAnimationSet(ani_set);
 	this->isEnable = true;
 	this->SetState(HITEFFECT_STATE_APPEAR);

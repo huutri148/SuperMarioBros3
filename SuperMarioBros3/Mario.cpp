@@ -952,6 +952,9 @@ int Mario::GetHeight()
 }
 Mario::Mario()
 {
+	AnimationSets* animation_sets = AnimationSets::GetInstance();
+	LPANIMATION_SET ani_set = animation_sets->Get(ANIMATION_SET_MARIO);
+	this->SetAnimationSet(ani_set);
 	x = 16;
 	y = 415;
 	vx = vy = 0;

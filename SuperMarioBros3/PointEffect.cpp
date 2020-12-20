@@ -5,7 +5,7 @@ PointEffect::PointEffect(float x, float y,int type)
 	this->x = x;
 	this->y = y;
 	AnimationSets* animation_sets = AnimationSets::GetInstance();
-	LPANIMATION_SET ani_set = animation_sets->Get(74);
+	LPANIMATION_SET ani_set = animation_sets->Get(ANIMATION_SET_POINTEFFECT);
 	this->SetAnimationSet(ani_set);
 	this->isEnable = true;
 	this->SetState(POINT_STATE_APPEAR);
