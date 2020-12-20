@@ -2,7 +2,6 @@
 
 void Block::Render()
 {
-	animation_set->at(0)->Render(-1, x, y);
 	//RenderBoundingBox();
 }
 Block::Block(float x, float y, float width, float height)

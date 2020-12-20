@@ -93,6 +93,9 @@ void PiranhaPlant::Render()
 }
 PiranhaPlant::PiranhaPlant(float x, float y, int _type) :Enemy(x, y)
 {
+	AnimationSets* animation_sets = AnimationSets::GetInstance();
+	LPANIMATION_SET ani_set = animation_sets->Get(ANIMATION_SET_PIRAHAPLANT);
+	this->SetAnimationSet(ani_set);
 	this->type = _type;
 	this->state = PIRANHAPLANT_STATE_DARTING;
 	vy = PIRANHAPLANT_DARTING_SPEED;

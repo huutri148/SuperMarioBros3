@@ -279,6 +279,12 @@ void WorldMap::Unload()
 {
 	for (unsigned int i = 0; i < objectsToRender.size(); i++)
 		delete objectsToRender[i];
+	for (unsigned int i = 0; i < panels.size(); i++)
+		delete panels[i];
+
+	delete tileMap;
+	delete player;
+	delete hud;
 
 	objectsToRender.clear();
 	panels.clear();

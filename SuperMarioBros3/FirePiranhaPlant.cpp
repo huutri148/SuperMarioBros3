@@ -113,6 +113,9 @@ void FirePiranhaPlant::Render()
 }
 FirePiranhaPlant::FirePiranhaPlant(float x, float y,float limit, int _type) :Enemy(x, y)
 {
+	AnimationSets* animation_sets = AnimationSets::GetInstance();
+	LPANIMATION_SET ani_set = animation_sets->Get(ANIMATION_SET_FIRE_PIRAHAPLANT);
+	this->SetAnimationSet(ani_set);
 	this->state = FIREPIRANHAPLANT_STATE_DARTING;
 	vy = FIREPIRANHAPLANT_DARTING_SPEED;
 	this->isOutOfPipe = true;

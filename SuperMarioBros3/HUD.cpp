@@ -8,7 +8,7 @@ Hud::Hud()
 	Sprites* sprites = Sprites::GetInstance();
 	Game* game = Game::GetInstance();
 	AnimationSets * animation_sets = AnimationSets::GetInstance();
-	LPANIMATION_SET ani_set = animation_sets->Get(77);
+	LPANIMATION_SET ani_set = animation_sets->Get(ANIMATION_SET_HUD_ID);
 	this->SetAnimationSet(ani_set);
 	powerMelterStack = 0;
 	money = game->money;

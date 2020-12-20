@@ -28,14 +28,16 @@ public:
 	Goomba(float x, float y) :Enemy(x,y)
 	{
 		this->SetState(GOOMBA_STATE_WALKING);
-		
+		AnimationSets* animation_sets = AnimationSets::GetInstance();
+		LPANIMATION_SET ani_set = animation_sets->Get(ANIMATION_SET_BROWN_GOOMBA);
+		this->SetAnimationSet(ani_set);	
 	}
 	Goomba() :Enemy()
 	{
 		this->SetState(GOOMBA_STATE_WALKING);
 		this->isEnable = true;
 		AnimationSets* animation_sets = AnimationSets::GetInstance();
-		LPANIMATION_SET ani_set = animation_sets->Get(8);
+		LPANIMATION_SET ani_set = animation_sets->Get(ANIMATION_SET_RED_GOOMBA);
 		this->SetAnimationSet(ani_set);
 	}
 };

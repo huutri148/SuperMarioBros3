@@ -133,7 +133,7 @@ Mushroom::Mushroom(int type)
 {
 	this->type = type;
 	AnimationSets* animation_sets = AnimationSets::GetInstance();
-	LPANIMATION_SET ani_set = animation_sets->Get(72);
+	LPANIMATION_SET ani_set = animation_sets->Get(ANIMATION_SET_MUSHROOM);
 	this->SetAnimationSet(ani_set);
 }
 void Mushroom::SetAppearedDirect()

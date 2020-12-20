@@ -29,6 +29,9 @@ public:
 		goomba = new Goomba();
 		/*goomba->SetState(GOOMBA_STATE_INACTIVE);*/
 		goomba->isEnable = false;
+		AnimationSets* animation_sets = AnimationSets::GetInstance();
+		LPANIMATION_SET ani_set = animation_sets->Get(ANIMATION_SET_PARA_GOOMBA);
+		this->SetAnimationSet(ani_set);
 	}
 	ParaGoomba() :Enemy()
 	{

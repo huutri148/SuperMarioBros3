@@ -129,9 +129,9 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				}
 				else
 				{
-					if (e->ny != 0)
+					if (e->ny > 0)
 					{
-						y -= min_ty * dy + ny * 0.4f;
+						y += -(min_ty * dy + ny * 0.4f) + dy;
 					}					
 					x += dx;
 				}
@@ -302,6 +302,9 @@ void KoopaTroopa::PickUpBy()
 }
 KoopaTroopa ::KoopaTroopa(float x, float y,int _type) : Enemy(x, y)
 {
+	AnimationSets* animation_sets = AnimationSets::GetInstance();
+	LPANIMATION_SET ani_set = animation_sets->Get(ANIMATION_SET_KOOPA);
+	this->SetAnimationSet(ani_set);
 	isPickedUp = false;
 	isEnable = true;
 	isBumped = false;
@@ -314,7 +317,7 @@ KoopaTroopa::KoopaTroopa()
 	this->SetState(KOOPATROOPA_STATE_WALKING);
 	this->isEnable = true;
 	AnimationSets* animation_sets = AnimationSets::GetInstance();
-	LPANIMATION_SET ani_set = animation_sets->Get(4);
+	LPANIMATION_SET ani_set = animation_sets->Get(ANIMATION_SET_KOOPA);
 	this->SetAnimationSet(ani_set);
 }
 void KoopaTroopa::SetBeingStromped()

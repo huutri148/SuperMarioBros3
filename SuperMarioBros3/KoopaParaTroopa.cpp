@@ -200,10 +200,17 @@ KoopaParaTroopa::KoopaParaTroopa(float x, float y) :Enemy(x, y)
 	this->SetState(PARATROOPA_STATE_JUMPING);
 	kooPa = new KoopaTroopa();
 	kooPa->isEnable = false;
+	AnimationSets* animation_sets = AnimationSets::GetInstance();
+	LPANIMATION_SET ani_set = animation_sets->Get(ANIMATION_SET_GREEN_PARATROOPA);
+	this->SetAnimationSet(ani_set);
 
 }
 KoopaParaTroopa::KoopaParaTroopa() :Enemy()
 {
+	Game* game = Game::GetInstance();
+	AnimationSets* animation_sets = AnimationSets::GetInstance();
+	LPANIMATION_SET ani_set = animation_sets->Get(ANIMATION_SET_GREEN_PARATROOPA);
+	this->SetAnimationSet(ani_set);
 	this->SetState(PARATROOPA_STATE_JUMPING);
 	kooPa = new KoopaTroopa();
 	kooPa->isEnable = false;
