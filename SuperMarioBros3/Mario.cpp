@@ -282,19 +282,23 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 			else if (dynamic_cast<Block*>(e->obj))
 			{
-				if (e->nx != 0 && ney == 0)
+				if (e->nx != 0)
 					x += dx;
-				if (e->ny > 0)
-					y += dy;
+				// Fix it
+				if (e->ny > 0 )
+					y += -(min_ty * dy + e->ny * 0.4f) + dy - 16;
 			}
 			else if (dynamic_cast<Item*>(e->obj))
 			{
 				dynamic_cast<Item*>(e->obj)->Used();
-				if (e->ny != 0)
-					y += -(min_ty * dy + ney * 0.4f) + dy;
-				if (e->nx != 0)
-					x += -(min_tx * dy + nex * 0.4f) + dx;
-			
+				if (!dynamic_cast<PSwitch*>(e->obj))
+				{
+					if (e->ny != 0)
+						y += -(min_ty * dy + ney * 0.4f) + dy;
+					if (e->nx != 0)
+						x += -(min_tx * dy + nex * 0.4f) + dx;
+
+				}
 			}
 			else if (dynamic_cast<Pipe*>(e->obj))
 			{
@@ -870,7 +874,7 @@ void Mario::TailAttack()
 		Grid* grid = ((PlayScene*)game->GetCurrentScene())->GetGrid();
 		if (nx > 0)
 		{
-			tail->Attack(x + MARIO_TAIL_BBOX_WIDTH ,
+			tail->Attack(x ,
 				y + MARIO_RACCOON_BBOX_HEIGHT - RACCOONTAIL_BBOX_HEIGHT,
 				this->nx, grid);
 		}
@@ -888,26 +892,19 @@ void Mario::Fly()
 	if (form == MARIO_RACCOON_FORM)
 	{
 		DWORD current = GetTickCount();
-		if (powerMelterStack == POWER_MELTER_FULL && 
+		if (flyTimeStart != 0 && 
 			current - flyTimeStart < MARIO_FLYING_LIMITED_TIME)
 		{
 			this->SetState(MARIO_STATE_FLYING);
-			this->vy = -MARIO_SUPER_JUMP_SPEED;
+			this->vy = -MARIO_JUMP_SPEED_Y;
 			this->vx = (MARIO_WALKING_SPEED +
 				(BUFF_SPEED * powerMelterStack)) * nx;
-			isFlying = true;
-		}
-		else if (current - flyTimeStart > MARIO_FLYING_LIMITED_TIME	&& 
-			flyTimeStart != 0)
-		{
-			flyTimeStart = 0;
-			powerMelterStack = 0;
-			isFlying = false;
+			this->isFlying = true;
 		}
 		else if (flyTimeStart == 0 && powerMelterStack == POWER_MELTER_FULL)
 		{
 			flyTimeStart = current;
-			this->vy = -MARIO_SUPER_JUMP_SPEED;
+			this->vy = -MARIO_JUMP_SPEED_Y;
 			this->vx = (MARIO_WALKING_SPEED +
 				(BUFF_SPEED * powerMelterStack)) * nx;
 		}
@@ -1065,18 +1062,15 @@ void Mario::SetWalkingRight()
 	if (canBrake == false)
 	{
 		this->nx = 1;
-		if (!isFlying)
+		if (vx * nx < 0 && abs(vx) >= 0.09f)
 		{
-			if (vx * nx < 0 && abs(vx) >= 0.09f)
-			{
-				canBrake = true;
-				LosePowerMelter();
-			}
-			else
-			{
-				this->SetState(MARIO_STATE_WALKING);
-				canBrake = false;
-			}
+			canBrake = true;
+			LosePowerMelter();
+		}
+		else
+		{
+			this->SetState(MARIO_STATE_WALKING);
+			canBrake = false;
 		}
 	}
 }
@@ -1085,18 +1079,15 @@ void Mario::SetWalkingLeft()
 	if (canBrake == false)
 	{
 		this->nx = -1;
-		if (isFlying == false)
+		if (vx * nx < 0 && abs(vx) >= 0.09f)
 		{
-			if (vx * nx < 0 && abs(vx) >= 0.09f)
-			{
-				canBrake = true;
-				LosePowerMelter();
-			}
-			else
-			{
-				this->SetState(MARIO_STATE_WALKING);
-				canBrake = false;
-			}
+			canBrake = true;
+			LosePowerMelter();
+		}
+		else
+		{
+			this->SetState(MARIO_STATE_WALKING);
+			canBrake = false;
 		}
 	}
 }
@@ -1123,6 +1114,13 @@ void Mario::HandleSwitchTime()
 	if (GetTickCount() - shootingTime > MARIO_SHOOTING_TIME &&
 		state == MARIO_STATE_SHOOT_FIREBALL)
 		this->SetState(MARIO_STATE_IDLE);
+	if (GetTickCount() - flyTimeStart > MARIO_FLYING_LIMITED_TIME &&
+		flyTimeStart != 0)
+	{
+		flyTimeStart = 0;
+		powerMelterStack = 0;
+		isFlying = false;
+	}
 
 	if (GetTickCount64() - untouchableStart > MARIO_UNTOUCHABLE_TIME && 
 		untouchable == 1)
