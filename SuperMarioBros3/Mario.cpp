@@ -27,6 +27,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		isTransform = false;
 		transformTime = 0;
+		// Trường hợp biến lớn
 		if (untouchable == 0)
 			this->SetLevel(MARIO_BIG_FORM);
 		else
@@ -1129,8 +1130,6 @@ void Mario::HandleSwitchTime()
 		untouchableStart = 0;
 		untouchable = 0;
 	}
-
-
 	if (isTeleport)
 	{
 		if (abs(y - teleportY) > MARIO_RACCOON_BBOX_HEIGHT)

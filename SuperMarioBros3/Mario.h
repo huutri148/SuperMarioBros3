@@ -9,7 +9,7 @@
 class Mario : public GameObject
 {
 
-	int untouchable = 0;
+
 
 	// Thời gian bắt đầu các trạng thái
 	DWORD untouchableStart = 0;
@@ -45,6 +45,7 @@ class Mario : public GameObject
 	
 public:
 
+	int untouchable = 0;
 	vector<int> card;
 	int powerMelterStack = 0;
 	int form = 0;
