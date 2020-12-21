@@ -414,7 +414,7 @@ void IntroScene::HandleBehaviourOfMario()
 		{
 			mario->Float();
 			goomba->SetState(GOOMBA_STATE_WALKING);
-			mario->vx = -0.07f;
+			mario->vx = -0.05f;
 		}
 	}
 	// Bật cờ cho sự kiện Đàn Koopas xuất hiện

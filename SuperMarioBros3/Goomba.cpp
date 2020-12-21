@@ -66,6 +66,20 @@ void Goomba::Update(DWORD dt,
 					this->ChangeDirect();
 				}
 			}
+			else if (dynamic_cast<Mario*>(e->obj))
+			{
+			/*	if (e->ny < 0)
+				{
+					this->SetBeingStromped();
+				}*/
+			/*	else if (nx != 0)
+				{
+					if (dynamic_cast<Mario*>(e->obj)->untouchable == 0)
+					{
+						dynamic_cast<Mario*>(e->obj)->DecreaseForm();
+					}
+				}*/
+			}
 			else
 			{
 				x += dx;

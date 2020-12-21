@@ -124,7 +124,8 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						{
 							y -= (min_ty * dy + ny * 0.4f);
 						}
-						x += dx;
+						if(e->nx != 0)
+							x += -(min_tx * dx + nx * 0.4f) + dx;
 					}
 				}
 				else
@@ -132,7 +133,7 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					if (e->ny > 0)
 					{
 						y += -(min_ty * dy + ny * 0.4f) + dy;
-					}					
+					}
 					x += dx;
 				}
 			}
@@ -190,9 +191,16 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					vy = 0;
 					y -= min_ty * dy + ny * 0.4f;
 				}
+			/*	else if (e->ny < 0)
+				{
+					this->SetBeingStromped();
+				}*/
 				if (e->nx != 0)
 				{
-					x -= min_tx * dx + nx * 0.4f;
+					if (dynamic_cast<Mario*>(e->obj)->untouchable == 0)
+						x -= min_tx * dx + nx * 0.4f;
+					else
+						x += -(min_tx * dx + nx * 0.4f) + dx;
 				}
 			}
 		}

@@ -410,6 +410,7 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 {
 	if (dynamic_cast<Item*>(curObj))
 	{
+		//coObjects.push_back(player);
 		for (auto obj : objects)
 		{
 			if (!dynamic_cast<Enemy*>(obj))
@@ -423,6 +424,7 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 	}
 	else if (dynamic_cast<FirePiranhaPlant*>(curObj) || dynamic_cast<PiranhaPlant*>(curObj))
 	{
+	/*	coObjects.push_back(player);*/
 		for (auto obj : objects)
 		{
 			if (dynamic_cast<Enemy*>(obj))
@@ -437,6 +439,7 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 	}
 	else if (dynamic_cast<KoopaTroopa*>(curObj))
 	{
+	/*	coObjects.push_back(player);*/
 		for (auto obj : objects)
 		{
 			if (dynamic_cast<Enemy*>(obj))
@@ -451,6 +454,7 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 	}
 	else if (dynamic_cast<Goomba*>(curObj))
 	{
+	/*	coObjects.push_back(player);*/
 		for (auto obj : objects)
 		{
 			if (dynamic_cast<Enemy*>(obj))
@@ -465,6 +469,7 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 	}
 	else if (dynamic_cast<ParaGoomba*>(curObj))
 	{
+	/*	coObjects.push_back(player);*/
 		for (auto obj : objects)
 		{
 			if (dynamic_cast<Enemy*>(obj))
@@ -479,6 +484,7 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 	}
 	else if (dynamic_cast<KoopaParaTroopa*>(curObj))
 	{
+	/*	coObjects.push_back(player);*/
 		for (auto obj : objects)
 		{
 			if (dynamic_cast<Enemy*>(obj))
