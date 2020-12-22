@@ -6,7 +6,7 @@ void Mushroom::Render()
 	if (type == MUSHROOM_TYPE_1UP)
 		ani = MUSHROOM_ANI_1UP;
 	animation_set->at(ani)->Render(this->nx, round(x),round( y));
-	//RenderBoundingBox();
+	RenderBoundingBox();
 }
 
 void Mushroom::GetBoundingBox(float& l, float& t, float& r,
@@ -60,7 +60,7 @@ void Mushroom::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						this->vx = -this->vx;
 						this->nx = -this->nx;
 					}
-					else
+					else if(!dynamic_cast<Mario*>(e->obj))
 					{
 						x += dx;
 					}
@@ -90,15 +90,6 @@ void Mushroom::SetState(int _state)
 		break;
 	}
 }
-//void Mushroom::Appear(float x, float y, int _type)
-//{
-//	appearY = y - MUSHROOM_BBOX_HEIGHT - 1;
-//	this->type = _type;
-//	this->SetAppearedDirect();
-//	this->SetPosition(x, y);
-//	this->SetState(MUSHROOM_STATE_APPEARANCE);
-//	this->isEnable = true;
-//}
 void Mushroom::Appear(float x, float y)
 {
 	this->SetPosition(x, y);

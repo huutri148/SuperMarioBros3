@@ -24,10 +24,7 @@ void ParaGoomba::Update(DWORD dt,
 	//DebugOut(L"\nState: %d", state);
 	if (state == PARAGOOMBA_STATE_INACTIVE)
 		return;
-/* Hoàn thành cơ bản về di chuyển của ParaKoopa
-* nhưng cần bổ sung thêm về hướng di chuyển (Chasing Mario)
-* tạo và truyền thông tin chung của Mario cho mọi Enemy
-*/
+
 	HandleTimeSwitchState();
 	Chasing();
 	Enemy::Update(dt, coObjects);
@@ -73,7 +70,7 @@ void ParaGoomba::Update(DWORD dt,
 				}
 				
 			}
-			else
+			else if(!dynamic_cast<Mario*>(e->obj))
 			{
 				x += dx;
 			}
@@ -92,6 +89,7 @@ void ParaGoomba::Render()
 			ani = PARAGOOMBA_ANI_JUMPING;
 		animation_set->at(ani)->Render(nx, ny, round(x), round(y));
 	}
+	RenderBoundingBox();
 }
 void ParaGoomba::SetState(int state)
 {

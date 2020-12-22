@@ -5,11 +5,13 @@ BrokenBrickEffect::BrokenBrickEffect(float x, float y)
 	this->y = y;
 	x1 = x2 = x;
 	y1 = y2 = y;
+
 	Sprites* sprites = Sprites::GetInstance();
 	for (unsigned int i = 0; i < 4; i++)
 	{
 		brokenBrickSprite.push_back(sprites->Get(SPRITE_BROKENBRICK_EFFECT_ID));
 	}
+
 	this->isEnable = true;
 	this->SetState(BROKENBRICK_EFFECT_STATE_APPEAR);
 	
@@ -18,11 +20,11 @@ void BrokenBrickEffect::Render()
 {
 	if (state != BROKENBRICK_EFFECT_STATE_APPEAR)
 		return;
-	//animation_set->at(0)->Render(-1, round(x), round(y));
-	brokenBrickSprite.at(0)->Draw(-1, x1, y1);
-	brokenBrickSprite.at(1)->Draw(-1, x1, y2);
-	brokenBrickSprite.at(2)->Draw(-1, x2, y1);
-	brokenBrickSprite.at(3)->Draw(-1, x2, y2);
+
+	brokenBrickSprite.at(0)->Draw(-1, round(x1), round(y1));
+	brokenBrickSprite.at(1)->Draw(-1, round(x1), round(y2));
+	brokenBrickSprite.at(2)->Draw(-1, round(x2), round(y1));
+	brokenBrickSprite.at(3)->Draw(-1, round(x2), round(y2));
 }
 
 void BrokenBrickEffect::SetState(int state)
@@ -48,12 +50,17 @@ void BrokenBrickEffect::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	float dy1, dy2;
 	dy1 = vy1 * dt;
 	dy2 = vy2 * dt;
+
 	x1 += dx;
 	x2 +=-dx;
 	y1 += dy1;
 	y2 += dy2;
+
+
 	vy1 += dt*GOOMBA_GRAVITY;
 	vy2 += dt * GOOMBA_GRAVITY;
+
+
 	if (GetTickCount() - appearTime > BROKENBRICK_EFFECT_APPEAR_TIME
 		&& appearTime != 0)
 		this->SetState(BROKENBRICK_EFFECT_STATE_INACTIVE);

@@ -243,7 +243,7 @@ void KoopaTroopa::Render()
 		}
 		animation_set->at(ani)->Render(nx,ny, round(x), round(y));
 	}
-	//RenderBoundingBox();
+	RenderBoundingBox();
 }
 void KoopaTroopa::SetState(int state)
 {

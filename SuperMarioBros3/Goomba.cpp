@@ -66,21 +66,7 @@ void Goomba::Update(DWORD dt,
 					this->ChangeDirect();
 				}
 			}
-			else if (dynamic_cast<Mario*>(e->obj))
-			{
-			/*	if (e->ny < 0)
-				{
-					this->SetBeingStromped();
-				}*/
-			/*	else if (nx != 0)
-				{
-					if (dynamic_cast<Mario*>(e->obj)->untouchable == 0)
-					{
-						dynamic_cast<Mario*>(e->obj)->DecreaseForm();
-					}
-				}*/
-			}
-			else
+			else if(!dynamic_cast<Mario*>(e->obj))
 			{
 				x += dx;
 			}
@@ -98,7 +84,7 @@ void Goomba::Render()
 			ani = GOOMBA_ANI_DIE;
 		animation_set->at(ani)->Render(nx, ny, round(x), round(y));
 	}
-	/*RenderBoundingBox();*/
+	RenderBoundingBox();
 }
 void Goomba::SetState(int state)
 {

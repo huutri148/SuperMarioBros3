@@ -424,7 +424,7 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 	}
 	else if (dynamic_cast<FirePiranhaPlant*>(curObj) || dynamic_cast<PiranhaPlant*>(curObj))
 	{
-	/*	coObjects.push_back(player);*/
+		coObjects.push_back(player);
 		for (auto obj : objects)
 		{
 			if (dynamic_cast<Enemy*>(obj))
@@ -439,7 +439,7 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 	}
 	else if (dynamic_cast<KoopaTroopa*>(curObj))
 	{
-	/*	coObjects.push_back(player);*/
+		coObjects.push_back(player);
 		for (auto obj : objects)
 		{
 			if (dynamic_cast<Enemy*>(obj))
@@ -454,7 +454,7 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 	}
 	else if (dynamic_cast<Goomba*>(curObj))
 	{
-	/*	coObjects.push_back(player);*/
+		coObjects.push_back(player);
 		for (auto obj : objects)
 		{
 			if (dynamic_cast<Enemy*>(obj))
@@ -469,7 +469,7 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 	}
 	else if (dynamic_cast<ParaGoomba*>(curObj))
 	{
-	/*	coObjects.push_back(player);*/
+		coObjects.push_back(player);
 		for (auto obj : objects)
 		{
 			if (dynamic_cast<Enemy*>(obj))
@@ -484,7 +484,7 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 	}
 	else if (dynamic_cast<KoopaParaTroopa*>(curObj))
 	{
-	/*	coObjects.push_back(player);*/
+		coObjects.push_back(player);
 		for (auto obj : objects)
 		{
 			if (dynamic_cast<Enemy*>(obj))
@@ -525,7 +525,8 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 					coObjects.push_back(obj);
 				else if ((dynamic_cast<Enemy*>(obj)) && obj->isEnable == true)
 				{
-					if(!dynamic_cast<Enemy*>(obj)->IsInactive())
+					if(!dynamic_cast<Enemy*>(obj)->IsInactive() && 
+						!dynamic_cast<Enemy*>(obj)->isDead)
 						coObjects.push_back(obj);
 				}
 			}
