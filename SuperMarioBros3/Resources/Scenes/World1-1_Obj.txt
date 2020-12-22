@@ -14,7 +14,7 @@
 
 #ID	TolRowTile	TolColTile	TolRowMap	TolColMap	TotalTiles	Matrix_path	edgeLeft	edgeRight	edgeBottomInWorld	edgeBottomInExtraMap
 [MAP]
-30	11	11	178	45	117	Resources\Map\World1-1.txt	16	2832	432	16	2143	2656	0	698
+30	11	11	178	45	117	Resources\Map\World1-1.txt	16	2832	432	16	2143	2656	0	698	16	400	2282	520	2344	362
 
 #grid_width	grid_height	cell_width	cell_height
 [GRID]

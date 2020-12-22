@@ -76,6 +76,8 @@ public:
 	Mario* GetPlayer() { return player; }
 	float GetEdgeLeft() { return map->edgeLeft; }
 	float GetEdgeRight() { return map->edgeRight; }
+	void GetExtraMapPosition(float& x, float& y);
+	void GetWorldMapPosition(float& x, float& y);
 	
 
 	// Bật tắt quái khi không nằm trong viewport

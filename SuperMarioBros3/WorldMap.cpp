@@ -163,11 +163,24 @@ void WorldMap::_ParseSection_MAPS(string line)
 	float edgeTopInExtraMap = (float)atof(tokens[13].c_str());
 	float edgeBottomInExtraMap = (float)atof(tokens[14].c_str());
 
+
+	float startPositionX = (float)atof(tokens[15].c_str());
+	float startPositionY = (float)atof(tokens[16].c_str());
+
+	float extraMapPositionX = (float)atof(tokens[17].c_str());
+	float extraMapPositionY = (float)atof(tokens[18].c_str());
+
+	float worldMapPositionX = (float)atof(tokens[19].c_str());
+	float worldMapPositionY = (float)atof(tokens[20].c_str());
+
 	this->tileMap = new Map(idMap, tolRowTileSet, tolColTileSet,
 		tolRowMap, tolColMap, totalTiles,
 		edgeLeft, edgeRight, edgeBottomInWorld, edgeTop,
 		edgeLeftInExtraMap, edgeRightInExtraMap,
-		edgeTopInExtraMap, edgeBottomInExtraMap);
+		edgeTopInExtraMap, edgeBottomInExtraMap,
+		startPositionX, startPositionY,
+		extraMapPositionX, extraMapPositionY,
+		worldMapPositionX, worldMapPositionY);
 
 	tileMap->LoadMatrix(MatrixPath.c_str());
 	tileMap->CreateTilesFromTileSet();
