@@ -27,6 +27,9 @@ public:
 	float edgeLeftInExtraMap;
 	float edgeRightInExtraMap;
 	float edgeTopInExtraMap;
+	float startPositionX, startPositionY;
+	float extraMapPositionX, extraMapPositionY;
+	float worldMapPositionX, worldMapPositionY;
 
 	Map(int idMap, int nTitleCols,
 		int nTitleRows, int nMapCols, int nMapRows,
@@ -35,7 +38,10 @@ public:
 		float edgeLeftInExtraMap,
 		float edgeRightInExtraMap,
 		float edgeBottomInExtraMap,
-		float edgeTopInExtraMap);
+		float edgeTopInExtraMap,
+		float startPositionX, float startPositionY,
+		float extraMapPositionX = 0, float startMapPositionY = 0,
+		float worldMapPositionX = 0, float worldMapPositionY = 0);
 
 	~Map();
 

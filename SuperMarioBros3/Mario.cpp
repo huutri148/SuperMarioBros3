@@ -1093,13 +1093,14 @@ void Mario::SetWalkingLeft()
 }
 void Mario::HandleSwitchTime()
 {
-	if (GetTickCount64() - tailAttackTime >
+	DWORD current = GetTickCount();
+	if (current - tailAttackTime >
 		MARIO_TAIL_ATTACK_TIME && isSwingTail == true)
 	{
 		isSwingTail = false;
 		tail->SetState(RACCOONTAIL_STATE_INACTIVE);
 	}
-	if (GetTickCount64() - turnRaccoonTime > MARIO_BIG_FORM_TRANSFORM_TIME &&
+	if (current - turnRaccoonTime > MARIO_BIG_FORM_TRANSFORM_TIME &&
 		isTurnRaccoon == true)
 	{
 		isTurnRaccoon = false;
@@ -1107,14 +1108,14 @@ void Mario::HandleSwitchTime()
 		if (untouchable == 1)
 			form = MARIO_BIG_FORM;
 	}
-	if (GetTickCount() - kickTime > MARIO_KICK_LIMIT_TIME && 
+	if (current - kickTime > MARIO_KICK_LIMIT_TIME && 
 		isKickShell == true)
 		isKickShell = false;
 
-	if (GetTickCount() - shootingTime > MARIO_SHOOTING_TIME &&
+	if (current - shootingTime > MARIO_SHOOTING_TIME &&
 		state == MARIO_STATE_SHOOT_FIREBALL)
 		this->SetState(MARIO_STATE_IDLE);
-	if (GetTickCount() - flyTimeStart > MARIO_FLYING_LIMITED_TIME &&
+	if (current - flyTimeStart > MARIO_FLYING_LIMITED_TIME &&
 		flyTimeStart != 0)
 	{
 		flyTimeStart = 0;
@@ -1122,7 +1123,7 @@ void Mario::HandleSwitchTime()
 		isFlying = false;
 	}
 
-	if (GetTickCount64() - untouchableStart > MARIO_UNTOUCHABLE_TIME && 
+	if (current - untouchableStart > MARIO_UNTOUCHABLE_TIME && 
 		untouchable == 1)
 	{
 		untouchableStart = 0;
@@ -1139,29 +1140,25 @@ void Mario::HandleSwitchTime()
 	}
 
 
-	if (GetTickCount() - floatingTime > MARIO_FLOATING_TIME &&
+	if (current - floatingTime > MARIO_FLOATING_TIME &&
 		isFloating == true)
 	{
 		isFloating = false;
 	}
-	if (isInTeleport && GetTickCount() - teleportTime > MARIO_TELEPORT_TIME)
+	if (isInTeleport && current - teleportTime > MARIO_TELEPORT_TIME)
 	{
 		// có thể nói đây là thời gian ở trong teleport
 		isInTeleport = false;
 		teleportTime = 0;
+		PlayScene* playScene = (PlayScene*)Game::GetInstance()->GetCurrentScene();
 		if (isInExtraMap == false)
 		{
-			///Thông tin về teleport cần được khởi tạo riêng mỗi map
-			/// phải khởi tạo số này khi load map
-			/// Todo: khởi tạo lại khi làm thêm map mới
-			x = 2282;
-			y = 520;
+			playScene->GetExtraMapPosition(x, y);
 			isInExtraMap = true;
 		}
 		else if (isInExtraMap == true)
 		{
-			x = 2344;
-			y = 362;
+			playScene->GetWorldMapPosition(x, y);
 			isInExtraMap = false;
 		}
 	}
