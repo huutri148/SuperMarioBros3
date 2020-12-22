@@ -6,22 +6,39 @@ Map::Map(int idMap, int nTitleCols, int nTitleRows, int nMapCols,
 	int nMapRows, int nTotalTiles, float edgeLeft,float edgeRight,
 	float edgeTop, float edgeBottomInWorld, 
 	float edgeLeftInExtraMap, float edgeRightInExtraMap,
-	float edgeTopInExtraMap,  float edgeBottomInExtraMap)
+	float edgeTopInExtraMap,  float edgeBottomInExtraMap,
+	float startPositionX, float startPositionY,
+	float extraMapPositionX , float extraMapPositionY ,
+	float worldMapPositionX , float worldMapPositionY )
 {
 	this->tileSet = Textures::GetInstance()->Get(idMap);
+
 	this->totalColsOfMap = nMapCols;
 	this->totalRowsOfMap = nMapRows;
+
 	this->totalRowsOfTileSet = nTitleRows;
 	this->totalColsOfTitleSet = nTitleCols;
+
 	this->totalTiles = nTotalTiles;
+
 	this->edgeLeft = edgeLeft;
 	this->edgeRight = edgeRight;
-	this->edgeBottomInWorld = edgeBottomInWorld;
-	this->edgeBottomInExtraMap = edgeBottomInExtraMap;
+	this->edgeBottomInWorld = edgeBottomInWorld;	
 	this->edgeTop = edgeTop;
+
 	this->edgeLeftInExtraMap = edgeLeftInExtraMap;
 	this->edgeRightInExtraMap = edgeRightInExtraMap;
 	this->edgeTopInExtraMap = edgeTopInExtraMap;
+	this->edgeBottomInExtraMap = edgeBottomInExtraMap;
+
+	this->startPositionX = startPositionX;
+	this->startPositionY = startPositionY; 
+
+	this->extraMapPositionX = extraMapPositionX;
+	this->extraMapPositionY = extraMapPositionY;
+
+	this->worldMapPositionX = worldMapPositionX;
+	this->worldMapPositionY = worldMapPositionY;
 }
 Map::~Map()
 {
