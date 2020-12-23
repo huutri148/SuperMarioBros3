@@ -1,5 +1,6 @@
 #include "Mushroom.h"
 #include"Game.h"
+#include"Player.h"
 void Mushroom::Render()
 {
 	int ani = MUSHROOM_ANI_POWERUP;
@@ -109,16 +110,14 @@ void Mushroom::Used()
 		mario->TurnBigForm();
 		PointEffect* effect = new PointEffect(x, y, POINT_TYPE_1000);
 		Unit* unit = new Unit(grid, effect, x, y);
-		mario->GainPoint(1000);
+		Player::GetInstance()->GainPoint(1000);
 	}
 	else
 	{
-		mario->GainLife();
+		Player::GetInstance()->GainLife();
 		PointEffect* effect = new PointEffect(x, y, POINT_TYPE_1UP);
 		Unit* unit = new Unit(grid, effect, x, y);
 	}
-	
-
 }
 Mushroom::Mushroom(int type)
 {

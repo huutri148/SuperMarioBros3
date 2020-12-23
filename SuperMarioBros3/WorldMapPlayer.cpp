@@ -1,15 +1,28 @@
 #include "WorldMapPlayer.h"
 #include"Utils.h"
 #include"WorldMap.h"
+#include"Player.h"
 void WorldMapPlayer::Render()
 {
-	animation_set->at(0)->Render(-1, x, y);
-	//RenderBoundingBox();
+	int ani = -1;
+	if (form == MARIO_BIG_FORM)
+		ani = WORLD_MAP_PLAYER_ANI_BIG;
+	else if (form == MARIO_RACCOON_FORM)
+		ani = WORLD_MAP_PLAYER_ANI_RACCOON;
+	else
+		ani = WORLD_MAP_PLAYER_ANI_SMALL;
+	animation_set->at(ani)->Render(-1, x, y);
 }
 void WorldMapPlayer::Render(float translateX, float translateY)
 {
-	animation_set->at(0)->Render(-1, round(x),round( y), 255, translateX, translateY);
-	//RenderBoundingBox();
+	int ani = -1;
+	if (form == MARIO_BIG_FORM)
+		ani = WORLD_MAP_PLAYER_ANI_BIG;
+	else if (form == MARIO_RACCOON_FORM)
+		ani = WORLD_MAP_PLAYER_ANI_RACCOON;
+	else
+		ani = WORLD_MAP_PLAYER_ANI_SMALL;
+	animation_set->at(ani)->Render(-1, round(x),round( y), 255, translateX, translateY);
 }
 void WorldMapPlayer::Up()
 {
@@ -39,8 +52,7 @@ void WorldMapPlayer::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	GameObject::Update(dt, coObjects);
 
 	FindNearestPanel();
-	/*DebugOut(L"\nNearest Panel: %f, %f", nearestPanel->x, nearestPanel->y);
-	DebugOut(L"\nCurent Panel: %f, %f", currentPanel->x, currentPanel->y);*/
+
 	if (nearestPanel->x == currentPanel->x && nearestPanel->y == currentPanel->y)
 	{
 		vx = 0;
@@ -81,6 +93,7 @@ void WorldMapPlayer::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			currentPanel = nearestPanel;
 		}
 	}
+
 	if (vy > 0 && vx == 0)
 	{
 		if (y < nearestPanel->y)
@@ -128,4 +141,8 @@ void WorldMapPlayer::FindNearestPanel()
 			}
 		}
 	}
+}
+WorldMapPlayer::WorldMapPlayer()
+{
+	form = Player::GetInstance()->GetLevel();
 }

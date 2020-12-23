@@ -1,6 +1,7 @@
 #include "RaccoonLeaf.h"
 #include"Game.h"
 #include"Mario.h"
+#include"Player.h"
 void RaccoonLeaf::Render()
 {
 	
@@ -85,7 +86,7 @@ void RaccoonLeaf::Used()
 		Unit* unit = new Unit(grid, effect, x, y);
 		mario->TurnRaccoonForm();
 		this->SetState(RACCOONLEAF_STATE_INACTIVE);
-		mario->GainPoint(1000);
+		Player::GetInstance()->GainPoint(1000);
 	}
 	else
 	{

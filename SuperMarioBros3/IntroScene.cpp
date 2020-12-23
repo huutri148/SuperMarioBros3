@@ -1,4 +1,5 @@
 ﻿#include "IntroScene.h"
+#include"Player.h"
 
 
 using namespace std;
@@ -557,6 +558,7 @@ void IntroSceneKeyHandler::OnKeyDown(int KeyCode)
 	case DIK_I:
 		Game* game = Game::GetInstance();
 		game->SwitchScene(1);
+		Player* p1 = Player::GetInstance();
 		break;
 	}
 	DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);

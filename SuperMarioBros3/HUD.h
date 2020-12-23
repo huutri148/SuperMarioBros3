@@ -6,7 +6,7 @@
 class Hud : public GameObject
 {
 	Font* font;
-	Mario* mario;
+	Mario* mario = NULL;
 
 
 
@@ -29,6 +29,11 @@ class Hud : public GameObject
 	int world = 1;
 	int time = 0;
 	int powerMelterStack = 0;
+
+	int doneScenePoint;
+	int indexTakenCard;
+	int idTakenCard;
+	int isGameDone = false;
 	vector<int> card;
 public:
 	Hud();
@@ -36,5 +41,6 @@ public:
 		float& right, float& bottom, bool isEnable) {};
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects = NULL);
 	virtual void Render();
+	void DoneGame(int idCard);
 };
 

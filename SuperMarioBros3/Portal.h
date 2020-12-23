@@ -12,8 +12,9 @@ class Portal :public GameObject
 	virtual void Render();
 public:
 	Portal();
-	int GetPortal();
+	void GetPortal();
 	virtual void SetState(int state);
+	int GetCardId() { return idCard; };
 
 };
 
