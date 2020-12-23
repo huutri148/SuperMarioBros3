@@ -14,7 +14,7 @@
 #include "PiranhaPlant.h"
 #include "Coin.h"
 #include "HitEffect.h"
-
+#include"Player.h"
 
 #pragma region Các hàm cập nhật tọa độ, animation
 void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -110,7 +110,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				if (ney < 0)
 				{
 					isInGround = true;
-					isFlying = false;
+					//isFlying = false;
 					isFloating = false;
 				}
 			}
@@ -123,7 +123,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						!dynamic_cast<FirePiranhaPlant*>(enemy))
 					{
 						enemy->SetBeingStromped();
-						score += 100;
+						Player::GetInstance()->GainPoint(100);
 						vy = -MARIO_JUMP_DEFLECT_SPEED;
 						vx = MARIO_WALK_DEFELCT_SPEED * nx;
 					}
@@ -176,7 +176,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 								{
 									dynamic_cast<KoopaTroopa*>(enemy)->IsKicked(this->nx);
 									this->SetState(MARIO_STATE_KICK);
-									score += 100;
+									Player::GetInstance()->GainPoint(100);
 								}
 								else
 								{
@@ -265,7 +265,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						{
 							brick->SetEmpty();
 							if (brick->state != BRICK_STATE_INACTIVE)
-								this->GainPoint(100);
+								Player::GetInstance()->GainPoint(100);
 						}
 					}
 				}
@@ -276,8 +276,8 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						x += -(min_tx * dx + nex * 0.4f) ;
 					if(e->ny != 0)
 						y += -(min_ty * dy + ney * 0.4f) ;
-					this->GainPoint(10);
-					this->GainMoney(1);
+					Player::GetInstance()->GainPoint(10);
+					Player::GetInstance()->GainMoney(1);
 				}
 			}
 			else if (dynamic_cast<Block*>(e->obj))
@@ -349,8 +349,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				x += dx;
 				y += dy;
 				this->SetAutoWalk(1, 0.1f);
-				card.push_back(dynamic_cast<Portal*>(e->obj)->GetPortal());
-				Game::GetInstance()->card.push_back(dynamic_cast<Portal*>(e->obj)->GetPortal());
+				dynamic_cast<Portal*>(e->obj)->GetPortal();
 			}
 			else if (dynamic_cast<Mario*>(e->obj))
 			{
@@ -652,7 +651,7 @@ void Mario::Render()
 			
 	}
 	animation_set->at(ani)->Render(nx, round(x), round(y), alpha,transX, transY);
-	/*RenderBoundingBox();*/
+	RenderBoundingBox();
 }
 void Mario::SetState(int state)
 {
@@ -829,8 +828,6 @@ void Mario::Friction()
 }
 void Mario::ShootFireBall(Grid* grid)
 {
-	// TODO: sửa để hạn chế tạo ra nhiều đối tượng fireball
-	// hạn chế việc tăng ram
 	if (++indexFireBall <= MARIO_MAX_BULLET)
 	{
 		if (indexFireBall == 1)
@@ -953,8 +950,6 @@ Mario::Mario()
 	AnimationSets* animation_sets = AnimationSets::GetInstance();
 	LPANIMATION_SET ani_set = animation_sets->Get(ANIMATION_SET_MARIO);
 	this->SetAnimationSet(ani_set);
-	x = 16;
-	y = 415;
 	vx = vy = 0;
 	nx = 1;
 	powerMelterStack = 0;
@@ -966,25 +961,20 @@ Mario::Mario()
 	flyTimeStart = 0;
 	isPickingUp = false;
 	indexFireBall = 0;
-	score = 0;
-	money = 0;
-	life = 4;
 	tail = new RaccoonTail();
 	tail->isEnable = false;
-	Game* game = Game::GetInstance();
-	card = game->card;
 }
 void Mario::TurnOffSkill()
 {
 	isPickingUp = false;
 	useSkill = false;
-	if (state == MARIO_STATE_SHOOT_FIREBALL ||
-		state ==MARIO_STATE_TAILATTACK)
+	if (state == MARIO_STATE_SHOOT_FIREBALL || state ==MARIO_STATE_TAILATTACK)
 		SetState(MARIO_STATE_IDLE);
 }
 void Mario::Reset()
 {
-	SetPosition(16, 400);
+	PlayScene* playScene = (PlayScene*)Game::GetInstance()->GetCurrentScene();
+	playScene->GetStartPosition(x, y);
 	vx = vy = 0;
 	nx = 1;
 	powerMelterStack = 0;
@@ -1100,6 +1090,7 @@ void Mario::HandleSwitchTime()
 		isSwingTail = false;
 		tail->SetState(RACCOONTAIL_STATE_INACTIVE);
 	}
+	
 	if (current - turnRaccoonTime > MARIO_BIG_FORM_TRANSFORM_TIME &&
 		isTurnRaccoon == true)
 	{
@@ -1108,6 +1099,7 @@ void Mario::HandleSwitchTime()
 		if (untouchable == 1)
 			form = MARIO_BIG_FORM;
 	}
+
 	if (current - kickTime > MARIO_KICK_LIMIT_TIME && 
 		isKickShell == true)
 		isKickShell = false;
@@ -1115,6 +1107,7 @@ void Mario::HandleSwitchTime()
 	if (current - shootingTime > MARIO_SHOOTING_TIME &&
 		state == MARIO_STATE_SHOOT_FIREBALL)
 		this->SetState(MARIO_STATE_IDLE);
+
 	if (current - flyTimeStart > MARIO_FLYING_LIMITED_TIME &&
 		flyTimeStart != 0)
 	{
@@ -1147,10 +1140,11 @@ void Mario::HandleSwitchTime()
 	}
 	if (isInTeleport && current - teleportTime > MARIO_TELEPORT_TIME)
 	{
-		// có thể nói đây là thời gian ở trong teleport
+		// là thời gian ở trong teleport
 		isInTeleport = false;
 		teleportTime = 0;
 		PlayScene* playScene = (PlayScene*)Game::GetInstance()->GetCurrentScene();
+
 		if (isInExtraMap == false)
 		{
 			playScene->GetExtraMapPosition(x, y);
@@ -1161,5 +1155,6 @@ void Mario::HandleSwitchTime()
 			playScene->GetWorldMapPosition(x, y);
 			isInExtraMap = false;
 		}
+
 	}
 }

@@ -36,13 +36,16 @@ protected:
 	Mario* player = NULL;
 	Map* map = NULL ;
 	bool isTurnCamY = false;// Camera Y được bật khi Mario bay 
-	bool isGameOver = false;
 	Hud* hud = NULL;
 	Unit* unit;
 	Grid* grid;
 
 	bool switchScene = false;
 	bool isGameDone = false;
+	bool isGameOver = false;
+
+
+	DWORD delayGameOverTime = 0;
 
 	vector<LPGAMEOBJECT> objects;
 	vector<Unit*> listUnits;
@@ -71,28 +74,33 @@ public:
 	virtual void Unload();
 
 
-
-	void TurnCamY(float _playerY, bool isFlying, int ScreenHeight, int MapHeight);
 	Mario* GetPlayer() { return player; }
 	float GetEdgeLeft() { return map->edgeLeft; }
 	float GetEdgeRight() { return map->edgeRight; }
 	void GetExtraMapPosition(float& x, float& y);
 	void GetWorldMapPosition(float& x, float& y);
+	void GetStartPosition(float& x, float& y);
+	int GetTakenCardID() { return portal->GetCardId(); };
+	// Nhận các đối tượng cần xét va chạm
+	void GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& coObjects);
+	void GetObjectFromGrid();
+	Grid* GetGrid() { return grid; };
+
+
+	void SetDoneGame() { isGameDone = true; };
+	void DoneGame();
+
 	
 
 	// Bật tắt quái khi không nằm trong viewport
 	void ActiveEnemiesInViewport();
 	void SetInactivation();
 	bool IsInViewport(LPGAMEOBJECT object);
+	void TurnCamY(float _playerY, bool isFlying, int ScreenHeight, int MapHeight);
+
 
 	void UpdateCameraPosition();
-	
-	// Nhận các đối tượng cần xét
-	void GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& coObjects);
-	void GetObjectFromGrid();
-	Grid* GetGrid() { return grid; };
 	void UpdateGrid();
-	
 	void UpdatePlayer(DWORD dt);
 
 

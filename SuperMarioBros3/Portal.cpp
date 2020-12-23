@@ -1,5 +1,6 @@
 #include "Portal.h"
 #include"Game.h"
+#include"Player.h"
 void Portal::Render()
 {
 	if (state != PORTAL_STATE_CONGRATULATE)
@@ -44,6 +45,7 @@ void Portal::SetState(int state)
 		vy = -PORTAL_PICKED_SPEED;
 		break;
 	case PORTAL_STATE_CONGRATULATE:
+		((PlayScene*)Game::GetInstance()->GetCurrentScene())->SetDoneGame();
 		vy = 0;
 		break;
 	case PORTAL_STATE_INACTIVE:
@@ -72,14 +74,8 @@ void Portal::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		{
 			Sprites* sprite = Sprites::GetInstance();
 			this->SetState(PORTAL_STATE_CONGRATULATE);
-			if (idCard == CARD_MUSHROOM)
-				card = sprite->Get(SPRITE_CARD_MUSHROOM);
-			else if (idCard == CARD_STARMAN)
-				card = sprite->Get(SPRITE_CARD_STARMAN);
-			else
-				card = sprite->Get(SPRITE_CARD_FLOWER);
+			card = sprite->Get(idCard);
 		}
-			
 	}
 	GameObject::Update(dt, coObjects);
 	y += dy;
@@ -96,10 +92,9 @@ void Portal::GetBoundingBox(float& left, float& top,
 		bottom = top + PORTAL_BBOX_HEIGHT;
 	}
 }
-int Portal::GetPortal()
+void Portal::GetPortal()
 {
 	this->SetState(PORTAL_STATE_PICKED);
-	return idCard;
 }
 
 Portal::Portal()

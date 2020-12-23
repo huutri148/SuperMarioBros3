@@ -26,13 +26,6 @@ class Mario : public GameObject
 
 	
 	int indexFireBall = 0;
-	int score = 0;
-	int money = 0;
-	int life = 4;
-	int type = 0;
-	
-	
-
 	//Các biến cờ ở các trạng thái
 	bool isInGround ;
 	bool isKickShell = false;
@@ -46,7 +39,6 @@ class Mario : public GameObject
 public:
 
 	int untouchable = 0;
-	vector<int> card;
 	int powerMelterStack = 0;
 	int form = 0;
 	bool turnToSmallForm = false;
@@ -104,14 +96,7 @@ public:
 	int GetWidth();
 	int GetHeight();
 	void Information();
-	int GetForm() { return form; };
-	int GetMoney() { return money; };
-	int GetScore() { return score; };
-	int GetLife() { return life; };
 	int GetPowerMelter() { return powerMelterStack; };
-	void GainMoney(int pMoney) { money += pMoney; };
-	void GainPoint(int pPoint) { score += pPoint; };
-	void GainLife() { life += 1; };
 
 	//Xử Lí
 	void Friction();

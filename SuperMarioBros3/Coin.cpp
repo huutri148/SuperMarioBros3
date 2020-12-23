@@ -4,6 +4,7 @@
 #include"Brick.h"
 #include"PointEffect.h"
 #include"Grid.h"
+#include"Player.h"
 void Coin::GetBoundingBox(float& left, float& top,
 	float& right, float& bottom,
 	bool isEnable)
@@ -120,5 +121,5 @@ void Coin::Used()
 	LPSCENE scence = Game::GetInstance()->GetCurrentScene();
 	Mario* mario = ((PlayScene*)scence)->GetPlayer();
 	this->SetState(COIN_STATE_INACTIVE);
-	mario->GainMoney(1);
+	Player::GetInstance()->GainMoney(1);
 }

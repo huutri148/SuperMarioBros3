@@ -177,7 +177,6 @@
     <ClInclude Include="PlayScene.h" />
     <ClInclude Include="PointEffect.h" />
     <ClInclude Include="Portal.h" />
-    <ClInclude Include="PowerMelter.h" />
     <ClInclude Include="PSwitch.h" />
     <ClInclude Include="RaccoonLeaf.h" />
     <ClInclude Include="RaccoonTail.h" />
@@ -224,7 +223,6 @@
     <ClCompile Include="PlayScene.cpp" />
     <ClCompile Include="PointEffect.cpp" />
     <ClCompile Include="Portal.cpp" />
-    <ClCompile Include="PowerMelter.cpp" />
     <ClCompile Include="PSwitch.cpp" />
     <ClCompile Include="RaccoonLeaf.cpp" />
     <ClCompile Include="RaccoonTail.cpp" />

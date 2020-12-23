@@ -1,12 +1,13 @@
 #include "Mushroom.h"
 #include"Game.h"
+#include"Player.h"
 void Mushroom::Render()
 {
 	int ani = MUSHROOM_ANI_POWERUP;
 	if (type == MUSHROOM_TYPE_1UP)
 		ani = MUSHROOM_ANI_1UP;
 	animation_set->at(ani)->Render(this->nx, round(x),round( y));
-	//RenderBoundingBox();
+	RenderBoundingBox();
 }
 
 void Mushroom::GetBoundingBox(float& l, float& t, float& r,
@@ -60,7 +61,7 @@ void Mushroom::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						this->vx = -this->vx;
 						this->nx = -this->nx;
 					}
-					else
+					else if(!dynamic_cast<Mario*>(e->obj))
 					{
 						x += dx;
 					}
@@ -90,15 +91,6 @@ void Mushroom::SetState(int _state)
 		break;
 	}
 }
-//void Mushroom::Appear(float x, float y, int _type)
-//{
-//	appearY = y - MUSHROOM_BBOX_HEIGHT - 1;
-//	this->type = _type;
-//	this->SetAppearedDirect();
-//	this->SetPosition(x, y);
-//	this->SetState(MUSHROOM_STATE_APPEARANCE);
-//	this->isEnable = true;
-//}
 void Mushroom::Appear(float x, float y)
 {
 	this->SetPosition(x, y);
@@ -118,16 +110,14 @@ void Mushroom::Used()
 		mario->TurnBigForm();
 		PointEffect* effect = new PointEffect(x, y, POINT_TYPE_1000);
 		Unit* unit = new Unit(grid, effect, x, y);
-		mario->GainPoint(1000);
+		Player::GetInstance()->GainPoint(1000);
 	}
 	else
 	{
-		mario->GainLife();
+		Player::GetInstance()->GainLife();
 		PointEffect* effect = new PointEffect(x, y, POINT_TYPE_1UP);
 		Unit* unit = new Unit(grid, effect, x, y);
 	}
-	
-
 }
 Mushroom::Mushroom(int type)
 {

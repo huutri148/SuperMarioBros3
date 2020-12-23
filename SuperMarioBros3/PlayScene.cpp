@@ -5,6 +5,7 @@
 #include"Utils.h"
 #include"Textures.h"
 #include"Sprites.h"
+#include"Player.h"
 
 
  
@@ -380,12 +381,19 @@ void PlayScene::Update(DWORD dt)
 	ActiveEnemiesInViewport();
 
 
-	if (portal->state == PORTAL_STATE_CONGRATULATE)
+	if (isGameDone == true)
 	{
-		this->isGameDone = true;
+		hud->Update(dt);
+		DoneGame();
+		return;
+	}
+
+	if (isGameOver == true)
+	{
 		Game* game = Game::GetInstance();
 		game->SetCamPos(0.0f, 0.0f);
 		game->SwitchScene(1);
+		isGameOver = false;
 		return;
 	}
 
@@ -437,7 +445,7 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 	}
 	else if (dynamic_cast<FirePiranhaPlant*>(curObj) || dynamic_cast<PiranhaPlant*>(curObj))
 	{
-	/*	coObjects.push_back(player);*/
+		coObjects.push_back(player);
 		for (auto obj : objects)
 		{
 			if (dynamic_cast<Enemy*>(obj))
@@ -452,7 +460,7 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 	}
 	else if (dynamic_cast<KoopaTroopa*>(curObj))
 	{
-	/*	coObjects.push_back(player);*/
+		coObjects.push_back(player);
 		for (auto obj : objects)
 		{
 			if (dynamic_cast<Enemy*>(obj))
@@ -467,7 +475,7 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 	}
 	else if (dynamic_cast<Goomba*>(curObj))
 	{
-	/*	coObjects.push_back(player);*/
+		coObjects.push_back(player);
 		for (auto obj : objects)
 		{
 			if (dynamic_cast<Enemy*>(obj))
@@ -482,7 +490,7 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 	}
 	else if (dynamic_cast<ParaGoomba*>(curObj))
 	{
-	/*	coObjects.push_back(player);*/
+		coObjects.push_back(player);
 		for (auto obj : objects)
 		{
 			if (dynamic_cast<Enemy*>(obj))
@@ -538,7 +546,8 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 					coObjects.push_back(obj);
 				else if ((dynamic_cast<Enemy*>(obj)) && obj->isEnable == true)
 				{
-					if(!dynamic_cast<Enemy*>(obj)->IsInactive())
+					if(!dynamic_cast<Enemy*>(obj)->IsInactive() && 
+						!dynamic_cast<Enemy*>(obj)->isDead)
 						coObjects.push_back(obj);
 				}
 			}
@@ -722,13 +731,17 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 	Mario* mario = ((PlayScene*)scence)->GetPlayer();
 	// disable control key when Mario die 
 	if (mario->GetState() == MARIO_STATE_DEATH || mario->isAutoWalk ||
-		mario->isInTeleport || mario->isTeleport) return;
+			mario->isInTeleport || mario->isTeleport)
+		return;
+
 	if (game->IsKeyDown(DIK_S))
 	{
 		mario->SuperJump();
 	}
+
 	if (game->IsKeyDown(DIK_RIGHT))
 	{
+
 		if (game->IsKeyDown(DIK_A))
 		{
 			mario->FillUpPowerMelter();
@@ -736,11 +749,13 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 		}
 		else if (!game->IsKeyDown(DIK_A))
 			mario->LosePowerMelter();
+
 		mario->SetWalkingRight();
 		mario->Friction();
 	}
 	else if (game->IsKeyDown(DIK_LEFT))
 	{
+
 		if (game->IsKeyDown(DIK_A))
 		{
 			mario->FillUpPowerMelter();
@@ -748,6 +763,8 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 		}
 		else if(!game->IsKeyDown(DIK_A))
 			mario->LosePowerMelter();
+
+
 		mario->SetWalkingLeft();
 		mario->Friction();
 	}
@@ -986,4 +1003,31 @@ void PlayScene::GetWorldMapPosition(float& x, float& y)
 {
 	x = map->worldMapPositionX;
 	y = map->worldMapPositionY;
+}
+void PlayScene::GetStartPosition(float& x, float& y)
+{
+	x = map->startPositionX;
+	y = map->startPositionY;
+}
+void PlayScene::DoneGame()
+{
+	if (GetTickCount() - delayGameOverTime > DONE_SCENE_DELAY_TIME &&
+		delayGameOverTime != 0)
+	{
+		Player* inplayer = Player::GetInstance();
+		isGameOver = true;
+		delayGameOverTime = 0;
+		inplayer->card.push_back(portal->GetCardId());
+		inplayer->SetLevel(player->form);
+		isGameDone = false;
+	}
+	else if (delayGameOverTime == 0)
+	{
+		delayGameOverTime = GetTickCount();
+		
+		// Nếu mario qua màn thì sẽ cộng điểm sau game
+		if(player->state != MARIO_STATE_DEATH)
+			hud->DoneGame(portal->GetCardId());
+	}
+		
 }

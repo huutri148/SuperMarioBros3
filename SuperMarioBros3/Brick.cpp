@@ -1,4 +1,5 @@
 ﻿#include "Brick.h"
+#include"Player.h"
 #include <algorithm>
 bool Brick::isTransForm = false;
 void Brick::Render()
@@ -145,14 +146,14 @@ void Brick::DropItem()
 	Mario* mario = ((PlayScene*)scence)->GetPlayer();
 	Grid* grid = ((PlayScene*)scence)->GetGrid();
 	Item* item;
-	int form = mario->GetForm();
+	int form = mario->form;
 	switch (type)
 	{
 	case BRICK_ITEM_COIN_TYPE:
 	{
 		item = new Coin(COIN_TYPE_1);
 		item->Appear(entryX, entryY);
-		mario->GainMoney(1);
+		Player::GetInstance()->GainMoney(1);
 		Unit* unit = new Unit(grid, item, x, y);
 		break;
 	}
