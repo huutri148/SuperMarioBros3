@@ -478,17 +478,17 @@ void Game::_ParseSection_SCENES(string line)
 	int id = atoi(tokens[0].c_str());
 	LPCWSTR path = ToLPCWSTR(tokens[1]);
 	LPSCENE scene;
-	if (id == 1)
+	if (id == 0)
 	{
 		scene = new WorldMap(id, path);
 		scenes[id] = scene;
 	}
-	else if (id == 2)
+	else if (id == 1)
 	{
 		scene = new PlayScene(id, path);
 		scenes[id] = scene;
 	}
-	else if (id == 0)
+	else if (id == 99)
 	{
 		scene = new IntroScene(id, path);
 		scenes[id] = scene;

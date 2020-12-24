@@ -21,7 +21,9 @@ class Hud : public GameObject
 	vector<LPSPRITE> remainTimeSprites;
 	vector<LPSPRITE> powerMelterSprite;
 	vector<LPSPRITE> filledPowerMelterSprite;
-	
+	Animation* animationTakenCard;
+
+
 	int nlife = 4;
 	int remainTime = 0;
 	int score = 0;

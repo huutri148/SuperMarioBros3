@@ -48,11 +48,6 @@ class Game
 	void _ParseSection_SCENES(string line);
 
 public:
-	int score = 0;
-	int money = 0;
-	int life = 4;
-	int type = 0;
-	vector<int> card;
 
 	void InitKeyboard();
 	void SetKeyHandler(LPKEYEVENTHANDLER handler) { keyHandler = handler; };

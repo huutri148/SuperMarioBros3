@@ -46,6 +46,8 @@ Hud::Hud()
 	
 	lifeSprite = font->mapping(nlife +'0');
 	worldSprite = font->mapping(world + '0');
+
+
 	// Sẽ cập nhật player từ scene hiện tại 
 	// Là Lugi hoặc Mario sẽ chọn icon ở cuối góc trái màn hình
 	int playerType = inPlayer->GetPlayerType();
@@ -59,11 +61,9 @@ Hud::Hud()
 	for (unsigned int i = 0; i < POWER_MELTER_FULL; i++)
 	{
 		if (i != POWER_MELTER_FULL - 1)
-			powerMelterSprite.push_back(sprites->
-				Get(SPRITE_POWERMELTER_ID));
+			powerMelterSprite.push_back(sprites->Get(SPRITE_POWERMELTER_ID));
 		else
-			powerMelterSprite.push_back(sprites->
-				Get(SPRITE_POWEMELTER_ARROW_ID));
+			powerMelterSprite.push_back(sprites->Get(SPRITE_POWEMELTER_ARROW_ID));
 	}
 
 	for (unsigned int i = 0; i < POWER_MELTER_FULL; i++)
@@ -81,9 +81,13 @@ void Hud::Render()
 {
 	LPDIRECT3DTEXTURE9 bbox = Textures::GetInstance()->Get(ID_TEX_BBOX);
 	Game* game = Game::GetInstance();
+
+
 	//BACKGROUND màu đen
 	Game::GetInstance()->Draw(1,x , y , bbox, 0, 0, game->GetScreenWidth() ,
 								40, 255,0,-84);
+
+
 
 	// Draw(-1,x,y,transparent, translateX( position in X-axis HUD),
 	//translateY( position in Y-axis HUD))
@@ -93,6 +97,8 @@ void Hud::Render()
 	lifeSprite->Draw(-1, x , y, 255, 57, -65);
 	worldSprite->Draw(-1, x , y , 255, 65, -73);
 	
+
+
 	for (unsigned int i = 0; i < remainTimeSprites.size(); i++)
 	{
 		// Draw(-1,x,y,transparent, translateX( position in X-axis HUD),
@@ -117,8 +123,9 @@ void Hud::Render()
 		powerMelterSprite[i]->Draw(-1, x , y ,255,
 					80.0f + FONT_BBOX_WIDTH * i,-73.0f);
 	}
-	// Todo: needed a way to deal with it more efficiently
-	// and it work differently in raccoon form
+
+
+
 	for ( int i = 0; i < powerMelterStack ; i++)
 	{
 		filledPowerMelterSprite[i]->Draw(-1, x, y,255,
@@ -129,15 +136,19 @@ void Hud::Render()
 					80.0f + FONT_BBOX_WIDTH * 6, -73.0f);
 		}
 	}
+
+
 	for (unsigned int i = 0; i < cardSprite.size(); i++)
 	{
 		this->cardSprite[i]->Draw(-1, x, y, 255,
 					195 + 24.0f* i, -78.0f);
 	}
+
+
+
 	if (isGameDone)
 	{
-		this->cardSprite[indexTakenCard]->Draw(-1, x, y, 255,
-			195 + 24.0f * indexTakenCard, -78.0f);
+		animationTakenCard->Render(-1, x, y, 255, 195 + 24.0f * indexTakenCard, -78.0f);
 	}
 }
 void Hud::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -153,21 +164,11 @@ void Hud::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	// Cộng điểm sau khi done Game
 	if (isGameDone)
 	{
-		if (idTakenCard == ((PlayScene*)scene)->GetTakenCardID() &&
-				doneScenePoint % 1000 == 0)
-			idTakenCard = SPRITE_EMPTY_CARD;
-		else
-			idTakenCard = ((PlayScene*)scene)->GetTakenCardID();
-
 		if (doneScenePoint != 0)
 		{
 			player->GainPoint(100);
 			doneScenePoint -= 100;
 		}
-		else if(doneScenePoint == 0)
-			idTakenCard = ((PlayScene*)scene)->GetTakenCardID();
-
-		cardSprite[indexTakenCard] = sprites->Get(idTakenCard);
 	}
 
 
@@ -199,5 +200,12 @@ void Hud::DoneGame(int idCard)
 	isGameDone = true;
 	doneScenePoint = DONE_SCENE_POINT;
 	idTakenCard = idCard;
-	cardSprite.push_back(Sprites::GetInstance()->Get(idCard));
+	
+	// Todo: Có thể dùng Factory Pattern cho Card ???
+	if(idCard == SPRITE_CARD_MUSHROOM)
+		animationTakenCard = Animations::GetInstance()->Get(ANIMATION_TAKEN_MUSHROOM_CARD);
+	else if(idCard == SPRITE_CARD_STARMAN)
+		animationTakenCard = Animations::GetInstance()->Get(ANIMATION_TAKEN_STAR_CARD);
+	else 
+		animationTakenCard = Animations::GetInstance()->Get(ANIMATION_TAKEN_FIREFLOWER_CARD);
 }
