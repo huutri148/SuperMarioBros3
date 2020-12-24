@@ -5,13 +5,22 @@
 void WorldMapPlayer::Render()
 {
 	int ani = -1;
+	int translateY = 0;
 	if (form == MARIO_BIG_FORM)
 		ani = WORLD_MAP_PLAYER_ANI_BIG;
 	else if (form == MARIO_RACCOON_FORM)
 		ani = WORLD_MAP_PLAYER_ANI_RACCOON;
+	else if (form == MARIO_FIRE_FORM)
+		ani = WORLD_MAP_PLAYER_ANI_FIRE;
 	else
 		ani = WORLD_MAP_PLAYER_ANI_SMALL;
-	animation_set->at(ani)->Render(-1, x, y);
+
+
+	if (form != MARIO_SMALL_FORM)
+		translateY -= WORLD_MAP_PLAYER_BIG_HEIGHT - WORLD_MAP_PLAYER_SMALL_HEIGHT;
+
+
+	animation_set->at(ani)->Render(-1, x, y + translateY);
 }
 void WorldMapPlayer::Render(float translateX, float translateY)
 {
@@ -20,8 +29,16 @@ void WorldMapPlayer::Render(float translateX, float translateY)
 		ani = WORLD_MAP_PLAYER_ANI_BIG;
 	else if (form == MARIO_RACCOON_FORM)
 		ani = WORLD_MAP_PLAYER_ANI_RACCOON;
+	else if (form == MARIO_FIRE_FORM)
+		ani = WORLD_MAP_PLAYER_ANI_FIRE;
 	else
 		ani = WORLD_MAP_PLAYER_ANI_SMALL;
+
+
+	if (form != MARIO_SMALL_FORM)
+		translateY -= WORLD_MAP_PLAYER_BIG_HEIGHT - WORLD_MAP_PLAYER_SMALL_HEIGHT;
+
+
 	animation_set->at(ani)->Render(-1, round(x),round( y), 255, translateX, translateY);
 }
 void WorldMapPlayer::Up()
@@ -111,7 +128,7 @@ void WorldMapPlayer::FindNearestPanel()
 	if (dynamic_cast<WorldMap*>(Game::GetInstance()->GetCurrentScene()))
 	{
 		WorldMap* worldMap = (WorldMap*)Game::GetInstance()->GetCurrentScene();
-		vector<LPGAMEOBJECT> panels = worldMap->GetPanels();
+		vector<WorldMapPanel*> panels = worldMap->GetPanels();
 		if (currentPanel == NULL)
 			currentPanel =(WorldMapPanel*) panels.at(0);
 		float nearestPanelX = currentPanel->x;
@@ -145,4 +162,11 @@ void WorldMapPlayer::FindNearestPanel()
 WorldMapPlayer::WorldMapPlayer()
 {
 	form = Player::GetInstance()->GetLevel();
+	WorldMap* worldMap = (WorldMap*)Game::GetInstance()->GetCurrentScene();
+	Player* player = Player::GetInstance();
+	currentPanel = worldMap->FindCurrentPanel(player->currentPanelID);
+	if (currentPanel != NULL)
+	{
+		currentPanel->GetPosition(this->x, this->y);
+	}
 }

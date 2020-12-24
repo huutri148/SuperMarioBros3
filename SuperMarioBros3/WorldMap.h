@@ -15,7 +15,7 @@ protected:
 	Map* tileMap = NULL;
 	WorldMapPlayer* player;
 	vector<LPGAMEOBJECT> objectsToRender;
-	vector<LPGAMEOBJECT> panels;
+	vector<WorldMapPanel*> panels;
 
 	void _ParseSection_TEXTURES(string line);
 	void _ParseSection_SPRITES(string line);
@@ -25,6 +25,7 @@ protected:
 	void _ParseSection_MAPS(string line);
 
 public:
+	bool isChangeState = false;
 	WorldMap(int id, LPCWSTR filePath);
 
 	virtual void Load();
@@ -33,7 +34,8 @@ public:
 	virtual void Unload();
 	
 	WorldMapPlayer* GetPlayer() { return player; };
-	vector<LPGAMEOBJECT> GetPanels() { return panels; };
+	vector<WorldMapPanel*> GetPanels() { return panels; };
+	WorldMapPanel* FindCurrentPanel(int sceneId);
 	friend class WorldMapKeyHandler;
 };
 

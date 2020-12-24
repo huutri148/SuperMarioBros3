@@ -1,6 +1,7 @@
 #pragma once
 #include"Define.h"
 #include<vector>
+
 using std::vector;
 class Player
 {
@@ -13,6 +14,9 @@ class Player
 	
 public: 
 	vector<int> card;
+	vector<int> clearedPanelID;
+	int currentPanelID;
+
 	static Player* GetInstance();
 	void initializePlayer();
 

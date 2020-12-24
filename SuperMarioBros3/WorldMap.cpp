@@ -1,5 +1,6 @@
 #include "WorldMap.h"
 #include<fstream>
+#include"Player.h"
 WorldMap::WorldMap(int id, LPCWSTR filePath) :
 	Scene(id, filePath)
 {
@@ -108,6 +109,7 @@ void WorldMap::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_BUSH:
 		obj = new WorldMapBush();
 		objectsToRender.push_back(obj);
+		obj->SetPosition(x, y);
 		break;
 	case OBJECT_TYPE_PANEL:
 	{
@@ -118,7 +120,8 @@ void WorldMap::_ParseSection_OBJECTS(string line)
 		int sceneId = atoi(tokens[8].c_str());
 		int type = atoi(tokens[9].c_str());
 		obj = new WorldMapPanel(l, t, r, b, sceneId, type);
-		panels.push_back(obj);
+		panels.push_back((WorldMapPanel*)obj);
+		obj->SetPosition(x, y);
 		break;
 	}
 	case OBJECT_TYPE_PLAYER:
@@ -128,13 +131,13 @@ void WorldMap::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_HUD:
 		obj = new Hud();
 		hud =(Hud*) obj;
+		obj->SetPosition(x, y);
 		break;
 	default:
 		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
 		return;
 	}
 	// General object setup
-	obj->SetPosition(x, y);
 	LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
 	obj->SetAnimationSet(ani_set);
 }
@@ -174,13 +177,13 @@ void WorldMap::_ParseSection_MAPS(string line)
 	float worldMapPositionY = (float)atof(tokens[20].c_str());
 
 	this->tileMap = new Map(idMap, tolRowTileSet, tolColTileSet,
-		tolRowMap, tolColMap, totalTiles,
-		edgeLeft, edgeRight, edgeBottomInWorld, edgeTop,
-		edgeLeftInExtraMap, edgeRightInExtraMap,
-		edgeTopInExtraMap, edgeBottomInExtraMap,
-		startPositionX, startPositionY,
-		extraMapPositionX, extraMapPositionY,
-		worldMapPositionX, worldMapPositionY);
+						tolRowMap, tolColMap, totalTiles,
+						edgeLeft, edgeRight, edgeBottomInWorld, edgeTop,
+						edgeLeftInExtraMap, edgeRightInExtraMap,
+						edgeTopInExtraMap, edgeBottomInExtraMap,
+						startPositionX, startPositionY,
+						extraMapPositionX, extraMapPositionY,
+						worldMapPositionX, worldMapPositionY);
 
 	tileMap->LoadMatrix(MatrixPath.c_str());
 	tileMap->CreateTilesFromTileSet();
@@ -254,6 +257,10 @@ void WorldMap::Update(DWORD dt)
 {
 	player->Update(dt);
 	hud->Update(dt);
+	for (unsigned int i = 0; i < panels.size(); i++)
+	{
+		panels[i]->Update(dt);
+	}
 }
 
 void WorldMap::Render()
@@ -283,10 +290,20 @@ void WorldMap::Render()
 		panel->Render(round(translateX), round(translateY));
 	}
 
-	player->Render(round(translateX ), round(translateY ));
+	if(!isChangeState)
+		player->Render(round(translateX ), round(translateY ));
 	hud->Render();
 }
 
+WorldMapPanel* WorldMap::FindCurrentPanel(int sceneID)
+{
+	for (WorldMapPanel* panel : panels)
+	{
+		if (sceneID == panel->GetSceneId() && panel->type == 1)
+			return panel;
+	}
+	return NULL;
+}
 
 void WorldMap::Unload()
 {
@@ -310,6 +327,8 @@ void WorldMap::Unload()
 void WorldMapKeyHandler::OnKeyDown(int KeyCode)
 {
 	//DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);
+	if (((WorldMap*)scence)->isChangeState)
+		return;
 	WorldMapPlayer* player = ((WorldMap*)scence)->GetPlayer();
 	switch (KeyCode)
 	{
@@ -332,7 +351,8 @@ void WorldMapKeyHandler::OnKeyDown(int KeyCode)
 		if (player->currentPanel->GetSceneId() == 1)
 		{
 			Game* game = Game::GetInstance();
-			game->SwitchScene(2);
+			Player::GetInstance()->currentPanelID = player->currentPanel->GetSceneId();
+			game->SwitchScene(1);
 		}
 		break;
 	}

@@ -110,7 +110,8 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				if (ney < 0)
 				{
 					isInGround = true;
-					//isFlying = false;
+					isFlying = false;
+					flyTimeStart = 0;
 					isFloating = false;
 				}
 			}
@@ -325,7 +326,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							vy = MARIO_SPEED_TELEPORT;
 							vx = 0;
 							teleportY = y;
-							x = e->obj->x + PIPE_BBOX_WIDTH / 2;
+							x = e->obj->x + PIPE_BBOX_WIDTH / 4;
 						}
 					}
 				}
@@ -339,7 +340,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							vy = -MARIO_SPEED_TELEPORT;
 							teleportY = y;
 							vx = 0;
-							x = e->obj->x + PIPE_BBOX_WIDTH  / 2;
+							x = e->obj->x + PIPE_BBOX_WIDTH  / 4;
 						}
 					}
 				}
@@ -634,7 +635,7 @@ void Mario::Render()
 	else if (isLookUp)
 		ani = MARIO_ANI_LOOKUP;
 	int alpha = 255;
-	if (form == MARIO_RACCOON_FORM && nx > 0)
+	if (form == MARIO_RACCOON_FORM && nx > 0 && !isTeleport)
 		transX = RACCOONTAIL_BBOX_WIDTH;
 
 	/// <summary>

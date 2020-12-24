@@ -557,7 +557,7 @@ void IntroSceneKeyHandler::OnKeyDown(int KeyCode)
 		break;
 	case DIK_I:
 		Game* game = Game::GetInstance();
-		game->SwitchScene(1);
+		game->SwitchScene(0);
 		Player* p1 = Player::GetInstance();
 		break;
 	}
@@ -569,5 +569,4 @@ void IntroSceneKeyHandler::OnKeyUp(int KeyCode)
 }
 void IntroSceneKeyHandler::KeyState(BYTE * states)
 {
-		// disable control key when Mario die 
 }

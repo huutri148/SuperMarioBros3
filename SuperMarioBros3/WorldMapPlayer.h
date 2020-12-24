@@ -7,7 +7,6 @@ class WorldMapPlayer : public GameObject
 {
 
 	//Todo: chuyển thông tin qua player
-	WorldMapPanel* nearestClearPanel = 0;
 	WorldMapPanel* nearestPanel;
 	int form;
 public:

@@ -376,10 +376,20 @@ void PlayScene::Load()
 void PlayScene::Update(DWORD dt)
 {
 
+
+
+
+	if (isGameOver == true)
+	{
+		Game* game = Game::GetInstance();
+		game->SetCamPos(0.0f, 0.0f);
+		game->SwitchScene(0);
+		isGameOver = false;
+		return;
+	}
 	GetObjectFromGrid();
 	UpdatePlayer(dt);
 	ActiveEnemiesInViewport();
-
 
 	if (isGameDone == true)
 	{
@@ -388,14 +398,6 @@ void PlayScene::Update(DWORD dt)
 		return;
 	}
 
-	if (isGameOver == true)
-	{
-		Game* game = Game::GetInstance();
-		game->SetCamPos(0.0f, 0.0f);
-		game->SwitchScene(1);
-		isGameOver = false;
-		return;
-	}
 
 	if (!player->IsTransform()) {
 		for (UINT i = 0; i < objects.size(); i++)
@@ -610,7 +612,8 @@ void PlayScene::UpdatePlayer(DWORD dt)
 {
 	if (player->state == MARIO_STATE_DEATH)
 	{
-		isGameOver = true;
+		/*isGameDone = true;*/
+		Player::GetInstance()->LoseLife();
 	}
 		
 	vector<LPGAMEOBJECT> coObjects;
@@ -626,6 +629,11 @@ void PlayScene::Unload()
 		delete objects[i];
 	for (unsigned int i = 0; i < listUnits.size(); i++)
 		delete listUnits[i];
+	for (unsigned int i = 0; i < listMovingObjectsToRender.size(); i++)
+		delete listMovingObjectsToRender[i];
+	for (unsigned int i = 0; i < listItems.size(); i++)
+		delete listItems[i];
+
 
 	objects.clear();
 	listStaticObjectsToRender.clear();
@@ -638,7 +646,6 @@ void PlayScene::Unload()
 	delete hud;
 
 	portal = NULL;
-	hud = NULL;
 	grid = NULL;
 	unit = NULL;
 	player = NULL;
@@ -1017,8 +1024,18 @@ void PlayScene::DoneGame()
 		Player* inplayer = Player::GetInstance();
 		isGameOver = true;
 		delayGameOverTime = 0;
-		inplayer->card.push_back(portal->GetCardId());
+	
 		inplayer->SetLevel(player->form);
+		inplayer->currentPanelID = this->id;
+		
+
+		// Trường hợp Mario win
+		if (player->state != MARIO_STATE_DEATH)
+		{
+			inplayer->card.push_back(portal->GetCardId());
+			inplayer->clearedPanelID.push_back(this->id);
+		}
+
 		isGameDone = false;
 	}
 	else if (delayGameOverTime == 0)
