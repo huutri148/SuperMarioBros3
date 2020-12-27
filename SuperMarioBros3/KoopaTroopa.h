@@ -14,13 +14,14 @@
 class KoopaTroopa :public Enemy
 {
 	int type;
-	bool isBumped;
+
 	DWORD hidingTime = 0;
 	DWORD turnWalkingTime = 0;
 	
 public:
 	//chuyển thành hàm
 	bool isPickedUp;
+	bool isBumped;
 	bool forceShell = false;
 	
 	float lastStanding_Y;

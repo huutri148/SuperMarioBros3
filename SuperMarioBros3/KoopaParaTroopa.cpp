@@ -93,7 +93,7 @@ void KoopaParaTroopa::Render()
 			ani = PARATROOPA_ANI_DEATH;
 		animation_set->at(ani)->Render(nx, ny, round(x), round(y));
 	}
-	RenderBoundingBox();
+	/*RenderBoundingBox();*/
 }
 void KoopaParaTroopa::SetState(int state)
 {

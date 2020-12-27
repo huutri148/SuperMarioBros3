@@ -105,7 +105,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			LPCOLLISIONEVENT e = coEventsResult[i];
 			if (e->ny != 0 )
 			{
-				if(!dynamic_cast<Item*>(e->obj))
+				if(!dynamic_cast<Item*>(e->obj) || dynamic_cast<PSwitch*>(e->obj))
 					vy = 0;
 				if (ney < 0)
 				{
@@ -167,7 +167,8 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							KoopaTroopa* koopa = dynamic_cast<KoopaTroopa*>(enemy);
 							if (koopa->state ==KOOPATROOPA_STATE_HIDING)
 							{
-								if (useSkill == true)
+								if (useSkill == true && !koopa->isBumped ||
+									useSkill == true && isInIntroScene)
 								{
 									koopa->PickUpBy();
 									isPickingUp = true;
@@ -298,7 +299,6 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						y += -(min_ty * dy + ney * 0.4f) + dy;
 					if (e->nx != 0)
 						x += -(min_tx * dy + nex * 0.4f) + dx;
-
 				}
 			}
 			else if (dynamic_cast<Pipe*>(e->obj))
@@ -652,7 +652,7 @@ void Mario::Render()
 			
 	}
 	animation_set->at(ani)->Render(nx, round(x), round(y), alpha,transX, transY);
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 void Mario::SetState(int state)
 {
