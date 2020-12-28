@@ -327,7 +327,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					{
 						// Nếu ấn phím S trên teleport
 						// thì sẽ dẫn đến extraMap
-						if (isSquat)
+						if (pressDown)
 						{
 							isTeleport = true;
 							vy = MARIO_SPEED_TELEPORT;
@@ -636,7 +636,26 @@ void Mario::Render()
 	else if (isTurnRaccoon == true)
 		ani = MARIO_ANI_TURN_TO_RACCOON;
 	else if (isTeleport)
-		ani = MARIO_ANI_RACCOON_TELEPORT;
+	{
+		switch (form)
+		{
+		case MARIO_SMALL_FORM:
+			ani = MARIO_ANI_SMALL_TELEPORT;
+			break;
+		case MARIO_BIG_FORM:
+			ani = MARIO_ANI_BIG_TELEPORT;
+			break;
+		case MARIO_FIRE_FORM:
+			ani = MARIO_ANI_FIRE_TELEPORT;
+			break;
+		case MARIO_RACCOON_FORM:
+			ani = MARIO_ANI_RACCOON_TELEPORT;
+			break;
+		}
+	
+	
+	}
+	
 	else if (isHitted)
 		ani = MARIO_ANI_HITTED;
 	else if (isLookUp)

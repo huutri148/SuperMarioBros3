@@ -29,6 +29,7 @@
 #include"Portal.h"
 #include"RaccoonTail.h"
 #include"BrokenBrickEffect.h"
+#include"RedKoopaParaTroopa.h"
 class PlayScene : public Scene
 {
 protected:

@@ -242,6 +242,12 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 		unit = new Unit(grid, obj, x, y);
 		break;
 	}
+	case OBJECT_TYPE_REDPARATROOPA:
+	{
+		obj = new RedKoopaParaTroopa(x, y);
+		unit = new Unit(grid, obj, x, y);
+		break;
+	}
 	case OBJECT_TYPE_HUD:
 	{
 		hud = new Hud();
@@ -409,9 +415,15 @@ void PlayScene::Update(DWORD dt)
 				if (goomba->state == PARAGOOMBA_STATE_GOOMBA)
 					goomba->ChangeToGoomba(grid);
 			}
-			if (dynamic_cast<KoopaParaTroopa*>(object))
+			else if (dynamic_cast<KoopaParaTroopa*>(object))
 			{
 				KoopaParaTroopa* parakoopa = dynamic_cast<KoopaParaTroopa*>(object);
+				if (parakoopa->state == PARATROOPA_STATE_KOOPA)
+					parakoopa->ChangeToKoopa(grid);
+			}
+			else if (dynamic_cast<RedKoopaParaTroopa*>(object))
+			{
+				RedKoopaParaTroopa* parakoopa = dynamic_cast<RedKoopaParaTroopa*>(object);
 				if (parakoopa->state == PARATROOPA_STATE_KOOPA)
 					parakoopa->ChangeToKoopa(grid);
 			}
@@ -674,6 +686,7 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		mario->Information();
 		break;
 	case DIK_DOWN:
+		mario->pressDown = true;
 		mario->Squat();
 		break;
 	case DIK_A:
@@ -730,6 +743,7 @@ void PlayScenceKeyHandler::OnKeyUp(int KeyCode)
 	case DIK_DOWN:
 		mario->SetState(MARIO_STATE_IDLE);
 		mario->isSquat = false;
+		mario->pressDown = false;
 		break;
 	}
 		
