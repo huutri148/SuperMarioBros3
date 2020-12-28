@@ -52,6 +52,7 @@ public:
 	bool isAutoWalk = false;
 
 	bool useSkill;
+	bool pressDown = false;
 	bool isSquat = false;
 	bool isPickingUp = false;
 	bool isSwingTail = false;

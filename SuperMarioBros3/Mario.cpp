@@ -38,10 +38,17 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		if (dynamic_cast<PlayScene*>(Game::GetInstance()->GetCurrentScene()))
 		{
 			PlayScene* scene = (PlayScene*)Game::GetInstance()->GetCurrentScene();
-			if (x < scene->GetEdgeLeft())
-				x = scene->GetEdgeLeft();
-			else if (x >= scene->GetEdgeRight() - MARIO_BIG_BBOX_WIDTH)
-				x = scene->GetEdgeRight() - MARIO_BIG_BBOX_WIDTH;
+			float edgeLeft = scene->GetEdgeLeft();
+			float edgeRight = scene->GetEdgeRight();
+			if (isInExtraMap)
+			{
+				edgeLeft = scene->GetEdgeLeftExtraMap();
+				edgeRight = scene->GetEdgeRightExtraMap();
+			}
+			if (x < edgeLeft)
+				x = edgeLeft;
+			else if (x >= edgeRight - MARIO_BIG_BBOX_WIDTH)
+				x = edgeRight - MARIO_BIG_BBOX_WIDTH;
 		}
 	}
 
@@ -105,7 +112,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			LPCOLLISIONEVENT e = coEventsResult[i];
 			if (e->ny != 0 )
 			{
-				if(!dynamic_cast<Item*>(e->obj))
+				if(!dynamic_cast<Item*>(e->obj) || dynamic_cast<PSwitch*>(e->obj))
 					vy = 0;
 				if (ney < 0)
 				{
@@ -167,7 +174,8 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							KoopaTroopa* koopa = dynamic_cast<KoopaTroopa*>(enemy);
 							if (koopa->state ==KOOPATROOPA_STATE_HIDING)
 							{
-								if (useSkill == true)
+								if (useSkill == true && !koopa->isBumped ||
+									useSkill == true && isInIntroScene)
 								{
 									koopa->PickUpBy();
 									isPickingUp = true;
@@ -298,7 +306,6 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						y += -(min_ty * dy + ney * 0.4f) + dy;
 					if (e->nx != 0)
 						x += -(min_tx * dy + nex * 0.4f) + dx;
-
 				}
 			}
 			else if (dynamic_cast<Pipe*>(e->obj))
@@ -320,7 +327,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					{
 						// Nếu ấn phím S trên teleport
 						// thì sẽ dẫn đến extraMap
-						if (isSquat)
+						if (pressDown)
 						{
 							isTeleport = true;
 							vy = MARIO_SPEED_TELEPORT;
@@ -629,7 +636,26 @@ void Mario::Render()
 	else if (isTurnRaccoon == true)
 		ani = MARIO_ANI_TURN_TO_RACCOON;
 	else if (isTeleport)
-		ani = MARIO_ANI_RACCOON_TELEPORT;
+	{
+		switch (form)
+		{
+		case MARIO_SMALL_FORM:
+			ani = MARIO_ANI_SMALL_TELEPORT;
+			break;
+		case MARIO_BIG_FORM:
+			ani = MARIO_ANI_BIG_TELEPORT;
+			break;
+		case MARIO_FIRE_FORM:
+			ani = MARIO_ANI_FIRE_TELEPORT;
+			break;
+		case MARIO_RACCOON_FORM:
+			ani = MARIO_ANI_RACCOON_TELEPORT;
+			break;
+		}
+	
+	
+	}
+	
 	else if (isHitted)
 		ani = MARIO_ANI_HITTED;
 	else if (isLookUp)
@@ -652,7 +678,7 @@ void Mario::Render()
 			
 	}
 	animation_set->at(ani)->Render(nx, round(x), round(y), alpha,transX, transY);
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 void Mario::SetState(int state)
 {

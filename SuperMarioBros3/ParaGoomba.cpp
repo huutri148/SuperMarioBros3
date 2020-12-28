@@ -89,7 +89,7 @@ void ParaGoomba::Render()
 			ani = PARAGOOMBA_ANI_JUMPING;
 		animation_set->at(ani)->Render(nx, ny, round(x), round(y));
 	}
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 void ParaGoomba::SetState(int state)
 {

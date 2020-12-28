@@ -29,6 +29,7 @@
 #include"Portal.h"
 #include"RaccoonTail.h"
 #include"BrokenBrickEffect.h"
+#include"RedKoopaParaTroopa.h"
 class PlayScene : public Scene
 {
 protected:
@@ -77,6 +78,8 @@ public:
 	Mario* GetPlayer() { return player; }
 	float GetEdgeLeft() { return map->edgeLeft; }
 	float GetEdgeRight() { return map->edgeRight; }
+	float GetEdgeRightExtraMap() { return map->edgeRightInExtraMap; }
+	float GetEdgeLeftExtraMap() { return map->edgeLeftInExtraMap; }
 	void GetExtraMapPosition(float& x, float& y);
 	void GetWorldMapPosition(float& x, float& y);
 	void GetStartPosition(float& x, float& y);

@@ -243,7 +243,7 @@ void KoopaTroopa::Render()
 		}
 		animation_set->at(ani)->Render(nx,ny, round(x), round(y));
 	}
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 void KoopaTroopa::SetState(int state)
 {
@@ -319,9 +319,9 @@ KoopaTroopa ::KoopaTroopa(float x, float y,int _type) : Enemy(x, y)
 	type = _type;
 	this->SetState(KOOPATROOPA_STATE_WALKING);
 }
-KoopaTroopa::KoopaTroopa()
+KoopaTroopa::KoopaTroopa(int type)
 {
-	type = 1;
+	this->type = type;
 	this->SetState(KOOPATROOPA_STATE_WALKING);
 	this->isEnable = true;
 	AnimationSets* animation_sets = AnimationSets::GetInstance();

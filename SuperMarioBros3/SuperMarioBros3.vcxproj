@@ -146,6 +146,7 @@
     <ClInclude Include="Animations.h" />
     <ClInclude Include="BackGroundIntroScene.h" />
     <ClInclude Include="Block.h" />
+    <ClInclude Include="BoomerangBrother.h" />
     <ClInclude Include="Brick.h" />
     <ClInclude Include="BrokenBrickEffect.h" />
     <ClInclude Include="Coin.h" />
@@ -169,6 +170,7 @@
     <ClInclude Include="KoopaTroopa.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Mario.h" />
+    <ClInclude Include="MovingPlattform.h" />
     <ClInclude Include="Mushroom.h" />
     <ClInclude Include="ParaGoomba.h" />
     <ClInclude Include="Pipe.h" />
@@ -180,6 +182,7 @@
     <ClInclude Include="PSwitch.h" />
     <ClInclude Include="RaccoonLeaf.h" />
     <ClInclude Include="RaccoonTail.h" />
+    <ClInclude Include="RedKoopaParaTroopa.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Sprites.h" />
     <ClInclude Include="Textures.h" />
@@ -193,6 +196,7 @@
     <ClCompile Include="Animations.cpp" />
     <ClCompile Include="BackGroundIntroScene.cpp" />
     <ClCompile Include="Block.cpp" />
+    <ClCompile Include="BoomerangBrother.cpp" />
     <ClCompile Include="Brick.cpp" />
     <ClCompile Include="BrokenBrickEffect.cpp" />
     <ClCompile Include="Coin.cpp" />
@@ -215,6 +219,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Mario.cpp" />
+    <ClCompile Include="MovingPlattform.cpp" />
     <ClCompile Include="Mushroom.cpp" />
     <ClCompile Include="ParaGoomba.cpp" />
     <ClCompile Include="Pipe.cpp" />
@@ -226,6 +231,7 @@
     <ClCompile Include="PSwitch.cpp" />
     <ClCompile Include="RaccoonLeaf.cpp" />
     <ClCompile Include="RaccoonTail.cpp" />
+    <ClCompile Include="RedKoopaParaTroopa.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Sprites.cpp" />
     <ClCompile Include="Textures.cpp" />

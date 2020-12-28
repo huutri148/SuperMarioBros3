@@ -483,14 +483,14 @@ void Game::_ParseSection_SCENES(string line)
 		scene = new WorldMap(id, path);
 		scenes[id] = scene;
 	}
-	else if (id == 1)
-	{
-		scene = new PlayScene(id, path);
-		scenes[id] = scene;
-	}
 	else if (id == 99)
 	{
 		scene = new IntroScene(id, path);
+		scenes[id] = scene;
+	}
+	else if(id == 1 || id == 4)
+	{
+		scene = new PlayScene(id, path);
 		scenes[id] = scene;
 	}
 }

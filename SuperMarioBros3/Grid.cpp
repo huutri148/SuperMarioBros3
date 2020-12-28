@@ -51,6 +51,14 @@ void Grid::Add(Unit* unit)
 {
 	int row = (int)(unit->y / cellHeight);
 	int col = (int)(unit->x / cellWidth);
+	 
+	// Lame way 
+	// Todo: Cần cách chia cell hợp lí hơn
+	if (row == this->numRows)
+		row = this->numRows - 1;
+	if (col == this->numCols)
+		col = this->numCols - 1;
+
 	// thêm vào đầu cell - add head
 	unit->prev = NULL;
 	unit->next = cells[row][col];

@@ -1,7 +1,8 @@
 [SETTINGS]
-start	99
+start	1
 #scene list
 [SCENES]
 99	Resources\Scenes\IntroScene.txt
 0	Resources\Scenes\World1_Obj.txt
 1	Resources\Scenes\World1-1_Obj.txt
+4	Resources\Scenes\World1-4_Obj.txt

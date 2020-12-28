@@ -117,6 +117,7 @@ void PlayScene::_ParseSection_ANIMATION_SETS(string line)
 	}
 
 	AnimationSets::GetInstance()->Add(ani_set_id, s);
+	DebugOut(L"\nDone loading: %d", ani_set_id);
 }
 
 /*
@@ -126,7 +127,7 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 {
 	vector<string> tokens = split(line);
 
-	//DebugOut(L"--> %s\n",ToWSTR(line).c_str());
+	DebugOut(L"--> %s\n",ToWSTR(line).c_str());
 
 	if (tokens.size() < 3) return; // skip invalid lines - an object set must have at least id, x, y
 
@@ -238,6 +239,12 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_PARATROOPA:
 	{
 		obj = new KoopaParaTroopa(x, y);
+		unit = new Unit(grid, obj, x, y);
+		break;
+	}
+	case OBJECT_TYPE_REDPARATROOPA:
+	{
+		obj = new RedKoopaParaTroopa(x, y);
 		unit = new Unit(grid, obj, x, y);
 		break;
 	}
@@ -377,8 +384,6 @@ void PlayScene::Update(DWORD dt)
 {
 
 
-
-
 	if (isGameOver == true)
 	{
 		Game* game = Game::GetInstance();
@@ -410,9 +415,15 @@ void PlayScene::Update(DWORD dt)
 				if (goomba->state == PARAGOOMBA_STATE_GOOMBA)
 					goomba->ChangeToGoomba(grid);
 			}
-			if (dynamic_cast<KoopaParaTroopa*>(object))
+			else if (dynamic_cast<KoopaParaTroopa*>(object))
 			{
 				KoopaParaTroopa* parakoopa = dynamic_cast<KoopaParaTroopa*>(object);
+				if (parakoopa->state == PARATROOPA_STATE_KOOPA)
+					parakoopa->ChangeToKoopa(grid);
+			}
+			else if (dynamic_cast<RedKoopaParaTroopa*>(object))
+			{
+				RedKoopaParaTroopa* parakoopa = dynamic_cast<RedKoopaParaTroopa*>(object);
 				if (parakoopa->state == PARATROOPA_STATE_KOOPA)
 					parakoopa->ChangeToKoopa(grid);
 			}
@@ -462,7 +473,7 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 	}
 	else if (dynamic_cast<KoopaTroopa*>(curObj))
 	{
-		coObjects.push_back(player);
+	/*	coObjects.push_back(player);*/
 		for (auto obj : objects)
 		{
 			if (dynamic_cast<Enemy*>(obj))
@@ -477,7 +488,7 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 	}
 	else if (dynamic_cast<Goomba*>(curObj))
 	{
-		coObjects.push_back(player);
+	/*	coObjects.push_back(player);*/
 		for (auto obj : objects)
 		{
 			if (dynamic_cast<Enemy*>(obj))
@@ -492,7 +503,7 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 	}
 	else if (dynamic_cast<ParaGoomba*>(curObj))
 	{
-		coObjects.push_back(player);
+	/*	coObjects.push_back(player);*/
 		for (auto obj : objects)
 		{
 			if (dynamic_cast<Enemy*>(obj))
@@ -507,7 +518,7 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 	}
 	else if (dynamic_cast<KoopaParaTroopa*>(curObj))
 	{
-		coObjects.push_back(player);
+	/*	coObjects.push_back(player);*/
 		for (auto obj : objects)
 		{
 			if (dynamic_cast<Enemy*>(obj))
@@ -675,6 +686,7 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		mario->Information();
 		break;
 	case DIK_DOWN:
+		mario->pressDown = true;
 		mario->Squat();
 		break;
 	case DIK_A:
@@ -712,6 +724,9 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	case DIK_P:
 		((PlayScene*)scence)->GetGrid()->Out();
 		break;
+	case DIK_G:
+		((PlayScene*)scence)->GetGrid()->Out();
+		break;
 	}
 }
 void PlayScenceKeyHandler::OnKeyUp(int KeyCode)
@@ -728,6 +743,7 @@ void PlayScenceKeyHandler::OnKeyUp(int KeyCode)
 	case DIK_DOWN:
 		mario->SetState(MARIO_STATE_IDLE);
 		mario->isSquat = false;
+		mario->pressDown = false;
 		break;
 	}
 		
@@ -816,36 +832,52 @@ void PlayScene::UpdateCameraPosition()
 	centerCamX -= screenWidth / 2;
 	centerCamY -= screenHeight / 2;
 	float edgeBottom = 0;
+	float edgeTop = 0;
 
 
 	if (player->isInExtraMap == false)
+	{
 		edgeBottom = map->edgeBottomInWorld + HUD_BBOX_HEIGHT;
+		edgeTop = map->edgeTop;
+	}
+	
 	else
+	{
 		edgeBottom = map->edgeBottomInExtraMap + HUD_BBOX_HEIGHT;
-
+		edgeTop = map->edgeTopInExtraMap;
+	}
+	
 
 	// CamX
 	if (player->x > map->edgeLeft + screenWidth / 2)
 	{
 		camX = centerCamX;
 	}
-	if (player->x + screenWidth / 2 > mapWidth - map->edgeLeft)
+	if (player->x + screenWidth / 2 > map->edgeRight - map->edgeLeft)
 	{
-		camX = (float)(mapWidth - map->edgeLeft) - screenWidth;
+		camX = (float)(map->edgeRight - map->edgeLeft) - screenWidth;
 	}
 
 	// CAMY
-	if (player->y + screenHeight > edgeBottom)
+	if (abs(edgeTop - edgeBottom) > SCREEN_HEIGHT )
 	{
-		camY = (float)(edgeBottom - screenHeight);
+		if (player->y + screenHeight > edgeBottom)
+		{
+			camY = (float)(edgeBottom - screenHeight);
+		}
+		if (player->y - screenHeight / 2 < edgeTop)
+			camY = (float)edgeTop;
+		else
+		{
+			if (isTurnCamY)
+				camY = centerCamY;
+		}
 	}
-	if (player->y - screenHeight / 2 < map->edgeTop)
-		camY = (float)map->edgeTop;
 	else
 	{
-		if (isTurnCamY)
-			camY = centerCamY;
+		camY = (float)edgeTop;
 	}
+	
 
 	// Cam ở extraMap
 	if (player->isInExtraMap)
@@ -855,7 +887,7 @@ void PlayScene::UpdateCameraPosition()
 		{
 			camX = centerCamX;
 		}
-		if (player->x + screenWidth / 2 > map->edgeRight)
+		if (player->x + screenWidth / 2 > map->edgeRightInExtraMap)
 		{
 			camX = (float)(map->edgeRightInExtraMap) - screenWidth;
 		}
