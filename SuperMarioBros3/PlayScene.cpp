@@ -624,7 +624,6 @@ void PlayScene::UpdatePlayer(DWORD dt)
 	if (player->state == MARIO_STATE_DEATH)
 	{
 		/*isGameDone = true;*/
-		Player::GetInstance()->LoseLife();
 	}
 		
 	vector<LPGAMEOBJECT> coObjects;
@@ -644,7 +643,7 @@ void PlayScene::Unload()
 		delete listMovingObjectsToRender[i];
 	for (unsigned int i = 0; i < listItems.size(); i++)
 		delete listItems[i];
-
+	
 
 	objects.clear();
 	listStaticObjectsToRender.clear();
@@ -655,6 +654,7 @@ void PlayScene::Unload()
 
 	delete map;
 	delete hud;
+	delete player;
 
 	portal = NULL;
 	grid = NULL;
@@ -1067,7 +1067,10 @@ void PlayScene::DoneGame()
 			inplayer->card.push_back(portal->GetCardId());
 			inplayer->clearedPanelID.push_back(this->id);
 		}
-
+		else
+		{
+			inplayer->LoseLife();
+		}
 		isGameDone = false;
 	}
 	else if (delayGameOverTime == 0)
