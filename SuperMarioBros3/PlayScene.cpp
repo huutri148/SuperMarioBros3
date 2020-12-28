@@ -117,6 +117,7 @@ void PlayScene::_ParseSection_ANIMATION_SETS(string line)
 	}
 
 	AnimationSets::GetInstance()->Add(ani_set_id, s);
+	DebugOut(L"\nDone loading: %d", ani_set_id);
 }
 
 /*
@@ -126,7 +127,7 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 {
 	vector<string> tokens = split(line);
 
-	//DebugOut(L"--> %s\n",ToWSTR(line).c_str());
+	DebugOut(L"--> %s\n",ToWSTR(line).c_str());
 
 	if (tokens.size() < 3) return; // skip invalid lines - an object set must have at least id, x, y
 
@@ -375,8 +376,6 @@ void PlayScene::Load()
 
 void PlayScene::Update(DWORD dt)
 {
-
-
 
 
 	if (isGameOver == true)
@@ -712,6 +711,9 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	case DIK_P:
 		((PlayScene*)scence)->GetGrid()->Out();
 		break;
+	case DIK_G:
+		((PlayScene*)scence)->GetGrid()->Out();
+		break;
 	}
 }
 void PlayScenceKeyHandler::OnKeyUp(int KeyCode)
@@ -829,9 +831,9 @@ void PlayScene::UpdateCameraPosition()
 	{
 		camX = centerCamX;
 	}
-	if (player->x + screenWidth / 2 > mapWidth - map->edgeLeft)
+	if (player->x + screenWidth / 2 > map->edgeRight - map->edgeLeft)
 	{
-		camX = (float)(mapWidth - map->edgeLeft) - screenWidth;
+		camX = (float)(map->edgeRight - map->edgeLeft) - screenWidth;
 	}
 
 	// CAMY
