@@ -818,13 +818,21 @@ void PlayScene::UpdateCameraPosition()
 	centerCamX -= screenWidth / 2;
 	centerCamY -= screenHeight / 2;
 	float edgeBottom = 0;
+	float edgeTop = 0;
 
 
 	if (player->isInExtraMap == false)
+	{
 		edgeBottom = map->edgeBottomInWorld + HUD_BBOX_HEIGHT;
+		edgeTop = map->edgeTop;
+	}
+	
 	else
+	{
 		edgeBottom = map->edgeBottomInExtraMap + HUD_BBOX_HEIGHT;
-
+		edgeTop = map->edgeTopInExtraMap;
+	}
+	
 
 	// CamX
 	if (player->x > map->edgeLeft + screenWidth / 2)
@@ -837,17 +845,25 @@ void PlayScene::UpdateCameraPosition()
 	}
 
 	// CAMY
-	if (player->y + screenHeight > edgeBottom)
+	if (abs(edgeTop - edgeBottom) > SCREEN_HEIGHT )
 	{
-		camY = (float)(edgeBottom - screenHeight);
+		if (player->y + screenHeight > edgeBottom)
+		{
+			camY = (float)(edgeBottom - screenHeight);
+		}
+		if (player->y - screenHeight / 2 < edgeTop)
+			camY = (float)edgeTop;
+		else
+		{
+			if (isTurnCamY)
+				camY = centerCamY;
+		}
 	}
-	if (player->y - screenHeight / 2 < map->edgeTop)
-		camY = (float)map->edgeTop;
 	else
 	{
-		if (isTurnCamY)
-			camY = centerCamY;
+		camY = (float)edgeTop;
 	}
+	
 
 	// Cam ở extraMap
 	if (player->isInExtraMap)
@@ -857,7 +873,7 @@ void PlayScene::UpdateCameraPosition()
 		{
 			camX = centerCamX;
 		}
-		if (player->x + screenWidth / 2 > map->edgeRight)
+		if (player->x + screenWidth / 2 > map->edgeRightInExtraMap)
 		{
 			camX = (float)(map->edgeRightInExtraMap) - screenWidth;
 		}

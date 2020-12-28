@@ -38,10 +38,17 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		if (dynamic_cast<PlayScene*>(Game::GetInstance()->GetCurrentScene()))
 		{
 			PlayScene* scene = (PlayScene*)Game::GetInstance()->GetCurrentScene();
-			if (x < scene->GetEdgeLeft())
-				x = scene->GetEdgeLeft();
-			else if (x >= scene->GetEdgeRight() - MARIO_BIG_BBOX_WIDTH)
-				x = scene->GetEdgeRight() - MARIO_BIG_BBOX_WIDTH;
+			float edgeLeft = scene->GetEdgeLeft();
+			float edgeRight = scene->GetEdgeRight();
+			if (isInExtraMap)
+			{
+				edgeLeft = scene->GetEdgeLeftExtraMap();
+				edgeRight = scene->GetEdgeRightExtraMap();
+			}
+			if (x < edgeLeft)
+				x = edgeLeft;
+			else if (x >= edgeRight - MARIO_BIG_BBOX_WIDTH)
+				x = edgeRight - MARIO_BIG_BBOX_WIDTH;
 		}
 	}
 
