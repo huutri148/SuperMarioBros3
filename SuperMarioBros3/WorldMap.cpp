@@ -353,6 +353,11 @@ void WorldMapKeyHandler::OnKeyDown(int KeyCode)
 			Game* game = Game::GetInstance();
 			Player::GetInstance()->currentPanelID = player->currentPanel->GetSceneId();
 			game->SwitchScene(1);
+		} else if (player->currentPanel->GetSceneId() == 4)
+		{
+			Game* game = Game::GetInstance();
+			Player::GetInstance()->currentPanelID = player->currentPanel->GetSceneId();
+			game->SwitchScene(4);
 		}
 		break;
 	}

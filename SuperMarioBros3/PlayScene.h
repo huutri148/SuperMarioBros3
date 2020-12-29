@@ -30,6 +30,10 @@
 #include"RaccoonTail.h"
 #include"BrokenBrickEffect.h"
 #include"RedKoopaParaTroopa.h"
+#include"MovingPlattform.h"
+
+
+
 class PlayScene : public Scene
 {
 protected:
