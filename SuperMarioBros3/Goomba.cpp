@@ -20,8 +20,7 @@ void Goomba::GetBoundingBox(float& left, float& top,
 		bottom = y + GOOMBA_BBOX_HEIGHT;
 }
 
-void Goomba::Update(DWORD dt,
-	vector<LPGAMEOBJECT>* coObjects)
+void Goomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	HandleTimeSwitchState();
 	if (state == GOOMBA_STATE_INACTIVE || isEnable == false)
@@ -102,15 +101,13 @@ void Goomba::SetState(int state)
 		ny = 1;
 		break;
 	case GOOMBA_STATE_BEING_STROMPED:
-		y += GOOMBA_BBOX_HEIGHT -
-			GOOMBA_BBOX_HEIGHT_DIE ;
+		y += GOOMBA_BBOX_HEIGHT - GOOMBA_BBOX_HEIGHT_DIE ;
 		isDead = true;
 		vx = 0;
 		vy = 0;
 		break;
 	case GOOMBA_STATE_INACTIVE:
 		vx = 0;
-	/*	isEnable = false;*/
 		x = entryX;
 		y = entryY;
 		break;

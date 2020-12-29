@@ -18,6 +18,7 @@ Hud::Hud()
 	money = inPlayer->GetMoney();
 	score = inPlayer->GetScore();
 	nlife = inPlayer->GetLife();
+	world = 1;
 	remainTime = DEFAULT_TIME;
 
 	//Todo: viết hàm xử lí khi Player thu thập đủ 3 Card

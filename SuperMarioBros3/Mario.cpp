@@ -15,6 +15,7 @@
 #include "Coin.h"
 #include "HitEffect.h"
 #include"Player.h"
+#include"MovingPlattform.h"
 
 #pragma region Các hàm cập nhật tọa độ, animation
 void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -372,6 +373,11 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				{
 					this->SetAutoJump(-0.7f);
 				}
+			}
+			else if (dynamic_cast<MovingPlattform*>(e->obj))
+			{
+				if(e->ny < 0)
+					e->obj->SetState(MOVING_PLATTFORM_STATE_FALLING);
 			}
 		}
 	}

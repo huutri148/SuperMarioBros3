@@ -141,7 +141,8 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 	AnimationSets* animation_sets = AnimationSets::GetInstance();
 
 	GameObject* obj = NULL;
-
+	// Todo: Drop grid 
+	// No add grid when loading scence
 	switch (object_type)
 	{
 	case OBJECT_TYPE_MARIO:
@@ -252,6 +253,11 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 	{
 		hud = new Hud();
 		return;
+	}
+	case OBJECT_TYPE_MOVING_PLATTFORM:
+	{
+		obj = new MovingPlattform(x, y);
+		unit = new Unit(grid, obj, x, y);
 	}
 	default:
 		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
@@ -551,7 +557,7 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 		{
 				if ( dynamic_cast<Ground*>(obj) ||dynamic_cast<Block*>(obj) ||
 				 dynamic_cast<Brick*>(obj) || dynamic_cast<Item*>(obj) ||
-				dynamic_cast<Pipe*>(obj) || dynamic_cast<Portal*>(obj))
+				dynamic_cast<Pipe*>(obj) || dynamic_cast<Portal*>(obj) )
 				coObjects.push_back(obj);
 			else 
 			{
@@ -561,6 +567,11 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 				{
 					if(!dynamic_cast<Enemy*>(obj)->IsInactive() && 
 						!dynamic_cast<Enemy*>(obj)->isDead)
+						coObjects.push_back(obj);
+				}
+				else if (dynamic_cast<MovingPlattform*>(obj))
+				{
+					if(obj->state != MOVING_PLATTFORM_STATE_INACTIVE)
 						coObjects.push_back(obj);
 				}
 			}
@@ -624,7 +635,6 @@ void PlayScene::UpdatePlayer(DWORD dt)
 	if (player->state == MARIO_STATE_DEATH)
 	{
 		/*isGameDone = true;*/
-		Player::GetInstance()->LoseLife();
 	}
 		
 	vector<LPGAMEOBJECT> coObjects;
@@ -644,7 +654,7 @@ void PlayScene::Unload()
 		delete listMovingObjectsToRender[i];
 	for (unsigned int i = 0; i < listItems.size(); i++)
 		delete listItems[i];
-
+	
 
 	objects.clear();
 	listStaticObjectsToRender.clear();
@@ -655,6 +665,7 @@ void PlayScene::Unload()
 
 	delete map;
 	delete hud;
+	delete player;
 
 	portal = NULL;
 	grid = NULL;
@@ -923,7 +934,7 @@ void PlayScene::GetObjectFromGrid()
 			listStaticObjectsToRender.push_back(obj);
 
 		else if (dynamic_cast<Enemy*>(obj) || dynamic_cast<FirePlantBullet*>(obj) ||
-			dynamic_cast<FireBall*>(obj))
+			dynamic_cast<FireBall*>(obj) || dynamic_cast<MovingPlattform*>(obj))
 			listMovingObjectsToRender.push_back(obj);
 
 		else if (dynamic_cast<PointEffect*>(obj) ||	dynamic_cast<HitEffect*>(obj) ||
@@ -970,7 +981,7 @@ bool PlayScene::IsInViewport(LPGAMEOBJECT object)
 	
 	object->GetPosition(objX, objY);
 	
-	return objX >= camX  && objX < camX + SCREEN_WIDTH
+	return objX >= camX  && objX < camX + game->GetScreenWidth()
 		&& objY >= camY && objY < camY + SCREEN_HEIGHT;
 };
 
@@ -993,6 +1004,12 @@ void PlayScene::SetInactivation()
 			{
 				object->isEnable = false;
 			}
+			else if (dynamic_cast<MovingPlattform*>(object))
+			{
+				MovingPlattform* movingPlattform = dynamic_cast<MovingPlattform*>(object);
+				movingPlattform->SetState(MOVING_PLATTFORM_STATE_INACTIVE);
+				movingPlattform->AbleToActive();
+			}
 			else if (dynamic_cast<Item*>(object))
 			{
 				if (!dynamic_cast<Coin*>(object))
@@ -1007,6 +1024,10 @@ void PlayScene::SetInactivation()
 			if (dynamic_cast<Enemy*>(object))
 			{
 				dynamic_cast<Enemy*>(object)->isAbleToActive = false;
+			}
+			else if (dynamic_cast<MovingPlattform*>(object))
+			{
+				dynamic_cast<MovingPlattform*>(object)->isAbleToActive = false;
 			}
 		}
 	};
@@ -1030,6 +1051,15 @@ void PlayScene::ActiveEnemiesInViewport()
 					enemy->Active();
 				}
 			}
+		}
+		else if (dynamic_cast<MovingPlattform*>(obj))
+		{
+			MovingPlattform* plattform = dynamic_cast<MovingPlattform*>(obj);
+			if(IsInViewport(plattform) && plattform->isAbleToActive == true)
+			{
+				plattform->SetState(MOVING_PLATTFORM_STATE_MOVING);
+			}
+				
 		}
 	}
 }
@@ -1067,7 +1097,10 @@ void PlayScene::DoneGame()
 			inplayer->card.push_back(portal->GetCardId());
 			inplayer->clearedPanelID.push_back(this->id);
 		}
-
+		else
+		{
+			inplayer->LoseLife();
+		}
 		isGameDone = false;
 	}
 	else if (delayGameOverTime == 0)
