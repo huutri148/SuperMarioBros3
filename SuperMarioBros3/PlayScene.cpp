@@ -258,6 +258,13 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 	{
 		obj = new MovingPlattform(x, y);
 		unit = new Unit(grid, obj, x, y);
+		break;
+	}
+	case OBJECT_TYPE_BOOMRERANG_BROTHER	:
+	{
+		obj = new BoomerangBrother(x, y);
+		unit = new Unit(grid, obj, x, y);
+		break;
 	}
 	default:
 		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
@@ -492,7 +499,7 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 				coObjects.push_back(obj);
 		}
 	}
-	else if (dynamic_cast<Goomba*>(curObj))
+	else if (dynamic_cast<Goomba*>(curObj) || dynamic_cast<BoomerangBrother*>(curObj))
 	{
 	/*	coObjects.push_back(player);*/
 		for (auto obj : objects)
@@ -507,6 +514,7 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 				coObjects.push_back(obj);
 		}
 	}
+
 	else if (dynamic_cast<ParaGoomba*>(curObj))
 	{
 	/*	coObjects.push_back(player);*/

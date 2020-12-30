@@ -31,6 +31,7 @@
 #include"BrokenBrickEffect.h"
 #include"RedKoopaParaTroopa.h"
 #include"MovingPlattform.h"
+#include"BoomerangBrother.h"
 
 
 

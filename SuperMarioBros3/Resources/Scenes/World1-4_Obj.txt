@@ -585,6 +585,16 @@
 715	30036	100	30037	100	30038	100
 
 
+#=======BOOMERANG BROTHER==========
+#======WALK===============
+730	30039	100	30040	100
+#======THROW BOOMERANG======
+731	30041	100	30042	100
+
+#=======BOOMERANG================
+732	30043	100	30044	100	30045	100	30046	100
+
+
 
 
 #=========PORTAL========
@@ -646,6 +656,9 @@
 #RED PARAKOOPA
 10	715	721
 
+#BOOMERANG_BROTHER
+11	730	731
+
 #pipe
 50	830
 51	831
@@ -687,7 +700,7 @@
 #6 = Pipe,5 = block,7 = Invisible Brick
 #8 = PiranhaPlant,9 = Coin,10 = FirePiranhaPlant,11 ParaGoomba
 # MARIO	x	y
-0	16.0	90
+0	2000.0	90
 #HUD
 13	0	0
 
@@ -1002,6 +1015,9 @@
 26	1760	160
 26	1808	192
 
+
+#BOOMERANG_BROTHER
+27	2130	160
 
 
 
