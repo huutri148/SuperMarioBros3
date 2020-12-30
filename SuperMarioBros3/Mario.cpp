@@ -376,8 +376,12 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 			else if (dynamic_cast<MovingPlattform*>(e->obj))
 			{
-				if(e->ny < 0)
+				if (e->ny < 0)
+				{
 					e->obj->SetState(MOVING_PLATTFORM_STATE_FALLING);
+					this->y = e->obj->y - MARIO_SMALL_BBOX_HEIGHT;
+				}
+				
 			}
 		}
 	}

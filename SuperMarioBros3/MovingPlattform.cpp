@@ -17,8 +17,8 @@ void MovingPlattform::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	GameObject::Update(dt, coObjects);
 
 
-	if (this->state == MOVING_PLATTFORM_STATE_FALLING)
-		vy += dt * MOVING_PLATTFORM_GRAVITY;
+	//if (this->state == MOVING_PLATTFORM_STATE_FALLING)
+	//	vy += dt * MOVING_PLATTFORM_GRAVITY;
 
 	x += dx;
 	y += dy;
@@ -47,6 +47,7 @@ void MovingPlattform::SetState(int state)
 		break;
 	case MOVING_PLATTFORM_STATE_FALLING:
 		vx = 0;
+		vy = 0.08f;
 		break;
 	case MOVING_PLATTFORM_STATE_INACTIVE:
 		x = entryX;
