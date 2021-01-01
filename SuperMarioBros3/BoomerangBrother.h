@@ -1,9 +1,12 @@
 #pragma once
 #include"Enemy.h"
+#include"Boomerang.h"
 class BoomerangBrother : public Enemy
 {
 	float lastStoping;
 	DWORD changeStateTime;
+	int indexBoomerang = 0;
+	vector<Boomerang*> weapon;
 	virtual void GetBoundingBox(float& left, float& top,
 		float& right, float& bottom, bool isEnable);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
@@ -24,6 +27,10 @@ public:
 			return true;
 		return false;
 	}
+
+	void ThrowingBoomerang();
+
+
 	BoomerangBrother(float x, float y) :Enemy(x, y)
 	{
 		this->SetState(BOOMERANG_BROTHER_STATE_WALKING);
@@ -32,6 +39,12 @@ public:
 		AnimationSets* animation_sets = AnimationSets::GetInstance();
 		LPANIMATION_SET ani_set = animation_sets->Get(ANIMATION_SET_BOOMERANG_BROTHER);
 		this->SetAnimationSet(ani_set);
+
+		for (unsigned int i = 0; i < 2; i++)
+		{
+			Boomerang* boom = new Boomerang();
+			weapon.push_back(boom);
+		}
 	}
 	BoomerangBrother() :Enemy()
 	{
@@ -39,9 +52,14 @@ public:
 		vx = -BOOMERANG_BROTHER_SPEED_X;
 		this->isEnable = true;
 		lastStoping = x;
+
 		AnimationSets* animation_sets = AnimationSets::GetInstance();
 		LPANIMATION_SET ani_set = animation_sets->Get(ANIMATION_SET_BOOMERANG_BROTHER);
 		this->SetAnimationSet(ani_set);
+
+
+		weapon.push_back(new Boomerang());
+		weapon.push_back(new Boomerang());
 	}
 };
 

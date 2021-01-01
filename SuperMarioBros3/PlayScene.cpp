@@ -510,7 +510,7 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 					continue;
 			}
 			if (!dynamic_cast<Block*>(obj) && !dynamic_cast<FirePlantBullet*>(obj) && 
-				!dynamic_cast<Item*>(obj) )
+				!dynamic_cast<Item*>(obj) && !dynamic_cast<Boomerang*>(obj) )
 				coObjects.push_back(obj);
 		}
 	}
@@ -775,12 +775,11 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 	if (mario->GetState() == MARIO_STATE_DEATH || mario->isAutoWalk ||
 			mario->isInTeleport || mario->isTeleport)
 		return;
-
+	
 	if (game->IsKeyDown(DIK_S))
 	{
 		mario->SuperJump();
 	}
-
 	if (game->IsKeyDown(DIK_RIGHT))
 	{
 
@@ -942,7 +941,8 @@ void PlayScene::GetObjectFromGrid()
 			listStaticObjectsToRender.push_back(obj);
 
 		else if (dynamic_cast<Enemy*>(obj) || dynamic_cast<FirePlantBullet*>(obj) ||
-			dynamic_cast<FireBall*>(obj) || dynamic_cast<MovingPlattform*>(obj))
+			dynamic_cast<FireBall*>(obj) || dynamic_cast<MovingPlattform*>(obj) || 
+			dynamic_cast<Boomerang*>(obj))
 			listMovingObjectsToRender.push_back(obj);
 
 		else if (dynamic_cast<PointEffect*>(obj) ||	dynamic_cast<HitEffect*>(obj) ||
