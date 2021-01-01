@@ -393,8 +393,10 @@ void KoopaTroopa::HandleTimeSwitchState()
 				LPSCENE scence = game->GetCurrentScene();
 				Mario* mario = NULL;
 				if (dynamic_cast<PlayScene*>(scence))
+				{
 					mario = ((PlayScene*)scence)->GetPlayer();
-				mario->isPickingUp = false;
+					mario->isPickingUp = false;
+				}
 			}
 			turnWalkingTime = 0;
 		}
