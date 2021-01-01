@@ -73,7 +73,7 @@ MovingPlattform::MovingPlattform(float entryX, float entryY)
 	this->SetState(MOVING_PLATTFORM_STATE_MOVING);
 
 	AnimationSets* animation_sets = AnimationSets::GetInstance();
-	LPANIMATION_SET ani_set = animation_sets->Get(MOVING_PLATTFORM_ANI_SET);
+	LPANIMATION_SET ani_set = animation_sets->Get(ANIMATION_SET_MOVING_PLATTFORM);
 	this->SetAnimationSet(ani_set);
 }
 void MovingPlattform::AbleToActive()

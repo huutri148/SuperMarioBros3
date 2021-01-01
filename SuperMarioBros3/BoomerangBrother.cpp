@@ -28,7 +28,8 @@ void BoomerangBrother::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		else if (vx < 0)
 			x = lastStoping + BOOMERANG_BROTHER_LIMIT_MOVING;
 		lastStoping = x;
-		this->SetState(BOOMERANG_BROTHER_STATE_THROWING);
+	
+		ThrowingBoomerang();
 	}
 	
 	vector<LPCOLLISIONEVENT> coEvents;
@@ -153,4 +154,21 @@ void BoomerangBrother::HandleTimeSwitchState()
 		this->SetState(BOOMERANG_BROTHER_STATE_DEATH);
 		return;
 	}
+}
+
+void BoomerangBrother::ThrowingBoomerang()
+{
+	this->SetState(BOOMERANG_BROTHER_STATE_THROWING);
+
+
+	if (indexBoomerang >= weapon.size())
+		indexBoomerang = 0;
+
+	if (weapon[indexBoomerang]->state == BOOMERANG_STATE_INACTIVE)
+	{
+		Grid* grid = ((PlayScene*)Game::GetInstance()->GetCurrentScene())->GetGrid();
+		weapon[indexBoomerang++]->Throw(x, y, 1, grid);
+	}
+		
+
 }

@@ -159,6 +159,9 @@
     <ClInclude Include="MovingPlattform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Boomerang.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">
@@ -300,6 +303,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MovingPlattform.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Boomerang.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
