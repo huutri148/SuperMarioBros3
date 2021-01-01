@@ -377,8 +377,7 @@ void KoopaTroopa::HandleTimeSwitchState()
 	if (forceShell == false)
 	{
 		// Ở trạng thái hiding chuyển sang walking
-		if (GetTickCount64() - turnWalkingTime >
-			KOOPATROOPA_TURN_WALKING_TIME &&
+		if (GetTickCount64() - turnWalkingTime > KOOPATROOPA_TURN_WALKING_TIME &&
 			this->state == KOOPATROOPA_STATE_EXIT_SHELL)
 		{
 			this->SetState(KOOPATROOPA_STATE_WALKING);
@@ -390,6 +389,12 @@ void KoopaTroopa::HandleTimeSwitchState()
 			{
 				this->x -= nx * KOOPATROOPA_DEFLECT_HOLDING_X;
 				isPickedUp = false;
+				Game* game = Game::GetInstance();
+				LPSCENE scence = game->GetCurrentScene();
+				Mario* mario = NULL;
+				if (dynamic_cast<PlayScene*>(scence))
+					mario = ((PlayScene*)scence)->GetPlayer();
+				mario->isPickingUp = false;
 			}
 			turnWalkingTime = 0;
 		}
