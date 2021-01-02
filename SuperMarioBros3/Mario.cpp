@@ -102,8 +102,8 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		float min_tx, min_ty, nex = 0, ney;
 
 		FilterCollision(coEvents, coEventsResult, 
-			min_tx, min_ty,
-			nex, ney);
+						min_tx, min_ty,
+						nex, ney);
 		x += min_tx * dx + nex * 0.4f;
 		y += min_ty * dy + ney * 0.4f;
 		
@@ -115,7 +115,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				if(!dynamic_cast<Item*>(e->obj) || dynamic_cast<PSwitch*>(e->obj))
 					vy = 0;
-				if (ney < 0)
+				if (ney < 0 && !dynamic_cast<Coin*>(e->obj))
 				{
 					isInGround = true;
 					isFlying = false;
@@ -285,6 +285,10 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					Player::GetInstance()->GainPoint(10);
 					Player::GetInstance()->GainMoney(1);
 				}
+				if (e->ny < 0)
+				{
+					isTouchingPlattform = false;
+				}
 			}
 			else if (dynamic_cast<Block*>(e->obj))
 			{
@@ -300,7 +304,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				if (!dynamic_cast<PSwitch*>(e->obj))
 				{
 					if (e->ny != 0)
-						y += -(min_ty * dy + ney * 0.4f) + dy;
+						y += -(min_ty * dy + ney * 0.4f);
 					if (e->nx != 0)
 						x += -(min_tx * dy + nex * 0.4f) + dx;
 				}
@@ -374,8 +378,10 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				if (e->ny < 0)
 				{
-					e->obj->SetState(MOVING_PLATTFORM_STATE_FALLING);
-					this->y = e->obj->y - MARIO_SMALL_BBOX_HEIGHT;
+					isTouchingPlattform = true;
+					MovingPlattform* movingPlattform = dynamic_cast<MovingPlattform*>(e->obj);
+					movingPlattform->SetState(MOVING_PLATTFORM_STATE_FALLING);
+					movingPlattform->isBeingTouched = true;
 				}
 				
 			}
@@ -391,7 +397,7 @@ void Mario::Render()
 	if (isEnable == false)
 		return;
 	int ani = -1;
-	if (vx == 0 )
+	if (vx == 0)
 	{
 		if (!isPickingUp)
 		{
@@ -430,7 +436,7 @@ void Mario::Render()
 			}
 		}
 	}
-	if (vx != 0 && isInGround == true || isAutoWalk == true)
+	if (vx != 0 && (isInGround == true || isTouchingPlattform == true) || isAutoWalk == true)
 	{
 		if (isPickingUp == false)
 		{
@@ -528,7 +534,7 @@ void Mario::Render()
 		}
 		
 	}
-	if (isInGround == false )
+	if (isInGround == false && isTouchingPlattform == false)
 	{
 		if (!isPickingUp && isFlying == false )
 		{
@@ -696,10 +702,12 @@ void Mario::SetState(int state)
 			break;
 	case MARIO_STATE_JUMPING:
 		isInGround = false;
+		isTouchingPlattform = false;
 		vy = -MARIO_JUMP_SPEED_Y;
 		break;
 	case MARIO_STATE_SUPER_JUMPING:
 		isInGround = false;
+		isTouchingPlattform = false;
 		vy = -MARIO_SUPER_JUMP_SPEED;
 		break;
 	case MARIO_STATE_IDLE:
@@ -800,7 +808,7 @@ void Mario::SetDirect(bool nx)
 void Mario::SuperJump()
 {
 	DWORD current = GetTickCount();
-	if (current - jumpTimeStart > MARIO_SUPER_JUMP_TIME	&& isInGround == true &&
+	if (current - jumpTimeStart > MARIO_SUPER_JUMP_TIME	&& (isInGround == true || isTouchingPlattform == true) &&
 		jumpTimeStart != 0)
 	{
 		this->SetState(MARIO_STATE_SUPER_JUMPING);
@@ -810,7 +818,7 @@ void Mario::SuperJump()
 void Mario::Jump()
 {
 	DWORD current = GetTickCount();
-	if (current - jumpTimeStart < MARIO_SUPER_JUMP_TIME && isInGround == true &&
+	if (current - jumpTimeStart < MARIO_SUPER_JUMP_TIME && (isInGround == true || isTouchingPlattform == true)&&
 		jumpTimeStart != 0)
 	{
 		this->SetState(MARIO_STATE_JUMPING);
