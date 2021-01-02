@@ -5,7 +5,7 @@ class BoomerangBrother : public Enemy
 {
 	float lastStoping;
 	DWORD changeStateTime;
-	int indexBoomerang = 0;
+	unsigned int indexBoomerang = 0;
 	vector<Boomerang*> weapon;
 	virtual void GetBoundingBox(float& left, float& top,
 		float& right, float& bottom, bool isEnable);
