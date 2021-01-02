@@ -15,7 +15,7 @@ class ParaGoomba :public Enemy
 public:
 	virtual void SetState(int state);
 	virtual bool IsDead();
-	virtual void SetBeingStromped();
+	virtual void SetBeingStomped();
 	virtual void SetBeingSkilled(int nx);
 	virtual bool IsInactive();
 	virtual void Active();

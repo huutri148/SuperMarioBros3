@@ -198,7 +198,7 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				}
 			/*	else if (e->ny < 0)
 				{
-					this->SetBeingStromped();
+					this->SetBeingStomped();
 				}*/
 				if (e->nx != 0)
 				{
@@ -333,7 +333,7 @@ KoopaTroopa::KoopaTroopa(int type)
 	LPANIMATION_SET ani_set = animation_sets->Get(ANIMATION_SET_KOOPA);
 	this->SetAnimationSet(ani_set);
 }
-void KoopaTroopa::SetBeingStromped()
+void KoopaTroopa::SetBeingStomped()
 {
 	if (state != KOOPATROOPA_STATE_HIDING)
 	{

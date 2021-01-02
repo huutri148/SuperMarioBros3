@@ -131,7 +131,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					if (enemy->IsDead() != true && !dynamic_cast<PiranhaPlant*>(enemy) &&
 						!dynamic_cast<FirePiranhaPlant*>(enemy))
 					{
-						enemy->SetBeingStromped();
+						enemy->SetBeingStomped();
 						Player::GetInstance()->GainPoint(100);
 						vy = -MARIO_JUMP_DEFLECT_SPEED;
 						vx = MARIO_WALK_DEFELCT_SPEED * nx;

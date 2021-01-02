@@ -143,7 +143,7 @@ void ParaGoomba::Chasing()
 	}
 }
 
-void ParaGoomba::SetBeingStromped()
+void ParaGoomba::SetBeingStomped()
 {
 	this->SetState(PARAGOOMBA_STATE_GOOMBA);
 	Game* game = Game::GetInstance();
