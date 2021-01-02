@@ -53,13 +53,11 @@ void Mushroom::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					this->SetState(MUSHROOM_STATE_WALKING);
 					vy = 0;
 				}
-				if (nx != 0 && ny == 0)
+				if (e->nx != 0 && ny == 0)
 				{
-					if (dynamic_cast<Pipe*>(e->obj) ||
-						dynamic_cast<Brick*>(e->obj))
+					if (dynamic_cast<Pipe*>(e->obj) || dynamic_cast<Brick*>(e->obj))
 					{
 						this->vx = -this->vx;
-						this->nx = -this->nx;
 					}
 					else if(!dynamic_cast<Mario*>(e->obj))
 					{

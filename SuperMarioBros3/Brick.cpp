@@ -27,9 +27,9 @@ void Brick::SetEmpty(bool canBreak)
 	if (state == BRICK_STATE_INACTIVE)
 		return;
 
-	if (state != BRICK_STATE_EMPTY)
+	if (state != BRICK_STATE_EMPTY && vy == 0)
 	{
-		if(type != BRICK_BREAKABLE_TYPE)
+		if(type != BRICK_BREAKABLE_TYPE && coin == 0)
 			this->SetState(BRICK_STATE_EMPTY);
 		else
 		{

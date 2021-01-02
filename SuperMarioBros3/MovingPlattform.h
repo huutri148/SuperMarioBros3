@@ -6,6 +6,7 @@ class MovingPlattform : public GameObject
 
 public:
 	bool isAbleToActive = true;
+	bool isBeingTouched = false;
 
 	virtual void Render();
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects = NULL);
