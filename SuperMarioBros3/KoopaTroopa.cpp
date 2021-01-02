@@ -147,8 +147,13 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					if (e->nx != 0)
 					{
 						if (isBumped == true)
-							dynamic_cast<Brick*>(e->obj)->SetEmpty();
+							dynamic_cast<Brick*>(e->obj)->SetEmpty(true);
 						this->ChangeDirect();
+					}
+					if (e->ny < 0)
+					{
+						if (e->obj->vy != 0)
+							this->SetBeingSkilled(-this->nx);
 					}
 				}
 			}

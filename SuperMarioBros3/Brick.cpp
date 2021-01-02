@@ -22,21 +22,27 @@ void Brick::GetBoundingBox(float& l, float& t, float& r, float& b,bool isEnable)
 		b = y + BRICK_BBOX_HEIGHT;
 	}
 }
-void Brick::SetEmpty()
+void Brick::SetEmpty(bool canBreak)
 {
 	if (state == BRICK_STATE_INACTIVE)
 		return;
-	if (type != BRICK_BREAKABLE_TYPE &&
-		state != BRICK_STATE_EMPTY)
+
+	if (state != BRICK_STATE_EMPTY)
 	{
-		this->SetState(BRICK_STATE_EMPTY);
-		/*this->DropItem();*/
-		isUsed = true;
+		if(type != BRICK_BREAKABLE_TYPE)
+			this->SetState(BRICK_STATE_EMPTY);
+		else
+		{
+			vy = -BRICK_DEFLECT_SPEED;
+		}
 	}
-	else if(type == BRICK_BREAKABLE_TYPE)
+		
+
+	if(type == BRICK_BREAKABLE_TYPE && canBreak == true)
 	{
 		this->Broken();
 	}
+	Player::GetInstance()->GainPoint(100);
 }
 void Brick::Broken()
 {
@@ -58,7 +64,7 @@ void Brick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	if (state == BRICK_STATE_INACTIVE ||
 		isEnable == false)
 		return;
-	if (type == BRICK_BREAKABLE_TYPE)
+	if (type == BRICK_BREAKABLE_TYPE && vy ==  0)
 	{
 		bool _isTransform = Brick::isTransForm;
 		if (_isTransform == false)
@@ -72,17 +78,22 @@ void Brick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		return;
 	}
 	GameObject::Update(dt, coObjects);
-	if(state != BRICK_STATE_NORMAL)
+
+	if(vy != 0)
 		vy += BRICK_GRAVITY * dt;
 	y += dy;
-	if (y > entryY  && 
-		state == BRICK_STATE_EMPTY)
+	if (y > entryY  && vy != 0)
 	{
 		vy = 0;
 		y = entryY;
 		this->DropItem();
-		this->SetState(BRICK_STATE_INACTIVE);
+
+		if (coin == 0)
+			this->SetState(BRICK_STATE_INACTIVE);
+		else
+			this->SetState(BRICK_STATE_NORMAL);
 	}
+
 }
 void Brick::SetState(int _state)
 {
@@ -94,7 +105,7 @@ void Brick::SetState(int _state)
 		vy = 0;
 		break;
 	case BRICK_STATE_EMPTY:
-		if (type != BRICK_BREAKABLE_TYPE)
+		if(type != BRICK_BREAKABLE_TYPE)
 			vy = -BRICK_DEFLECT_SPEED;
 		vx = 0;
 		break;
@@ -116,9 +127,9 @@ void Brick::Used()
 }
 bool Brick::CanUsed()
 {
-	if (this->state == BRICK_STATE_EMPTY
-		&& Brick::isTransForm == true
-		&& type == BRICK_BREAKABLE_TYPE)
+	if (this->state == BRICK_STATE_EMPTY && 
+			Brick::isTransForm == true &&
+			type == BRICK_BREAKABLE_TYPE)
 		return true;
 	return false;
 }
@@ -127,18 +138,6 @@ bool Brick::Breakable()
 	if (type == BRICK_BREAKABLE_TYPE)
 		return true;
 	return false;
-}
-void InvisibleBrick::Render()
-{
-	animation_set->at(0)->Render(-1, x, y);
-}
-
-void InvisibleBrick::GetBoundingBox(float& l, float& t, float& r, float& b, bool isEnable)
-{
-	l = x;
-	t = y;
-	r = x + BRICK_BBOX_WIDTH;
-	b = y + BRICK_BBOX_HEIGHT;
 }
 void Brick::DropItem()
 {
@@ -151,6 +150,7 @@ void Brick::DropItem()
 	{
 	case BRICK_ITEM_COIN_TYPE:
 	{
+		coin -= 1;
 		item = new Coin(COIN_TYPE_1);
 		item->Appear(entryX, entryY);
 		Player::GetInstance()->GainMoney(1);
@@ -159,6 +159,7 @@ void Brick::DropItem()
 	}
 	case BRICK_POWER_UP_TYPE:
 	{
+		coin -= 1;
 		if (form == MARIO_SMALL_FORM)
 			item = new Mushroom(MUSHROOM_TYPE_POWERUP);
 		else
@@ -169,6 +170,7 @@ void Brick::DropItem()
 	}
 	case BRICK_PSWITCH_TYPE:
 	{
+		coin -= 1;
 		item = new PSwitch();
 		item->Appear(x, y);
 		Unit* unit = new Unit(grid, item, x, y);
@@ -176,11 +178,11 @@ void Brick::DropItem()
 	}
 	case BRICK_ITEM_EXTRA_LIFE_TYPE:
 	{
+		coin -= 1;
 		item = new Mushroom(MUSHROOM_TYPE_1UP);
 		item->Appear(x, y);
 		Unit* unit = new Unit(grid, item, x, y);
 		break;
 	}
 	}
-	isUsed = false;
 }
