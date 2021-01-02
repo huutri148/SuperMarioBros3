@@ -95,7 +95,7 @@ bool RedKoopaParaTroopa::IsDead()
 }
 
 
-void RedKoopaParaTroopa::SetBeingStromped()
+void RedKoopaParaTroopa::SetBeingStomped()
 {
 	this->SetState(PARATROOPA_STATE_KOOPA);
 	Game* game = Game::GetInstance();

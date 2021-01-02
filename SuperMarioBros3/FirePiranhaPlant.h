@@ -24,7 +24,7 @@ public:
 	virtual void SetState(int state);
 	void Shooting();
 	virtual bool IsDead();
-	virtual void SetBeingStromped();
+	virtual void SetBeingStomped();
 	virtual void SetBeingSkilled(int nx);
 	virtual void Inactive() { this->SetState(FIREPIRANHAPLANT_STATE_INACTIVE); };
 	virtual void Active() { this->SetState(FIREPIRANHAPLANT_STATE_DARTING); };

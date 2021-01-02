@@ -15,7 +15,7 @@ class Goomba : public Enemy
 public:
 	virtual void SetState(int state);
 	virtual bool IsDead();
-	virtual void SetBeingStromped();
+	virtual void SetBeingStomped();
 	virtual void SetBeingSkilled(int nx);
 	virtual void Inactive() { this->SetState(GOOMBA_STATE_INACTIVE); }
 	virtual void Active() { this->SetState(GOOMBA_STATE_WALKING); };

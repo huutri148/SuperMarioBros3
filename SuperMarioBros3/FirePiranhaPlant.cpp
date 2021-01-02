@@ -165,7 +165,7 @@ void FirePiranhaPlant::SetBeingSkilled(int nx)
 		FIREPIRANHAPLANT_BBOX_DEATH_HEIGHT;
 	deathTime = GetTickCount();
 }
-void FirePiranhaPlant::SetBeingStromped()
+void FirePiranhaPlant::SetBeingStomped()
 {
 
 }

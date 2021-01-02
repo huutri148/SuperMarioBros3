@@ -26,7 +26,7 @@ void Goomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	if (state == GOOMBA_STATE_INACTIVE || isEnable == false)
 		return;
 	Enemy::Update(dt, coObjects);
-	if (this->state != GOOMBA_STATE_BEING_STROMPED)
+	if (this->state != GOOMBA_STATE_BEING_STOMPED)
 		vy += dt * GOOMBA_GRAVITY;
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
@@ -79,7 +79,7 @@ void Goomba::Render()
 	{
 		int ani;
 		ani = GOOMBA_ANI_WALKING;
-		if (state == GOOMBA_STATE_BEING_STROMPED)
+		if (state == GOOMBA_STATE_BEING_STOMPED)
 			ani = GOOMBA_ANI_DIE;
 		animation_set->at(ani)->Render(nx, ny, round(x), round(y));
 	}
@@ -100,7 +100,7 @@ void Goomba::SetState(int state)
 		isDead = true;
 		ny = 1;
 		break;
-	case GOOMBA_STATE_BEING_STROMPED:
+	case GOOMBA_STATE_BEING_STOMPED:
 		y += GOOMBA_BBOX_HEIGHT - GOOMBA_BBOX_HEIGHT_DIE ;
 		isDead = true;
 		vx = 0;
@@ -126,9 +126,9 @@ bool Goomba::IsDead()
 }
  
 
-void Goomba::SetBeingStromped()
+void Goomba::SetBeingStomped()
 {
-	this->SetState(GOOMBA_STATE_BEING_STROMPED);
+	this->SetState(GOOMBA_STATE_BEING_STOMPED);
 	Game* game = Game::GetInstance();
 	LPSCENE scene = game->GetCurrentScene();
 	if (dynamic_cast<PlayScene*>(scene))
