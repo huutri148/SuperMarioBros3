@@ -47,7 +47,7 @@ void RaccoonTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			LPCOLLISIONEVENT e = coEventsResult[i];
 			if (dynamic_cast<Brick*>(e->obj))
 			{
-				dynamic_cast<Brick*>(e->obj)->SetEmpty();
+				dynamic_cast<Brick*>(e->obj)->SetEmpty(true);
 				Game* game = Game::GetInstance();
 				LPSCENE scene = game->GetCurrentScene();
 				if (dynamic_cast<PlayScene*>(scene))

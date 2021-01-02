@@ -148,8 +148,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							}
 						}
 					}
-					else if (dynamic_cast<PiranhaPlant*>(enemy) ||
-						dynamic_cast<FirePiranhaPlant*>(enemy))
+					else if (dynamic_cast<PiranhaPlant*>(enemy) || dynamic_cast<FirePiranhaPlant*>(enemy))
 					{
 						if (untouchable == 0)
 						{
@@ -188,7 +187,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 									this->SetState(MARIO_STATE_KICK);
 									Player::GetInstance()->GainPoint(100);
 								}
-								else
+								else if (koopa->isBumped == true)
 								{
 									if (form > MARIO_SMALL_FORM)
 									{
@@ -270,13 +269,10 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				{
 					if (e->ny > 0 && nex == 0)
 					{
-						if (brick->Breakable() && form != MARIO_SMALL_FORM ||
-							!brick->Breakable())
-						{
-							brick->SetEmpty();
-							if (brick->state != BRICK_STATE_INACTIVE)
-								Player::GetInstance()->GainPoint(100);
-						}
+						if (form == MARIO_SMALL_FORM)
+							brick->SetEmpty(false);
+						else 
+							brick->SetEmpty(true);
 					}
 				}
 				else
