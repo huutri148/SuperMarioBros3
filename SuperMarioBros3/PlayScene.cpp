@@ -489,7 +489,6 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 		{
 			if (dynamic_cast<Enemy*>(obj))
 			{
-				
 				if (dynamic_cast<Enemy*>(obj)->isDead || dynamic_cast<Enemy*>(obj)->IsInactive())
 					continue;
 			}
@@ -988,8 +987,8 @@ bool PlayScene::IsInViewport(LPGAMEOBJECT object)
 	
 	object->GetPosition(objX, objY);
 	
-	return objX >= camX  && objX < camX + game->GetScreenWidth()
-		&& objY >= camY && objY < camY + SCREEN_HEIGHT;
+	return objX >= camX - 16.0f  && objX < camX + SCREEN_WIDTH
+		&& objY >= camY - (SCREEN_HEIGHT - game->GetScreenHeight())  && objY < camY + SCREEN_HEIGHT;
 };
 
 // Inactive các quái khi ra khỏi Viewport
