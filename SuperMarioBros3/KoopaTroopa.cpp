@@ -45,11 +45,13 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				else
 					this->x = mario->x - KOOPATROOPA_BBOX_WIDTH +
 					KOOPATROOPA_DEFLECT_HOLDING_X;
+
 				if (mario->GetHeight() > MARIO_SMALL_BBOX_HEIGHT)
 					this->y = mario->y + (float)mario->GetHeight() *
 					KOOPATROOPA_DEFLECT_HOLDING_Y;
 				else
 					this->y = mario->y;
+
 				vx = 0;
 				vy = 0;
 			}
@@ -144,7 +146,7 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				{
 					CanPullBack = true;
 					lastStanding_Y = y;
-					if (e->nx != 0)
+					if (e->nx != 0 && ny == 0)
 					{
 						if (isBumped == true)
 							dynamic_cast<Brick*>(e->obj)->SetEmpty(true);
@@ -168,7 +170,8 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				else
 					x += dx;
 			}
-			else if (dynamic_cast<Ground*>(e->obj) || dynamic_cast<Pipe*>(e->obj))
+			else if (dynamic_cast<Ground*>(e->obj) || dynamic_cast<Pipe*>(e->obj) ||
+					dynamic_cast<MovingPlattform*>(e->obj))
 			{
 				CanPullBack = true;
 				lastStanding_Y = y;
@@ -395,6 +398,14 @@ void KoopaTroopa::HandleTimeSwitchState()
 			{
 				this->x -= nx * KOOPATROOPA_DEFLECT_HOLDING_X;
 				isPickedUp = false;
+				Game* game = Game::GetInstance();
+				LPSCENE scence = game->GetCurrentScene();
+				Mario* mario = NULL;
+				if (dynamic_cast<PlayScene*>(scence))
+				{
+					mario = ((PlayScene*)scence)->GetPlayer();
+					mario->isPickingUp = false;
+				}
 			}
 			turnWalkingTime = 0;
 		}
