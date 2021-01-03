@@ -45,11 +45,13 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				else
 					this->x = mario->x - KOOPATROOPA_BBOX_WIDTH +
 					KOOPATROOPA_DEFLECT_HOLDING_X;
+
 				if (mario->GetHeight() > MARIO_SMALL_BBOX_HEIGHT)
 					this->y = mario->y + (float)mario->GetHeight() *
 					KOOPATROOPA_DEFLECT_HOLDING_Y;
 				else
 					this->y = mario->y;
+
 				vx = 0;
 				vy = 0;
 			}
@@ -144,11 +146,16 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				{
 					CanPullBack = true;
 					lastStanding_Y = y;
-					if (e->nx != 0)
+					if (e->nx != 0 && ny == 0)
 					{
 						if (isBumped == true)
-							dynamic_cast<Brick*>(e->obj)->SetEmpty();
+							dynamic_cast<Brick*>(e->obj)->SetEmpty(true);
 						this->ChangeDirect();
+					}
+					if (e->ny < 0)
+					{
+						if (e->obj->vy != 0)
+							this->SetBeingSkilled(-this->nx);
 					}
 				}
 			}
@@ -163,7 +170,8 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				else
 					x += dx;
 			}
-			else if (dynamic_cast<Ground*>(e->obj) || dynamic_cast<Pipe*>(e->obj))
+			else if (dynamic_cast<Ground*>(e->obj) || dynamic_cast<Pipe*>(e->obj) ||
+					dynamic_cast<MovingPlattform*>(e->obj))
 			{
 				CanPullBack = true;
 				lastStanding_Y = y;
@@ -193,7 +201,7 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				}
 			/*	else if (e->ny < 0)
 				{
-					this->SetBeingStromped();
+					this->SetBeingStomped();
 				}*/
 				if (e->nx != 0)
 				{
@@ -328,7 +336,7 @@ KoopaTroopa::KoopaTroopa(int type)
 	LPANIMATION_SET ani_set = animation_sets->Get(ANIMATION_SET_KOOPA);
 	this->SetAnimationSet(ani_set);
 }
-void KoopaTroopa::SetBeingStromped()
+void KoopaTroopa::SetBeingStomped()
 {
 	if (state != KOOPATROOPA_STATE_HIDING)
 	{

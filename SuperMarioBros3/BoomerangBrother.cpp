@@ -120,7 +120,7 @@ bool BoomerangBrother::IsDead()
 }
 
 
-void BoomerangBrother::SetBeingStromped()
+void BoomerangBrother::SetBeingStomped()
 {
 	ny = 1;
 	deathTime = GetTickCount();

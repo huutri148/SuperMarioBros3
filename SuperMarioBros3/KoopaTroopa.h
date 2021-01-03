@@ -39,7 +39,7 @@ public:
 	
 
 	virtual void SetState(int state);
-	virtual void SetBeingStromped();
+	virtual void SetBeingStomped();
 	virtual void SetBeingSkilled(int nx);
 	virtual void Inactive() { this->SetState(KOOPATROOPA_STATE_INACTIVE); }
 	virtual void Active() { this->SetState(KOOPATROOPA_STATE_WALKING); };

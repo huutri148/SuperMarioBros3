@@ -552,10 +552,10 @@ void IntroSceneKeyHandler::OnKeyDown(int KeyCode)
 	IntroScene* scene = (IntroScene*)this->scence;
 	switch (KeyCode)
 	{
-	case DIK_U:
+	case DIK_A:
 		scene->SwitchMenu();
 		break;
-	case DIK_I:
+	case DIK_S:
 		Game* game = Game::GetInstance();
 		game->SwitchScene(0);
 		Player* p1 = Player::GetInstance();

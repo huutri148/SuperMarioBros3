@@ -143,7 +143,7 @@ void PiranhaPlant::SetBeingSkilled(int nx)
 	deathTime = GetTickCount();
 	isDead = true;
 }
-void PiranhaPlant::SetBeingStromped()
+void PiranhaPlant::SetBeingStomped()
 {
 
 }

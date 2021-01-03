@@ -33,7 +33,7 @@ public:
 
 	void SetEnable(bool _enable) { this->isEnable = _enable; };
 	void SetDead() { this->isDead = true; };
-	virtual void SetBeingStromped() = 0;
+	virtual void SetBeingStomped() = 0;
 	virtual void SetBeingSkilled(int nx) = 0;
 	void GetPlayerPosition(float x, float y)
 	{ 

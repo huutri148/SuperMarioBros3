@@ -164,7 +164,13 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_BRICK:
 	{
 		int set_type = atoi(tokens[4].c_str());
-		obj = new Brick(x, y, set_type);
+		if(tokens.size() == 5)
+			obj = new Brick(x, y, set_type);
+		else
+		{
+			int coin =atoi( tokens[5].c_str());
+			obj = new Brick(x, y, set_type, coin);
+		}
 		unit = new Unit(grid, obj, x, y);
 		int ani_set_id = atoi(tokens[3].c_str());
 		LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
@@ -457,17 +463,11 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 {
 	if (dynamic_cast<Item*>(curObj))
 	{
-		//coObjects.push_back(player);
 		for (auto obj : objects)
 		{
 			if (!dynamic_cast<Enemy*>(obj))
 				coObjects.push_back(obj);
 		}
-	}
-	else if (dynamic_cast<PointEffect*>(curObj) || dynamic_cast<HitEffect*>(curObj) ||
-		dynamic_cast<BrokenBrickEffect*>(curObj) || dynamic_cast<FirePlantBullet*>(curObj))
-	{
-		return;
 	}
 	else if (dynamic_cast<FirePiranhaPlant*>(curObj) || dynamic_cast<PiranhaPlant*>(curObj))
 	{
@@ -479,19 +479,16 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 				if (!(dynamic_cast<KoopaTroopa*>(obj) && obj->state == KOOPATROOPA_STATE_HIDING))
 					continue;
 			}
-			if (dynamic_cast<Ground*>(obj) || 	dynamic_cast<InvisibleBrick*>(obj) ||
-				dynamic_cast<FireBall*>(obj))
+			if (dynamic_cast<Ground*>(obj) || dynamic_cast<FireBall*>(obj))
 				coObjects.push_back(obj);
 		}
 	}
 	else if (dynamic_cast<KoopaTroopa*>(curObj))
 	{
-	/*	coObjects.push_back(player);*/
 		for (auto obj : objects)
 		{
 			if (dynamic_cast<Enemy*>(obj))
 			{
-				
 				if (dynamic_cast<Enemy*>(obj)->isDead || dynamic_cast<Enemy*>(obj)->IsInactive())
 					continue;
 			}
@@ -501,7 +498,6 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 	}
 	else if (dynamic_cast<Goomba*>(curObj) || dynamic_cast<BoomerangBrother*>(curObj))
 	{
-	/*	coObjects.push_back(player);*/
 		for (auto obj : objects)
 		{
 			if (dynamic_cast<Enemy*>(obj))
@@ -514,10 +510,8 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 				coObjects.push_back(obj);
 		}
 	}
-
 	else if (dynamic_cast<ParaGoomba*>(curObj))
 	{
-	/*	coObjects.push_back(player);*/
 		for (auto obj : objects)
 		{
 			if (dynamic_cast<Enemy*>(obj))
@@ -532,7 +526,6 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 	}
 	else if (dynamic_cast<KoopaParaTroopa*>(curObj))
 	{
-	/*	coObjects.push_back(player);*/
 		for (auto obj : objects)
 		{
 			if (dynamic_cast<Enemy*>(obj))
@@ -584,6 +577,11 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 				}
 			}
 		}
+	}
+	else if(dynamic_cast<PointEffect*>(curObj) || dynamic_cast<HitEffect*>(curObj) ||
+			dynamic_cast<BrokenBrickEffect*>(curObj) || dynamic_cast<FirePlantBullet*>(curObj))
+	{
+			return;
 	}
 }
 
@@ -989,8 +987,8 @@ bool PlayScene::IsInViewport(LPGAMEOBJECT object)
 	
 	object->GetPosition(objX, objY);
 	
-	return objX >= camX  && objX < camX + game->GetScreenWidth()
-		&& objY >= camY && objY < camY + SCREEN_HEIGHT;
+	return objX >= camX - 16.0f  && objX < camX + SCREEN_WIDTH
+		&& objY >= camY - (SCREEN_HEIGHT - game->GetScreenHeight())  && objY < camY + SCREEN_HEIGHT;
 };
 
 // Inactive các quái khi ra khỏi Viewport

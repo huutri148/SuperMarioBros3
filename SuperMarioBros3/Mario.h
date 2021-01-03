@@ -50,6 +50,7 @@ public:
 	bool isHitted = false;
 	bool isLookUp = false;
 	bool isAutoWalk = false;
+	bool isTouchingPlattform = false;
 
 	bool useSkill;
 	bool pressDown = false;
@@ -83,8 +84,17 @@ public:
 	void SetAutoWalk(int nx, float vx)
 	{	this->nx = nx;
 		this->vx = vx;
-		this->isAutoWalk = true;};
+		this->isAutoWalk = true;
+	};
 	void SetAutoJump(float vy) { this->vy = vy; isInGround = false;}
+	void SetY(float _y)
+	{
+		if (form == MARIO_SMALL_FORM)
+			y = _y - MARIO_SMALL_BBOX_HEIGHT;
+		else
+			y = _y - MARIO_BIG_BBOX_HEIGHT;
+	}
+
 
 
 	// 1 số Nút Hack
