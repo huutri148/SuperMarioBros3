@@ -128,7 +128,7 @@ public:
 	void TailAttack();
 	void Float();
 	void Fly();
-	void StartJumping() { jumpTimeStart = GetTickCount(); }
+	void StartJumping() { jumpTimeStart = GetTickCount();}
 	void Jump();
 	void SuperJump();
 	void PickUp();

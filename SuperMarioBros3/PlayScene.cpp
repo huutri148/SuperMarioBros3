@@ -699,7 +699,8 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	switch (KeyCode)
 	{
 	case DIK_S:
-		mario->StartJumping();
+	/*	mario->StartJumping();*/
+		mario->SuperJump();
 		mario->Float();
 		mario->Fly();
 		break;
@@ -764,9 +765,6 @@ void PlayScenceKeyHandler::OnKeyUp(int KeyCode)
 	case DIK_A:
 		mario->TurnOffSkill();
 		break;
-	case DIK_S:
-		mario->Jump();
-		break;
 	case DIK_DOWN:
 		mario->SetState(MARIO_STATE_IDLE);
 		mario->isSquat = false;
@@ -784,10 +782,6 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 			mario->isInTeleport || mario->isTeleport)
 		return;
 	
-	if (game->IsKeyDown(DIK_S))
-	{
-		mario->SuperJump();
-	}
 	if (game->IsKeyDown(DIK_RIGHT))
 	{
 

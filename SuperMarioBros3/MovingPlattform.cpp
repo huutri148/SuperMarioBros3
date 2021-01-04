@@ -34,6 +34,7 @@ void MovingPlattform::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				mario->isTouchingPlattform = false;
 				isBeingTouched = false;
+				mario->vy = 0;
 			}
 		}
 		else

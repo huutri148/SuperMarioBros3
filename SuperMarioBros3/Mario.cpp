@@ -49,6 +49,8 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		}
 	}
 
+	if (dt > 64)
+		dt = 32;
 
 	if (isTransform)
 		return;
@@ -803,23 +805,18 @@ void Mario::SetDirect(bool nx)
 }
 void Mario::SuperJump()
 {
-	DWORD current = GetTickCount();
-	if (current - jumpTimeStart > MARIO_SUPER_JUMP_TIME	&& (isInGround == true || isTouchingPlattform == true) &&
-		jumpTimeStart != 0)
+	if (isInGround == true || isTouchingPlattform == true)
 	{
 		this->SetState(MARIO_STATE_SUPER_JUMPING);
-		jumpTimeStart = 0;
 	}
+	
 }
 void Mario::Jump()
 {
-	DWORD current = GetTickCount();
-	if (current - jumpTimeStart < MARIO_SUPER_JUMP_TIME && (isInGround == true || isTouchingPlattform == true)&&
-		jumpTimeStart != 0)
+	if (isInGround == true || isTouchingPlattform == true)
 	{
-		this->SetState(MARIO_STATE_JUMPING);
-		jumpTimeStart = 0;
-	}
+		this->SetState(MARIO_STATE_SUPER_JUMPING);
+	} 
 }
 void Mario::Squat()
 {
