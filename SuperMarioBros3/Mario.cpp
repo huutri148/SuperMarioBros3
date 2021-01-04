@@ -41,11 +41,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			PlayScene* scene = (PlayScene*)Game::GetInstance()->GetCurrentScene();
 			float edgeLeft = scene->GetEdgeLeft();
 			float edgeRight = scene->GetEdgeRight();
-			if (isInExtraMap)
-			{
-				edgeLeft = scene->GetEdgeLeftExtraMap();
-				edgeRight = scene->GetEdgeRightExtraMap();
-			}
+
 			if (x < edgeLeft)
 				x = edgeLeft;
 			else if (x >= edgeRight - MARIO_BIG_BBOX_WIDTH)

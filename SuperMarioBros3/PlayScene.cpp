@@ -272,6 +272,13 @@ void PlayScene::_ParseSection_OBJECTS(string line)
 		unit = new Unit(grid, obj, x, y);
 		break;
 	}
+	case OBJECT_TYPE_MOVING_EDGE:
+	{
+		float limitX =(float) atof(tokens[3].c_str());
+		obj = new MovingEdge (x, y, limitX);
+		movingEdge = (MovingEdge*)obj;
+		break;
+	}
 	default:
 		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
 		return;
@@ -454,6 +461,8 @@ void PlayScene::Update(DWORD dt)
 
 	SetInactivation();
 	// Update camera to follow mario
+	if (movingEdge != NULL)
+		movingEdge->Update(dt);
 	UpdateCameraPosition();
 	hud->Update(dt);
 	UpdateGrid();
@@ -672,6 +681,7 @@ void PlayScene::Unload()
 	delete map;
 	delete hud;
 	delete player;
+	delete movingEdge;
 
 	portal = NULL;
 	grid = NULL;
@@ -893,7 +903,14 @@ void PlayScene::UpdateCameraPosition()
 	{
 		camY = (float)edgeTop;
 	}
-	
+	// TODO: Rerange it logically
+	if (movingEdge != NULL)
+	{
+		if (movingEdge->state != MOVING_EDGE_STATE_INACTIVE)
+		{
+			camX = movingEdge->x;
+		}
+	}
 
 	// Cam ở extraMap
 	if (player->isInExtraMap)
@@ -908,6 +925,9 @@ void PlayScene::UpdateCameraPosition()
 			camX = (float)(map->edgeRightInExtraMap) - screenWidth;
 		}
 	}
+
+
+
 	Game::GetInstance()->SetCamPos(round(camX), round(camY));
 };
 void PlayScene::GetObjectFromGrid()
@@ -1118,4 +1138,29 @@ void PlayScene::DoneGame()
 			hud->DoneGame(portal->GetCardId());
 	}
 		
+}
+
+float PlayScene::GetEdgeLeft()
+{
+	if (movingEdge != NULL)
+	{
+		if(movingEdge->state == MOVING_EDGE_STATE_MOVING)
+			return movingEdge->x;
+	}
+	if (player->isInExtraMap)
+		return map->edgeLeftInExtraMap;
+	return map->edgeLeft;
+}
+
+
+float PlayScene::GetEdgeRight()
+{
+	if (movingEdge != NULL)
+	{
+		if (movingEdge->state == MOVING_EDGE_STATE_MOVING)
+			return movingEdge->x + Game::GetInstance()->GetScreenWidth();
+	}
+	if (player->isInExtraMap)
+		return map->edgeRightInExtraMap;
+	return map->edgeRight;
 }
