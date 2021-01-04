@@ -543,6 +543,14 @@ void IntroScene::Unload()
 		delete objects[i];
 
 	objects.clear();
+	fallingObjects.clear();
+	koopas.clear();
+	bushsSprite.clear();
+	menuSprites.clear();
+
+	mario = NULL;
+	lugi = NULL;
+	koopa = NULL;
 
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
 }

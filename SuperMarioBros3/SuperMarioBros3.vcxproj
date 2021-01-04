@@ -171,6 +171,7 @@
     <ClInclude Include="KoopaTroopa.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Mario.h" />
+    <ClInclude Include="MovingEdge.h" />
     <ClInclude Include="MovingPlattform.h" />
     <ClInclude Include="Mushroom.h" />
     <ClInclude Include="ParaGoomba.h" />
@@ -221,6 +222,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Mario.cpp" />
+    <ClCompile Include="MovingEdge.cpp" />
     <ClCompile Include="MovingPlattform.cpp" />
     <ClCompile Include="Mushroom.cpp" />
     <ClCompile Include="ParaGoomba.cpp" />
