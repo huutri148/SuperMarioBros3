@@ -32,26 +32,34 @@
 #include"RedKoopaParaTroopa.h"
 #include"MovingPlattform.h"
 #include"BoomerangBrother.h"
+#include"MovingEdge.h"
 
 
 
 class PlayScene : public Scene
 {
 protected:
-	Portal* portal;
+
+
+	DWORD delayGameOverTime = 0;
+
+
+	Portal* portal = NULL;
 	Mario* player = NULL;
 	Map* map = NULL ;
-	bool isTurnCamY = false;// Camera Y được bật khi Mario bay 
 	Hud* hud = NULL;
+	MovingEdge* movingEdge = NULL;
 	Unit* unit;
 	Grid* grid;
+
 
 	bool switchScene = false;
 	bool isGameDone = false;
 	bool isGameOver = false;
+	bool isTurnCamY = false;	// Camera Y được bật khi Mario bay 
 
 
-	DWORD delayGameOverTime = 0;
+
 
 	vector<LPGAMEOBJECT> objects;
 	vector<Unit*> listUnits;
@@ -62,7 +70,6 @@ protected:
 
 
 
-	//LPFireBall fireball;
 	void _ParseSection_TEXTURES(string line);
 	void _ParseSection_SPRITES(string line);
 	void _ParseSection_ANIMATIONS(string line);
@@ -81,14 +88,15 @@ public:
 
 
 	Mario* GetPlayer() { return player; }
-	float GetEdgeLeft() { return map->edgeLeft; }
-	float GetEdgeRight() { return map->edgeRight; }
+	float GetEdgeLeft();
+	float GetEdgeRight();
 	float GetEdgeRightExtraMap() { return map->edgeRightInExtraMap; }
 	float GetEdgeLeftExtraMap() { return map->edgeLeftInExtraMap; }
 	void GetExtraMapPosition(float& x, float& y);
 	void GetWorldMapPosition(float& x, float& y);
 	void GetStartPosition(float& x, float& y);
 	int GetTakenCardID() { return portal->GetCardId(); };
+
 	// Nhận các đối tượng cần xét va chạm
 	void GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& coObjects);
 	void GetObjectFromGrid();
