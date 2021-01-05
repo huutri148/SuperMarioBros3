@@ -4,23 +4,23 @@
 0	Resources\textures\mario.png	68	145	190
 10	Resources\textures\enemies_world_1.png	0	255	255
 20	Resources\textures\misc.png	166	185	255
-30	Resources\Map\map1-4_bank.png	255	255	255
+30	Resources\Map\World1-4\map1-4_bank.png	255	255	255
 40	Resources\textures\tiles.png	255	127	93
 50	Resources\textures\tiles.png	255	255	255
 80	Resources\textures\HUD&Font.png	0	224	142
 90	Resources\textures\GoalRoulette.png	0	183	239
-100	Resources\Map\map1-1_bank.png	255	255	255
+100	Resources\Map\World1-1\map1-1_bank.png	255	255	255
 
 
 #ID	TolColTile	TolRowTile	TolColMap	TolRowMap	TotalTiles	Matrix_path	edgeLeft	edgeRight	edgeBottomInWorld	edgeBottomInExtraMap
 [MAP]
-30	11	8	163	27	79	Resources\Map\World1-4.txt	16	2080	208	16	2080	2592	16	208	16	90	2218	90	1952	80
+Resources\Map\World1-4\World1-4_Inf.txt	Resources\Map\World1-4\World1-4_Matrix.txt
 
 
 
 #grid_width	grid_height	cell_width	cell_height
 [GRID]
-2608	448	144	120
+2608	432	177	144
 
 
 # id	left	top	right	bottom	texture_id

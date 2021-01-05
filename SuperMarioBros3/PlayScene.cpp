@@ -292,48 +292,15 @@ void PlayScene::_ParseSection_MAPS(string line)
 {
 	vector<string> tokens = split(line);
 
-	if (tokens.size() < 7) return; // skip invalid lines
-
-	int idMap = atoi(tokens[0].c_str());
-	int tolRowTileSet = atoi(tokens[1].c_str());
-	int tolColTileSet = atoi(tokens[2].c_str());
-	int tolRowMap = atoi(tokens[3].c_str());
-	int tolColMap = atoi(tokens[4].c_str());
-	int totalTiles = atoi(tokens[5].c_str());
-	wstring MatrixPath = ToWSTR(tokens[6]);
+	if (tokens.size() < 2) return; // skip invalid lines
 
 
-	float edgeLeft = (float)atof(tokens[7].c_str());
-	float edgeRight = (float)atof(tokens[8].c_str());
-	float edgeBottomInWorld = (float)atof(tokens[9].c_str());
-	float edgeTop = (float)atof(tokens[10].c_str());
+	wstring mapInformationPath = ToWSTR(tokens[0]);
+	wstring MatrixPath = ToWSTR(tokens[1]);
 
-
-	float edgeLeftInExtraMap = (float)atof(tokens[11].c_str());
-	float edgeRightInExtraMap = (float)atof(tokens[12].c_str());
-	float edgeTopInExtraMap = (float)atof(tokens[13].c_str());
-	float edgeBottomInExtraMap = (float)atof(tokens[14].c_str());
-
-
-	float startPositionX = (float)atof(tokens[15].c_str());
-	float startPositionY = (float)atof(tokens[16].c_str());
-
-	float extraMapPositionX = (float)atof(tokens[17].c_str());
-	float extraMapPositionY = (float)atof(tokens[18].c_str());
-
-	float worldMapPositionX = (float)atof(tokens[19].c_str());
-	float worldMapPositionY = (float)atof(tokens[20].c_str());
-
-	this->map = new Map(idMap, tolRowTileSet, tolColTileSet,
-		tolRowMap, tolColMap, totalTiles,
-		edgeLeft, edgeRight, edgeTop, edgeBottomInWorld,
-		edgeLeftInExtraMap, edgeRightInExtraMap,
-		edgeTopInExtraMap, edgeBottomInExtraMap,
-		startPositionX, startPositionY,
-		extraMapPositionX, extraMapPositionY,
-		worldMapPositionX, worldMapPositionY);
-
-
+	map = new Map();
+	
+	map->LoadInformation(mapInformationPath.c_str());
 	map->LoadMatrix(MatrixPath.c_str());
 	map->CreateTilesFromTileSet();
 	DebugOut(L"\nParseSection_MAPS: Done");
@@ -665,8 +632,6 @@ void PlayScene::Unload()
 		delete objects[i];
 	for (unsigned int i = 0; i < listUnits.size(); i++)
 		delete listUnits[i];
-	for (unsigned int i = 0; i < listMovingObjectsToRender.size(); i++)
-		delete listMovingObjectsToRender[i];
 	for (unsigned int i = 0; i < listItems.size(); i++)
 		delete listItems[i];
 	
