@@ -42,11 +42,22 @@ public:
 		float startPositionX, float startPositionY,
 		float extraMapPositionX = 0, float startMapPositionY = 0,
 		float worldMapPositionX = 0, float worldMapPositionY = 0);
-
 	~Map();
-
+	Map() {};
+	void Init(int idMap, int nTitleCols,
+		int nTitleRows, int nMapCols, int nMapRows,
+		int nTotalTiles, float edgeLeft, float edgeRight,
+		float edgeBottomInWorld, float edgeTop,
+		float edgeLeftInExtraMap,
+		float edgeRightInExtraMap,
+		float edgeBottomInExtraMap,
+		float edgeTopInExtraMap,
+		float startPositionX, float startPositionY,
+		float extraMapPositionX = 0, float startMapPositionY = 0,
+		float worldMapPositionX = 0, float worldMapPositionY = 0);
 	void CreateTilesFromTileSet();
 	void LoadMatrix(LPCWSTR path);
+	void LoadInformation(LPCWSTR path);
 	void Render(float cam_x, float cam_y,int screenWidth,int screenHeight
 	,float translateX = 0.0f, float translateY = 0.0f);
 	int GetTotalColsOfMap() { return this->totalColsOfMap; }
