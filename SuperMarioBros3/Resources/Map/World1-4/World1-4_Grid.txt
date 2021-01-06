@@ -1,4 +1,3 @@
-Cols of Grid	Rows of Grid
 14	3
 # MARIO	x	y
 0	16.0	90

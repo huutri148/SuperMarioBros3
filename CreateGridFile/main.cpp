@@ -22,11 +22,6 @@ void WriteGridFile(int sceneID,int gridCols, int gridRows);
 int main()
 {
 	int sceneID;
-	/*const char* newDir = R"(D:\CastlevaniaUit\CastlevaniaUit\)";*/
-	//if (!SetCurrentDirectory(newDir)) {
-	//	std::cerr << "Error setting current directory: #" << GetLastError();
-	//	return 1; // quit if we couldn't set the current directory
-	//}
 	cout << "Insert Scene you want to create grid: ";
 	cin >> sceneID;
 	CreateGridFile(sceneID);
@@ -99,7 +94,6 @@ void WriteGridFile(int sceneID,int gridCols, int gridRows)
 	sprintf_s(gridFileName, "..\\SuperMarioBros3\\Resources\\Map\\World1-%d\\World1-%d_Grid.txt", sceneID, sceneID);
 	ofstream gridFile;
 	gridFile.open(gridFileName);
-	gridFile << "Cols of Grid\tRows of Grid\n";
 	gridFile << gridCols << "\t" << gridRows;
 
 	char objectsFileName[100];
