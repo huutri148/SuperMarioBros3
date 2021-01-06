@@ -111,14 +111,37 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			LPCOLLISIONEVENT e = coEventsResult[i];
 			if (e->ny != 0 )
 			{
-				if(!dynamic_cast<Item*>(e->obj) || dynamic_cast<PSwitch*>(e->obj))
-					vy = 0;
-				if (ney < 0 && !dynamic_cast<Coin*>(e->obj))
+				if (!dynamic_cast<Item*>(e->obj) || dynamic_cast<PSwitch*>(e->obj) || dynamic_cast<Brick*>(e->obj))
 				{
-					isInGround = true;
-					isFlying = false;
-					flyTimeStart = 0;
-					isFloating = false;
+					if (dynamic_cast<Brick*>(e->obj))
+					{
+						if (!dynamic_cast<Brick*>(e->obj)->CanUsed())
+							vy = 0;
+					}
+					else 
+						vy = 0;
+				}
+				if (ney < 0 && !dynamic_cast<Coin*>(e->obj) || dynamic_cast<Brick*>(e->obj))
+				{
+
+					if (dynamic_cast<Brick*>(e->obj))
+					{
+						if (!dynamic_cast<Brick*>(e->obj)->CanUsed())
+						{
+							isInGround = true;
+							isFlying = false;
+							flyTimeStart = 0;
+							isFloating = false;
+						}
+					}
+					else
+					{
+						isInGround = true;
+						isFlying = false;
+						flyTimeStart = 0;
+						isFloating = false;
+					}
+					
 				}
 			}
 			if (dynamic_cast<Enemy*>(e->obj))
@@ -276,10 +299,10 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				else
 				{
 					brick->Used();
+					if (e->ny != 0)
+						y += -(min_ty * dy + ney * 0.4f);
 					if (e->nx != 0)
-						x += -(min_tx * dx + nex * 0.4f) ;
-					if(e->ny != 0)
-						y += -(min_ty * dy + ney * 0.4f) ;
+						x += -(min_tx * dy + nex * 0.4f) + dx;
 					Player::GetInstance()->GainPoint(10);
 					Player::GetInstance()->GainMoney(1);
 				}

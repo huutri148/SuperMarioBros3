@@ -22,3 +22,13 @@ void Player::initializePlayer()
 	currentPanelID = 0;
 	clearedPanelID.push_back(currentPanelID);
 }
+void Player::Reset()
+{
+	score = 0;
+	money = 0;
+	life = 4;
+	playerType = OBJECT_TYPE_MARIO;
+	form = MARIO_SMALL_FORM;
+	currentPanelID = 0;
+	clearedPanelID.push_back(currentPanelID);
+}

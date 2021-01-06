@@ -26,6 +26,7 @@ public:
 	int GetLife() { return life; };
 	int GetPlayerType() { return playerType; };
 
+	void Reset();
 	void SetLevel(int form) { this->form = form; };
 	void TakeCard(int idCard) { this->card.push_back(idCard); };
 	

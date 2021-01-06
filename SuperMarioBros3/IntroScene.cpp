@@ -565,8 +565,9 @@ void IntroSceneKeyHandler::OnKeyDown(int KeyCode)
 		break;
 	case DIK_S:
 		Game* game = Game::GetInstance();
-		game->SwitchScene(0);
 		Player* p1 = Player::GetInstance();
+		p1->Reset();
+		game->SwitchScene(0);
 		break;
 	}
 	DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);

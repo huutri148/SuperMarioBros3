@@ -99,9 +99,15 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
-			if (ny != 0 && !dynamic_cast<Mario*>(e->obj))
+			if (ny != 0 && (!dynamic_cast<Mario*>(e->obj) || dynamic_cast<Brick*>(e->obj)))
 			{
-				vy = 0;
+				if (dynamic_cast<Brick*>(e->obj))
+				{
+					if (!dynamic_cast<Brick*>(e->obj)->CanUsed())
+						vy = 0;
+				}
+				else 
+					vy = 0;
 				if (hidingTime != 0 && !isBumped || forceShell == true)
 					vx = 0;
 			}
@@ -157,6 +163,14 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						if (e->obj->vy != 0)
 							this->SetBeingSkilled(-this->nx);
 					}
+				}
+				else
+				{
+					if (e->ny != 0)
+						y += -(min_ty * dy + e->ny * 0.4f) + dy;
+					if (e->nx != 0)
+						x += -(min_tx * dy + e->nx * 0.4f) + dx;
+					nx = 1;
 				}
 			}
 			else if (dynamic_cast<Block*>(e->obj))
