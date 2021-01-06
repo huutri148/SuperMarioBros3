@@ -96,6 +96,7 @@ public:
 	void GetWorldMapPosition(float& x, float& y);
 	void GetStartPosition(float& x, float& y);
 	int GetTakenCardID() { return portal->GetCardId(); };
+	void ParseObjFromFile(LPCWSTR path);
 
 	// Nhận các đối tượng cần xét va chạm
 	void GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& coObjects);
