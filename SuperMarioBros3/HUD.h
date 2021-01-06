@@ -12,11 +12,12 @@ class Hud : public GameObject
 
 	LPSPRITE hud1;
 	LPSPRITE hud2;
-	vector<LPSPRITE> cardSprite;
 	LPSPRITE playerSprite;
 	LPSPRITE lifeSprite;
-	vector<LPSPRITE> moneySprite;
 	LPSPRITE worldSprite;
+
+	vector<LPSPRITE> moneySprite;
+	vector<LPSPRITE> cardSprite;
 	vector<LPSPRITE> scoreSprite;
 	vector<LPSPRITE> remainTimeSprites;
 	vector<LPSPRITE> powerMelterSprite;
@@ -38,6 +39,7 @@ class Hud : public GameObject
 	int isGameDone = false;
 	vector<int> card;
 public:
+
 	Hud();
 	virtual void GetBoundingBox(float& left, float& top,
 		float& right, float& bottom, bool isEnable) {};

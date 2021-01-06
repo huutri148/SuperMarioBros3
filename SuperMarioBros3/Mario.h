@@ -15,7 +15,6 @@ class Mario : public GameObject
 	DWORD untouchableStart = 0;
 	DWORD stackTimeStart = 0;
 	DWORD flyTimeStart = 0;
-	DWORD jumpTimeStart = 0;// pressing jumping time
 	DWORD floatingTime = 0;
 	DWORD shootingTime = 0;
 	DWORD tailAttackTime = 0;
@@ -26,6 +25,9 @@ class Mario : public GameObject
 
 	
 	int indexFireBall = 0;
+	float teleportY = 0;	// Vị trí ở cổng tele
+	
+
 	//Các biến cờ ở các trạng thái
 	bool isInGround ;
 	bool isKickShell = false;
@@ -33,14 +35,17 @@ class Mario : public GameObject
 	bool isFloating = false;
 	bool isTransform = false;
 	bool isTurnRaccoon = false;
+
+
 	RaccoonTail* tail;
-	float teleportY = 0;	// Vị trí ở cổng tele
+	
 	
 public:
 
 	int untouchable = 0;
 	int powerMelterStack = 0;
 	int form = 0;
+	int jumpStack = 0;
 	bool turnToSmallForm = false;
 
 	bool isInTeleport = false;
@@ -128,9 +133,8 @@ public:
 	void TailAttack();
 	void Float();
 	void Fly();
-	void StartJumping() { jumpTimeStart = GetTickCount(); }
+	void StartJumping();
 	void Jump();
-	void SuperJump();
 	void PickUp();
 	//Thay đổi PowerMelter
 	void FillUpPowerMelter();
