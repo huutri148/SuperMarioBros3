@@ -703,11 +703,6 @@ void Mario::SetState(int state)
 		isTouchingPlattform = false;
 		vy = -MARIO_JUMP_SPEED_Y;
 		break;
-	case MARIO_STATE_SUPER_JUMPING:
-		isInGround = false;
-		isTouchingPlattform = false;
-		vy = -MARIO_SUPER_JUMP_SPEED;
-		break;
 	case MARIO_STATE_IDLE:
 		vx = 0;
 		isKickShell = false;
@@ -803,19 +798,24 @@ void Mario::SetDirect(bool nx)
 	else
 		this->nx = -1;
 }
-void Mario::SuperJump()
+void Mario::Jump()
 {
-	if (isInGround == true || isTouchingPlattform == true)
+	if (isInGround == false && isTouchingPlattform == false)
 	{
-		this->SetState(MARIO_STATE_SUPER_JUMPING);
+		if (jumpStack < MARIO_MAX_JUMPING_STACK)
+		{
+			this->SetState(MARIO_STATE_JUMPING);
+			jumpStack++;
+		}
 	}
 	
 }
-void Mario::Jump()
+void Mario::StartJumping()
 {
 	if (isInGround == true || isTouchingPlattform == true)
 	{
-		this->SetState(MARIO_STATE_SUPER_JUMPING);
+		jumpStack = 1;
+		this->SetState(MARIO_STATE_JUMPING);
 	} 
 }
 void Mario::Squat()
