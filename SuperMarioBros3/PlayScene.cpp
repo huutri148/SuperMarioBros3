@@ -25,16 +25,35 @@ PlayScene::PlayScene(int id, LPCWSTR filePath) :
 
 void PlayScene::_ParseSection_GRID(string line)
 {
-	vector<string> tokens = split(line);
 
-	if (tokens.size() < 4) return; // skip invalid lines
-
-	int W = atoi(tokens[0].c_str());
+	
+	/*int W = atoi(tokens[0].c_str());
 	int H = atoi(tokens[1].c_str());
 	int x = atoi(tokens[2].c_str());
-	int y = atoi(tokens[3].c_str());
+	int y = atoi(tokens[3].c_str());*/
 
-	grid = new Grid(W, H, x, y);
+	LPCWSTR path = ToLPCWSTR(line);
+	ifstream f;
+
+	f.open(path);
+
+	int gridCols = -1;
+	int gridRows =  -1;
+
+	if (!f)
+	{
+		DebugOut(L"\nFailed to open file grid");
+		return;
+	}
+
+	f >> gridCols >> gridRows;
+
+
+	if (gridCols == -1 || gridRows == -1)
+		return;
+
+	grid = new Grid(gridCols, gridRows);
+	
 	DebugOut(L"\nParseSection_GRID: Done");
 }
 void PlayScene::_ParseSection_TEXTURES(string line)
@@ -125,167 +144,8 @@ void PlayScene::_ParseSection_ANIMATION_SETS(string line)
 */
 void PlayScene::_ParseSection_OBJECTS(string line)
 {
-	vector<string> tokens = split(line);
-
-	DebugOut(L"--> %s\n",ToWSTR(line).c_str());
-
-	if (tokens.size() < 3) return; // skip invalid lines - an object set must have at least id, x, y
-
-	int object_type = atoi(tokens[0].c_str());
-	float x = (float)atof(tokens[1].c_str());
-	float y = (float)atof(tokens[2].c_str());
-
-
-
-
-	AnimationSets* animation_sets = AnimationSets::GetInstance();
-
-	GameObject* obj = NULL;
-	// Todo: Drop grid 
-	// No add grid when loading scence
-	switch (object_type)
-	{
-	case OBJECT_TYPE_MARIO:
-		if (player != NULL)
-		{
-			DebugOut(L"[ERROR] MARIO object was created before!\n");
-			return;
-		}
-		obj = new Mario();
-		player = (Mario*)obj;
-		DebugOut(L"[INFO] Player object created!\n");
-		break;
-	case OBJECT_TYPE_GOOMBA: 
-	{
-		obj = new Goomba(x, y);
-		unit = new Unit(grid, obj, x, y);
-		break;
-	}
-	case OBJECT_TYPE_BRICK:
-	{
-		int set_type = atoi(tokens[4].c_str());
-		if(tokens.size() == 5)
-			obj = new Brick(x, y, set_type);
-		else
-		{
-			int coin =atoi( tokens[5].c_str());
-			obj = new Brick(x, y, set_type, coin);
-		}
-		unit = new Unit(grid, obj, x, y);
-		int ani_set_id = atoi(tokens[3].c_str());
-		LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
-		obj->SetAnimationSet(ani_set);
-		break;
-	}
-	case OBJECT_TYPE_KOOPAS:
-	{
-		int set_type = atoi(tokens[3].c_str());
-		obj = new KoopaTroopa(x, y, set_type);
-		unit = new Unit(grid, obj, x, y);
-		break;
-	}
-	case OBJECT_TYPE_BLOCKS: 
-	{
-		float width = (float)atof(tokens[3].c_str());
-		float height = (float)atof(tokens[4].c_str());
-		obj = new Block(x, y, width, height);
-		unit = new Unit(grid, obj, x, y);
-		break;
-	}
-	case OBJECT_TYPE_GROUNDS:
-	{
-		obj = new Ground();
-		unit = new Unit(grid, obj, x, y);
-		break;
-	}
-	case OBJECT_TYPE_PIPES: 
-	{
-		int ani_set_id = atoi(tokens[3].c_str());
-		int set_type = atoi(tokens[4].c_str());
-		LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
-		obj = new Pipe(set_type);
-		obj->SetAnimationSet(ani_set);
-		unit = new Unit(grid, obj, x, y);
-		break;
-	}
-	case OBJECT_TYPE_PIRANHAPLANT:
-	{
-		int set_type = atoi(tokens[3].c_str());
-		obj = new PiranhaPlant(x, y, set_type);
-		unit = new Unit(grid, obj, x, y);
-		break;
-	}
-	case OBJECT_TYPE_FIREPIRANHAPLANT:
-	{
-		float limit =(float) atof(tokens[3].c_str());
-		int set_type = atoi(tokens[4].c_str());
-		obj = new FirePiranhaPlant(x, y,limit, set_type);
-		unit = new Unit(grid, obj, x, y);
-		break;
-	}
-	case OBJECT_TYPE_PORTAL:
-	{
-		obj = new Portal();
-		portal =(Portal*)obj;
-		unit = new Unit(grid, obj, x, y);
-		break;
-	}
-	case OBJECT_TYPE_COIN:
-	{
-		int set_type = atoi(tokens[3].c_str());
-		obj = new Coin(set_type);
-		unit = new Unit(grid, obj, x, y);
-		break;
-	}
-	case OBJECT_TYPE_PARAGOOMBA:
-	{
-		obj = new ParaGoomba(x,y);
-		unit = new Unit(grid, obj, x, y);
-		break;
-	}
-	case OBJECT_TYPE_PARATROOPA:
-	{
-		obj = new KoopaParaTroopa(x, y);
-		unit = new Unit(grid, obj, x, y);
-		break;
-	}
-	case OBJECT_TYPE_REDPARATROOPA:
-	{
-		obj = new RedKoopaParaTroopa(x, y);
-		unit = new Unit(grid, obj, x, y);
-		break;
-	}
-	case OBJECT_TYPE_HUD:
-	{
-		hud = new Hud();
-		return;
-	}
-	case OBJECT_TYPE_MOVING_PLATTFORM:
-	{
-		obj = new MovingPlattform(x, y);
-		unit = new Unit(grid, obj, x, y);
-		break;
-	}
-	case OBJECT_TYPE_BOOMRERANG_BROTHER	:
-	{
-		obj = new BoomerangBrother(x, y);
-		unit = new Unit(grid, obj, x, y);
-		break;
-	}
-	case OBJECT_TYPE_MOVING_EDGE:
-	{
-		float limitX =(float) atof(tokens[3].c_str());
-		obj = new MovingEdge (x, y, limitX);
-		movingEdge = (MovingEdge*)obj;
-		break;
-	}
-	default:
-		DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
-		return;
-	}
-	// General object setup
-	obj->SetPosition(x, y);
-
+	wstring path = ToWSTR(line);
+	ParseObjFromFile(path.c_str());
 }
 
 void PlayScene::_ParseSection_MAPS(string line)
@@ -1122,4 +982,173 @@ float PlayScene::GetEdgeRight()
 	if (player->isInExtraMap)
 		return map->edgeRightInExtraMap;
 	return map->edgeRight;
+}
+
+void PlayScene::ParseObjFromFile(LPCWSTR path)
+{
+	ifstream f;
+	f.open(path);
+	if (!f)
+		DebugOut(L"\nFailed to open object file!");
+	char str[MAX_SCENE_LINE];
+	while (f.getline(str, MAX_SCENE_LINE))
+	{
+		string line(str);
+		DebugOut(L"--> %s\n", ToWSTR(line).c_str());
+		vector<string> tokens = split(line);
+
+		// Bỏ dòng Colums và Row của Grid
+		if (tokens.size() < 3) continue; // skip invalid lines
+
+		if (line[0] == '#') continue;
+
+		int object_type = atoi(tokens[0].c_str());
+		float x = (float)atof(tokens[1].c_str());
+		float y = (float)atof(tokens[2].c_str());
+
+	
+		
+
+		AnimationSets* animation_sets = AnimationSets::GetInstance();
+
+		GameObject* obj = NULL;
+		switch (object_type)
+		{
+		case OBJECT_TYPE_MARIO:
+			if (player != NULL)
+			{
+				DebugOut(L"[ERROR] MARIO object was created before!\n");
+				return;
+			}
+			obj = new Mario();
+			player = (Mario*)obj;
+			DebugOut(L"[INFO] Player object created!\n");
+			break;
+		case OBJECT_TYPE_GOOMBA:
+		{
+			obj = new Goomba(x, y);
+			break;
+		}
+		case OBJECT_TYPE_BRICK:
+		{
+			int set_type = atoi(tokens[4].c_str());
+			if (tokens.size() < 8)
+				obj = new Brick(x, y, set_type);
+			else
+			{
+				int coin = atoi(tokens[5].c_str());
+				obj = new Brick(x, y, set_type, coin);
+			}
+			int ani_set_id = atoi(tokens[3].c_str());
+			LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
+			obj->SetAnimationSet(ani_set);
+			break;
+		}
+		case OBJECT_TYPE_KOOPAS:
+		{
+			int set_type = atoi(tokens[3].c_str());
+			obj = new KoopaTroopa(x, y, set_type);
+			break;
+		}
+		case OBJECT_TYPE_BLOCKS:
+		{
+			float width = (float)atof(tokens[3].c_str());
+			float height = (float)atof(tokens[4].c_str());
+			obj = new Block(x, y, width, height);
+			break;
+		}
+		case OBJECT_TYPE_GROUNDS:
+		{
+			obj = new Ground();
+			break;
+		}
+		case OBJECT_TYPE_PIPES:
+		{
+			int ani_set_id = atoi(tokens[3].c_str());
+			int set_type = atoi(tokens[4].c_str());
+			LPANIMATION_SET ani_set = animation_sets->Get(ani_set_id);
+			obj = new Pipe(set_type);
+			obj->SetAnimationSet(ani_set);
+			break;
+		}
+		case OBJECT_TYPE_PIRANHAPLANT:
+		{
+			int set_type = atoi(tokens[3].c_str());
+			obj = new PiranhaPlant(x, y, set_type);
+			break;
+		}
+		case OBJECT_TYPE_FIREPIRANHAPLANT:
+		{
+			float limit = (float)atof(tokens[3].c_str());
+			int set_type = atoi(tokens[4].c_str());
+			obj = new FirePiranhaPlant(x, y, limit, set_type);
+			break;
+		}
+		case OBJECT_TYPE_PORTAL:
+		{
+			obj = new Portal();
+			portal = (Portal*)obj;
+			break;
+		}
+		case OBJECT_TYPE_COIN:
+		{
+			int set_type = atoi(tokens[3].c_str());
+			obj = new Coin(set_type);
+			break;
+		}
+		case OBJECT_TYPE_PARAGOOMBA:
+		{
+			obj = new ParaGoomba(x, y);
+			break;
+		}
+		case OBJECT_TYPE_PARATROOPA:
+		{
+			obj = new KoopaParaTroopa(x, y);
+			break;
+		}
+		case OBJECT_TYPE_REDPARATROOPA:
+		{
+			obj = new RedKoopaParaTroopa(x, y);
+			break;
+		}
+		case OBJECT_TYPE_HUD:
+		{
+			hud = new Hud();
+			continue;
+		}
+		case OBJECT_TYPE_MOVING_PLATTFORM:
+		{
+			obj = new MovingPlattform(x, y);
+			break;
+		}
+		case OBJECT_TYPE_BOOMRERANG_BROTHER:
+		{
+			obj = new BoomerangBrother(x, y);
+			break;
+		}
+		case OBJECT_TYPE_MOVING_EDGE:
+		{
+			float limitX = (float)atof(tokens[3].c_str());
+			obj = new MovingEdge(x, y, limitX);
+			movingEdge = (MovingEdge*)obj;
+			break;
+		}
+		default:
+			DebugOut(L"[ERR] Invalid object type: %d\n", object_type);
+			continue;
+		}
+		// General object setup
+		obj->SetPosition(x, y);
+
+		// Nạp grid từ file
+		if (object_type != OBJECT_TYPE_MARIO && object_type != OBJECT_TYPE_HUD &&
+			object_type != OBJECT_TYPE_MOVING_EDGE)
+		{
+			int gridCol = (int)atoi(tokens[tokens.size() - 1].c_str());
+			int gridRow = (int)atoi(tokens[tokens.size() - 2].c_str());
+			Unit* unit = new Unit(grid, obj, gridRow, gridCol);
+		}
+		
+	}
+	f.close();
 }

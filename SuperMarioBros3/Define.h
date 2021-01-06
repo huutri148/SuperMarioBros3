@@ -819,3 +819,8 @@
 #define SCREEN_WIDTH  320
 #define SCREEN_HEIGHT 288
 #define MAX_FRAME_RATE 120
+
+
+//GRID
+#define CELL_WIDTH	177
+#define CELL_HEIGHT	144
