@@ -534,6 +534,8 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		break;
 	case DIK_R:
 		mario->Reset();
+		if (((PlayScene*)scence)->GetMovingEdge() != NULL)
+			((PlayScene*)scence)->GetMovingEdge()->SetPosition(16, 90);
 		break;
 	case DIK_I:
 		mario->Information();
@@ -557,27 +559,75 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		break;
 	}
 	case DIK_Z:
-		mario->SetTele(505, 300);
+		if (scence->GetSceneID() == 1)
+		{
+			mario->SetTele(505, 300);
+		} 
+		else if (scence->GetSceneID() == 4)
+		{
+			mario->SetTele(659, 116);
+			((PlayScene*)scence)->GetMovingEdge()->SetPosition(440, 16);
+		}
+		
 		break;
 	case DIK_X:
-		mario->SetTele(735, 380);
+		if (scence->GetSceneID() == 1)
+		{
+			mario->SetTele(735, 380);
+		}
+		else if (scence->GetSceneID() == 4)
+		{
+			mario->SetTele(1003, 116);
+			((PlayScene*)scence)->GetMovingEdge()->SetPosition(800, 16);
+		}
 		break;
 	case DIK_C:
-		mario->SetTele(1327, 380);
+		if (scence->GetSceneID() == 1)
+		{
+			mario->SetTele(1327, 380);
+		}
+		else if (scence->GetSceneID() == 4)
+		{
+			mario->SetTele(1003, 116);
+			((PlayScene*)scence)->GetMovingEdge()->SetPosition(800, 16);
+		}
 		break;
 	case DIK_V:
-		mario->SetTele(1930, 380);
+		if (scence->GetSceneID() == 1)
+		{
+			mario->SetTele(1930, 380);
+		}
+		else if (scence->GetSceneID() == 4)
+		{
+			mario->SetTele(1552, 110);
+			((PlayScene*)scence)->GetMovingEdge()->SetPosition(1300, 16);
+		}
 		break;
 	case DIK_B:
-		mario->SetTele(2275, 90);
+		if (scence->GetSceneID() == 1)
+		{
+			mario->SetTele(2275, 90);
+		}
+		else if (scence->GetSceneID() == 4)
+		{
+			mario->SetTele(1957, 68);
+			((PlayScene*)scence)->GetMovingEdge()->SetPosition(1750, 16);
+		}
+		
 		break;
 	case DIK_N:
-		mario->SetTele(2488, 380);
+		if (scence->GetSceneID() == 1)
+		{
+			mario->SetTele(2488, 380);
+		}
+		else if (scence->GetSceneID() == 4)
+		{
+			mario->SetTele(2216, 118);
+			mario->isInExtraMap = true;
+			((PlayScene*)scence)->GetMovingEdge()->SetState(MOVING_EDGE_STATE_INACTIVE);
+		}
 		break;
 	case DIK_P:
-		((PlayScene*)scence)->GetGrid()->Out();
-		break;
-	case DIK_G:
 		((PlayScene*)scence)->GetGrid()->Out();
 		break;
 	}

@@ -43,7 +43,12 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			float edgeRight = scene->GetEdgeRight();
 
 			if (x < edgeLeft)
+			{
+				if (scene->GetMovingEdge() != NULL && vx == 0)
+					vx = -0.025f;
 				x = edgeLeft;
+			}
+				
 			else if (x >= edgeRight - MARIO_BIG_BBOX_WIDTH)
 				x = edgeRight - MARIO_BIG_BBOX_WIDTH;
 		}
