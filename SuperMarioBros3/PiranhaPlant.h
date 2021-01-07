@@ -26,7 +26,7 @@ public:
 			return true;
 		return false;
 	}
-
+	virtual int GetWidth() { return FIREPIRANHAPLANT_BBOX_WIDTH; };
 	PiranhaPlant(float x, float y, int _type = PIRANHAPLANT_GREEN_TYPE);
 	
 };

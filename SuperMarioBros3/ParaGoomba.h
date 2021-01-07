@@ -22,7 +22,7 @@ public:
 	virtual void Inactive();
 	void ChangeToGoomba(Grid* grid);
 	void Chasing();
-
+	virtual int GetWidth() { return PARAGOOMBA_BBOX_WIDTH; };
 	ParaGoomba(float x, float y) :Enemy(x, y)
 	{
 		this->SetState(PARAGOOMBA_STATE_WALKING);

@@ -23,5 +23,6 @@ public:
 			unit->Move(x, y);
 		this->SetState(RACCOONTAIL_STATE_ATTACK);
 	};
+	virtual int GetWidth() { return RACCOONTAIL_BBOX_WIDTH; };
 };
 

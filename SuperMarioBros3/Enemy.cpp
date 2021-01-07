@@ -34,6 +34,6 @@ void Enemy::AbleToActive()
 	Game* game = Game::GetInstance();
 	float cam_x = game->GetCamX();
 	float cam_y = game->GetCamY();
-	if ((this->entryX <= cam_x - 16.0f  || this->entryX > cam_x + game->GetScreenWidth()))
+	if ((this->entryX + this->GetWidth() <= cam_x  || this->entryX > cam_x + game->GetScreenWidth()))
 		this->isAbleToActive = true;
 }

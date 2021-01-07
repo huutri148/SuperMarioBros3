@@ -1,5 +1,5 @@
 [SETTINGS]
-start	4
+start	99
 #scene list
 [SCENES]
 99	Resources\Scenes\IntroScene.txt

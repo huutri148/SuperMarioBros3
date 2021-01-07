@@ -21,5 +21,6 @@ public:
 		LPANIMATION_SET ani_set = animation_sets->Get(60);
 		this->SetAnimationSet(ani_set);
 	}
+	virtual int GetWidth() { return FIREBALL_BBOX_WIDTH; };
 };
 

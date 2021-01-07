@@ -10,6 +10,7 @@ class Portal :public GameObject
 		float& right, float& bottom, bool isEnable);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects = NULL);
 	virtual void Render();
+	virtual int GetWidth() { return 0; };
 public:
 	Portal();
 	void GetPortal();

@@ -19,6 +19,7 @@ public:
 	virtual void SetBeingSkilled(int nx);
 	virtual void Inactive() { this->SetState(GOOMBA_STATE_INACTIVE); }
 	virtual void Active() { this->SetState(GOOMBA_STATE_WALKING); };
+	virtual int GetWidth() { return GOOMBA_BBOX_WIDTH; };
 	virtual bool IsInactive()
 	{
 		if (this->state == GOOMBA_STATE_INACTIVE)

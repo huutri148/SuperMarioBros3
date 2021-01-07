@@ -16,6 +16,7 @@ public:
 	void Used();
 	int GetType() { return this->type; }
 	virtual void SetState(int state);
+	virtual int GetWidth() { return COIN_BBOX_WIDTH; };
 	Coin(int type);
 };
 

@@ -833,7 +833,7 @@ bool PlayScene::IsInViewport(LPGAMEOBJECT object)
 	
 	object->GetPosition(objX, objY);
 	
-	return objX >= camX - 16.0f  && objX < camX + SCREEN_WIDTH
+	return objX >= camX - object->GetWidth()  && objX < camX + SCREEN_WIDTH
 		&& objY >= camY - (SCREEN_HEIGHT - game->GetScreenHeight())  && objY < camY + SCREEN_HEIGHT;
 };
 

@@ -16,7 +16,7 @@ public:
 	virtual void GetBoundingBox(float& l, float& t, float& r, float& b, bool isEnable) {};
 	virtual void Render(float translateX = 0, float translateY = 0);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects = NULL);
-
+	virtual int GetWidth() { return 0; };
 	void Down();
 	void Up();
 	void Left();

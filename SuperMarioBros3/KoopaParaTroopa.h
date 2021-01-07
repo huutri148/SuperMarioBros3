@@ -11,6 +11,7 @@ class KoopaParaTroopa :public Enemy
 	virtual void GetBoundingBox(float& left, float& top,
 		float& right, float& bottom, bool isEnable);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
+	virtual int GetWidth() { return PARATROOPA_BBOX_WIDTH; };
 	virtual void Render();
 	virtual void HandleTimeSwitchState();
 

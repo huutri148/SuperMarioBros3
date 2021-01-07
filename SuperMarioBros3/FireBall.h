@@ -21,5 +21,6 @@ public:
 		this->nx = _nx;
 		this->SetState(FIREBALL_STATE_NORMAL);
 	}
+	virtual int GetWidth() { return FIREBALL_BBOX_WIDTH; };
 };
 

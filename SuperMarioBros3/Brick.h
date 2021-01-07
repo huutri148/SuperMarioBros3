@@ -46,6 +46,7 @@ public:
 	void Used();
 	void SetState(int _state);
 	void SetEmpty(bool canBreak);
+	virtual int GetWidth() { return BRICK_BBOX_WIDTH; };
 	virtual void GetBoundingBox(float& l, float& t, float& r, float& b,bool isEnable);
 };
 

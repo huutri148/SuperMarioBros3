@@ -14,6 +14,7 @@ public:
 	virtual void Render();
 	virtual void GetBoundingBox(float& l, float& t, float& r, float& b, bool isEnable) {};
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects = NULL);
+	virtual int GetWidth() { return 0; };
 	BackGroundIntroScene();
 	DWORD beginSection2Time;
 	DWORD section3Time = 0;
