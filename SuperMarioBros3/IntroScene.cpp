@@ -297,7 +297,7 @@ void IntroScene::Update(DWORD dt)
 		{
 			// LUGI nhảy đụng vào góc trên màn hình sẽ bật cờ để 
 			// Section 3 bắt đầu
-			if (lugi->y < 30)
+			if (lugi->y < BEGIN_SECTION3_Y)
 			{
 				backGround->isBeginSection2 = false;
 				backGround->isBeginSection3 = true;
@@ -512,14 +512,23 @@ void IntroScene::Render()
 	if (showingMenu == true)
 		menuSprites.at(indexMenu)->Draw(-1, 16 + BACKGROUND_BBOX_WIDTH/2 - MENU_BBOX_WIDTH /2,
 			SCREEN_WIDTH / 2);
-	for (size_t i = 1; i < objects.size(); i++)
+	for (size_t i = 6; i < objects.size(); i++)
 	{
-		if (objects[i]->x >= 16 && objects[i]->x < 258)
+		if (objects[i]->x >= INTROSCENE_START_POSITION && objects[i]->x < INTROSCENE_END_POSITION)
 		{
 			if (objects[i]->isEnable == true)
 				objects[i]->Render();
 		}
 	}
+	if (mario->x >= INTROSCENE_START_POSITION && mario->x < INTROSCENE_END_POSITION)
+	{
+		mario->Render();
+	}
+	if (lugi->x >= INTROSCENE_START_POSITION && lugi->x < INTROSCENE_END_POSITION)
+	{
+		lugi->Render();
+	}
+	
 	if (showingBush == true)
 	{
 		bushsSprite.at(1)->Draw(-1, 209, 101);
