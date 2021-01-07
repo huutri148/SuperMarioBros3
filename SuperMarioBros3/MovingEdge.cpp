@@ -19,7 +19,13 @@ void MovingEdge::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		this->SetState(MOVING_EDGE_STATE_INACTIVE);
 		return;
 	}
-
+	else
+	{
+		PlayScene* scene = (PlayScene*)(Game::GetInstance())->GetCurrentScene();
+		Mario* mario = scene->GetPlayer();
+		if(mario->x > x + SCREEN_WIDTH)
+			this->SetState(MOVING_EDGE_STATE_INACTIVE);
+	}
 
 	x += dx;
 

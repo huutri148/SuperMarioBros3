@@ -130,7 +130,7 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					{
 						if (e->ny != 0)
 						{
-							y -= (min_ty * dy + ny * 0.4f);
+							y -= (min_ty * dy + e->ny * 0.4f);
 						}
 						if(e->nx != 0)
 							x += -(min_tx * dx + nx * 0.4f) + dx;
