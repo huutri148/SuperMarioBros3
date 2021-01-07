@@ -461,7 +461,8 @@ void IntroScene::HandleBehaviourOfMario()
 		}
 		if (mario->x > SCREEN_HEIGHT / 2 - MARIO_BIG_BBOX_WIDTH)
 		{
-			mario->SetState(MARIO_STATE_IDLE);
+			mario->vx = 0;
+			mario->isAutoWalk = false;
 			mario->useSkill = false;
 			lugi->SetAutoWalk(1, 0.1f);
 		}
