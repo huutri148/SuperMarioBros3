@@ -28,9 +28,9 @@ void ParaGoomba::Update(DWORD dt,
 	HandleTimeSwitchState();
 	Chasing();
 	Enemy::Update(dt, coObjects);
-	if(dt > 64)
-		dt = 16;
+
 	vy += PARAGOOMBA_GRAVITY * dt;
+	
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
@@ -55,24 +55,27 @@ void ParaGoomba::Update(DWORD dt,
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
-			if (!dynamic_cast<Block*>(e->obj) && !dynamic_cast<Goomba*>(e->obj))
+			if (e->ny < 0)
 			{
-				if (nx != 0 && ny == 0)
+				isInGround = true;
+				this->SetState(PARAGOOMBA_STATE_WALKING);
+			}
+			if (dynamic_cast<Brick*>(e->obj))
+			{
+				if (e->nx != 0 && ny == 0)
 				{
 					this->ChangeDirect();
 				}
-				else if (ny < 0 )
+				else if (ny > 0)
 				{
-					if(state == PARAGOOMBA_STATE_SUPER_JUMPING)
-						this->SetState(PARAGOOMBA_STATE_WALKING);
-					else if (state == PARAGOOMBA_STATE_FLAPPING)
-						this->SetState(PARAGOOMBA_STATE_FLAPPING);
+					this->SetState(PARAGOOMBA_STATE_WALKING);
+					this->ChangeDirect();
 				}
 				
 			}
-			else if(!dynamic_cast<Mario*>(e->obj))
+			else if(dynamic_cast<Enemy*>(e->obj))
 			{
-				x += dx;
+				x += -(min_tx * dx + nx * 0.4f) + dx;
 			}
 		}
 	}
@@ -102,10 +105,12 @@ void ParaGoomba::SetState(int state)
 		vy = 0;
 		break;
 	case PARAGOOMBA_STATE_FLAPPING:
-		vy = -0.1f;
+		vy = - PARAGOOMBA_JUMP_SPEED;
+		isInGround = false;
 		break;
 	case PARAGOOMBA_STATE_SUPER_JUMPING:
-		vy = -0.2f;
+		vy = -PARAGOOMBA_SUPER_JUMP_SPEED;
+		isInGround = false;
 		break;
 	case PARAGOOMBA_STATE_INACTIVE:
 		x = entryX;
@@ -172,23 +177,33 @@ void ParaGoomba::SetBeingSkilled(int nx)
 void ParaGoomba::HandleTimeSwitchState()
 {
 	DWORD current = GetTickCount();
+	if (isInGround && isDead == false)
+	{
+		if (current - switchStateTime > PARAGOOMBA_SWITCH_STATE_TIME &&
+			jumpingCount == 0)
+		{
+			this->SetState(PARAGOOMBA_STATE_FLAPPING);
+			jumpingCount++;
+		}
+		else if (jumpingCount < PARAGOOMBA_JUMPING_STACK && jumpingCount > 0)
+		{
+			this->SetState(PARAGOOMBA_STATE_FLAPPING);
+			jumpingCount++;
+		}
+		else if (jumpingCount == PARAGOOMBA_JUMPING_STACK)
+		{
+			this->SetState(PARAGOOMBA_STATE_SUPER_JUMPING);
+			switchStateTime = current;
+			jumpingCount = 0;
+		}
+	}
 	if (GetTickCount64() - deathTime > GOOMA_DEATH_TIME 
 		 && isDead == true)
 	{
 		this->isEnable = false;
 		return;
 	}
-	else if (current - switchStateTime > PARAGOOMBA_SWITCH_STATE_TIME)
-	{
-		if (state == PARAGOOMBA_STATE_WALKING)
-		{
-			y -= PARAGOOMBA_BBOX_HEIGHT_FLAPPING - PARAGOOMBA_STATE_WALKING;
-			this->SetState(PARAGOOMBA_STATE_SUPER_JUMPING);
-		}
-		else if (state == PARAGOOMBA_STATE_FLAPPING)
-			this->SetState(PARAGOOMBA_STATE_SUPER_JUMPING);
-		switchStateTime = GetTickCount();
-	}
+	
 }
 bool ParaGoomba::IsInactive()
 {
