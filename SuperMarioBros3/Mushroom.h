@@ -9,6 +9,7 @@ public:
 	virtual void Render();
 	//void Appear(float x, float y, int _type = MUSHROOM_ANI_POWERUP);
 	void Appear(float x, float y);
+	virtual int GetWidth() { return MUSHROOM_BBOX_WIDTH; };
 	virtual void Update(DWORD dt,
 		vector<LPGAMEOBJECT>* coObjects);
 	void SetState(int _state);

@@ -50,7 +50,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 
 	if (dt > 64)
-		dt = 32;
+		dt = 16;
 
 	if (isTransform)
 		return;
@@ -69,15 +69,18 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		else
 			vy += MARIO_GRAVITY * dt;
 
-
 		if (isFloating)
 		{
 			if(vy > MARIO_GRAVITY * dt)
 				vy = MARIO_GRAVITY * dt;
 		}
-			
+		if (isTouchingPlattform)
+		{
+			if(vy > MARIO_GRAVITY * 63)
+				vy = MARIO_GRAVITY * 63;
+		}
 	}
-
+	DebugOut(L"\nVy:%f", vy);
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 	coEvents.clear();
@@ -94,6 +97,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		y += dy;
 		if (vy > MARIO_GRAVITY * dt)
 			isInGround = false;
+
 	}
 	else
 	{
@@ -294,6 +298,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 							brick->SetEmpty(false);
 						else 
 							brick->SetEmpty(true);
+						isReadyToJump = false;
 					}
 				}
 				else
@@ -397,12 +402,16 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 			else if (dynamic_cast<MovingPlattform*>(e->obj))
 			{
-				if (e->ny < 0)
+				if (e->ny < 0 && nex == 0)
 				{
 					isTouchingPlattform = true;
 					MovingPlattform* movingPlattform = dynamic_cast<MovingPlattform*>(e->obj);
 					movingPlattform->SetState(MOVING_PLATTFORM_STATE_FALLING);
 					movingPlattform->isBeingTouched = true;
+				} 
+				else if ( e->nx != 0)
+				{
+					vx = e->obj->vx;
 				}
 				
 			}
@@ -823,7 +832,7 @@ void Mario::SetDirect(bool nx)
 }
 void Mario::Jump()
 {
-	if (isInGround == false && isTouchingPlattform == false)
+	if (isReadyToJump)
 	{
 		if (jumpStack < MARIO_MAX_JUMPING_STACK)
 		{
@@ -839,6 +848,7 @@ void Mario::StartJumping()
 	{
 		jumpStack = 1;
 		this->SetState(MARIO_STATE_JUMPING);
+		isReadyToJump = true;
 	} 
 }
 void Mario::Squat()

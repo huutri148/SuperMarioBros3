@@ -43,6 +43,7 @@ public:
 	virtual void SetBeingSkilled(int nx);
 	virtual void Inactive() { this->SetState(KOOPATROOPA_STATE_INACTIVE); }
 	virtual void Active() { this->SetState(KOOPATROOPA_STATE_WALKING); };
+	virtual int GetWidth() { return KOOPATROOPA_BBOX_WIDTH; };
 	virtual bool IsInactive()
 	{
 		if (this->state == KOOPATROOPA_STATE_INACTIVE)

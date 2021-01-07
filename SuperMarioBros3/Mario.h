@@ -35,6 +35,7 @@ class Mario : public GameObject
 	bool isFloating = false;
 	bool isTransform = false;
 	bool isTurnRaccoon = false;
+	bool isReadyToJump = false;
 
 
 	RaccoonTail* tail;

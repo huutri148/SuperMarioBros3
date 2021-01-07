@@ -19,6 +19,7 @@ public:
 	virtual bool IsDead();
 	virtual void SetBeingStomped();
 	virtual void SetBeingSkilled(int nx);
+	virtual int GetWidth() { return BOOMERANG_BROTHER_BBOX_WIDTH; };
 	virtual void Inactive() { this->SetState(BOOMERANG_BROTHER_STATE_INACTIVE); }
 	virtual void Active() { this->SetState(BOOMERANG_BROTHER_STATE_WALKING); };
 	virtual bool IsInactive()

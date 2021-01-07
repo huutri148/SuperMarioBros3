@@ -5,6 +5,8 @@
 class ParaGoomba :public Enemy
 {
 	DWORD switchStateTime;
+	bool isInGround;
+	int jumpingCount = 0;
 	Goomba* goomba;
 	virtual void GetBoundingBox(float& left, float& top,
 		float& right, float& bottom, bool isEnable);
@@ -22,12 +24,11 @@ public:
 	virtual void Inactive();
 	void ChangeToGoomba(Grid* grid);
 	void Chasing();
-
+	virtual int GetWidth() { return PARAGOOMBA_BBOX_WIDTH; };
 	ParaGoomba(float x, float y) :Enemy(x, y)
 	{
 		this->SetState(PARAGOOMBA_STATE_WALKING);
 		goomba = new Goomba();
-		/*goomba->SetState(GOOMBA_STATE_INACTIVE);*/
 		goomba->isEnable = false;
 		AnimationSets* animation_sets = AnimationSets::GetInstance();
 		LPANIMATION_SET ani_set = animation_sets->Get(ANIMATION_SET_PARA_GOOMBA);

@@ -19,7 +19,9 @@ public:
 	virtual bool IsInactive();
 	virtual void Active();
 	virtual void Inactive();
+	virtual int GetWidth() { return PARATROOPA_BBOX_WIDTH; };
 	void ChangeToKoopa(Grid* grid);
+
 
 	RedKoopaParaTroopa(float x, float y, float limit = 80.0f);
 	RedKoopaParaTroopa();

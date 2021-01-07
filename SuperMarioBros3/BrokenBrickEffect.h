@@ -14,5 +14,6 @@ class BrokenBrickEffect :public GameObject
 public:
 	BrokenBrickEffect(float x, float y);
 	virtual void SetState(int state);
+	virtual int GetWidth() { return 0; };
 };
 

@@ -9,6 +9,7 @@ public:
 	virtual void Render() {};
 	virtual void GetBoundingBox(float& l, float& t, float& r, float& b, bool isEnable) {};
 	virtual void SetState(int state);
+	virtual int GetWidth() { return 0; };
 	MovingEdge(float startX,float y, float stopX)
 	{
 		x = startX;

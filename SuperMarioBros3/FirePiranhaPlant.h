@@ -20,8 +20,9 @@ public:
 	virtual void GetBoundingBox(float& left, float& top, float& right,
 		float& bottom, bool isEnable);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
-	virtual void Render();
+	virtual int GetWidth() { return FIREPIRANHAPLANT_BBOX_WIDTH; };
 	virtual void SetState(int state);
+	virtual void Render();
 	void Shooting();
 	virtual bool IsDead();
 	virtual void SetBeingStomped();

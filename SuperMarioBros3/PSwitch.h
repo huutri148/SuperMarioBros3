@@ -13,5 +13,6 @@ public:
 	virtual void GetBoundingBox(float& l, float& t, float& r,
 		float& b, bool isEnable);
 	virtual void Used();
+	virtual int GetWidth() { return PSWITCH_BBOX_WIDTH; };
 };
 

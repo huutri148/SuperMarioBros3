@@ -59,6 +59,7 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				isPickedUp = false;
 				mario->isPickingUp = false;
+				mario->SetState(MARIO_STATE_KICK);
 				this->SetState(KOOPATROOPA_STATE_HIDING);
 				IsKicked(mario->nx);
 			}
@@ -130,7 +131,7 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					{
 						if (e->ny != 0)
 						{
-							y -= (min_ty * dy + ny * 0.4f);
+							y -= (min_ty * dy + e->ny * 0.4f);
 						}
 						if(e->nx != 0)
 							x += -(min_tx * dx + nx * 0.4f) + dx;

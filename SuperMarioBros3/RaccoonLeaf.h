@@ -24,5 +24,6 @@ public:
 	virtual void GetBoundingBox(float& l, float& t, float& r,
 		float& b, bool isEnable);
 	virtual void Used();
+	virtual int GetWidth() { return RACCOONLEAF_BBOX_WIDTH; };
 };
 
