@@ -60,6 +60,7 @@ public:
 
 	bool useSkill;
 	bool pressDown = false;
+	bool pressUp = false;
 	bool isSquat = false;
 	bool isPickingUp = false;
 	bool isSwingTail = false;

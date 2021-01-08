@@ -373,7 +373,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				{
 					if (e->ny > 0)
 					{
-						if (!isInGround)
+						if (pressUp)
 						{
 							isTeleport = true;
 							vy = -MARIO_SPEED_TELEPORT;
@@ -965,7 +965,7 @@ void Mario::Fly()
 			current - flyTimeStart < MARIO_FLYING_LIMITED_TIME)
 		{
 			this->SetState(MARIO_STATE_FLYING);
-			this->vy = -0.3f;
+			this->vy = -MARIO_FLYING_SPEED;
 			this->vx = (MARIO_WALKING_SPEED +
 				(BUFF_SPEED * powerMelterStack)) * nx;
 			this->isFlying = true;
@@ -973,7 +973,7 @@ void Mario::Fly()
 		else if (flyTimeStart == 0 && powerMelterStack == POWER_MELTER_FULL)
 		{
 			flyTimeStart = current;
-			this->vy = -0.3f;
+			this->vy = -MARIO_FLYING_SPEED;
 			this->vx = (MARIO_WALKING_SPEED +
 				(BUFF_SPEED * powerMelterStack)) * nx;
 		}

@@ -548,7 +548,10 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	case DIK_R:
 		mario->Reset();
 		if (((PlayScene*)scence)->GetMovingEdge() != NULL)
-			((PlayScene*)scence)->GetMovingEdge()->SetPosition(16, 90);
+		{
+			if(!mario->isInExtraMap)
+				((PlayScene*)scence)->GetMovingEdge()->SetPosition(16, 90);
+		}
 		break;
 	case DIK_I:
 		mario->Information();
@@ -556,6 +559,9 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	case DIK_DOWN:
 		mario->pressDown = true;
 		mario->Squat();
+		break;
+	case DIK_UP:
+		mario->pressUp = true;
 		break;
 	case DIK_A:
 	{
@@ -655,6 +661,9 @@ void PlayScenceKeyHandler::OnKeyUp(int KeyCode)
 		break;
 	case DIK_S:
 		mario->jumpStack = MARIO_MAX_JUMPING_STACK;
+		break;
+	case DIK_UP:
+		mario->pressUp = false;
 		break;
 	case DIK_DOWN:
 		mario->SetState(MARIO_STATE_IDLE);

@@ -4,17 +4,21 @@ class Unit
 {
 	friend class Grid;
 private:
-	Grid* grid;
-	LPGAMEOBJECT obj;
 	float x;
 	float y;
+
+	Grid* grid;
+	LPGAMEOBJECT obj;
+	
 	Unit* prev;
 	Unit* next;
 public:
 	Unit(Grid* grid, LPGAMEOBJECT obj, float x, float y);
+	Unit(Grid* grid, LPGAMEOBJECT obj, int gridRow, int gridCol);
+
 	void Move(float x, float y);
 	LPGAMEOBJECT GetObj(){ return this->obj; }
-	Unit(Grid* grid, LPGAMEOBJECT obj, int gridRow, int gridCol);
+	
 };
 
 class Grid
