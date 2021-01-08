@@ -6,7 +6,7 @@ void Mushroom::Render()
 	int ani = MUSHROOM_ANI_POWERUP;
 	if (type == MUSHROOM_TYPE_1UP)
 		ani = MUSHROOM_ANI_1UP;
-	animation_set->at(ani)->Render(this->nx, round(x),round( y));
+	animation_set->at(ani)->Render(this->nx, round(x - 1),round( y));
 	//RenderBoundingBox();
 }
 

@@ -164,7 +164,8 @@ void Brick::DropItem()
 			item = new Mushroom(MUSHROOM_TYPE_POWERUP);
 		else
 			item = new RaccoonLeaf();
-		item->Appear(x, y);
+		// Đẩy ra 1 tí khi va chạm gạch bên phải sẽ không bị chồng boundingbox
+		item->Appear(x + 1.0f, y);
 		Unit* unit = new Unit(grid, item, x, y);
 		break;
 	}
@@ -180,7 +181,8 @@ void Brick::DropItem()
 	{
 		coin -= 1;
 		item = new Mushroom(MUSHROOM_TYPE_1UP);
-		item->Appear(x, y);
+		// Đẩy ra 1 tí khi va chạm gạch bên phải sẽ không bị chồng boundingbox
+		item->Appear(x + 1.0f, y);
 		Unit* unit = new Unit(grid, item, x, y);
 		break;
 	}
