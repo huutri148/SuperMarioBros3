@@ -1,4 +1,4 @@
-#include "BoomerangBrother.h"
+﻿#include "BoomerangBrother.h"
 #include "Pipe.h"
 #include "Brick.h"
 void BoomerangBrother::GetBoundingBox(float& left, float& top,
@@ -18,8 +18,22 @@ void BoomerangBrother::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		return;
 	Enemy::Update(dt, coObjects);
 	vy += dt * GOOMBA_GRAVITY;
-	if (GetTickCount() - changeStateTime > BOOMERANG_BROTHER_CHANGE_STATE_TIME)
+	if (indexBoomerang >= weapon.size())
+		indexBoomerang = 0;
+	if (GetTickCount() - changeStateTime > BOOMERANG_BROTHER_CHANGE_STATE_TIME )
 		this->SetState(BOOMERANG_BROTHER_STATE_WALKING);
+
+
+
+	// Chỉnh vị trí boomerang khi đang giữ
+	if (weapon[indexBoomerang]->state == BOOMERANG_STATE_HOLDING)
+	{
+		weapon[indexBoomerang]->x = x- BOOMERANG_BBOX_WIDTH / 2;
+		if (isDead)
+			weapon[indexBoomerang]->SetState(BOOMERANG_STATE_INACTIVE);
+	}
+
+
 	if (abs(lastStoping - x) >= BOOMERANG_BROTHER_LIMIT_MOVING)
 	{
 		this->vx = -vx;
@@ -28,10 +42,16 @@ void BoomerangBrother::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		else if (vx < 0)
 			x = lastStoping + BOOMERANG_BROTHER_LIMIT_MOVING;
 		lastStoping = x;
-	
-		ThrowingBoomerang();
+
+		// Nếu mario ra khỏi vùng giới hạn sẽ không ném
+		Mario* mario = ((PlayScene*)Game::GetInstance()->GetCurrentScene())->GetPlayer();
+		if(abs(mario->x - x) <= BOOMERANG_LIMIT_X)
+			ThrowingBoomerang();
+		else
+			this->SetState(BOOMERANG_BROTHER_STATE_THROWING);
 	}
 	
+
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
@@ -83,7 +103,7 @@ void BoomerangBrother::Render()
 	{
 		int ani;
 		ani = BOOMERANG_BROTHER_ANI_WALKING;
-		if (state == BOOMERANG_BROTHER_STATE_THROWING)
+		if (isThrowing)
 			ani = BOOMERANG_BROTHER_ANI_THROWING;
 		animation_set->at(ani)->Render(nx, ny, round(x), round(y));
 	}
@@ -95,8 +115,8 @@ void BoomerangBrother::SetState(int state)
 	switch (state)
 	{
 	case BOOMERANG_BROTHER_STATE_WALKING:
+		isThrowing = false;
 		nx = 1;
-	
 		break;
 	case BOOMERANG_BROTHER_STATE_THROWING:
 		changeStateTime = GetTickCount();
@@ -159,16 +179,15 @@ void BoomerangBrother::HandleTimeSwitchState()
 void BoomerangBrother::ThrowingBoomerang()
 {
 	this->SetState(BOOMERANG_BROTHER_STATE_THROWING);
-
-
-	if (indexBoomerang >= weapon.size())
-		indexBoomerang = 0;
-
-	if (weapon[indexBoomerang]->state == BOOMERANG_STATE_INACTIVE)
+	if (weapon[indexBoomerang]->state == BOOMERANG_STATE_HOLDING)
+	{
+		isThrowing = true;
+		weapon[indexBoomerang++]->Throw(x, y, nx);
+	}
+	else if (weapon[indexBoomerang]->state == BOOMERANG_STATE_INACTIVE)
 	{
 		Grid* grid = ((PlayScene*)Game::GetInstance()->GetCurrentScene())->GetGrid();
-		weapon[indexBoomerang++]->Throw(x, y, 1, grid);
-	}
+		weapon[indexBoomerang]->Hold(x, y, grid);
 		
-
+	}
 }

@@ -67,6 +67,7 @@ protected:
 	vector<LPGAMEOBJECT> listStaticObjectsToRender;
 	vector<LPGAMEOBJECT> listMovingObjectsToRender;
 	vector<LPGAMEOBJECT> listPipesToRender;
+	vector<LPGAMEOBJECT> listWeaponsToRender;
 
 
 

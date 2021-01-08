@@ -1,27 +1,49 @@
 #include "Boomerang.h"
+#include "Utils.h"
 
 
 void Boomerang::Render()
 {
-	if(state == BOOMERANG_STATE_THROWING)
-		animation_set->at(BOOMERANG_ANI_THROWING)->Render(-1, round(x), round(y));
+	if (state != BOOMERANG_STATE_INACTIVE)
+	{
+		int ani = BOOMERANG_ANI_HOLDING;
+		if (state == BOOMERANG_STATE_THROWING)
+			ani = BOOMERANG_ANI_THROWING;
+		animation_set->at(ani)->Render(nx ,ny, round(x), round(y));
+	}
+		
 }
 void Boomerang::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	if (state == BOOMERANG_STATE_INACTIVE)
 		return;
-	if (dt > 64)
-		dt = 32;
 	GameObject::Update(dt, coObjects);
-	vy += dt * 0.00005f;
-	if (vy >= 0 && vx * nx > 0)
-		vx = -vx;
-	if ((x - startX < 0 && nx > 0) || (x - startX > 0 && nx < 0))
+	if (state == BOOMERANG_STATE_THROWING)
 	{
-		this->SetState(BOOMERANG_STATE_INACTIVE);
+		if (-y + startY >= BOOMERANG_LIMIT_Y && vy < 0)
+		{
+			vy = 0;
+			vx = BOOMERANG_SPEED_X;
+		}
+		if (x - startX >= 0 && vx > 0)
+		{
+			vy = BOOMERANG_SPEED_Y;
+			vx = 0;
+			startY = y;
+		}
+		if (y - startY >= BOOMERANG_LIMIT_Y && vy > 0)
+		{
+			vy = 0;
+			vx = -BOOMERANG_SPEED_X;
+			startX = x - BOOMERANG_LIMIT_X;
+		}
+		if (startX - x >= 0 && vx < 0)
+		{
+			this->SetState(BOOMERANG_STATE_INACTIVE);
+		}
+		x += dx;
+		y += dy;
 	}
-	x += dx;
-	y += dy;
 }
 void Boomerang::GetBoundingBox(float& l, float& t,
 	float& r, float& b, bool isEnable)
@@ -37,23 +59,33 @@ void Boomerang::SetState(int _state)
 	switch (_state)
 	{
 	case BOOMERANG_STATE_THROWING:
-		vx = nx * 0.08f;
-		vy = - 0.05f;
-		isEnable = true;
-		startX = x;
-		startY = y;
+		vy = -BOOMERANG_SPEED_Y;
+		vx = 0;
+		startX = x + BOOMERANG_LIMIT_X;
+		startY = y ;
 		break;
 	case BOOMERANG_STATE_INACTIVE:
 		isEnable = false;
+	case BOOMERANG_STATE_HOLDING:
+		vx = 0;
+		vy = 0;
+		isEnable = true;
 		break;
 	}
 }
-void Boomerang::Throw(float x, float y,int nx,Grid* grid)
+void Boomerang::Throw(float x, float y,int nx)
 {
 	this->x = x;
 	this->y = y;
 	this->nx = nx;
 	this->SetState(BOOMERANG_STATE_THROWING);
+}
+void Boomerang::Hold(float x, float y, Grid* grid)
+{
+	this->x = x - BOOMERANG_BBOX_WIDTH/2;
+	this->y = y - 6;
+	nx = 1;
+	this->SetState(BOOMERANG_STATE_HOLDING);
 	if (unit == NULL)
 	{
 		unit = new Unit(grid, this, x, y);

@@ -45,7 +45,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			if (x < edgeLeft)
 			{
 				if (scene->GetMovingEdge() != NULL && vx == 0)
-					vx = -0.025f;
+					vx = scene->GetMovingEdge()->vx;
 				x = edgeLeft;
 			}
 				
@@ -85,7 +85,6 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				vy = MARIO_GRAVITY * 63;
 		}
 	}
-	DebugOut(L"\nVy:%f", vy);
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 	coEvents.clear();
@@ -275,7 +274,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					}
 				}
 			}
-			else if (dynamic_cast<FirePlantBullet*>(e->obj))
+			else if (dynamic_cast<FirePlantBullet*>(e->obj) || dynamic_cast<Boomerang*>(e->obj))
 			{
 				if (untouchable == 0)
 				{

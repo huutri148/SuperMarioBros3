@@ -398,7 +398,8 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 				coObjects.push_back(obj);
 			else 
 			{
-				if (dynamic_cast<FirePlantBullet*>(obj) && obj->IsEnable() == true)
+				if ((dynamic_cast<FirePlantBullet*>(obj) || dynamic_cast<Boomerang*>(obj))
+					&& obj->IsEnable() == true)
 					coObjects.push_back(obj);
 				else if ((dynamic_cast<Enemy*>(obj)) && obj->isEnable == true)
 				{
@@ -453,11 +454,14 @@ void PlayScene::Render()
 			obj->Render();
 		}
 		player->Render();
-		for (auto obj : listPipesToRender)
+		if (player->isTeleport)
 		{
-			if (obj->IsEnable() == false)
-				continue;
-			obj->Render();
+			for (auto obj : listPipesToRender)
+			{
+				if (obj->IsEnable() == false)
+					continue;
+				obj->Render();
+			}
 		}
 		hud->Render();
 	}
@@ -815,6 +819,7 @@ void PlayScene::GetObjectFromGrid()
 	listItems.clear();
 	objects.clear();
 
+
 	Game* game = Game::GetInstance();
 	float camX,camY;
 
@@ -831,13 +836,14 @@ void PlayScene::GetObjectFromGrid()
 		if (dynamic_cast<Block*>(obj) || dynamic_cast<Ground*>(obj))
 			continue;
 
-		else if (dynamic_cast<Brick*>(obj) || dynamic_cast<Portal*>(obj))
+		else if (dynamic_cast<Brick*>(obj) || dynamic_cast<Portal*>(obj) || 
+			dynamic_cast<Pipe*>(obj))
 			listStaticObjectsToRender.push_back(obj);
 
-		else if (dynamic_cast<Enemy*>(obj) || dynamic_cast<FirePlantBullet*>(obj) ||
-			dynamic_cast<FireBall*>(obj) || dynamic_cast<MovingPlattform*>(obj) || 
-			dynamic_cast<Boomerang*>(obj))
-			listMovingObjectsToRender.push_back(obj);
+		else if (dynamic_cast<FirePlantBullet*>(obj) || dynamic_cast<FireBall*>(obj) || 
+			dynamic_cast<MovingPlattform*>(obj) || dynamic_cast<Boomerang*>(obj) ||
+			dynamic_cast<Enemy*>(obj))
+			listMovingObjectsToRender.push_back(obj);			
 
 		else if (dynamic_cast<PointEffect*>(obj) ||	dynamic_cast<HitEffect*>(obj) ||
 			dynamic_cast<BrokenBrickEffect*>(obj))
@@ -847,7 +853,7 @@ void PlayScene::GetObjectFromGrid()
 		else if (dynamic_cast<Item*>(obj))
 			listItems.push_back(obj);
 
-		else if (dynamic_cast<Pipe*>(obj))
+		if (dynamic_cast<Pipe*>(obj))
 			listPipesToRender.push_back(obj);
 	}
  }
