@@ -233,5 +233,7 @@ void ParaGoomba::ChangeToGoomba(Grid* grid)
 	goomba->SetPosition(x, y);
 	goomba->isEnable = true;
 	this->SetState(PARAGOOMBA_STATE_INACTIVE);
-	Unit* unit = new Unit(grid, goomba, x, y);
+	// BUG here:
+	// Khi đổi thành Koopa thì không được nạp vào listUnit
+	Unit* unit = new Unit(grid, goomba, x - GOOMBA_BBOX_WIDTH * 2, y);
 }

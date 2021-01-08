@@ -984,8 +984,7 @@ void PlayScene::ActiveEnemiesInViewport()
 			if(IsInViewport(plattform) && plattform->isAbleToActive == true)
 			{
 				plattform->SetState(MOVING_PLATTFORM_STATE_MOVING);
-			}
-				
+			}		
 		}
 	}
 }

@@ -1,4 +1,4 @@
-#include "RedKoopaParaTroopa.h"
+﻿#include "RedKoopaParaTroopa.h"
 #include"Game.h"
 void RedKoopaParaTroopa::GetBoundingBox(float& left, float& top,
 	float& right, float& bottom,
@@ -151,7 +151,9 @@ void RedKoopaParaTroopa::ChangeToKoopa(Grid* grid)
 	kooPa->isEnable = true;
 	kooPa->isAbleToActive = true;
 	this->SetState(PARATROOPA_STATE_INACTIVE);
-	Unit* unit = new Unit(grid, kooPa, x, y);
+	// BUG here:
+	// Khi đổi thành Koopa thì không được nạp vào listUnit
+	Unit* unit = new Unit(grid, kooPa, x - KOOPATROOPA_BBOX_WIDTH * 2, y);
 }
 RedKoopaParaTroopa::RedKoopaParaTroopa(float x, float y, float limit) :Enemy(x,y)
 {

@@ -1,4 +1,4 @@
-#include "KoopaParaTroopa.h"
+﻿#include "KoopaParaTroopa.h"
 
 
 void KoopaParaTroopa::GetBoundingBox(float& left, float& top,
@@ -120,8 +120,7 @@ void KoopaParaTroopa::SetState(int state)
 }
 bool KoopaParaTroopa::IsDead()
 {
-	if (state == PARATROOPA_STATE_INACTIVE ||
-		state == PARATROOPA_STATE_DEATH ||
+	if (state == PARATROOPA_STATE_INACTIVE || state == PARATROOPA_STATE_DEATH ||
 		state == PARATROOPA_STATE_KOOPA)
 		return true;
 	return false;
@@ -189,11 +188,16 @@ void KoopaParaTroopa::Active()
 }
 void KoopaParaTroopa::ChangeToKoopa(Grid* grid)
 {
+	kooPa->SetState(KOOPATROOPA_STATE_INACTIVE);
 	kooPa->SetPosition(x, y);
 	kooPa->isEnable = true;
 	kooPa->isAbleToActive = true;
 	this->SetState(PARATROOPA_STATE_INACTIVE);
-	Unit* unit = new Unit(grid, kooPa, x, y);
+
+	// BUG here:
+	// Khi đổi thành Koopa thì không được nạp vào listUnit
+	Unit* unit = new Unit(grid, kooPa, x - KOOPATROOPA_BBOX_WIDTH * 2, y);
+	
 }
 KoopaParaTroopa::KoopaParaTroopa(float x, float y) :Enemy(x, y)
 {
