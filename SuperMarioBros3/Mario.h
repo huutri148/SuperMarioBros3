@@ -104,8 +104,11 @@ public:
 
 
 	// 1 số Nút Hack
-	void SetTele(float x, float y){	this->SetLevel(MARIO_RACCOON_FORM);
-									this->x = x; this->y = y; };
+	void SetTele(float x, float y) {
+		this->SetLevel(MARIO_RACCOON_FORM);
+		this->x = x; this->y = y;
+		this->SetState(MARIO_STATE_IDLE);
+	};
 	void Reset();
 	void UpForm();
 

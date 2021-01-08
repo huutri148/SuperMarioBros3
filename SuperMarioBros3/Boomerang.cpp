@@ -48,10 +48,18 @@ void Boomerang::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 void Boomerang::GetBoundingBox(float& l, float& t,
 	float& r, float& b, bool isEnable)
 {
-	l = x;
-	t = y;
-	r = x + BOOMERANG_BBOX_WIDTH;
-	b = y + BOOMERANG_BBOX_HEIGHT;
+	if (state == BOOMERANG_STATE_THROWING)
+	{
+		l = x;
+		t = y;
+		r = x + BOOMERANG_BBOX_WIDTH;
+		b = y + BOOMERANG_BBOX_HEIGHT;
+	}
+	else
+	{
+		l = t = r = b = 0;
+	}
+	
 }
 void Boomerang::SetState(int _state)
 {
@@ -75,6 +83,7 @@ void Boomerang::SetState(int _state)
 }
 void Boomerang::Throw(float x, float y,int nx)
 {
+	
 	this->x = x;
 	this->y = y;
 	this->nx = nx;

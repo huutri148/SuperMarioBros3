@@ -276,6 +276,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 			else if (dynamic_cast<FirePlantBullet*>(e->obj) || dynamic_cast<Boomerang*>(e->obj))
 			{
+			
 				if (untouchable == 0)
 				{
 					if (form > MARIO_SMALL_FORM)
@@ -309,9 +310,9 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				{
 					brick->Used();
 					if (e->ny != 0)
-						y += -(min_ty * dy + ney * 0.4f);
+						y += -(min_ty * dy + e->ny * 0.4f);
 					if (e->nx != 0)
-						x += -(min_tx * dy + nex * 0.4f) + dx;
+						x += -(min_tx * dx + e->nx * 0.4f);
 					Player::GetInstance()->GainPoint(10);
 					Player::GetInstance()->GainMoney(1);
 				}
@@ -964,7 +965,7 @@ void Mario::Fly()
 			current - flyTimeStart < MARIO_FLYING_LIMITED_TIME)
 		{
 			this->SetState(MARIO_STATE_FLYING);
-			this->vy = -MARIO_JUMP_SPEED_Y;
+			this->vy = -0.3f;
 			this->vx = (MARIO_WALKING_SPEED +
 				(BUFF_SPEED * powerMelterStack)) * nx;
 			this->isFlying = true;
@@ -972,7 +973,7 @@ void Mario::Fly()
 		else if (flyTimeStart == 0 && powerMelterStack == POWER_MELTER_FULL)
 		{
 			flyTimeStart = current;
-			this->vy = -MARIO_JUMP_SPEED_Y;
+			this->vy = -0.3f;
 			this->vx = (MARIO_WALKING_SPEED +
 				(BUFF_SPEED * powerMelterStack)) * nx;
 		}

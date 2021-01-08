@@ -445,6 +445,15 @@ void PlayScene::Render()
 				continue;
 			obj->Render();
 		}
+		if (!player->isTeleport)
+		{
+			for (auto obj : listPipesToRender)
+			{
+				if (obj->IsEnable() == false)
+					continue;
+				obj->Render();
+			}
+		}
 		for (auto obj : listMovingObjectsToRender)
 		{
 			if (obj->IsEnable() == false)
@@ -837,7 +846,7 @@ void PlayScene::GetObjectFromGrid()
 			continue;
 
 		else if (dynamic_cast<Brick*>(obj) || dynamic_cast<Portal*>(obj) || 
-			dynamic_cast<Pipe*>(obj))
+			dynamic_cast<PiranhaPlant*>(obj) || dynamic_cast<FirePiranhaPlant*>(obj))
 			listStaticObjectsToRender.push_back(obj);
 
 		else if (dynamic_cast<FirePlantBullet*>(obj) || dynamic_cast<FireBall*>(obj) || 
