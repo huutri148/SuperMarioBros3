@@ -1025,7 +1025,7 @@ Mario::Mario()
 	vx = vy = 0;
 	nx = 1;
 	powerMelterStack = 0;
-	form = MARIO_SMALL_FORM;
+	form = Player::GetInstance()->GetLevel();
 	isEnable = true;
 	isKickShell = false;
 	useSkill = false;

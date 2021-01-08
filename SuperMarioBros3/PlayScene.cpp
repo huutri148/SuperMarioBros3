@@ -527,6 +527,7 @@ void PlayScene::Unload()
 	player = NULL;
 	hud = NULL;
 	map = NULL;
+	Brick::isTransForm = false;
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
 }
 
@@ -586,8 +587,10 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		{
 			mario->SetTele(659, 116);
 			((PlayScene*)scence)->GetMovingEdge()->SetPosition(440, 16);
+			
 		}
-		
+		if (mario->isInExtraMap)
+			mario->isInExtraMap = false;
 		break;
 	case DIK_X:
 		if (scence->GetSceneID() == 1)
@@ -598,7 +601,10 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		{
 			mario->SetTele(1003, 116);
 			((PlayScene*)scence)->GetMovingEdge()->SetPosition(800, 16);
+			
 		}
+		if (mario->isInExtraMap)
+			mario->isInExtraMap = false;
 		break;
 	case DIK_C:
 		if (scence->GetSceneID() == 1)
@@ -610,6 +616,8 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 			mario->SetTele(1003, 116);
 			((PlayScene*)scence)->GetMovingEdge()->SetPosition(800, 16);
 		}
+		if (mario->isInExtraMap)
+			mario->isInExtraMap = false;
 		break;
 	case DIK_V:
 		if (scence->GetSceneID() == 1)
@@ -621,6 +629,8 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 			mario->SetTele(1552, 110);
 			((PlayScene*)scence)->GetMovingEdge()->SetPosition(1300, 16);
 		}
+		if (mario->isInExtraMap)
+			mario->isInExtraMap = false;
 		break;
 	case DIK_B:
 		if (scence->GetSceneID() == 1)
@@ -632,7 +642,8 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 			mario->SetTele(1957, 68);
 			((PlayScene*)scence)->GetMovingEdge()->SetPosition(1750, 16);
 		}
-		
+		if (mario->isInExtraMap)
+			mario->isInExtraMap = false;
 		break;
 	case DIK_N:
 		if (scence->GetSceneID() == 1)
