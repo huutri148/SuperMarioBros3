@@ -398,7 +398,8 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 				coObjects.push_back(obj);
 			else 
 			{
-				if (dynamic_cast<FirePlantBullet*>(obj) && obj->IsEnable() == true)
+				if ((dynamic_cast<FirePlantBullet*>(obj) || dynamic_cast<Boomerang*>(obj))
+					&& obj->IsEnable() == true)
 					coObjects.push_back(obj);
 				else if ((dynamic_cast<Enemy*>(obj)) && obj->isEnable == true)
 				{
@@ -453,11 +454,14 @@ void PlayScene::Render()
 			obj->Render();
 		}
 		player->Render();
-		for (auto obj : listPipesToRender)
+		if (player->isTeleport)
 		{
-			if (obj->IsEnable() == false)
-				continue;
-			obj->Render();
+			for (auto obj : listPipesToRender)
+			{
+				if (obj->IsEnable() == false)
+					continue;
+				obj->Render();
+			}
 		}
 		hud->Render();
 	}
@@ -534,6 +538,8 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		break;
 	case DIK_R:
 		mario->Reset();
+		if (((PlayScene*)scence)->GetMovingEdge() != NULL)
+			((PlayScene*)scence)->GetMovingEdge()->SetPosition(16, 90);
 		break;
 	case DIK_I:
 		mario->Information();
@@ -557,27 +563,75 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		break;
 	}
 	case DIK_Z:
-		mario->SetTele(505, 300);
+		if (scence->GetSceneID() == 1)
+		{
+			mario->SetTele(505, 300);
+		} 
+		else if (scence->GetSceneID() == 4)
+		{
+			mario->SetTele(659, 116);
+			((PlayScene*)scence)->GetMovingEdge()->SetPosition(440, 16);
+		}
+		
 		break;
 	case DIK_X:
-		mario->SetTele(735, 380);
+		if (scence->GetSceneID() == 1)
+		{
+			mario->SetTele(735, 380);
+		}
+		else if (scence->GetSceneID() == 4)
+		{
+			mario->SetTele(1003, 116);
+			((PlayScene*)scence)->GetMovingEdge()->SetPosition(800, 16);
+		}
 		break;
 	case DIK_C:
-		mario->SetTele(1327, 380);
+		if (scence->GetSceneID() == 1)
+		{
+			mario->SetTele(1327, 380);
+		}
+		else if (scence->GetSceneID() == 4)
+		{
+			mario->SetTele(1003, 116);
+			((PlayScene*)scence)->GetMovingEdge()->SetPosition(800, 16);
+		}
 		break;
 	case DIK_V:
-		mario->SetTele(1930, 380);
+		if (scence->GetSceneID() == 1)
+		{
+			mario->SetTele(1930, 380);
+		}
+		else if (scence->GetSceneID() == 4)
+		{
+			mario->SetTele(1552, 110);
+			((PlayScene*)scence)->GetMovingEdge()->SetPosition(1300, 16);
+		}
 		break;
 	case DIK_B:
-		mario->SetTele(2275, 90);
+		if (scence->GetSceneID() == 1)
+		{
+			mario->SetTele(2275, 90);
+		}
+		else if (scence->GetSceneID() == 4)
+		{
+			mario->SetTele(1957, 68);
+			((PlayScene*)scence)->GetMovingEdge()->SetPosition(1750, 16);
+		}
+		
 		break;
 	case DIK_N:
-		mario->SetTele(2488, 380);
+		if (scence->GetSceneID() == 1)
+		{
+			mario->SetTele(2488, 380);
+		}
+		else if (scence->GetSceneID() == 4)
+		{
+			mario->SetTele(2216, 118);
+			mario->isInExtraMap = true;
+			((PlayScene*)scence)->GetMovingEdge()->SetState(MOVING_EDGE_STATE_INACTIVE);
+		}
 		break;
 	case DIK_P:
-		((PlayScene*)scence)->GetGrid()->Out();
-		break;
-	case DIK_G:
 		((PlayScene*)scence)->GetGrid()->Out();
 		break;
 	}
@@ -765,6 +819,7 @@ void PlayScene::GetObjectFromGrid()
 	listItems.clear();
 	objects.clear();
 
+
 	Game* game = Game::GetInstance();
 	float camX,camY;
 
@@ -781,13 +836,14 @@ void PlayScene::GetObjectFromGrid()
 		if (dynamic_cast<Block*>(obj) || dynamic_cast<Ground*>(obj))
 			continue;
 
-		else if (dynamic_cast<Brick*>(obj) || dynamic_cast<Portal*>(obj))
+		else if (dynamic_cast<Brick*>(obj) || dynamic_cast<Portal*>(obj) || 
+			dynamic_cast<Pipe*>(obj))
 			listStaticObjectsToRender.push_back(obj);
 
-		else if (dynamic_cast<Enemy*>(obj) || dynamic_cast<FirePlantBullet*>(obj) ||
-			dynamic_cast<FireBall*>(obj) || dynamic_cast<MovingPlattform*>(obj) || 
-			dynamic_cast<Boomerang*>(obj))
-			listMovingObjectsToRender.push_back(obj);
+		else if (dynamic_cast<FirePlantBullet*>(obj) || dynamic_cast<FireBall*>(obj) || 
+			dynamic_cast<MovingPlattform*>(obj) || dynamic_cast<Boomerang*>(obj) ||
+			dynamic_cast<Enemy*>(obj))
+			listMovingObjectsToRender.push_back(obj);			
 
 		else if (dynamic_cast<PointEffect*>(obj) ||	dynamic_cast<HitEffect*>(obj) ||
 			dynamic_cast<BrokenBrickEffect*>(obj))
@@ -797,7 +853,7 @@ void PlayScene::GetObjectFromGrid()
 		else if (dynamic_cast<Item*>(obj))
 			listItems.push_back(obj);
 
-		else if (dynamic_cast<Pipe*>(obj))
+		if (dynamic_cast<Pipe*>(obj))
 			listPipesToRender.push_back(obj);
 	}
  }

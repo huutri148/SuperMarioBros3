@@ -17,6 +17,12 @@ public:
 		this->stopX = stopX;
 		this->SetState(MOVING_EDGE_STATE_MOVING);
 	}
+	void SetPosition(float x, float y)
+	{
+		this->SetState(MOVING_EDGE_STATE_MOVING);
+		this->x = x;
+		this->y = y;
+	}
 
 };
 

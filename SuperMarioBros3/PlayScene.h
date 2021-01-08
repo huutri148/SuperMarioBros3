@@ -67,6 +67,7 @@ protected:
 	vector<LPGAMEOBJECT> listStaticObjectsToRender;
 	vector<LPGAMEOBJECT> listMovingObjectsToRender;
 	vector<LPGAMEOBJECT> listPipesToRender;
+	vector<LPGAMEOBJECT> listWeaponsToRender;
 
 
 
@@ -102,6 +103,7 @@ public:
 	void GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& coObjects);
 	void GetObjectFromGrid();
 	Grid* GetGrid() { return grid; };
+	MovingEdge* GetMovingEdge() { return movingEdge; };
 
 
 	void SetDoneGame() { isGameDone = true; };
