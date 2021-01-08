@@ -126,6 +126,10 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						{
 							this->SetState(KOOPATROOPA_STATE_DEATH);
 						}
+						if (e->ny != 0)
+						{
+							y -= (min_ty * dy + e->ny * 0.4f);
+						}
 					}
 					else
 					{

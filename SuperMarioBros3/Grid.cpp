@@ -107,7 +107,6 @@ void Grid::Move(Unit* unit, float x, float y)
 	if (newRow < 0 || newRow >= numRows || newCol < 0 ||
 		newCol >= numCols)
 	{
-				
 		return;
 	}
 	
@@ -131,6 +130,7 @@ void Grid::Move(Unit* unit, float x, float y)
 	}
 	if (cells[oldRow][oldCol] == unit)
 		cells[oldRow][oldCol] = unit->next;
+
 	// thêm vào cell mới
 	Add(unit);
 }

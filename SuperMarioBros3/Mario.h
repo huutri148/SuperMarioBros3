@@ -60,6 +60,7 @@ public:
 
 	bool useSkill;
 	bool pressDown = false;
+	bool pressUp = false;
 	bool isSquat = false;
 	bool isPickingUp = false;
 	bool isSwingTail = false;
@@ -104,8 +105,11 @@ public:
 
 
 	// 1 số Nút Hack
-	void SetTele(float x, float y){	this->SetLevel(MARIO_RACCOON_FORM);
-									this->x = x; this->y = y; };
+	void SetTele(float x, float y) {
+		this->SetLevel(MARIO_RACCOON_FORM);
+		this->x = x; this->y = y;
+		this->SetState(MARIO_STATE_IDLE);
+	};
 	void Reset();
 	void UpForm();
 

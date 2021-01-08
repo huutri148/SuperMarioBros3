@@ -445,6 +445,15 @@ void PlayScene::Render()
 				continue;
 			obj->Render();
 		}
+		if (!player->isTeleport)
+		{
+			for (auto obj : listPipesToRender)
+			{
+				if (obj->IsEnable() == false)
+					continue;
+				obj->Render();
+			}
+		}
 		for (auto obj : listMovingObjectsToRender)
 		{
 			if (obj->IsEnable() == false)
@@ -518,6 +527,7 @@ void PlayScene::Unload()
 	player = NULL;
 	hud = NULL;
 	map = NULL;
+	Brick::isTransForm = false;
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
 }
 
@@ -539,7 +549,10 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	case DIK_R:
 		mario->Reset();
 		if (((PlayScene*)scence)->GetMovingEdge() != NULL)
-			((PlayScene*)scence)->GetMovingEdge()->SetPosition(16, 90);
+		{
+			if(!mario->isInExtraMap)
+				((PlayScene*)scence)->GetMovingEdge()->SetPosition(16, 90);
+		}
 		break;
 	case DIK_I:
 		mario->Information();
@@ -547,6 +560,9 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	case DIK_DOWN:
 		mario->pressDown = true;
 		mario->Squat();
+		break;
+	case DIK_UP:
+		mario->pressUp = true;
 		break;
 	case DIK_A:
 	{
@@ -571,8 +587,10 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		{
 			mario->SetTele(659, 116);
 			((PlayScene*)scence)->GetMovingEdge()->SetPosition(440, 16);
+			
 		}
-		
+		if (mario->isInExtraMap)
+			mario->isInExtraMap = false;
 		break;
 	case DIK_X:
 		if (scence->GetSceneID() == 1)
@@ -583,7 +601,10 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 		{
 			mario->SetTele(1003, 116);
 			((PlayScene*)scence)->GetMovingEdge()->SetPosition(800, 16);
+			
 		}
+		if (mario->isInExtraMap)
+			mario->isInExtraMap = false;
 		break;
 	case DIK_C:
 		if (scence->GetSceneID() == 1)
@@ -595,6 +616,8 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 			mario->SetTele(1003, 116);
 			((PlayScene*)scence)->GetMovingEdge()->SetPosition(800, 16);
 		}
+		if (mario->isInExtraMap)
+			mario->isInExtraMap = false;
 		break;
 	case DIK_V:
 		if (scence->GetSceneID() == 1)
@@ -606,6 +629,8 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 			mario->SetTele(1552, 110);
 			((PlayScene*)scence)->GetMovingEdge()->SetPosition(1300, 16);
 		}
+		if (mario->isInExtraMap)
+			mario->isInExtraMap = false;
 		break;
 	case DIK_B:
 		if (scence->GetSceneID() == 1)
@@ -617,7 +642,8 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 			mario->SetTele(1957, 68);
 			((PlayScene*)scence)->GetMovingEdge()->SetPosition(1750, 16);
 		}
-		
+		if (mario->isInExtraMap)
+			mario->isInExtraMap = false;
 		break;
 	case DIK_N:
 		if (scence->GetSceneID() == 1)
@@ -646,6 +672,9 @@ void PlayScenceKeyHandler::OnKeyUp(int KeyCode)
 		break;
 	case DIK_S:
 		mario->jumpStack = MARIO_MAX_JUMPING_STACK;
+		break;
+	case DIK_UP:
+		mario->pressUp = false;
 		break;
 	case DIK_DOWN:
 		mario->SetState(MARIO_STATE_IDLE);
@@ -837,7 +866,7 @@ void PlayScene::GetObjectFromGrid()
 			continue;
 
 		else if (dynamic_cast<Brick*>(obj) || dynamic_cast<Portal*>(obj) || 
-			dynamic_cast<Pipe*>(obj))
+			dynamic_cast<PiranhaPlant*>(obj) || dynamic_cast<FirePiranhaPlant*>(obj))
 			listStaticObjectsToRender.push_back(obj);
 
 		else if (dynamic_cast<FirePlantBullet*>(obj) || dynamic_cast<FireBall*>(obj) || 
@@ -966,8 +995,7 @@ void PlayScene::ActiveEnemiesInViewport()
 			if(IsInViewport(plattform) && plattform->isAbleToActive == true)
 			{
 				plattform->SetState(MOVING_PLATTFORM_STATE_MOVING);
-			}
-				
+			}		
 		}
 	}
 }

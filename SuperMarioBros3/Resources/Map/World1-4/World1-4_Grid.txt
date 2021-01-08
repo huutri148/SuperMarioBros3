@@ -1,6 +1,6 @@
 14	3
 # MARIO	x	y
-0	16.0	90
+0	48.0	90
 #HUD
 13	0	0
 #GROUND	x	y

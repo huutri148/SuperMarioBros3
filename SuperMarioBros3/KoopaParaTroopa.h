@@ -8,6 +8,7 @@ class KoopaParaTroopa :public Enemy
 	// It's a lame way !!!
 	// Todo: find a way to specify KoopaTroopa instead of Enemy
 	Enemy* kooPa;
+	Unit* unit;
 	virtual void GetBoundingBox(float& left, float& top,
 		float& right, float& bottom, bool isEnable);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
