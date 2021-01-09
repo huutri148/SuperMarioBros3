@@ -93,6 +93,7 @@ public:
 	float GetEdgeRight();
 	float GetEdgeRightExtraMap() { return map->edgeRightInExtraMap; }
 	float GetEdgeLeftExtraMap() { return map->edgeLeftInExtraMap; }
+	float GetEdgeBottom();
 	void GetExtraMapPosition(float& x, float& y);
 	void GetWorldMapPosition(float& x, float& y);
 	void GetStartPosition(float& x, float& y);

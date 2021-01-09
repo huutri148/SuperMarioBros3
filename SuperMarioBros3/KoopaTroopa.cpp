@@ -59,7 +59,8 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				isPickedUp = false;
 				mario->isPickingUp = false;
-				mario->SetState(MARIO_STATE_KICK);
+				if(!mario->isInIntroScene)
+					mario->SetState(MARIO_STATE_KICK);
 				this->SetState(KOOPATROOPA_STATE_HIDING);
 				IsKicked(mario->nx);
 			}
