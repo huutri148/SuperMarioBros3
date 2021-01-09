@@ -535,6 +535,8 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 {
 	//DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);
 	Mario* mario = ((PlayScene*)scence)->GetPlayer();
+	if (mario->isAutoWalk || mario->isInTeleport || mario->isTeleport)
+		return;
 	switch (KeyCode)
 	{
 	case DIK_S:
@@ -741,7 +743,7 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 void PlayScene::TurnCamY(float playerY, bool isFlying, int ScreenHeight, int MapHeight)
 {
 	
-	if (isTurnCamY == true && playerY > (map->edgeBottomInWorld + 16) - ScreenHeight/2)
+	if (isTurnCamY == true && playerY > (GetEdgeBottom() + 16) - ScreenHeight/2)
 	{
 		isTurnCamY = false;
 	}
@@ -1074,6 +1076,14 @@ float PlayScene::GetEdgeRight()
 		return map->edgeRightInExtraMap;
 	return map->edgeRight;
 }
+
+float PlayScene::GetEdgeBottom()
+{
+	if (player->isInExtraMap)
+		return map->edgeBottomInExtraMap;
+	return map->edgeBottomInWorld;
+}
+
 
 void PlayScene::ParseObjFromFile(LPCWSTR path)
 {
