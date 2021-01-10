@@ -20,8 +20,7 @@ void MovingPlattform::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	if (this->state == MOVING_PLATTFORM_STATE_FALLING)
 		vy += dt * MOVING_PLATTFORM_GRAVITY;
 
-	x += dx;
-	y += dy;
+
 	if (isBeingTouched)
 	{
 		PlayScene* playScene = (PlayScene*)Game::GetInstance()->GetCurrentScene();
@@ -42,6 +41,37 @@ void MovingPlattform::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			isBeingTouched = false;
 		}
 	}
+	vector<LPCOLLISIONEVENT> coEvents;
+	vector<LPCOLLISIONEVENT> coEventsResult;
+
+	coEvents.clear();
+	CalcPotentialCollisions(coObjects, coEvents);
+	if (coEvents.size() == 0)
+	{
+		x += dx;
+		y += dy;
+	}
+	else
+	{
+		float min_tx, min_ty, nx = 0, ny;
+		FilterCollision(coEvents, coEventsResult,
+			min_tx, min_ty,
+			nx, ny);
+
+		for (UINT i = 0; i < coEventsResult.size(); i++)
+		{
+			LPCOLLISIONEVENT e = coEventsResult[i];
+			if (dynamic_cast<Mario*>(e->obj))
+			{
+				if (nx != 0 && ny == 0)
+				{
+					
+					e->obj->x -= (min_tx * dx + nx * 0.4f);
+				}
+			}
+		}
+	}
+
 }
 void MovingPlattform::Render()
 {

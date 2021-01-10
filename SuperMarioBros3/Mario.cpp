@@ -112,7 +112,6 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						nex, ney);
 		x += min_tx * dx + nex * 0.4f;
 		y += min_ty * dy + ney * 0.4f;
-		
 		// Collision logic 
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
@@ -416,7 +415,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				} 
 				else if ( e->nx != 0)
 				{
-					vx = e->obj->vx;
+					vx = e->obj->vx -0.001f;
 				}
 				
 			}

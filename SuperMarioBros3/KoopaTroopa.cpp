@@ -19,7 +19,18 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	if (state == KOOPATROOPA_STATE_INACTIVE || isEnable == false)
 		return;
 	Enemy::Update(dt, coObjects);
-	vy += KOOPATROOPA_GRAVITY * dt;
+	if (dt > 64)
+		dt = 16;
+
+
+	if (!isBumped)
+		vy += KOOPATROOPA_GRAVITY * dt;
+	else
+		vy += KOOPATROOPA_BUMPED_GRAVITY * dt;
+
+
+
+	
 	
 	if (state != KOOPATROOPA_STATE_WALKING)
 		CanPullBack = false;
@@ -98,6 +109,7 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			nx, ny);
 		x += min_tx * dx + nx * 0.4f;
 		y += min_ty * dy + ny * 0.4f;
+		
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
