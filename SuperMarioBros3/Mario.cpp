@@ -415,7 +415,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				} 
 				else if ( e->nx != 0)
 				{
-					vx = e->obj->vx;
+					vx = e->obj->vx -0.001f;
 				}
 				
 			}

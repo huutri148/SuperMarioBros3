@@ -305,6 +305,10 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 				coObjects.push_back(obj);
 		}
 	}
+	else if (dynamic_cast<MovingPlattform*>(curObj))
+	{
+		coObjects.push_back(player);
+	}
 	else if (dynamic_cast<FirePiranhaPlant*>(curObj) || dynamic_cast<PiranhaPlant*>(curObj))
 	{
 		coObjects.push_back(player);
