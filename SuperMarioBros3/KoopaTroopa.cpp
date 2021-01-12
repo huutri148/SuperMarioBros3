@@ -72,6 +72,23 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					mario->SetState(MARIO_STATE_KICK);
 				this->SetState(KOOPATROOPA_STATE_HIDING);
 				IsKicked(mario->nx);
+				for (UINT i = 0; i < coObjects->size(); i++)
+				{
+					if (dynamic_cast<Pipe*>(coObjects->at(i)) || dynamic_cast<Ground*>(coObjects->at(i)) ||
+						dynamic_cast<Brick*>(coObjects->at(i)))
+					{
+						if (this->CheckAABB(coObjects->at(i)))
+						{
+							this->SetState(KOOPATROOPA_STATE_DEATH);
+							ny = 1;
+							vx = 0;
+							Game* game = Game::GetInstance();
+							LPSCENE scene = game->GetCurrentScene();
+							this->GainScore(100);
+							return;
+						}
+					}
+				}
 			}
 		}
 	}
@@ -427,8 +444,6 @@ void KoopaTroopa::HandleTimeSwitchState(vector<LPGAMEOBJECT>* coObjects)
 				}
 			}
 			turnWalkingTime = 0;
-
-
 			// Trường hợp rùa bị cầm và tỉnh lại trong Pipe, Gạch hoặc đất
 			for (UINT i = 0; i < coObjects->size(); i++)
 			{
