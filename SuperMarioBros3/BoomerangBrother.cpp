@@ -147,12 +147,7 @@ void BoomerangBrother::SetBeingStomped()
 	isDead = true;
 	Game* game = Game::GetInstance();
 	LPSCENE scene = game->GetCurrentScene();
-	if (dynamic_cast<PlayScene*>(scene))
-	{
-		Grid* grid = ((PlayScene*)game->GetCurrentScene())->GetGrid();
-		PointEffect* effect = new PointEffect(x, y, POINT_TYPE_1000);
-		Unit* unit = new Unit(grid, effect, x, y);
-	}
+	this->GainScore(1000);
 	deathTime = GetTickCount();
 }
 void BoomerangBrother::SetBeingSkilled(int nx)
@@ -160,10 +155,7 @@ void BoomerangBrother::SetBeingSkilled(int nx)
 	ny = 1;
 	deathTime = GetTickCount();
 	isDead = true;
-	Game* game = Game::GetInstance();
-	Grid* grid = ((PlayScene*)game->GetCurrentScene())->GetGrid();
-	PointEffect* effect = new PointEffect(x, y, POINT_TYPE_1000);
-	Unit* unit = new Unit(grid, effect, x, y);
+	this->GainScore(1000);
 	deathTime = GetTickCount();
 }
 void BoomerangBrother::HandleTimeSwitchState()

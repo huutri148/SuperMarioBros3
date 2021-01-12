@@ -130,28 +130,14 @@ bool KoopaParaTroopa::IsDead()
 void KoopaParaTroopa::SetBeingStomped()
 {
 	this->SetState(PARATROOPA_STATE_KOOPA);
-	Game* game = Game::GetInstance();
-	LPSCENE scene = game->GetCurrentScene();
-	if (dynamic_cast<PlayScene*>(scene))
-	{
-		Grid* grid = ((PlayScene*)game->GetCurrentScene())->GetGrid();
-		PointEffect* effect = new PointEffect(x, y, POINT_TYPE_100);
-		Unit* unit = new Unit(grid, effect, x, y);
-	}
+	this->GainScore(100);
 }
 void KoopaParaTroopa::SetBeingSkilled(int nx)
 {
 	this->nx = nx;
 	this->SetState(PARATROOPA_STATE_DEATH);
 	deathTime = GetTickCount();
-	Game* game = Game::GetInstance();
-	LPSCENE scene = game->GetCurrentScene();
-	if (dynamic_cast<PlayScene*>(scene))
-	{
-		Grid* grid = ((PlayScene*)game->GetCurrentScene())->GetGrid();
-		PointEffect* effect = new PointEffect(x, y, POINT_TYPE_200);
-		Unit* unit = new Unit(grid, effect, x, y);
-	}
+	this->GainScore(200);
 }
 void KoopaParaTroopa::HandleTimeSwitchState()
 {
