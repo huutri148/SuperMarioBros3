@@ -78,6 +78,7 @@ public:
 	LPCOLLISIONEVENT SweptAABBEx(LPGAMEOBJECT coO);
 	void CalcPotentialCollisions(vector<LPGAMEOBJECT>* coObjects,
 		vector<LPCOLLISIONEVENT>& coEvents);
+	virtual bool CheckAABB(GameObject* obj);
 	void FilterCollision(
 		vector<LPCOLLISIONEVENT>& coEvents,
 		vector<LPCOLLISIONEVENT>& coEventsResult,
@@ -86,7 +87,7 @@ public:
 		float& nx,
 		float& ny);
 
-	/*void AddAnimation(int aniId);*/
+	
 	void SetAnimationSet(LPANIMATION_SET ani_set)
 	{ animation_set = ani_set; }
 	GameObject() ;
@@ -102,6 +103,7 @@ public:
 		dt = 0;
 		state = 0;
 	}
+
 	virtual void GetBoundingBox(float& left, float& top, float& right,
 		float& bottom,bool isEnable) = 0;
 	virtual int GetWidth() = 0;

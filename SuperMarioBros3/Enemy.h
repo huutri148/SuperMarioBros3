@@ -27,6 +27,8 @@ public:
 	virtual void Active() = 0;
 	void AbleToActive();
 
+
+	void GainScore(int score = 100);
 	virtual void SetEntryPosition(float x, float y);
 	void GetEntryPosition(float& ex, float& ey) { ex = entryX; ey = entryY; };
 	virtual void SetState(int state);

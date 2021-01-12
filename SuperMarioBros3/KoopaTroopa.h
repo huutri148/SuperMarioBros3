@@ -35,7 +35,8 @@ public:
 		float& right, float& bottom, bool isEnable);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	virtual void Render();
-	virtual void HandleTimeSwitchState();
+	void HandleTimeSwitchState(vector<LPGAMEOBJECT>* coObjects);
+	virtual void HandleTimeSwitchState() {};
 	
 
 	virtual void SetState(int state);
@@ -50,7 +51,9 @@ public:
 			return true;
 		return false;
 	}
+	virtual bool CheckAABB(GameObject* obj);
 	KoopaTroopa(float x, float y, int _type = KOOPATROOPA_GREEN_TYPE);
 	KoopaTroopa(int type =KOOPATROOPA_GREEN_TYPE);
+	
 };
 

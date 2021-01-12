@@ -131,22 +131,14 @@ void Goomba::SetBeingStomped()
 	this->SetState(GOOMBA_STATE_BEING_STOMPED);
 	Game* game = Game::GetInstance();
 	LPSCENE scene = game->GetCurrentScene();
-	if (dynamic_cast<PlayScene*>(scene))
-	{
-		Grid* grid = ((PlayScene*)game->GetCurrentScene())->GetGrid();
-		PointEffect* effect = new PointEffect(x, y, POINT_TYPE_100);
-		Unit* unit = new Unit(grid, effect, x, y);
-	}
+	this->GainScore(100);
 	deathTime = GetTickCount();
 }
 void Goomba::SetBeingSkilled(int nx)
 {
 	this->nx = nx;
 	this->SetState(GOOMBA_STATE_BEING_SKILLED);
-	Game* game = Game::GetInstance();
-	Grid* grid = ((PlayScene*)game->GetCurrentScene())->GetGrid();
-	PointEffect* effect = new PointEffect(x, y, POINT_TYPE_100);
-	Unit* unit = new Unit(grid, effect, x, y);
+	this->GainScore(100);
 	deathTime = GetTickCount();
 }
 void Goomba::HandleTimeSwitchState()
