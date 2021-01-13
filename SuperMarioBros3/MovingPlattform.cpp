@@ -67,6 +67,7 @@ void MovingPlattform::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				{
 					
 					e->obj->x -= (min_tx * dx + nx * 0.4f);
+					/*e->obj->x = x - e->obj->GetWidth();*/
 				}
 			}
 		}

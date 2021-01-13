@@ -72,23 +72,7 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					mario->SetState(MARIO_STATE_KICK);
 				this->SetState(KOOPATROOPA_STATE_HIDING);
 				IsKicked(mario->nx);
-				for (UINT i = 0; i < coObjects->size(); i++)
-				{
-					if (dynamic_cast<Pipe*>(coObjects->at(i)) || dynamic_cast<Ground*>(coObjects->at(i)) ||
-						dynamic_cast<Brick*>(coObjects->at(i)))
-					{
-						if (this->CheckAABB(coObjects->at(i)))
-						{
-							this->SetState(KOOPATROOPA_STATE_DEATH);
-							ny = 1;
-							vx = 0;
-							Game* game = Game::GetInstance();
-							LPSCENE scene = game->GetCurrentScene();
-							this->GainScore(100);
-							return;
-						}
-					}
-				}
+				CheckWhenHidhing(coObjects);
 			}
 		}
 	}
@@ -151,8 +135,8 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				{
 					if (isPickedUp == true || isBumped == true)
 					{
-						enemy->SetBeingSkilled(this->nx);
 						enemy->SetDead();
+						enemy->SetBeingSkilled(this->nx);
 						if (isPickedUp == true)
 						{
 							this->SetState(KOOPATROOPA_STATE_DEATH);
@@ -410,7 +394,9 @@ void KoopaTroopa::SetBeingSkilled(int _nx)
 	vy = -KOOPATROOPA_DIE_DEFLECT_SPEED_Y;
 	ny = 1;
 	isBumped = false;
-	isPickedUp = false;			
+	isPickedUp = false;
+	if (isDead == true)
+		deathTime = GetTickCount();
 }
 
 
@@ -420,7 +406,7 @@ void KoopaTroopa::HandleTimeSwitchState(vector<LPGAMEOBJECT>* coObjects)
 	if (GetTickCount() - deathTime > KOOPATROOPA_DEATH_TIME &&
 		isDead == true)
 	{
-		isEnable = true;
+		isEnable = false;
 		return;
 	}
 	if (forceShell == false)
@@ -445,26 +431,12 @@ void KoopaTroopa::HandleTimeSwitchState(vector<LPGAMEOBJECT>* coObjects)
 			}
 			turnWalkingTime = 0;
 			// Trường hợp rùa bị cầm và tỉnh lại trong Pipe, Gạch hoặc đất
-			for (UINT i = 0; i < coObjects->size(); i++)
+			if (!CheckWhenHidhing(coObjects))
 			{
-				if (dynamic_cast<Pipe*>(coObjects->at(i)) || dynamic_cast<Ground*>(coObjects->at(i)) ||
-					dynamic_cast<Brick*>(coObjects->at(i)))
-				{
-					if (this->CheckAABB(coObjects->at(i)))
-					{
-						this->SetState(KOOPATROOPA_STATE_DEATH);
-						ny = 1;
-						vx = 0;
-						Game* game = Game::GetInstance();
-						LPSCENE scene = game->GetCurrentScene();
-						this->GainScore(100);
-						return;
-					}
-				}
+				this->SetState(KOOPATROOPA_STATE_WALKING);
+				this->y -= KOOPATROOPA_BBOX_HEIGHT -
+					KOOPATROOPA_BBOX_HEIGHT_HIDING;
 			}
-			this->SetState(KOOPATROOPA_STATE_WALKING);
-			this->y -= KOOPATROOPA_BBOX_HEIGHT -
-				KOOPATROOPA_BBOX_HEIGHT_HIDING;
 		}
 
 		// Chuyển sang Exit shell 
@@ -497,4 +469,25 @@ bool KoopaTroopa::CheckAABB(GameObject* obj)
 	bool d2 = (b - t1 < KOOPATROOPA_BBOX_HEIGHT_HIDING && b - t1 > 0) ||
 		(t - b1 < KOOPATROOPA_BBOX_HEIGHT_HIDING && t - b1 > 0);
 	return d1 && d2;
+}
+bool KoopaTroopa::CheckWhenHidhing(vector<LPGAMEOBJECT>* coObjects)
+{
+	for (UINT i = 0; i < coObjects->size(); i++)
+	{
+		if (dynamic_cast<Pipe*>(coObjects->at(i)) || dynamic_cast<Ground*>(coObjects->at(i)) ||
+			dynamic_cast<Brick*>(coObjects->at(i)))
+		{
+			if (this->CheckAABB(coObjects->at(i)))
+			{
+				this->SetState(KOOPATROOPA_STATE_DEATH);
+				ny = 1;
+				vx = 0;
+				Game* game = Game::GetInstance();
+				LPSCENE scene = game->GetCurrentScene();
+				this->GainScore(100);
+				return true;
+			}
+		}
+	}
+	return false;
 }
