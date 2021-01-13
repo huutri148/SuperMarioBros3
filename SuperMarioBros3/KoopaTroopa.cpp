@@ -151,8 +151,8 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				{
 					if (isPickedUp == true || isBumped == true)
 					{
-						enemy->SetBeingSkilled(this->nx);
 						enemy->SetDead();
+						enemy->SetBeingSkilled(this->nx);
 						if (isPickedUp == true)
 						{
 							this->SetState(KOOPATROOPA_STATE_DEATH);
@@ -410,7 +410,9 @@ void KoopaTroopa::SetBeingSkilled(int _nx)
 	vy = -KOOPATROOPA_DIE_DEFLECT_SPEED_Y;
 	ny = 1;
 	isBumped = false;
-	isPickedUp = false;			
+	isPickedUp = false;
+	if (isDead == true)
+		deathTime = GetTickCount();
 }
 
 
@@ -420,7 +422,7 @@ void KoopaTroopa::HandleTimeSwitchState(vector<LPGAMEOBJECT>* coObjects)
 	if (GetTickCount() - deathTime > KOOPATROOPA_DEATH_TIME &&
 		isDead == true)
 	{
-		isEnable = true;
+		isEnable = false;
 		return;
 	}
 	if (forceShell == false)
