@@ -101,8 +101,7 @@ void KoopaParaTroopa::SetState(int state)
 	switch (state)
 	{
 	case PARATROOPA_STATE_JUMPING:
-		vx = -PARAGOOMBA_WALKING_SPEED;
-		nx = -1;
+		vx = nx * PARAGOOMBA_WALKING_SPEED;
 		vy =  0;
 		break;
 	case PARATROOPA_STATE_INACTIVE:
@@ -162,6 +161,18 @@ void KoopaParaTroopa::Inactive()
 }
 void KoopaParaTroopa::Active()
 {
+	Game* game = Game::GetInstance();
+	PlayScene* scence = (PlayScene*)game->GetCurrentScene();
+	Mario* mario =scence->GetPlayer();
+	float px, py;
+	mario->GetPosition(px, py);
+
+	if (px - entryX <= 0)
+		nx = -1;
+	else
+		nx = 1;
+
+
 	if(kooPa->state == KOOPATROOPA_STATE_WALKING &&
 		kooPa->isEnable == false)
 		this->SetState(PARATROOPA_STATE_JUMPING);
