@@ -11,6 +11,8 @@
 80	Resources\textures\HUD&Font.png	0	224	142
 90	Resources\textures\GoalRoulette.png	0	183	239
 
+[SOUNDS]
+0	Resources\Sounds\Coin.wav
 
 #MapInformation		MapMatrix
 [MAP]

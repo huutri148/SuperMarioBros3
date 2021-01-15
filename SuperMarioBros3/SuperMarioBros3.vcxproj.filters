@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Sound">
+      <UniqueIdentifier>{ff6a068d-8224-4dce-8312-0afe6ba726c7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -165,6 +168,15 @@
     <ClInclude Include="MovingEdge.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="dsutil.h">
+      <Filter>Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="dxutil.h">
+      <Filter>Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="Sounds.h">
+      <Filter>Sound</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">
@@ -313,6 +325,15 @@
     </ClCompile>
     <ClCompile Include="MovingEdge.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dsutil.cpp">
+      <Filter>Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="dxutil.cpp">
+      <Filter>Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="Sounds.cpp">
+      <Filter>Sound</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

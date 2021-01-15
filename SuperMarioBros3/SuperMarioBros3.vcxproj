@@ -88,14 +88,14 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
     </ClCompile>
     <Link>
       <SubSystem>
       </SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3dx9.lib;d3d9.lib;dxguid.lib;dxerr.lib;dinput8.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3dx9.lib;d3d9.lib;dxguid.lib;dxerr.lib;dsound.lib;dinput8.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -152,6 +152,8 @@
     <ClInclude Include="BrokenBrickEffect.h" />
     <ClInclude Include="Coin.h" />
     <ClInclude Include="Define.h" />
+    <ClInclude Include="dsutil.h" />
+    <ClInclude Include="dxutil.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="FireBall.h" />
     <ClInclude Include="FirePiranhaPlant.h" />
@@ -186,6 +188,7 @@
     <ClInclude Include="RaccoonTail.h" />
     <ClInclude Include="RedKoopaParaTroopa.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="Sounds.h" />
     <ClInclude Include="Sprites.h" />
     <ClInclude Include="Textures.h" />
     <ClInclude Include="Utils.h" />
@@ -203,6 +206,8 @@
     <ClCompile Include="Brick.cpp" />
     <ClCompile Include="BrokenBrickEffect.cpp" />
     <ClCompile Include="Coin.cpp" />
+    <ClCompile Include="dsutil.cpp" />
+    <ClCompile Include="dxutil.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="FireBall.cpp" />
     <ClCompile Include="FirePiranhaPlant.cpp" />
@@ -237,6 +242,7 @@
     <ClCompile Include="RaccoonTail.cpp" />
     <ClCompile Include="RedKoopaParaTroopa.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="Sounds.cpp" />
     <ClCompile Include="Sprites.cpp" />
     <ClCompile Include="Textures.cpp" />
     <ClCompile Include="Utils.cpp" />

@@ -1,6 +1,6 @@
 ﻿#include "Game.h"
 Game* Game::__instance = NULL;
-
+Sounds* Game::gameSound = NULL;
 /*
 	Initialize DirectX, create a Direct3D device for rendering within the window, initial Sprite library for
 	rendering 2D images
@@ -49,6 +49,9 @@ void Game::Init(HWND hWnd)
 
 	// Initialize sprite helper from Direct3DX helper library
 	D3DXCreateSprite(d3ddv, &spriteHandler);
+
+	Game::gameSound = new Sounds();
+	Game::gameSound->LoadSound(hWnd);
 
 	OutputDebugString(L"[INFO] InitGame done;\n");
 }
@@ -454,8 +457,16 @@ void Game::Load(LPCWSTR gameFile)
 void Game::SwitchScene(int scene_id)
 {
 	DebugOut(L"[INFO] Switching to scene %d\n", scene_id);
+	int oldScene = current_scene;
+	scenes[current_scene]->Unload();
 
-	scenes[current_scene]->Unload();;
+	switch (oldScene)
+	{
+	case 0:
+		Game::gameSound->stopSound(0);
+		break;
+	}
+
 
 	Textures::GetInstance()->Clear();
 	Sprites::GetInstance()->Clear();
@@ -465,6 +476,12 @@ void Game::SwitchScene(int scene_id)
 	LPSCENE s = scenes[scene_id];
 	Game::GetInstance()->SetKeyHandler(s->GetKeyEventHandler());
 	s->Load();
+	switch (scene_id)
+	{
+	case 0:
+		Game::gameSound->playSoundLoop(0);
+		break;
+	}
 }
 void Game::_ParseSection_SETTINGS(string line)
 {

@@ -17,9 +17,11 @@
 #include"PlayScene.h"
 #include"WorldMap.h"
 #include"IntroScene.h"
+#include"Sounds.h"
 class Game
 {
 	static Game* __instance;
+	
 	HWND hWnd;									// Window handle
 
 	LPDIRECT3D9 d3d = NULL;						// Direct3D handle
@@ -48,7 +50,7 @@ class Game
 	void _ParseSection_SCENES(string line);
 
 public:
-
+	static Sounds* gameSound;
 	void InitKeyboard();
 	void SetKeyHandler(LPKEYEVENTHANDLER handler) { keyHandler = handler; };
 	void Init(HWND hWnd);
