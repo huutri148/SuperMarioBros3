@@ -53,6 +53,10 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				x = edgeRight - MARIO_BIG_BBOX_WIDTH;
 		}
 	}
+	else
+	{
+		ax = 0;
+	}
 
 	if (dt > 64)
 		dt = 16;
@@ -61,6 +65,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		return;
 	// Calculate dx, dy 
 	GameObject::Update(dt);
+	UpdateVx(dt);
 	// fall down slower
 	if (isTeleport == false) 
 	{
@@ -412,6 +417,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					MovingPlattform* movingPlattform = dynamic_cast<MovingPlattform*>(e->obj);
 					movingPlattform->SetState(MOVING_PLATTFORM_STATE_FALLING);
 					movingPlattform->isBeingTouched = true;
+					y -= (min_ty * dy + e->ny * 0.4f);
 				} 
 				else if ( e->nx != 0)
 				{
@@ -878,24 +884,26 @@ int Mario::Skill()
 }
 void Mario::Friction()
 {
-	this->vx -= this->vx * MARIO_FRICTION;
-	if (abs(this->vx) < 0.01f && canBrake == false)
-	{
-		this->SetState(MARIO_STATE_IDLE);
-	}
-	else if (canBrake == true)
-	{
-		if (abs(this->vx) < 0.04f && powerMelterStack == 0)
+		if (isInGround)
 		{
-			this->SetState(MARIO_STATE_IDLE);
-			canBrake = false;
+			
+			if (vx > 0)
+				ax = -0.0005f;
+			else if (vx < 0)
+				ax = 0.0005f;
+			else ax = 0;
 		}
-		else if (abs(this->vx) < 0.01f)
+		else
 		{
-			this->SetState(MARIO_STATE_IDLE);
-			canBrake = false;
+			if (vx > 0 && nx > 0)
+				ax = -0.00005f;
+			else if (vx < 0 && nx < 0)
+				ax = 0.00005f;
+			else if (vx > 0 && nx < 0)
+				ax = -0.0005f;
+			else if (vx < 0 && nx > 0)
+				ax = 0.0005f;
 		}
-	}
 }
 void Mario::ShootFireBall(Grid* grid)
 {
@@ -1140,7 +1148,7 @@ void Mario::SetWalkingLeft()
 	if (canBrake == false)
 	{
 		this->nx = -1;
-		if (vx * nx < 0 && abs(vx) >= 0.09f)
+		if (vx * nx < 0 && abs(vx) >= 0.09f )
 		{
 			canBrake = true;
 			LosePowerMelter();
@@ -1227,5 +1235,21 @@ void Mario::HandleSwitchTime()
 			isInExtraMap = false;
 		}
 
+	}
+}
+
+
+
+void Mario::UpdateVx(DWORD dt)
+{
+	if (!isInIntroScene)
+	{
+		vx += ax * dt;
+		if (abs(vx) < 0.004)
+		{
+			this->SetState(MARIO_STATE_IDLE);
+			canBrake = false;
+		}
+		DebugOut(L"\nvx: %f", vx);
 	}
 }

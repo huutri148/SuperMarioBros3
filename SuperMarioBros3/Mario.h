@@ -128,6 +128,7 @@ public:
 	void DecreaseForm();
 	void TurnRaccoonForm();
 	void HandleSwitchTime();
+	void UpdateVx(DWORD dt);
 
 
 
