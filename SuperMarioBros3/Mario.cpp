@@ -896,29 +896,29 @@ void Mario::Friction()
 		{
 			if (isJumped && !canBrake)
 			{
-				if (typeFriction == 0)
+				if (typeFriction == FRICTION_TYPE_GROUND)
 				{
 					if (vx > 0)
-						ax = -0.0004f;
+						ax = -GROUND_FRICTION;
 					else if (vx < 0)
-						ax = 0.0004f;
+						ax = GROUND_FRICTION;
 					else ax = 0;
 				} 
-				else if (typeFriction == 1 || typeFriction == 2)
+				else if (typeFriction == FRICTION_TYPE_BRICK || typeFriction == FRICTION_TYPE_MOVING_PLATTFORM)
 				{
 					if (vx > 0)
-						ax = -0.0003f;
+						ax = -BRICK_FRICTION;
 					else if (vx < 0)
-						ax = 0.0003f;
+						ax = BRICK_FRICTION;
 					else ax = 0;
 				}
 			} 
 			else
 			{
 				if (vx > 0)
-					ax = -0.0005f;
+					ax = -FRICTION;
 				else if (vx < 0)
-					ax = 0.0005f;
+					ax = FRICTION;
 				else ax = 0;
 			}
 			
@@ -926,13 +926,13 @@ void Mario::Friction()
 		else
 		{
 			if (vx > 0 && nx > 0)
-				ax = 0.00001f;
+				ax = JUMPING_FRICTION;
 			else if (vx < 0 && nx < 0)
-				ax = -0.00001f;
+				ax = -JUMPING_FRICTION;
 			else if (vx > 0 && nx < 0)
-				ax = -0.0005f;
+				ax = -FRICTION;
 			else if (vx < 0 && nx > 0)
-				ax = 0.0005f;
+				ax = FRICTION;
 		}
 }
 void Mario::ShootFireBall(Grid* grid)
@@ -1286,9 +1286,9 @@ void Mario::UpdateVx(DWORD dt)
 void Mario::SetFriction(GameObject* obj)
 {
 	if (dynamic_cast<Ground*>(obj) || dynamic_cast<Block*>(obj) || dynamic_cast<Pipe*>(obj))
-		typeFriction = 0;
+		typeFriction = FRICTION_TYPE_GROUND;
 	else if (dynamic_cast<Brick*>(obj))
-		typeFriction = 1;
+		typeFriction = FRICTION_TYPE_BRICK;
 	else if (dynamic_cast<MovingPlattform*>(obj))
-		typeFriction = 2;
+		typeFriction = FRICTION_TYPE_MOVING_PLATTFORM;
 }
