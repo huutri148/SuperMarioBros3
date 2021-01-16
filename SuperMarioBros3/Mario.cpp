@@ -65,7 +65,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		return;
 	// Calculate dx, dy 
 	GameObject::Update(dt);
-	if(state != MARIO_STATE_DEATH)
+	if(state != MARIO_STATE_DEATH && !isInTeleport && !isTeleport)
 		UpdateVx(dt);
 	// fall down slower
 	if (isTeleport == false) 
@@ -685,7 +685,9 @@ void Mario::Render()
 		ani = MARIO_ANI_FLYING;
 	}
 	else if (isSwingTail && !isPickingUp)
+	{
 		ani = MARIO_ANI_TAILATTACK;
+	}
 	else if (state == MARIO_STATE_SHOOT_FIREBALL)
 		ani = MARIO_ANI_SHOOT_FIRE_BALL;
 	else if (isTransform == true)
@@ -718,7 +720,7 @@ void Mario::Render()
 	else if (isLookUp)
 		ani = MARIO_ANI_LOOKUP;
 	int alpha = 255;
-	if (form == MARIO_RACCOON_FORM && nx > 0 && !isTeleport)
+	if (form == MARIO_RACCOON_FORM && nx > 0 && !isTeleport && !isSwingTail)
 		transX = RACCOONTAIL_BBOX_WIDTH;
 
 	/// <summary>
@@ -905,9 +907,9 @@ void Mario::Friction()
 				else if (typeFriction == 1 || typeFriction == 2)
 				{
 					if (vx > 0)
-						ax = -0.0002f;
+						ax = -0.0003f;
 					else if (vx < 0)
-						ax = 0.0002f;
+						ax = 0.0003f;
 					else ax = 0;
 				}
 			} 
@@ -1278,7 +1280,6 @@ void Mario::UpdateVx(DWORD dt)
 			this->SetState(MARIO_STATE_IDLE);
 			canBrake = false;
 		}
-		DebugOut(L"\nvx: %f", vx);
 	}
 }
 
