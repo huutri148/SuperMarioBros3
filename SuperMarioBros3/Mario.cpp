@@ -65,7 +65,8 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		return;
 	// Calculate dx, dy 
 	GameObject::Update(dt);
-	UpdateVx(dt);
+	if(state != MARIO_STATE_DEATH)
+		UpdateVx(dt);
 	// fall down slower
 	if (isTeleport == false) 
 	{
@@ -105,7 +106,11 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		x += dx;
 		y += dy;
 		if (vy > MARIO_GRAVITY * dt)
+		{
 			isInGround = false;
+			isJumped = true;
+		}
+			
 
 	}
 	else
@@ -153,7 +158,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						flyTimeStart = 0;
 						isFloating = false;
 					}
-					
+					SetFriction(e->obj);
 				}
 			}
 			if (dynamic_cast<Enemy*>(e->obj))
@@ -750,6 +755,7 @@ void Mario::SetState(int state)
 		isKickShell = false;
 		isAutoWalk = false;
 		isSquat = false;
+		isJumped = false;
 		break;
 	case MARIO_STATE_DEATH:
 		vy = -MARIO_DIE_DEFLECT_SPEED;
@@ -886,19 +892,41 @@ void Mario::Friction()
 {
 		if (isInGround)
 		{
+			if (isJumped && !canBrake)
+			{
+				if (typeFriction == 0)
+				{
+					if (vx > 0)
+						ax = -0.0004f;
+					else if (vx < 0)
+						ax = 0.0004f;
+					else ax = 0;
+				} 
+				else if (typeFriction == 1 || typeFriction == 2)
+				{
+					if (vx > 0)
+						ax = -0.0002f;
+					else if (vx < 0)
+						ax = 0.0002f;
+					else ax = 0;
+				}
+			} 
+			else
+			{
+				if (vx > 0)
+					ax = -0.0005f;
+				else if (vx < 0)
+					ax = 0.0005f;
+				else ax = 0;
+			}
 			
-			if (vx > 0)
-				ax = -0.0005f;
-			else if (vx < 0)
-				ax = 0.0005f;
-			else ax = 0;
 		}
 		else
 		{
 			if (vx > 0 && nx > 0)
-				ax = -0.00005f;
+				ax = 0.00001f;
 			else if (vx < 0 && nx < 0)
-				ax = 0.00005f;
+				ax = -0.00001f;
 			else if (vx > 0 && nx < 0)
 				ax = -0.0005f;
 			else if (vx < 0 && nx > 0)
@@ -1252,4 +1280,14 @@ void Mario::UpdateVx(DWORD dt)
 		}
 		DebugOut(L"\nvx: %f", vx);
 	}
+}
+
+void Mario::SetFriction(GameObject* obj)
+{
+	if (dynamic_cast<Ground*>(obj) || dynamic_cast<Block*>(obj) || dynamic_cast<Pipe*>(obj))
+		typeFriction = 0;
+	else if (dynamic_cast<Brick*>(obj))
+		typeFriction = 1;
+	else if (dynamic_cast<MovingPlattform*>(obj))
+		typeFriction = 2;
 }
