@@ -36,8 +36,8 @@ class Mario : public GameObject
 	bool isTransform = false;
 	bool isTurnRaccoon = false;
 	bool isReadyToJump = false;
-
-
+	bool isJumped = false;
+	int typeFriction = 0;
 	RaccoonTail* tail;
 	
 	
@@ -121,6 +121,7 @@ public:
 
 	//Xử Lí
 	void Friction();
+	void SetFriction(GameObject* obj);
 	void StartUntouchable() { untouchable = 1; untouchableStart = GetTickCount(); }
 	void TurnOffSkill();
 	void TurnBigForm();
@@ -128,6 +129,7 @@ public:
 	void DecreaseForm();
 	void TurnRaccoonForm();
 	void HandleSwitchTime();
+	void UpdateVx(DWORD dt);
 
 
 

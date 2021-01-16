@@ -51,6 +51,8 @@ public:
 	float vx;
 	float vy;
 
+	float ax = 0;
+
 	int nx;
 	int ny = -1;
 
@@ -102,6 +104,7 @@ public:
 		isEnable = true;
 		dt = 0;
 		state = 0;
+		ax = 0;
 	}
 
 	virtual void GetBoundingBox(float& left, float& top, float& right,
