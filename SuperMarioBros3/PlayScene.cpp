@@ -747,7 +747,7 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 void PlayScene::TurnCamY(float playerY, bool isFlying, int ScreenHeight, int MapHeight)
 {
 	
-	if (isTurnCamY == true && playerY > (GetEdgeBottom() + 16) - ScreenHeight/2)
+	if (isTurnCamY == true && (playerY > (GetEdgeBottom() + 16 - ScreenHeight/2)))
 	{
 		isTurnCamY = false;
 	}

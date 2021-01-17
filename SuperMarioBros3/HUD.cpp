@@ -178,12 +178,11 @@ void Hud::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		powerMelterStack = mario->GetPowerMelter();
 		money = player->GetMoney();
 		score = player->GetScore();
-		nlife = player->GetLife();
 		time += dt;
 		remainTime = DEFAULT_TIME - time / 1000;
 	}
 
-
+	nlife = player->GetLife();
 	lifeSprite = font->mapping(nlife + '0');
 
 	string time_str = to_string(remainTime);

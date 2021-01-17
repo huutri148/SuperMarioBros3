@@ -931,7 +931,7 @@ void Mario::Friction()
 			}
 			
 		}
-		else
+		else if(!isFlying)
 		{
 			if (vx > 0 && nx > 0)
 				ax = JUMPING_FRICTION;
@@ -941,6 +941,14 @@ void Mario::Friction()
 				ax = -FRICTION;
 			else if (vx < 0 && nx > 0)
 				ax = FRICTION;
+		}
+		else if (isFlying)
+		{
+			if (vx > 0)
+				ax = -FRICTION;
+			else if (vx < 0)
+				ax = FRICTION;
+			else ax = 0;
 		}
 }
 void Mario::ShootFireBall(Grid* grid)

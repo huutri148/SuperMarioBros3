@@ -16,6 +16,7 @@ protected:
 	WorldMapPlayer* player;
 	vector<LPGAMEOBJECT> objectsToRender;
 	vector<WorldMapPanel*> panels;
+	LPSPRITE gameOverMenu = NULL;
 	float dBackGround = 0;
 
 
@@ -30,6 +31,7 @@ protected:
 public:
 	bool isChangeState = false;
 	float switchScene = false;
+	bool isOutOfLife = false;
 	WorldMap(int id, LPCWSTR filePath);
 
 	virtual void Load();
