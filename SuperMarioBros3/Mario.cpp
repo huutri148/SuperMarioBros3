@@ -738,7 +738,7 @@ void Mario::Render()
 			
 	}
 	animation_set->at(ani)->Render(nx, round(x), round(y), alpha,transX, transY);
-	RenderBoundingBox();
+	/*RenderBoundingBox();*/
 }
 void Mario::SetState(int state)
 {

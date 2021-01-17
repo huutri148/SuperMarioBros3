@@ -85,8 +85,8 @@ void Hud::Render()
 
 
 	//BACKGROUND màu đen
-	Game::GetInstance()->Draw(1,x , y , bbox, 0, 0, game->GetScreenWidth() ,
-								40, 255,0,-84);
+	Game::GetInstance()->Draw( 1 ,  x , y , bbox, 0, 0, game->GetScreenWidth() + 4,
+								50, 255,0,-84);
 
 
 

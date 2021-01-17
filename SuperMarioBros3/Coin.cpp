@@ -22,6 +22,17 @@ void Coin::Update(DWORD dt,
 		return;
 	GameObject::Update(dt, coObjects);
 	vy += COIN_GRAIVITY * dt;
+
+	if (type == COIN_TYPE_2)
+	{
+		if (dynamic_cast<PlayScene*>(Game::GetInstance()->GetCurrentScene()))
+		{
+			PlayScene* playScene = (PlayScene*)Game::GetInstance()->GetCurrentScene();
+			Mario* mario = playScene->GetPlayer();
+			if (CheckAABB(mario))
+				this->Used();
+		}
+	}
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 	coEvents.clear();

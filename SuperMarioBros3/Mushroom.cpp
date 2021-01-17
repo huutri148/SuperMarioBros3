@@ -26,6 +26,16 @@ void Mushroom::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	GameObject::Update(dt, coObjects);
 	if (state == MUSHROOM_STATE_WALKING || y <= appearY)
 		vy += RACCOONLEAF_GRAVITY * dt;
+
+
+	if (dynamic_cast<PlayScene*>(Game::GetInstance()->GetCurrentScene()))
+	{
+		PlayScene* playScene = (PlayScene*)Game::GetInstance()->GetCurrentScene();
+		Mario* mario = playScene->GetPlayer();
+		if (CheckAABB(mario))
+			this->Used();
+	}
+
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 	coEvents.clear();
