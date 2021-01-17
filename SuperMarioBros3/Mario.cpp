@@ -34,7 +34,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		else
 			this->SetLevel(MARIO_SMALL_FORM);
 	}
-	if (!isAutoWalk)
+	if (!isAutoWalk && state != MARIO_STATE_DEATH)
 	{
 		if (dynamic_cast<PlayScene*>(Game::GetInstance()->GetCurrentScene()))
 		{
@@ -48,9 +48,13 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					vx = scene->GetMovingEdge()->vx;
 				x = edgeLeft;
 			}
-				
 			else if (x >= edgeRight - MARIO_BIG_BBOX_WIDTH)
 				x = edgeRight - MARIO_BIG_BBOX_WIDTH;
+
+
+
+			if (y > scene->GetEdgeBottom())
+				this->SetState(MARIO_STATE_DEATH);
 		}
 	}
 	else
@@ -426,7 +430,8 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				} 
 				else if ( e->nx != 0)
 				{
-					vx = e->obj->vx -0.001f;
+					if (e->obj->vx < 0)
+						vx = -0.0000001f; // Cho vận tốc rất nhỏ để vẫn va chạm và để kích hoạt animation
 				}
 				
 			}
@@ -720,7 +725,7 @@ void Mario::Render()
 	else if (isLookUp)
 		ani = MARIO_ANI_LOOKUP;
 	int alpha = 255;
-	if (form == MARIO_RACCOON_FORM && nx > 0 && !isTeleport && !isSwingTail)
+	if (form == MARIO_RACCOON_FORM && nx > 0 && !isTeleport)
 		transX = RACCOONTAIL_BBOX_WIDTH;
 
 	/// <summary>
@@ -737,7 +742,7 @@ void Mario::Render()
 			
 	}
 	animation_set->at(ani)->Render(nx, round(x), round(y), alpha,transX, transY);
-	//RenderBoundingBox();
+	/*RenderBoundingBox();*/
 }
 void Mario::SetState(int state)
 {
@@ -754,10 +759,10 @@ void Mario::SetState(int state)
 		break;
 	case MARIO_STATE_IDLE:
 		vx = 0;
-		isKickShell = false;
 		isAutoWalk = false;
-		isSquat = false;
 		isJumped = false;
+		if (isInIntroScene)
+			isSquat = false;
 		break;
 	case MARIO_STATE_DEATH:
 		vy = -MARIO_DIE_DEFLECT_SPEED;
@@ -871,9 +876,12 @@ void Mario::StartJumping()
 }
 void Mario::Squat()
 {
-	if (form != MARIO_SMALL_FORM && vx == 0 || isInIntroScene )
+	if (form != MARIO_SMALL_FORM && isInGround || isInIntroScene )
 	{
 		isSquat = true;
+		// Bug : here
+		vx = 0;
+		ax = 0;
 	}
 
 }
@@ -923,7 +931,7 @@ void Mario::Friction()
 			}
 			
 		}
-		else
+		else if(!isFlying)
 		{
 			if (vx > 0 && nx > 0)
 				ax = JUMPING_FRICTION;
@@ -933,6 +941,14 @@ void Mario::Friction()
 				ax = -FRICTION;
 			else if (vx < 0 && nx > 0)
 				ax = FRICTION;
+		}
+		else if (isFlying)
+		{
+			if (vx > 0)
+				ax = -FRICTION;
+			else if (vx < 0)
+				ax = FRICTION;
+			else ax = 0;
 		}
 }
 void Mario::ShootFireBall(Grid* grid)
@@ -1037,8 +1053,7 @@ void Mario::UpForm()
 void Mario::Information()
 {
 	Game* game = Game::GetInstance();
-	DebugOut(L"\nMario x: %f, y: %f ", x,y);
-	DebugOut(L"Get Cam X: %f", game->GetCamX());
+	DebugOut(L"\nMario vx: %f", vx);
 }
 int  Mario::GetWidth()
 {
@@ -1274,7 +1289,8 @@ void Mario::UpdateVx(DWORD dt)
 {
 	if (!isInIntroScene)
 	{
-		vx += ax * dt;
+		if(!isSquat)
+			vx += ax * dt;
 		if (abs(vx) < 0.004)
 		{
 			this->SetState(MARIO_STATE_IDLE);

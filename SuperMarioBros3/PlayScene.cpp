@@ -705,7 +705,7 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 	}
 	if (game->IsKeyDown(DIK_RIGHT))
 	{
-
+		mario->isSquat = false;
 		if (game->IsKeyDown(DIK_A))
 		{
 			mario->FillUpPowerMelter();
@@ -719,7 +719,7 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 	}
 	else if (game->IsKeyDown(DIK_LEFT))
 	{
-
+		mario->isSquat = false;
 		if (game->IsKeyDown(DIK_A))
 		{
 			mario->FillUpPowerMelter();
@@ -747,7 +747,7 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 void PlayScene::TurnCamY(float playerY, bool isFlying, int ScreenHeight, int MapHeight)
 {
 	
-	if (isTurnCamY == true && playerY > (GetEdgeBottom() + 16) - ScreenHeight/2)
+	if (isTurnCamY == true && (playerY > (GetEdgeBottom() + 16 - ScreenHeight/2)))
 	{
 		isTurnCamY = false;
 	}

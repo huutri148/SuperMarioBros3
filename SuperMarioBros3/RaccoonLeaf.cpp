@@ -30,7 +30,14 @@ void RaccoonLeaf::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		vy += RACCOONLEAF_GRAVITY * dt;
 	x += dx;
 	y += dy;
-	
+	if (dynamic_cast<PlayScene*>(Game::GetInstance()->GetCurrentScene()))
+	{
+		PlayScene* playScene = (PlayScene*)Game::GetInstance()->GetCurrentScene();
+		Mario* mario = playScene->GetPlayer();
+		if (CheckAABB(mario))
+			this->Used();
+	}
+
 	if (vy > 0 && vx == 0)
 	{
 		vy = RACCOONLEAF_SPEED_FALL;

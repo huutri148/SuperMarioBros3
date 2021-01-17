@@ -255,9 +255,18 @@ void WorldMap::Load()
 
 void WorldMap::Update(DWORD dt)
 {
+	if (isOutOfLife == true)
+		return;
+	
 	player->Update(dt);
 	hud->Update(dt);
-	
+	if (Player::GetInstance()->GetLife() == 0)
+	{
+		isOutOfLife = true;
+		if (gameOverMenu == NULL)
+			gameOverMenu = Sprites::GetInstance()->Get(10098);
+		return;
+	}
 	for (unsigned int i = 0; i < panels.size(); i++)
 	{
 		panels[i]->Update(dt);
@@ -304,18 +313,20 @@ void WorldMap::Render()
 
 	if(!isChangeState)
 		player->Render(round(translateX ), round(translateY ));
-
+	if (isOutOfLife)
+		gameOverMenu->Draw(-1, round(translateX), round(translateY), 255,tileMap->GetMapWidth()/4.0f,
+			tileMap->GetMapHeiht()/4.0f);
 	if (switchScene)
 	{
 		LPDIRECT3DTEXTURE9 bbox = Textures::GetInstance()->Get(ID_TEX_BBOX);
 		//BACKGROUND màu đen
-		game->Draw(-1,-game->GetScreenWidth(),0, bbox, 0, 0,SCREEN_WIDTH,
+		game->Draw(-1,-(float)game->GetScreenWidth(),0, bbox, 0, 0,SCREEN_WIDTH,
 			SCREEN_HEIGHT, 255, dBackGround , 0);
-		game->Draw(-1, 0, -game->GetScreenHeight(), bbox, 0, 0,SCREEN_WIDTH,
+		game->Draw(-1, 0, -(float)game->GetScreenHeight(), bbox, 0, 0, SCREEN_WIDTH,
 			SCREEN_HEIGHT, 255, 0, dBackGround);
-		game->Draw(-1, 0, game->GetScreenHeight(), bbox, 0, 0, SCREEN_WIDTH,
+		game->Draw(-1, 0, (float)game->GetScreenHeight(), bbox, 0, 0, SCREEN_WIDTH,
 			SCREEN_HEIGHT, 255, 0, -dBackGround);
-		game->Draw(-1 , game->GetScreenWidth(),0, bbox, 0, 0, SCREEN_WIDTH,
+		game->Draw(-1 , (float)game->GetScreenWidth(),0, bbox, 0, 0, SCREEN_WIDTH,
 			SCREEN_HEIGHT, 255, -dBackGround, 0);
 	}
 	hud->Render();
@@ -376,22 +387,35 @@ void WorldMapKeyHandler::OnKeyDown(int KeyCode)
 	switch (KeyCode)
 	{
 	case DIK_LEFT:
-		player->Left();
+		if(!(Player::GetInstance()->GetLife() == 0))
+			player->Left();
 		break;
 	case DIK_DOWN:
-		player->Down();
+		if (!(Player::GetInstance()->GetLife() == 0))
+			player->Down();
 		break;
 	case DIK_RIGHT:
-		player->Right();
+		if (!(Player::GetInstance()->GetLife() == 0))
+			player->Right();
 		break;
 	case DIK_UP:
-		player->Up();
+		if (!(Player::GetInstance()->GetLife() == 0))
+			player->Up();
 		break;
 	case DIK_S:
-		if ((player->currentPanel->GetSceneId() == 1)|| (player->currentPanel->GetSceneId() == 4))
-			((WorldMap*)scence)->switchScene = true;
+		if (!(Player::GetInstance()->GetLife() == 0))
+		{
+			if ((player->currentPanel->GetSceneId() == 1) || (player->currentPanel->GetSceneId() == 4))
+				((WorldMap*)scence)->switchScene = true;
+		}
 		break;
-	
+	case DIK_A:
+		if ((Player::GetInstance()->GetLife() == 0))
+		{
+			Player::GetInstance()->Reset();
+			Player::GetInstance()->GainLife();
+			((WorldMap*)scence)->isOutOfLife = false;
+		}
 	}
 }
 void WorldMapKeyHandler::OnKeyUp(int KeyCode)

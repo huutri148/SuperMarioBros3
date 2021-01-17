@@ -4,6 +4,7 @@
 0	Resources\Map\World1_bank.png	255	255	255
 10	Resources\textures\WorldMap.png	166	185	255
 20	Resources\textures\Panel.png	255	255	255
+30	Resources\textures\Game_Over_Menu.png	34	0	1
 80	Resources\textures\HUD&Font.png	0	224	142
 #ID	TolColTile	TolRowTile	TolColMap	TolRowMap	TotalTiles	Matrix_path	edgeLeft	edgeRight	edgeBottomInWorld	edgeBottomInExtraMap
 [MAP]
@@ -70,7 +71,8 @@
 10026	354	74	370	90	10
 10027	374	80	390	90	10
 
-
+#========GAMEOVER_MENU=====
+10098	5	6	133	70	30
 #========INVISIBLE========
 10099	455	133	487	165	10
 
