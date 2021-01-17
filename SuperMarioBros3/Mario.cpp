@@ -34,7 +34,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		else
 			this->SetLevel(MARIO_SMALL_FORM);
 	}
-	if (!isAutoWalk)
+	if (!isAutoWalk && state != MARIO_STATE_DEATH)
 	{
 		if (dynamic_cast<PlayScene*>(Game::GetInstance()->GetCurrentScene()))
 		{
@@ -48,9 +48,13 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					vx = scene->GetMovingEdge()->vx;
 				x = edgeLeft;
 			}
-				
 			else if (x >= edgeRight - MARIO_BIG_BBOX_WIDTH)
 				x = edgeRight - MARIO_BIG_BBOX_WIDTH;
+
+
+
+			if (y > scene->GetEdgeBottom())
+				this->SetState(MARIO_STATE_DEATH);
 		}
 	}
 	else

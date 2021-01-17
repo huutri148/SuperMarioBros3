@@ -309,14 +309,14 @@ void WorldMap::Render()
 	{
 		LPDIRECT3DTEXTURE9 bbox = Textures::GetInstance()->Get(ID_TEX_BBOX);
 		//BACKGROUND màu đen
-		game->Draw(-1,-game->GetScreenWidth(),0, bbox, 0, 0,SCREEN_WIDTH,
-			SCREEN_HEIGHT, 255, dBackGround , 0);
-		game->Draw(-1, 0, -game->GetScreenHeight(), bbox, 0, 0,SCREEN_WIDTH,
-			SCREEN_HEIGHT, 255, 0, dBackGround);
-		game->Draw(-1, 0, game->GetScreenHeight(), bbox, 0, 0, SCREEN_WIDTH,
-			SCREEN_HEIGHT, 255, 0, -dBackGround);
-		game->Draw(-1 , game->GetScreenWidth(),0, bbox, 0, 0, SCREEN_WIDTH,
-			SCREEN_HEIGHT, 255, -dBackGround, 0);
+		game->Draw(-1,-game->GetScreenWidth(),0, bbox, 0, 0,(float)SCREEN_WIDTH,
+			(float)SCREEN_HEIGHT, 255, dBackGround , 0);
+		game->Draw(-1, 0, -game->GetScreenHeight(), bbox, 0, 0, (float)SCREEN_WIDTH,
+			(float)SCREEN_HEIGHT, 255, 0, dBackGround);
+		game->Draw(-1, 0, game->GetScreenHeight(), bbox, 0, 0, (float)SCREEN_WIDTH,
+			(float)SCREEN_HEIGHT, 255, 0, -dBackGround);
+		game->Draw(-1 , game->GetScreenWidth(),0, bbox, 0, 0, (float)SCREEN_WIDTH,
+			(float)SCREEN_HEIGHT, 255, -dBackGround, 0);
 	}
 	hud->Render();
 }
