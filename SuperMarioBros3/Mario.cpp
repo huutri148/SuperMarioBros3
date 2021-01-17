@@ -738,7 +738,7 @@ void Mario::Render()
 			
 	}
 	animation_set->at(ani)->Render(nx, round(x), round(y), alpha,transX, transY);
-	//RenderBoundingBox();
+	RenderBoundingBox();
 }
 void Mario::SetState(int state)
 {
@@ -756,8 +756,9 @@ void Mario::SetState(int state)
 	case MARIO_STATE_IDLE:
 		vx = 0;
 		isAutoWalk = false;
-		isSquat = false;
 		isJumped = false;
+		if (isInIntroScene)
+			isSquat = false;
 		break;
 	case MARIO_STATE_DEATH:
 		vy = -MARIO_DIE_DEFLECT_SPEED;
@@ -871,9 +872,12 @@ void Mario::StartJumping()
 }
 void Mario::Squat()
 {
-	if (form != MARIO_SMALL_FORM && vx == 0 || isInIntroScene )
+	if (form != MARIO_SMALL_FORM && isInGround || isInIntroScene )
 	{
 		isSquat = true;
+		// Bug : here
+		vx = 0;
+		ax = 0;
 	}
 
 }
@@ -1037,8 +1041,7 @@ void Mario::UpForm()
 void Mario::Information()
 {
 	Game* game = Game::GetInstance();
-	DebugOut(L"\nMario x: %f, y: %f ", x,y);
-	DebugOut(L"Get Cam X: %f", game->GetCamX());
+	DebugOut(L"\nMario vx: %f", vx);
 }
 int  Mario::GetWidth()
 {
@@ -1274,7 +1277,8 @@ void Mario::UpdateVx(DWORD dt)
 {
 	if (!isInIntroScene)
 	{
-		vx += ax * dt;
+		if(!isSquat)
+			vx += ax * dt;
 		if (abs(vx) < 0.004)
 		{
 			this->SetState(MARIO_STATE_IDLE);
