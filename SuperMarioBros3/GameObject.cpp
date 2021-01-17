@@ -145,12 +145,6 @@ void GameObject::RenderBoundingBox()
 		rect.right, rect.bottom, 100);
 }
 
-//void GameObject::AddAnimation(int aniId)
-//{
-//	LPANIMATION ani = Animations::GetInstance()->Get(aniId);
-//	animations.push_back(ani);
-//}
-
 
 GameObject::~GameObject()
 {
