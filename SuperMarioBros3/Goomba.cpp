@@ -60,9 +60,10 @@ void Goomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 			else if (dynamic_cast<Ground*>(e->obj))
 			{
-				if (e->nx != 0 && ny == 0)
+				if (e->nx != 0)
 				{
-					this->ChangeDirect();
+					if(e->obj->y <= y)
+						this->ChangeDirect();
 				}
 			}
 			else if(!dynamic_cast<Mario*>(e->obj))

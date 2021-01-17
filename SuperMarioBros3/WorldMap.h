@@ -16,6 +16,9 @@ protected:
 	WorldMapPlayer* player;
 	vector<LPGAMEOBJECT> objectsToRender;
 	vector<WorldMapPanel*> panels;
+	float dBackGround = 0;
+
+
 
 	void _ParseSection_TEXTURES(string line);
 	void _ParseSection_SPRITES(string line);
@@ -26,12 +29,14 @@ protected:
 
 public:
 	bool isChangeState = false;
+	float switchScene = false;
 	WorldMap(int id, LPCWSTR filePath);
 
 	virtual void Load();
 	virtual void Update(DWORD dt);
 	virtual void Render();
 	virtual void Unload();
+	void ChooseLevel();
 	
 	WorldMapPlayer* GetPlayer() { return player; };
 	vector<WorldMapPanel*> GetPanels() { return panels; };

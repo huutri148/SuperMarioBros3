@@ -1,4 +1,4 @@
-#include "WorldMap.h"
+﻿#include "WorldMap.h"
 #include<fstream>
 #include"Player.h"
 WorldMap::WorldMap(int id, LPCWSTR filePath) :
@@ -257,9 +257,20 @@ void WorldMap::Update(DWORD dt)
 {
 	player->Update(dt);
 	hud->Update(dt);
+	
 	for (unsigned int i = 0; i < panels.size(); i++)
 	{
 		panels[i]->Update(dt);
+	}
+	if (switchScene)
+	{
+		Game* game = Game::GetInstance();
+		int screenWidth = game->GetScreenWidth();
+		float translateX = (float)screenWidth / POINT_TO_STOP;
+		if (dBackGround < translateX)
+			dBackGround += WORLDMAP_BACKGROUND_SPEED * dt;
+		else
+			ChooseLevel();
 	}
 }
 
@@ -279,6 +290,7 @@ void WorldMap::Render()
 	this->tileMap->Render(camX, camY, screenWidth, screenHeight,
 		translateX,translateY);
 
+	
 
 	for (auto obj : objectsToRender)
 	{
@@ -292,6 +304,20 @@ void WorldMap::Render()
 
 	if(!isChangeState)
 		player->Render(round(translateX ), round(translateY ));
+
+	if (switchScene)
+	{
+		LPDIRECT3DTEXTURE9 bbox = Textures::GetInstance()->Get(ID_TEX_BBOX);
+		//BACKGROUND màu đen
+		game->Draw(-1,-game->GetScreenWidth(),0, bbox, 0, 0,SCREEN_WIDTH,
+			SCREEN_HEIGHT, 255, dBackGround , 0);
+		game->Draw(-1, 0, -game->GetScreenHeight(), bbox, 0, 0,SCREEN_WIDTH,
+			SCREEN_HEIGHT, 255, 0, dBackGround);
+		game->Draw(-1, 0, game->GetScreenHeight(), bbox, 0, 0, SCREEN_WIDTH,
+			SCREEN_HEIGHT, 255, 0, -dBackGround);
+		game->Draw(-1 , game->GetScreenWidth(),0, bbox, 0, 0, SCREEN_WIDTH,
+			SCREEN_HEIGHT, 255, -dBackGround, 0);
+	}
 	hud->Render();
 }
 
@@ -324,6 +350,21 @@ void WorldMap::Unload()
 
 	DebugOut(L"[INFO] Scene %s unloaded! \n", sceneFilePath);
 }
+void WorldMap::ChooseLevel()
+{
+	if (player->currentPanel->GetSceneId() == 1)
+	{
+		Game* game = Game::GetInstance();
+		Player::GetInstance()->currentPanelID = player->currentPanel->GetSceneId();
+		game->SwitchScene(1);
+	}
+	else if (player->currentPanel->GetSceneId() == 4)
+	{
+		Game* game = Game::GetInstance();
+		Player::GetInstance()->currentPanelID = player->currentPanel->GetSceneId();
+		game->SwitchScene(4);
+	}
+}
 void WorldMapKeyHandler::OnKeyDown(int KeyCode)
 {
 	//DebugOut(L"[INFO] KeyDown: %d\n", KeyCode);
@@ -344,23 +385,11 @@ void WorldMapKeyHandler::OnKeyDown(int KeyCode)
 	case DIK_UP:
 		player->Up();
 		break;
-	case DIK_A:
-		break;
 	case DIK_S:
-	{
-		if (player->currentPanel->GetSceneId() == 1)
-		{
-			Game* game = Game::GetInstance();
-			Player::GetInstance()->currentPanelID = player->currentPanel->GetSceneId();
-			game->SwitchScene(1);
-		} else if (player->currentPanel->GetSceneId() == 4)
-		{
-			Game* game = Game::GetInstance();
-			Player::GetInstance()->currentPanelID = player->currentPanel->GetSceneId();
-			game->SwitchScene(4);
-		}
+		if ((player->currentPanel->GetSceneId() == 1)|| (player->currentPanel->GetSceneId() == 4))
+			((WorldMap*)scence)->switchScene = true;
 		break;
-	}
+	
 	}
 }
 void WorldMapKeyHandler::OnKeyUp(int KeyCode)
