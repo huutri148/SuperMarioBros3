@@ -357,12 +357,14 @@ void WorldMap::ChooseLevel()
 		Game* game = Game::GetInstance();
 		Player::GetInstance()->currentPanelID = player->currentPanel->GetSceneId();
 		game->SwitchScene(1);
+		switchScene = false;
 	}
 	else if (player->currentPanel->GetSceneId() == 4)
 	{
 		Game* game = Game::GetInstance();
 		Player::GetInstance()->currentPanelID = player->currentPanel->GetSceneId();
 		game->SwitchScene(4);
+		switchScene = false;
 	}
 }
 void WorldMapKeyHandler::OnKeyDown(int KeyCode)
