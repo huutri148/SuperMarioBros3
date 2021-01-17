@@ -41,7 +41,7 @@ void KoopaParaTroopa::Update(DWORD dt,
 			min_tx, min_ty,
 			nx, ny);
 		x += min_tx * dx + nx * 0.4f;
-		y += min_ty * dy + ny * 0.1f;
+		y += min_ty * dy + ny * 0.09f;
 		
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{

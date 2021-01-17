@@ -426,7 +426,8 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				} 
 				else if ( e->nx != 0)
 				{
-					vx = e->obj->vx -0.001f;
+					if (e->obj->vx < 0)
+						vx = -0.0000001f; // Cho vận tốc rất nhỏ để vẫn va chạm và để kích hoạt animation
 				}
 				
 			}
@@ -720,7 +721,7 @@ void Mario::Render()
 	else if (isLookUp)
 		ani = MARIO_ANI_LOOKUP;
 	int alpha = 255;
-	if (form == MARIO_RACCOON_FORM && nx > 0 && !isTeleport && !isSwingTail)
+	if (form == MARIO_RACCOON_FORM && nx > 0 && !isTeleport)
 		transX = RACCOONTAIL_BBOX_WIDTH;
 
 	/// <summary>
@@ -754,7 +755,6 @@ void Mario::SetState(int state)
 		break;
 	case MARIO_STATE_IDLE:
 		vx = 0;
-		isKickShell = false;
 		isAutoWalk = false;
 		isSquat = false;
 		isJumped = false;

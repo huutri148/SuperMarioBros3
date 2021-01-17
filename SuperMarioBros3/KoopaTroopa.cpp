@@ -210,7 +210,18 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				CanPullBack = true;
 				lastStanding_Y = y;
 				if (nx != 0 && ny == 0)
-					ChangeDirect();
+				{
+					if (dynamic_cast<MovingPlattform*>(e->obj))
+					{
+						if(isBumped)
+							ChangeDirect();
+						else 
+							x += dx;
+					}
+					else
+						ChangeDirect();
+				}
+					
 				if (ny < 0)
 				{
 					vy = 0;
