@@ -47,10 +47,16 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				if (scene->GetMovingEdge() != NULL && vx == 0)
 					vx = scene->GetMovingEdge()->vx;
 				x = edgeLeft;
+				inTheEdge = true;
 			}
 			else if (x >= edgeRight - MARIO_BIG_BBOX_WIDTH)
+			{
 				x = edgeRight - MARIO_BIG_BBOX_WIDTH;
-
+				inTheEdge = true;
+			}
+			else
+				inTheEdge = false;
+			
 
 
 			if (y > scene->GetEdgeBottom())
@@ -126,10 +132,22 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						nex, ney);
 		x += min_tx * dx + nex * 0.4f;
 		y += min_ty * dy + ney * 0.4f;
+
+		if (nex != 0)
+			touchingHorizontal = true;
+		else
+			touchingHorizontal = false;
+		
 		// Collision logic 
 		for (UINT i = 0; i < coEventsResult.size(); i++)
 		{
 			LPCOLLISIONEVENT e = coEventsResult[i];
+			if (e->nx != 0 && touchingHorizontal == true)
+			{
+				if (!(e->obj->y < (y + GetHeight())))
+					touchingHorizontal = false;
+			}
+
 			if (e->ny != 0 )
 			{
 				if (!dynamic_cast<Item*>(e->obj) || dynamic_cast<PSwitch*>(e->obj) || dynamic_cast<Brick*>(e->obj))
@@ -509,7 +527,7 @@ void Mario::Render()
 				}
 			}
 			else if(powerMelterStack >= POWER_MELTER_BUFF_SPEED_LEVEL &&
-					 powerMelterStack < POWER_MELTER_FULL)
+					 powerMelterStack < POWER_MELTER_FULL - 1)
 			{
 				switch (form)
 				{
@@ -527,7 +545,7 @@ void Mario::Render()
 					break;
 				}
 			}
-			else if (powerMelterStack == POWER_MELTER_FULL)
+			else if (powerMelterStack >= POWER_MELTER_FULL - 1)
 			{
 				switch (form)
 				{
@@ -820,14 +838,17 @@ void Mario::GetBoundingBox(float& left, float& top, float& right,
 void Mario::FillUpPowerMelter()// Tăng stack năng lượng của Mario
 {
 	DWORD current = GetTickCount();
-	if ( isFlying == false && isInGround != false)
+	if ( isFlying == false && isInGround != false )
 	{
-		if (current - stackTimeStart > STACK_TIME 
-			&& powerMelterStack < POWER_MELTER_FULL)
+		if (current - stackTimeStart > STACK_TIME && powerMelterStack < POWER_MELTER_FULL && 
+			!touchingHorizontal && !inTheEdge)
 		{
 			powerMelterStack += 1;
 			stackTimeStart = current;
+			
 		}
+		else if (touchingHorizontal || inTheEdge)
+			LosePowerMelter();
 	}
 }
 void Mario::LosePowerMelter()// Power Stack sẽ cạn theo thời gian

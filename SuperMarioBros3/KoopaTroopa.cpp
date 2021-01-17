@@ -61,10 +61,15 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				else
 					this->y = mario->y;
 
+				if (mario->isTeleport)
+				{
+					x = mario->x;
+				}
+
 				vx = 0;
 				vy = 0;
 			}
-			if(mario->useSkill == false) // nếu người chơi nhả nút giữ sẽ trở về Hiding
+			if(mario->useSkill == false && !mario->isTeleport) // nếu người chơi nhả nút giữ sẽ trở về Hiding
 			{
 				isPickedUp = false;
 				mario->isPickingUp = false;
