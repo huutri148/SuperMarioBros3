@@ -37,6 +37,8 @@ class Mario : public GameObject
 	bool isTurnRaccoon = false;
 	bool isReadyToJump = false;
 	bool isJumped = false;
+	bool touchingHorizontal = false;
+	bool inTheEdge = false;
 	int typeFriction = 0;
 	RaccoonTail* tail;
 	

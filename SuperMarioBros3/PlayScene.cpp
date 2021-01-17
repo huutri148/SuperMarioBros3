@@ -301,7 +301,7 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 	{
 		for (auto obj : objects)
 		{
-			if (!dynamic_cast<Enemy*>(obj))
+			if (!dynamic_cast<Enemy*>(obj) && obj->isEnable == true)
 				coObjects.push_back(obj);
 		}
 	}
@@ -457,24 +457,33 @@ void PlayScene::Render()
 					continue;
 				obj->Render();
 			}
-		}
-		for (auto obj : listMovingObjectsToRender)
-		{
-			if (obj->IsEnable() == false)
+			for (auto obj : listMovingObjectsToRender)
 			{
-				continue;
+				if (obj->IsEnable() == false)
+				{
+					continue;
+				}
+				obj->Render();
 			}
-			obj->Render();
 		}
 		player->Render();
 		if (player->isTeleport)
 		{
+			for (auto obj : listMovingObjectsToRender)
+			{
+				if (obj->IsEnable() == false)
+				{
+					continue;
+				}
+				obj->Render();
+			}
 			for (auto obj : listPipesToRender)
 			{
 				if (obj->IsEnable() == false)
 					continue;
 				obj->Render();
 			}
+			
 		}
 		hud->Render();
 	}
@@ -713,7 +722,6 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 		}
 		else if (!game->IsKeyDown(DIK_A))
 			mario->LosePowerMelter();
-
 		mario->SetWalkingRight();
 		mario->Friction();
 	}
@@ -725,10 +733,8 @@ void PlayScenceKeyHandler::KeyState(BYTE* states)
 			mario->FillUpPowerMelter();
 			mario->PickUp();
 		}
-		else if(!game->IsKeyDown(DIK_A))
+		else if (!game->IsKeyDown(DIK_A))
 			mario->LosePowerMelter();
-
-
 		mario->SetWalkingLeft();
 		mario->Friction();
 	}
