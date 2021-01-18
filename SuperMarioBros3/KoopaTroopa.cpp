@@ -25,9 +25,9 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	else
 	{
 		vy += KOOPATROOPA_BUMPED_GRAVITY * dt;
-		if (vy > KOOPATROOPA_MAX_GRAVITY)
-			vy = KOOPATROOPA_MAX_GRAVITY;
 	}
+	if (vy > KOOPATROOPA_MAX_GRAVITY)
+		vy = KOOPATROOPA_MAX_GRAVITY;
 		
 	
 	if (state != KOOPATROOPA_STATE_WALKING)
@@ -353,8 +353,13 @@ void KoopaTroopa::IsKicked(int n)
 {
 	this->nx = n;
 	isBumped = true;
-	forceShell = false;
-	vx = nx *KOOPATROOPA_BUMP_SPEED;
+	if (isInItroScene == true)
+	{
+		vx = nx * KOOPATROOPA_BUMP_SPEED;
+		forceShell = false;
+	}
+	else
+		vx = nx * 0.2f;
 }
 bool KoopaTroopa::IsHiding()
 {

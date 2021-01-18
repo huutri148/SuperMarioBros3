@@ -161,6 +161,7 @@ void IntroScene::_ParseSection_OBJECTS(string line)
 		((KoopaTroopa*)obj)->SetState(KOOPATROOPA_STATE_HIDING);
 		((KoopaTroopa*)obj)->isEnable = false;
 		((KoopaTroopa*)obj)->forceShell = true;
+		((KoopaTroopa*)obj)->isInItroScene = true;
 		if (koopa == NULL)
 			koopa = (KoopaTroopa*)obj;
 		fallingObjects.push_back(obj);
