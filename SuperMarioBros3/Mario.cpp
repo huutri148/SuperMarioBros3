@@ -118,7 +118,6 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		if (vy > MARIO_GRAVITY * dt)
 		{
 			isInGround = false;
-			isJumped = true;
 		}
 			
 
@@ -451,6 +450,10 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					if (e->obj->vx < 0)
 						vx = -0.0000001f; // Cho vận tốc rất nhỏ để vẫn va chạm và để kích hoạt animation
 				}
+				else if (e->ny > 0)
+				{
+					y += -(min_ty * dy + e->ny * 0.4f);
+				}
 				
 			}
 		}
@@ -710,6 +713,8 @@ void Mario::Render()
 	else if (isSwingTail && !isPickingUp)
 	{
 		ani = MARIO_ANI_TAILATTACK;
+		if (!isInGround)
+			ani = MARIO_ANI_JUMPING_TAILATTACK;
 	}
 	else if (state == MARIO_STATE_SHOOT_FIREBALL)
 		ani = MARIO_ANI_SHOOT_FIRE_BALL;
@@ -778,7 +783,6 @@ void Mario::SetState(int state)
 	case MARIO_STATE_IDLE:
 		vx = 0;
 		isAutoWalk = false;
-		isJumped = false;
 		if (isInIntroScene)
 			isSquat = false;
 		break;
@@ -921,56 +925,44 @@ int Mario::Skill()
 }
 void Mario::Friction()
 {
-		if (isInGround)
-		{
-			if (isJumped && !canBrake)
-			{
-				if (typeFriction == FRICTION_TYPE_GROUND)
-				{
-					if (vx > 0)
-						ax = -GROUND_FRICTION;
-					else if (vx < 0)
-						ax = GROUND_FRICTION;
-					else ax = 0;
-				} 
-				else if (typeFriction == FRICTION_TYPE_BRICK || typeFriction == FRICTION_TYPE_MOVING_PLATTFORM)
-				{
-					if (vx > 0)
-						ax = -BRICK_FRICTION;
-					else if (vx < 0)
-						ax = BRICK_FRICTION;
-					else ax = 0;
-				}
-			} 
-			else
-			{
-				if (vx > 0)
-					ax = -FRICTION;
-				else if (vx < 0)
-					ax = FRICTION;
-				else ax = 0;
-			}
-			
-		}
-		else if(!isFlying)
-		{
-			if (vx > 0 && nx > 0)
-				ax = JUMPING_FRICTION;
-			else if (vx < 0 && nx < 0)
-				ax = -JUMPING_FRICTION;
-			else if (vx > 0 && nx < 0)
-				ax = -FRICTION;
-			else if (vx < 0 && nx > 0)
-				ax = FRICTION;
-		}
-		else if (isFlying)
+	if (isInGround)
+	{
+		if (typeFriction == FRICTION_TYPE_MOVING_PLATTFORM)
 		{
 			if (vx > 0)
-				ax = -FRICTION;
+				ax = -MOVING_PLATTFORM_FRICTION;
 			else if (vx < 0)
-				ax = FRICTION;
+				ax = MOVING_PLATTFORM_FRICTION;
 			else ax = 0;
 		}
+		else if (typeFriction == FRICTION_TYPE_BRICK)
+		{
+			if (vx > 0)
+				ax = -BRICK_FRICTION;
+			else if (vx < 0)
+				ax = BRICK_FRICTION;
+			else ax = 0;
+		}
+		else
+		{
+			if (vx > 0)
+				ax = -GROUND_FRICTION;
+			else if (vx < 0)
+				ax = GROUND_FRICTION;
+			else ax = 0;
+		}
+	}
+	else 
+	{
+		if (vx > 0 && nx > 0)
+			ax = -JUMPING_FRICTION;
+		else if (vx < 0 && nx < 0)
+			ax = JUMPING_FRICTION;
+		else if (vx > 0 && nx < 0)
+			ax = -GROUND_FRICTION;
+		else if (vx < 0 && nx > 0)
+			ax = GROUND_FRICTION;
+	}
 }
 void Mario::ShootFireBall(Grid* grid)
 {
@@ -1017,16 +1009,15 @@ void Mario::TailAttack()
 		Grid* grid = ((PlayScene*)game->GetCurrentScene())->GetGrid();
 		if (nx > 0)
 		{
-			tail->Attack(x ,
-				y + MARIO_RACCOON_BBOX_HEIGHT - RACCOONTAIL_BBOX_HEIGHT,
+			tail->Attack(x , y + MARIO_RACCOON_BBOX_HEIGHT - RACCOONTAIL_BBOX_HEIGHT,
 				this->nx, grid);
 		}
 		if (nx < 0)
 		{
-			tail->Attack(x + MARIO_TAIL_BBOX_WIDTH,
-				y + MARIO_RACCOON_BBOX_HEIGHT - RACCOONTAIL_BBOX_HEIGHT,
+			tail->Attack(x + MARIO_TAIL_BBOX_WIDTH, y + MARIO_RACCOON_BBOX_HEIGHT - RACCOONTAIL_BBOX_HEIGHT,
 				this->nx, grid);
 		}
+		
 	}
 }
 void Mario::Fly()
@@ -1234,6 +1225,7 @@ void Mario::HandleSwitchTime()
 	{
 		isSwingTail = false;
 		tail->SetState(RACCOONTAIL_STATE_INACTIVE);
+		
 	}
 	
 	if (current - turnRaccoonTime > MARIO_BIG_FORM_TRANSFORM_TIME &&

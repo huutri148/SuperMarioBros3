@@ -134,7 +134,7 @@
 4	2576	192
 
 #BLOCK	x	y	w	h
-5	1984	144	46	32
+5	1988	144	42	32
 
 
 #PIPE	x	y	ani_set	type

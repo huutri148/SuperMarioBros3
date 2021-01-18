@@ -23,6 +23,7 @@ public:
 	bool isPickedUp;
 	bool isBumped;
 	bool forceShell = false;
+	bool isInItroScene = false;
 	
 	float lastStanding_Y;
 	bool CanPullBack = false;
