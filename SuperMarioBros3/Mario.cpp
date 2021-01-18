@@ -450,6 +450,10 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					if (e->obj->vx < 0)
 						vx = -0.0000001f; // Cho vận tốc rất nhỏ để vẫn va chạm và để kích hoạt animation
 				}
+				else if (e->ny > 0)
+				{
+					y += -(min_ty * dy + e->ny * 0.4f);
+				}
 				
 			}
 		}

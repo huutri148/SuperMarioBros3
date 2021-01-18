@@ -92,11 +92,20 @@ void Hud::Render()
 
 	// Draw(-1,x,y,transparent, translateX( position in X-axis HUD),
 	//translateY( position in Y-axis HUD))
-	hud1->Draw(-1, x, y, 255, 28, -80);
-	hud2->Draw(-1, x ,y, 255, 195, -80);
-	playerSprite->Draw(-1, x , y, 255, 32, -65);
-	lifeSprite->Draw(-1, x , y, 255, 57, -65);
-	worldSprite->Draw(-1, x , y , 255, 65, -73);
+	hud1->Draw(-1, x, y, 255,HUD1_TRANSLATE_X,
+							HUD_TRANSLATE_Y);
+
+	hud2->Draw(-1, x ,y, 255, HUD2_TRANSLATE_X, 
+								HUD_TRANSLATE_Y);
+
+	playerSprite->Draw(-1, x , y, 255,PLAYER_SPRITE_TRANSLATE_X, 
+							HUD_TRANSLATE_Y + PLAYER_SPRTIE_TRANSPATE_Y);
+
+	lifeSprite->Draw(-1, x , y, 255, LIFE_SPRITE_TRANSLATE_X, 
+							HUD_TRANSLATE_Y + PLAYER_SPRTIE_TRANSPATE_Y);
+
+	worldSprite->Draw(-1, x , y , 255, WORLD_SPRITE_TRANSLATE_X,
+							HUD_TRANSLATE_Y + WORLD_SPRITE_TRANSLATE_Y);
 	
 
 
@@ -105,24 +114,28 @@ void Hud::Render()
 		// Draw(-1,x,y,transparent, translateX( position in X-axis HUD),
 		//translateY( position in Y-axis HUD)
 		remainTimeSprites[i]->Draw(-1, x, y, 255,
-					152.0f + FONT_BBOX_WIDTH*i,-65.0f);
+			REMAINTIME_SPRITE_TRANSLATE_X + FONT_BBOX_WIDTH*i,
+			HUD_TRANSLATE_Y + PLAYER_SPRTIE_TRANSPATE_Y);
 	}
 	for (unsigned int i = 0; i < scoreSprite.size(); i++)
 	{
 		scoreSprite[i]->Draw(-1, x , y, 255, 
-					80.0f + FONT_BBOX_WIDTH * i, -65.0f);
+			SCORE_SPRITE_TRANSLATE_X + FONT_BBOX_WIDTH * i,
+			HUD_TRANSLATE_Y + PLAYER_SPRTIE_TRANSPATE_Y);
 	}
 
 	for (unsigned int i = 0; i < moneySprite.size(); i++)
 	{
 		moneySprite[i]->Draw(-1, x , y, 255, 
-					160.0f + FONT_BBOX_WIDTH * i, -73.0f);
+			MONEY_SPRITE_TRANSLATE_X + FONT_BBOX_WIDTH * i, 
+			HUD_TRANSLATE_Y + WORLD_SPRITE_TRANSLATE_Y);
 	}
 	
 	for (unsigned int i = 0; i < powerMelterSprite.size(); i++)
 	{
 		powerMelterSprite[i]->Draw(-1, x , y ,255,
-					80.0f + FONT_BBOX_WIDTH * i,-73.0f);
+			SCORE_SPRITE_TRANSLATE_X + FONT_BBOX_WIDTH * i, 
+			HUD_TRANSLATE_Y + WORLD_SPRITE_TRANSLATE_Y);
 	}
 
 
@@ -130,11 +143,14 @@ void Hud::Render()
 	for ( int i = 0; i < powerMelterStack ; i++)
 	{
 		filledPowerMelterSprite[i]->Draw(-1, x, y,255,
-					80.0f + FONT_BBOX_WIDTH * i,-73.0f);
-		if (i == 6)
+			SCORE_SPRITE_TRANSLATE_X + FONT_BBOX_WIDTH * i, 
+			HUD_TRANSLATE_Y + WORLD_SPRITE_TRANSLATE_Y);
+
+		if (i == POWER_MELTER_FULL -1)
 		{
 			animation_set->at(0)->Render(-1, x, y, 255,
-					80.0f + FONT_BBOX_WIDTH * 6, -73.0f);
+				SCORE_SPRITE_TRANSLATE_X + FONT_BBOX_WIDTH * (POWER_MELTER_FULL - 1),
+				HUD_TRANSLATE_Y + WORLD_SPRITE_TRANSLATE_Y);
 		}
 	}
 
@@ -142,14 +158,17 @@ void Hud::Render()
 	for (unsigned int i = 0; i < cardSprite.size(); i++)
 	{
 		this->cardSprite[i]->Draw(-1, x, y, 255,
-					195 + 24.0f* i, -78.0f);
+			CARD_SPRITE_TRANSLATE_X +  i * CARD_WIDTH, 
+			HUD_TRANSLATE_Y + CARD_SPRITE_TRANSLATE_Y);
 	}
 
 
 
 	if (isGameDone)
 	{
-		animationTakenCard->Render(-1, x, y, 255, 195 + 24.0f * indexTakenCard, -78.0f);
+		animationTakenCard->Render(-1, x, y, 255, CARD_SPRITE_TRANSLATE_X +
+			CARD_WIDTH * indexTakenCard,
+			HUD_TRANSLATE_Y + CARD_SPRITE_TRANSLATE_Y);
 	}
 }
 void Hud::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)

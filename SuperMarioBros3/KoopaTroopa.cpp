@@ -21,13 +21,19 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	Enemy::Update(dt, coObjects);
 
 	if (!isBumped)
+	{
 		vy += KOOPATROOPA_GRAVITY * dt;
+		if (vy > KOOPATROOPA_MAX_GRAVITY * 3)
+			vy = KOOPATROOPA_MAX_GRAVITY * 3;
+	}
+	
 	else
 	{
 		vy += KOOPATROOPA_BUMPED_GRAVITY * dt;
+		if (vy > KOOPATROOPA_MAX_GRAVITY )
+			vy = KOOPATROOPA_MAX_GRAVITY;
 	}
-	if (vy > KOOPATROOPA_MAX_GRAVITY)
-		vy = KOOPATROOPA_MAX_GRAVITY;
+	
 		
 	
 	if (state != KOOPATROOPA_STATE_WALKING)
