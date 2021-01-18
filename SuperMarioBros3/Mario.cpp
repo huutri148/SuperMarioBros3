@@ -709,6 +709,8 @@ void Mario::Render()
 	else if (isSwingTail && !isPickingUp)
 	{
 		ani = MARIO_ANI_TAILATTACK;
+		if (!isInGround)
+			ani = MARIO_ANI_JUMPING_TAILATTACK;
 	}
 	else if (state == MARIO_STATE_SHOOT_FIREBALL)
 		ani = MARIO_ANI_SHOOT_FIRE_BALL;
@@ -1003,16 +1005,15 @@ void Mario::TailAttack()
 		Grid* grid = ((PlayScene*)game->GetCurrentScene())->GetGrid();
 		if (nx > 0)
 		{
-			tail->Attack(x ,
-				y + MARIO_RACCOON_BBOX_HEIGHT - RACCOONTAIL_BBOX_HEIGHT,
+			tail->Attack(x , y + MARIO_RACCOON_BBOX_HEIGHT - RACCOONTAIL_BBOX_HEIGHT,
 				this->nx, grid);
 		}
 		if (nx < 0)
 		{
-			tail->Attack(x + MARIO_TAIL_BBOX_WIDTH,
-				y + MARIO_RACCOON_BBOX_HEIGHT - RACCOONTAIL_BBOX_HEIGHT,
+			tail->Attack(x + MARIO_TAIL_BBOX_WIDTH, y + MARIO_RACCOON_BBOX_HEIGHT - RACCOONTAIL_BBOX_HEIGHT,
 				this->nx, grid);
 		}
+		
 	}
 }
 void Mario::Fly()
@@ -1220,6 +1221,7 @@ void Mario::HandleSwitchTime()
 	{
 		isSwingTail = false;
 		tail->SetState(RACCOONTAIL_STATE_INACTIVE);
+		
 	}
 	
 	if (current - turnRaccoonTime > MARIO_BIG_FORM_TRANSFORM_TIME &&
