@@ -118,7 +118,6 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		if (vy > MARIO_GRAVITY * dt)
 		{
 			isInGround = false;
-			isJumped = true;
 		}
 			
 
@@ -778,7 +777,6 @@ void Mario::SetState(int state)
 	case MARIO_STATE_IDLE:
 		vx = 0;
 		isAutoWalk = false;
-		isJumped = false;
 		if (isInIntroScene)
 			isSquat = false;
 		break;
@@ -921,56 +919,44 @@ int Mario::Skill()
 }
 void Mario::Friction()
 {
-		if (isInGround)
-		{
-			if (isJumped && !canBrake)
-			{
-				if (typeFriction == FRICTION_TYPE_GROUND)
-				{
-					if (vx > 0)
-						ax = -GROUND_FRICTION;
-					else if (vx < 0)
-						ax = GROUND_FRICTION;
-					else ax = 0;
-				} 
-				else if (typeFriction == FRICTION_TYPE_BRICK || typeFriction == FRICTION_TYPE_MOVING_PLATTFORM)
-				{
-					if (vx > 0)
-						ax = -BRICK_FRICTION;
-					else if (vx < 0)
-						ax = BRICK_FRICTION;
-					else ax = 0;
-				}
-			} 
-			else
-			{
-				if (vx > 0)
-					ax = -FRICTION;
-				else if (vx < 0)
-					ax = FRICTION;
-				else ax = 0;
-			}
-			
-		}
-		else if(!isFlying)
-		{
-			if (vx > 0 && nx > 0)
-				ax = JUMPING_FRICTION;
-			else if (vx < 0 && nx < 0)
-				ax = -JUMPING_FRICTION;
-			else if (vx > 0 && nx < 0)
-				ax = -FRICTION;
-			else if (vx < 0 && nx > 0)
-				ax = FRICTION;
-		}
-		else if (isFlying)
+	if (isInGround)
+	{
+		if (typeFriction == FRICTION_TYPE_MOVING_PLATTFORM)
 		{
 			if (vx > 0)
-				ax = -FRICTION;
+				ax = -MOVING_PLATTFORM_FRICTION;
 			else if (vx < 0)
-				ax = FRICTION;
+				ax = MOVING_PLATTFORM_FRICTION;
 			else ax = 0;
 		}
+		else if (typeFriction == FRICTION_TYPE_BRICK)
+		{
+			if (vx > 0)
+				ax = -BRICK_FRICTION;
+			else if (vx < 0)
+				ax = BRICK_FRICTION;
+			else ax = 0;
+		}
+		else
+		{
+			if (vx > 0)
+				ax = -GROUND_FRICTION;
+			else if (vx < 0)
+				ax = GROUND_FRICTION;
+			else ax = 0;
+		}
+	}
+	else 
+	{
+		if (vx > 0 && nx > 0)
+			ax = -JUMPING_FRICTION;
+		else if (vx < 0 && nx < 0)
+			ax = JUMPING_FRICTION;
+		else if (vx > 0 && nx < 0)
+			ax = -GROUND_FRICTION;
+		else if (vx < 0 && nx > 0)
+			ax = GROUND_FRICTION;
+	}
 }
 void Mario::ShootFireBall(Grid* grid)
 {

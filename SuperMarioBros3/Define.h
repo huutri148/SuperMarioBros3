@@ -169,6 +169,8 @@
 
 #define GROUND_FRICTION							0.0004f
 #define BRICK_FRICTION							0.0003f
+#define MOVING_PLATTFORM_FRICTION				0.0002f
+
 
 #define FRICTION								0.0005f
 #define JUMPING_FRICTION						0.00001f
@@ -647,6 +649,10 @@
 #define SPRITE_MARIO_PLAYER_ID			50003
 #define SPRITE_LUGI_PLAYER_ID			50004
 #define HUD_BBOX_HEIGHT					58
+
+
+#define HUD_HEIGHT						101
+
 
 //FONT
 

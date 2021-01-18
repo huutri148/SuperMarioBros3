@@ -332,7 +332,7 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 				if (dynamic_cast<Enemy*>(obj)->isDead || dynamic_cast<Enemy*>(obj)->IsInactive())
 					continue;
 			}
-			if (!dynamic_cast<FirePlantBullet*>(obj) && !dynamic_cast<Item*>(obj))
+			if (!dynamic_cast<FirePlantBullet*>(obj) && !dynamic_cast<Item*>(obj) && obj->isEnable == true)
 				coObjects.push_back(obj);
 		}
 	}
