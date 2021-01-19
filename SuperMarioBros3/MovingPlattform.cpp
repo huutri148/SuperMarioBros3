@@ -27,7 +27,8 @@ void MovingPlattform::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		Mario* mario = playScene->GetPlayer();
 		if (mario->isTouchingPlattform)
 		{
-			if(mario->x >= x - MARIO_SMALL_BBOX_WIDTH && mario->x < x + MOVING_PLATTFORM_BBOX_WIDTH)
+			if(mario->x >= x - MARIO_SMALL_BBOX_WIDTH && 
+				mario->x < x + MOVING_PLATTFORM_BBOX_WIDTH)
 				mario->SetY(this->y);
 			else
 			{
@@ -41,6 +42,8 @@ void MovingPlattform::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			isBeingTouched = false;
 		}
 	}
+	
+	
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 
@@ -67,9 +70,9 @@ void MovingPlattform::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				{
 					
 					e->obj->x -= (min_tx * dx + nx * 0.4f);
-					/*e->obj->x = x - e->obj->GetWidth();*/
+	
 				}
-				else if (ny > 0)
+				else if (e->ny < 0)
 				{
 					y += dy;
 				}
@@ -131,6 +134,10 @@ MovingPlattform::MovingPlattform(float entryX, float entryY)
 	LPANIMATION_SET ani_set = animation_sets->Get(ANIMATION_SET_MOVING_PLATTFORM);
 	this->SetAnimationSet(ani_set);
 }
+
+
+
+
 void MovingPlattform::AbleToActive()
 {
 	Game* game = Game::GetInstance();

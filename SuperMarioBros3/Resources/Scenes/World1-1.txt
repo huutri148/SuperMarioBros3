@@ -317,7 +317,7 @@ Resources\Map\World1-1\World1-1_Grid.txt
 #===========SUPER MUSROOM=============
 40058	156	121	172	137	20
 #===========FIRE FLOWER===============
-40059	309	121	321	137	20
+40059	309	121	325	137	20
 #=========1-UP MUSH ROOM===============
 40060	286	121	302	137	20
 #==========STARTMAN====================
@@ -767,6 +767,8 @@ Resources\Map\World1-1\World1-1_Grid.txt
 #====PSWITCH=====
 856	40062	100	40063	100
 857	40064	100
+#====FIREFLOWER===
+862	40059	100
 #====HUD=======
 858	50006	100	50008	100
 #====MUSHROOM- Card===
@@ -816,6 +818,8 @@ Resources\Map\World1-1\World1-1_Grid.txt
 72	854	855
 #PSWITCH
 73	856	857
+#FIREFLOWER
+79	862
 #Point Effect
 74	603	604	605	606	607	608	609	610	611
 #HIT effect

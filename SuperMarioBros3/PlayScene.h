@@ -33,7 +33,7 @@
 #include"MovingPlattform.h"
 #include"BoomerangBrother.h"
 #include"MovingEdge.h"
-
+#include"FireFlower.h"
 
 
 class PlayScene : public Scene
