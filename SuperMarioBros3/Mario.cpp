@@ -34,6 +34,10 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		else
 			this->SetLevel(MARIO_SMALL_FORM);
 	}
+
+
+
+	 
 	if (!isAutoWalk && state != MARIO_STATE_DEATH)
 	{
 		if (dynamic_cast<PlayScene*>(Game::GetInstance()->GetCurrentScene()))
@@ -42,12 +46,14 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			float edgeLeft = scene->GetEdgeLeft();
 			float edgeRight = scene->GetEdgeRight();
 
+
+			// Set lại vị trí khi ở rìa map
 			if (x < edgeLeft)
 			{
 				if (scene->GetMovingEdge() != NULL && vx == 0)
 					vx = scene->GetMovingEdge()->vx;
 				x = edgeLeft;
-				inTheEdge = true;
+				inTheEdge = true;// Biến dùng để xác định va chạm với map
 			}
 			else if (x >= edgeRight - MARIO_BIG_BBOX_WIDTH)
 			{
@@ -57,15 +63,14 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			else
 				inTheEdge = false;
 			
-
-
-			if (y > scene->GetEdgeBottom())
+			// Nếu rớt ra khỏi map hoặc bị kẹp lại thì sẽ setDeath
+			if (y > scene->GetEdgeBottom() || (inTheEdge && touchingHorizontal))
 				this->SetState(MARIO_STATE_DEATH);
 		}
 	}
 	else
 	{
-		ax = 0;
+		ax = 0; // quán tính == 0
 	}
 
 	if (dt > 64)
@@ -77,6 +82,8 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	GameObject::Update(dt);
 	if(state != MARIO_STATE_DEATH && !isInTeleport && !isTeleport)
 		UpdateVx(dt);
+
+
 	// fall down slower
 	if (isTeleport == false) 
 	{
@@ -95,12 +102,18 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			if(vy > MARIO_GRAVITY * dt)
 				vy = MARIO_GRAVITY * dt;
 		}
+
+		// Điều chỉnh trọng lực của Mario 
+		// Sao cho khi rớt thì vẫn tính va chạm với các vật khác
 		if (isTouchingPlattform)
 		{
 			if(vy > MARIO_GRAVITY * 63)
 				vy = MARIO_GRAVITY * 63;
 		}
 	}
+
+
+
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 	coEvents.clear();
@@ -120,7 +133,6 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			isInGround = false;
 		}
 			
-
 	}
 	else
 	{
@@ -131,6 +143,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						nex, ney);
 		x += min_tx * dx + nex * 0.4f;
 		y += min_ty * dy + ney * 0.4f;
+
 
 		if (nex != 0)
 			touchingHorizontal = true;
@@ -182,6 +195,9 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					SetFriction(e->obj);
 				}
 			}
+
+
+
 			if (dynamic_cast<Enemy*>(e->obj))
 			{
 				Enemy* enemy = dynamic_cast<Enemy*>(e->obj);
@@ -372,18 +388,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 			else if (dynamic_cast<Pipe*>(e->obj))
 			{
-			//Todo: sửa lại cho thích hợp vì bị rung camera và
-			// khi gặp đất rớt
-				/*if (e->nx != 0 && ney != 0)
-				{
-					if(!isInGround)
-						y += dy;
-					if(e->nx < 0)
-						x -= (min_tx * dx + e->nx * 0.4f) + dx;
-					else if (e->nx > 0)
-						x += (min_tx * dx + e->nx * 0.4f) - dx;
-				}*/
-				if (dynamic_cast<Pipe*>(e->obj)->type == PIPE_EXTRAMAP_PORT_TYPE_UP)
+				if (dynamic_cast<Pipe*>(e->obj)->type == PIPE_EXTRAMAP_PORT_TYPE_UP_DOWN)
 				{
 					if (e->ny < 0)
 					{
@@ -399,7 +404,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 						}
 					}
 				}
-				else if (dynamic_cast<Pipe*>(e->obj)->type == PIPE_EXTRAMAP_PORT_TYPE_DOWN)
+				else if (dynamic_cast<Pipe*>(e->obj)->type == PIPE_EXTRAMAP_PORT_TYPE_DOWN_UP)
 				{
 					if (e->ny > 0)
 					{
@@ -1292,7 +1297,6 @@ void Mario::HandleSwitchTime()
 			playScene->GetWorldMapPosition(x, y);
 			isInExtraMap = false;
 		}
-
 	}
 }
 

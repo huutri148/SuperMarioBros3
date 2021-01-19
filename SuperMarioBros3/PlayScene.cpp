@@ -26,12 +26,6 @@ PlayScene::PlayScene(int id, LPCWSTR filePath) :
 void PlayScene::_ParseSection_GRID(string line)
 {
 
-	
-	/*int W = atoi(tokens[0].c_str());
-	int H = atoi(tokens[1].c_str());
-	int x = atoi(tokens[2].c_str());
-	int y = atoi(tokens[3].c_str());*/
-
 	LPCWSTR path = ToLPCWSTR(line);
 	ifstream f;
 
@@ -338,6 +332,7 @@ void PlayScene::GetColliableObjects(LPGAMEOBJECT curObj, vector<LPGAMEOBJECT>& c
 	}
 	else if (dynamic_cast<Goomba*>(curObj) || dynamic_cast<BoomerangBrother*>(curObj))
 	{
+		coObjects.push_back(player);
 		for (auto obj : objects)
 		{
 			if (dynamic_cast<Enemy*>(obj))

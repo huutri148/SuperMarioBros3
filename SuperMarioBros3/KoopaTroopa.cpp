@@ -16,8 +16,11 @@ void KoopaTroopa::GetBoundingBox(float& left, float& top,
 void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	HandleTimeSwitchState(coObjects);
+
+
 	if (state == KOOPATROOPA_STATE_INACTIVE || isEnable == false)
 		return;
+
 	Enemy::Update(dt, coObjects);
 
 	if (!isBumped)
@@ -26,7 +29,6 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		if (vy > KOOPATROOPA_MAX_GRAVITY * 3)
 			vy = KOOPATROOPA_MAX_GRAVITY * 3;
 	}
-	
 	else
 	{
 		vy += KOOPATROOPA_BUMPED_GRAVITY * dt;
@@ -37,7 +39,10 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		
 	
 	if (state != KOOPATROOPA_STATE_WALKING)
-		CanPullBack = false;
+		canPullBack = false;
+	
+	
+	
 	//Xét nếu đang bị cầm ở dạng shell
 	if (isPickedUp == true && !isDead)
 	{
@@ -79,14 +84,21 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			{
 				isPickedUp = false;
 				mario->isPickingUp = false;
+
+				// Sử dụng ở IntroScene
 				if(!mario->isInIntroScene)
 					mario->SetState(MARIO_STATE_KICK);
 				this->SetState(KOOPATROOPA_STATE_HIDING);
+
+
 				IsKicked(mario->nx);
 				CheckWhenHidhing(coObjects);
 			}
 		}
 	}
+	
+	
+	
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
 	coEvents.clear();
@@ -103,10 +115,10 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		y += dy;
 		//Nếu Koopa rời khỏi mặt đất
 		// kéo nó lại vị trí cuối cùng mà xảy ra đụng độ
-		if (CanPullBack &&
+		if (canPullBack &&
 			type == KOOPATROOPA_RED_TYPE )
 		{
-			if (y - lastStanding_Y >= 1.0f)
+			if (y - lastStanding_Y >= 1.0f) 
 			{
 				y -= 4;
 				x -= nx * 13;
@@ -181,7 +193,7 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				
 				if (!dynamic_cast<Brick*>(e->obj)->CanUsed())
 				{
-					CanPullBack = true;
+					canPullBack = true;
 					lastStanding_Y = y;
 					if (e->nx != 0 && ny == 0)
 					{
@@ -206,7 +218,7 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 			else if (dynamic_cast<Block*>(e->obj))
 			{
-				CanPullBack = true;
+				canPullBack = true;
 				lastStanding_Y = y;
 				if(e->ny < 0 )
 				{
@@ -218,7 +230,7 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			else if (dynamic_cast<Ground*>(e->obj) || dynamic_cast<Pipe*>(e->obj) ||
 					dynamic_cast<MovingPlattform*>(e->obj))
 			{
-				CanPullBack = true;
+				canPullBack = true;
 				lastStanding_Y = y;
 				if (nx != 0 && ny == 0)
 				{
@@ -255,10 +267,6 @@ void KoopaTroopa::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					vy = 0;
 					y -= min_ty * dy + ny * 0.4f;
 				}
-			/*	else if (e->ny < 0)
-				{
-					this->SetBeingStomped();
-				}*/
 				if (e->nx != 0)
 				{
 					if (dynamic_cast<Mario*>(e->obj)->untouchable == 0)
@@ -336,7 +344,7 @@ void KoopaTroopa::SetState(int state)
 	case KOOPATROOPA_STATE_INACTIVE:
 		x = entryX;
 		y = entryY;
-		CanPullBack = false;
+		canPullBack = false;
 		hidingTime = 0;
 		break;
 	case KOOPATROOPA_STATE_EXIT_SHELL:
@@ -346,6 +354,9 @@ void KoopaTroopa::SetState(int state)
 		break;
 	}
 }
+
+
+
 bool KoopaTroopa::IsDead()
 {
 	if (this->state == KOOPATROOPA_STATE_HIDING && !isBumped || 
@@ -355,6 +366,9 @@ bool KoopaTroopa::IsDead()
 	}
 	return false;
 }
+
+
+
 void KoopaTroopa::IsKicked(int n)
 {
 	this->nx = n;
@@ -365,7 +379,7 @@ void KoopaTroopa::IsKicked(int n)
 		forceShell = false;
 	}
 	else
-		vx = nx * 0.2f;
+		vx = nx * KOOPATROOPA_FAST_BUMP_SPEED;
 }
 bool KoopaTroopa::IsHiding()
 {
@@ -397,6 +411,8 @@ KoopaTroopa::KoopaTroopa(int type)
 	LPANIMATION_SET ani_set = animation_sets->Get(ANIMATION_SET_KOOPA);
 	this->SetAnimationSet(ani_set);
 }
+
+
 void KoopaTroopa::SetBeingStomped()
 {
 	if (state != KOOPATROOPA_STATE_HIDING)
@@ -436,7 +452,7 @@ void KoopaTroopa::HandleTimeSwitchState(vector<LPGAMEOBJECT>* coObjects)
 		isEnable = false;
 		return;
 	}
-	if (forceShell == false)
+	if (forceShell == false)// forceShell dùng để chặn cho trở lại dạng Walking (dùng ở introScene)
 	{
 		// Ở trạng thái hiding chuyển sang walking
 		if (GetTickCount64() - turnWalkingTime > KOOPATROOPA_TURN_WALKING_TIME &&
@@ -492,29 +508,39 @@ bool KoopaTroopa::CheckAABB(GameObject* obj)
 	this->GetBoundingBox(l, t, r, b, isEnable);
 	obj->GetBoundingBox(l1, t1, r1, b1, obj->isEnable);
 
+
+	// Sửa lại hàm sao cho chỉ cần 3 cạnh chèn ở trong coObject sẽ trả true
 	bool d1 = (r1 - l < GetWidth() && r1 - l > 0 || (r - l1 < GetWidth() && r - l1 > 0));
 	bool d2 = (b - t1 < KOOPATROOPA_BBOX_HEIGHT_HIDING && b - t1 > 0) ||
 		(t - b1 < KOOPATROOPA_BBOX_HEIGHT_HIDING && t - b1 > 0);
 	return d1 && d2;
 }
+
+
+
+
 bool KoopaTroopa::CheckWhenHidhing(vector<LPGAMEOBJECT>* coObjects)
 {
-	for (UINT i = 0; i < coObjects->size(); i++)
+	if (state != KOOPATROOPA_STATE_WALKING && !isDead) // Chỉ kiểm tra khi ở dạng Shell
 	{
-		if (dynamic_cast<Pipe*>(coObjects->at(i)) || dynamic_cast<Ground*>(coObjects->at(i)) ||
-			dynamic_cast<Brick*>(coObjects->at(i)))
+		for (UINT i = 0; i < coObjects->size(); i++)
 		{
-			if (this->CheckAABB(coObjects->at(i)))
+			if (dynamic_cast<Pipe*>(coObjects->at(i)) || dynamic_cast<Ground*>(coObjects->at(i)) ||
+				dynamic_cast<Brick*>(coObjects->at(i)))
 			{
-				this->SetState(KOOPATROOPA_STATE_DEATH);
-				ny = 1;
-				vx = 0;
-				Game* game = Game::GetInstance();
-				LPSCENE scene = game->GetCurrentScene();
-				this->GainScore(100);
-				return true;
+				if (this->CheckAABB(coObjects->at(i)))
+				{
+					this->SetState(KOOPATROOPA_STATE_DEATH);
+					ny = 1;
+					vx = 0;
+					Game* game = Game::GetInstance();
+					LPSCENE scene = game->GetCurrentScene();
+					this->GainScore(100);
+					return true;
+				}
 			}
 		}
+		return false;
 	}
 	return false;
 }

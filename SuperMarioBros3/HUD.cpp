@@ -180,8 +180,7 @@ void Hud::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	x = game->GetCamX();
 	y = game->GetCamY() + SCREEN_HEIGHT;
-	if (scene->GetSceneID() == 4)
-		y -= 11.0f;
+	
 	// Cộng điểm sau khi done Game
 	if (isGameDone)
 	{
@@ -200,6 +199,8 @@ void Hud::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		score = player->GetScore();
 		time += dt;
 		remainTime = DEFAULT_TIME - time / 1000;
+		if (scene->GetSceneID() == 4 || (scene->GetSceneID() == 1 && mario->isInExtraMap))
+			y -= 11.0f;
 	}
 
 	nlife = player->GetLife();

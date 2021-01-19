@@ -6,7 +6,7 @@
 #include"RaccoonLeaf.h"
 #include"Grid.h"
 #include"BrokenBrickEffect.h"
-
+#include"FireFlower.h"
 class Brick : public GameObject
 {
 	
@@ -18,8 +18,6 @@ class Brick : public GameObject
 public:
 	static bool isTransForm;
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
-	/*virtual void CalcPotentialCollisions(vector<LPGAMEOBJECT>* coObjects,
-		vector<LPCOLLISIONEVENT>& coEvents);*/
 	virtual void Render();
 	Brick(float x, float y, int _type  = BRICK_ITEM_COIN_TYPE)
 		:GameObject(x, y) {

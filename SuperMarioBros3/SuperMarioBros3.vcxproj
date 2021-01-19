@@ -154,6 +154,7 @@
     <ClInclude Include="Define.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="FireBall.h" />
+    <ClInclude Include="FireFlower.h" />
     <ClInclude Include="FirePiranhaPlant.h" />
     <ClInclude Include="FirePlantBullet.h" />
     <ClInclude Include="Font.h" />
@@ -205,6 +206,7 @@
     <ClCompile Include="Coin.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="FireBall.cpp" />
+    <ClCompile Include="FireFlower.cpp" />
     <ClCompile Include="FirePiranhaPlant.cpp" />
     <ClCompile Include="FirePlantBullet.cpp" />
     <ClCompile Include="Font.cpp" />

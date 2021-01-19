@@ -186,5 +186,16 @@ void Brick::DropItem()
 		Unit* unit = new Unit(grid, item, x, y);
 		break;
 	}
+	case BRICK_FIREFLOWER_TYPE:
+	{
+		coin -= 1;
+		if (form == MARIO_SMALL_FORM)
+			item = new Mushroom(MUSHROOM_TYPE_POWERUP);
+		else
+			item = new FireFlower();
+		item->Appear(x, y);
+		Unit* unit = new Unit(grid, item, x, y);
+		break;
+	}
 	}
 }

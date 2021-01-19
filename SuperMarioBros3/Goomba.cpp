@@ -26,14 +26,21 @@ void Goomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	if (state == GOOMBA_STATE_INACTIVE || isEnable == false)
 		return;
 	Enemy::Update(dt, coObjects);
+
+
 	if (this->state != GOOMBA_STATE_BEING_STOMPED)
 		vy += dt * GOOMBA_GRAVITY;
+
 	vector<LPCOLLISIONEVENT> coEvents;
 	vector<LPCOLLISIONEVENT> coEventsResult;
-
 	coEvents.clear();
+
+
 	if(!this->IsDead())
 		CalcPotentialCollisions(coObjects, coEvents);
+
+
+
 	if (coEvents.size() == 0)
 	{
 		x += dx;
@@ -68,7 +75,8 @@ void Goomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 			else if(!dynamic_cast<Mario*>(e->obj))
 			{
-				x += dx;
+				if (e->ny < 0)
+					this->SetBeingStomped();
 			}
 		}
 	}
