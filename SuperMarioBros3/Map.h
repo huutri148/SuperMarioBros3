@@ -8,7 +8,7 @@ class Map
 {
 	int** matrix;
 	int totalColsOfTitleSet, totalRowsOfTileSet;
-	int totalColsOfMap, totalRowsOfMap;
+	int totalRowsOfMap, totalColsOfMap;
 	int totalTiles;
 	LPDIRECT3DTEXTURE9 tileSet;
 	vector<LPSPRITE> tiles;
@@ -60,8 +60,8 @@ public:
 	void LoadInformation(LPCWSTR path);
 	void Render(float cam_x, float cam_y,int screenWidth,int screenHeight
 	,float translateX = 0.0f, float translateY = 0.0f);
-	int GetTotalColsOfMap() { return this->totalColsOfMap; }
-	int GetTotalRowsOfMap() { return this->totalRowsOfMap; }
+	int GetTotalColsOfMap() { return this->totalRowsOfMap; }
+	int GetTotalRowsOfMap() { return this->totalColsOfMap; }
 	int GetMapHeiht();
 	int GetMapWidth();
 };

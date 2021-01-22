@@ -509,13 +509,14 @@ void PlayScene::UpdatePlayer(DWORD dt)
 */
 void PlayScene::Unload()
 {
-	for (unsigned int i = 0; i < objects.size(); i++)
+	/*for (unsigned int i = 0; i < objects.size(); i++)
 		delete objects[i];
 	for (unsigned int i = 0; i < listUnits.size(); i++)
 		delete listUnits[i];
 	for (unsigned int i = 0; i < listItems.size(); i++)
-		delete listItems[i];
-	
+		delete listItems[i];*/
+	grid->ClearAll();
+	grid->Out();
 
 	objects.clear();
 	listStaticObjectsToRender.clear();
@@ -548,7 +549,6 @@ void PlayScenceKeyHandler::OnKeyDown(int KeyCode)
 	switch (KeyCode)
 	{
 	case DIK_S:
-	/*	mario->StartJumping();*/
 		mario->StartJumping();
 		mario->Float();
 		mario->Fly();

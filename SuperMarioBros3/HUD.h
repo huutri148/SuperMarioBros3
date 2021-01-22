@@ -41,6 +41,7 @@ class Hud : public GameObject
 public:
 
 	Hud();
+	~Hud();
 	virtual void GetBoundingBox(float& left, float& top,
 		float& right, float& bottom, bool isEnable) {};
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects = NULL);

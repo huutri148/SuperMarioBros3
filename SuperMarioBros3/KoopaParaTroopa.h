@@ -25,6 +25,7 @@ public:
 	virtual void Active();
 	virtual void Inactive();
 	void ChangeToKoopa(Grid* grid);
+	void ChangeToShell();
 
 	KoopaParaTroopa(float x, float y);
 	KoopaParaTroopa();

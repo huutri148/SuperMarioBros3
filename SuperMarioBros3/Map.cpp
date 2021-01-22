@@ -13,8 +13,8 @@ Map::Map(int idMap, int nTitleCols, int nTitleRows, int nMapCols,
 {
 	this->tileSet = Textures::GetInstance()->Get(idMap);
 
-	this->totalColsOfMap = nMapCols;
-	this->totalRowsOfMap = nMapRows;
+	this->totalRowsOfMap = nMapCols;
+	this->totalColsOfMap = nMapRows;
 
 	this->totalRowsOfTileSet = nTitleRows;
 	this->totalColsOfTitleSet = nTitleCols;
@@ -62,11 +62,11 @@ void Map::LoadMatrix(LPCWSTR path)
 	ifstream file;
 
 	file.open(path);
-	this->matrix = new int* [totalRowsOfMap];
-	for (int iRow = 0; iRow < totalRowsOfMap; iRow++)
+	this->matrix = new int* [totalColsOfMap];
+	for (int iRow = 0; iRow < totalColsOfMap; iRow++)
 	{
-		this->matrix[iRow] = new int[totalColsOfMap];
-		for (int iColumn = 0; iColumn < totalColsOfMap; iColumn++)
+		this->matrix[iRow] = new int[totalRowsOfMap];
+		for (int iColumn = 0; iColumn < totalRowsOfMap; iColumn++)
 		{
 			file >> this->matrix[iRow][iColumn];
 		}
@@ -89,10 +89,10 @@ void Map::Render(float cam_x,float cam_y,
 	float transY = floor(translateY);
 
 	//DebugOut(L"\nF: %d - L:  %d", FirstColumn, LastColumn);
-	if (LastColumn >= totalColsOfMap)
-		LastColumn = totalColsOfMap ;
-	if (LastRow >= totalRowsOfMap)
-		LastRow = totalRowsOfMap ;
+	if (LastColumn >= totalRowsOfMap)
+		LastColumn = totalRowsOfMap ;
+	if (LastRow >= totalColsOfMap)
+		LastRow = totalColsOfMap ;
 
 
 	for (int iRow = FirstRow; iRow < LastRow; iRow++)
@@ -109,14 +109,14 @@ void Map::Render(float cam_x,float cam_y,
 int Map::GetMapHeiht()
 {
 	if (height == 0)
-		height = totalRowsOfMap * TILE_HEIGHT;
+		height = totalColsOfMap * TILE_HEIGHT;
 	return height;
 }
 int Map::GetMapWidth()
 {
 	if (width == 0)
 	{
-		width = totalColsOfMap * TILE_WIDTH;
+		width = totalRowsOfMap * TILE_WIDTH;
 	}
 	return width;
 }
@@ -185,8 +185,8 @@ void Map ::Init(int idMap, int nTitleCols, int nTitleRows, int nMapCols,
 {
 	this->tileSet = Textures::GetInstance()->Get(idMap);
 
-	this->totalColsOfMap = nMapCols;
-	this->totalRowsOfMap = nMapRows;
+	this->totalRowsOfMap = nMapCols;
+	this->totalColsOfMap = nMapRows;
 
 	this->totalRowsOfTileSet = nTitleRows;
 	this->totalColsOfTitleSet = nTitleCols;

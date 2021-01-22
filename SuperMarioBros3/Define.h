@@ -176,7 +176,7 @@
 
 
 #define FRICTION								0.0005f
-#define JUMPING_FRICTION						0.00001f
+#define JUMPING_FRICTION						0.00005f
 // RACOON TAIL
 #define RACCOONTAIL_BBOX_WIDTH					9
 #define RACCOONTAIL_BBOX_HEIGHT					10
@@ -895,3 +895,13 @@
 //GRID
 #define CELL_WIDTH	177
 #define CELL_HEIGHT	144
+
+#ifndef SAFE_DELETE
+#define SAFE_DELETE(ptr) \
+if(ptr) \
+{\
+	delete (ptr); \
+	ptr = nullptr; \
+} \
+
+#endif

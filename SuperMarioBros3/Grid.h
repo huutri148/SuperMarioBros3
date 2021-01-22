@@ -40,6 +40,7 @@ public:
 	void Add(Unit* unit,int gridRow, int gridCol);
 	void Move(Unit* unit, float x, float y);
 	void Get(float cam_x,float cam_y, vector<Unit*>& listUnits);
+	void ClearAll();
 	void Out();
 };
 

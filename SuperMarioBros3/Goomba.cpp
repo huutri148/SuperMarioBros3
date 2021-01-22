@@ -75,6 +75,8 @@ void Goomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 			else if(!dynamic_cast<Mario*>(e->obj))
 			{
+				if(e->ny != 0)
+					y -= (min_ty * dy + ny * 0.4f);
 				if (e->ny < 0)
 					this->SetBeingStomped();
 			}

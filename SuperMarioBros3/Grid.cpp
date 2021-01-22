@@ -194,3 +194,30 @@ Grid::Grid(int gridCols, int gridRows)
 		for (int j = 0; j < numCols; j++)
 			cells[i][j] = NULL;
 }
+
+void Grid::ClearAll()
+{
+	for (int i = 0; i < numRows; i++)
+	{
+		for (int j = 0; j < numCols; j++)
+		{
+
+			Unit* unit = cells[i][j];
+			while (unit)
+			{
+				if (cells[i][j] == unit)
+					cells[i][j] = unit->next;
+				if (unit->next != NULL)
+					unit->next->prev = unit->prev;
+				if (unit->prev != NULL)
+					unit->prev->next = unit->next;
+				Unit* tmp = unit;
+				unit = unit->next;
+				if(tmp->GetObj() != NULL)
+					delete tmp->GetObj();
+				delete tmp;
+			}
+		}
+	}
+
+}

@@ -59,7 +59,14 @@ void RaccoonTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			}
 			else if (dynamic_cast<Enemy*>(e->obj))
 			{
-				dynamic_cast<Enemy*>(e->obj)->SetBeingSkilled((int)(-e->nx));
+				if (!dynamic_cast<KoopaParaTroopa*>(e->obj))
+				{
+					dynamic_cast<Enemy*>(e->obj)->SetBeingSkilled((int)(-e->nx));
+				}
+				else
+				{
+					dynamic_cast<KoopaParaTroopa*>(e->obj)->ChangeToShell();
+				}
 				Game* game = Game::GetInstance();
 				LPSCENE scene = game->GetCurrentScene();
 				if (dynamic_cast<PlayScene*>(scene))
