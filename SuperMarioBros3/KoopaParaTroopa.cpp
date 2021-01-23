@@ -196,6 +196,23 @@ void KoopaParaTroopa::ChangeToKoopa(Grid* grid)
 	Unit* unit = new Unit(grid, kooPa, x - KOOPATROOPA_BBOX_WIDTH * 2, y);
 	
 }
+void KoopaParaTroopa::ChangeToShell()
+{
+	Game* game = Game::GetInstance();
+	LPSCENE scene = game->GetCurrentScene();
+	Grid* grid = ((PlayScene*)game->GetCurrentScene())->GetGrid();
+	kooPa->SetState(KOOPATROOPA_STATE_INACTIVE);
+	kooPa->SetPosition(x, y);
+	kooPa->isEnable = true;
+	kooPa->isAbleToActive = true;
+	kooPa->SetBeingSkilled(nx);
+	this->SetState(PARATROOPA_STATE_INACTIVE);
+
+	// BUG here:
+	// Khi đổi thành Koopa thì không được nạp vào listUnit
+	Unit* unit = new Unit(grid, kooPa, x - KOOPATROOPA_BBOX_WIDTH * 2, y);
+
+}
 KoopaParaTroopa::KoopaParaTroopa(float x, float y) :Enemy(x, y)
 {
 	this->SetState(PARATROOPA_STATE_JUMPING);

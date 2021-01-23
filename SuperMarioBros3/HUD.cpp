@@ -231,3 +231,8 @@ void Hud::DoneGame(int idCard)
 	else 
 		animationTakenCard = Animations::GetInstance()->Get(ANIMATION_TAKEN_FIREFLOWER_CARD);
 }
+
+Hud::~Hud()
+{
+	
+}

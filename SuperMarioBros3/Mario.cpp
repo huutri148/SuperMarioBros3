@@ -54,6 +54,11 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					vx = scene->GetMovingEdge()->vx;
 				x = edgeLeft;
 				inTheEdge = true;// Biến dùng để xác định va chạm với map
+
+
+				// Nếu rớt ra khỏi map hoặc bị kẹp lại thì sẽ setDeath
+				if (inTheEdge && touchingHorizontal)
+					this->SetState(MARIO_STATE_DEATH);
 			}
 			else if (x >= edgeRight - MARIO_BIG_BBOX_WIDTH)
 			{
@@ -64,7 +69,7 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				inTheEdge = false;
 			
 			// Nếu rớt ra khỏi map hoặc bị kẹp lại thì sẽ setDeath
-			if (y > scene->GetEdgeBottom() || (inTheEdge && touchingHorizontal))
+			if (y > scene->GetEdgeBottom())
 				this->SetState(MARIO_STATE_DEATH);
 		}
 	}
@@ -310,13 +315,16 @@ void Mario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 					}
 					else
 					{
-						if (form > MARIO_SMALL_FORM)
+						if (!enemy->IsDead())
 						{
-							DecreaseForm();
+							if (form > MARIO_SMALL_FORM)
+							{
+								DecreaseForm();
+							}
+							else
+								SetState(MARIO_STATE_DEATH);
+							enemy->ChangeDirect();
 						}
-						else
-							SetState(MARIO_STATE_DEATH);
-						enemy->ChangeDirect();
 					}
 				}
 			}

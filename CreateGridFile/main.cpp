@@ -1,4 +1,4 @@
-#include"conio.h"
+﻿#include"conio.h"
 #include"stdio.h"
 #include"string.h"
 #include"iostream"
@@ -106,7 +106,7 @@ void WriteGridFile(int sceneID,int gridCols, int gridRows)
 		string line(str);
 		vector<string> tokens = split(line);
 		
-		
+		// Bỏ qua ID MARIO và HUD
 		if (line[0] != '#' && line[0] != '0' && atoi(tokens[0].c_str()) != 13)
 		{
 			if (tokens.size() < 3)
@@ -132,6 +132,7 @@ void WriteGridFile(int sceneID,int gridCols, int gridRows)
 		}
 		cout <<"\n" << line ;
 	}
+
 	objFile.close();
 	gridFile.close();
 

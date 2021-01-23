@@ -42,14 +42,8 @@ void Render()
 	LPDIRECT3DSURFACE9 bb = game->GetBackBuffer();
 	LPD3DXSPRITE spriteHandler = game->GetSpriteHandler();
 
-	if (d3ddv->BeginScene())
-	{/*
-		RECT rect;
-		rect.left = left;
-		rect.top = top;
-		rect.right = right;
-		rect.bottom = bottom;
-		D3DXVECTOR3 p(120, 120, 0);*/
+	if (SUCCEEDED(d3ddv->BeginScene()))
+	{
 		// Clear back buffer with a color
 		if(dynamic_cast<PlayScene*>(Game::GetInstance()->GetCurrentScene()))
 			d3ddv->ColorFill(bb, NULL, BACKGROUND_COLOR_PLAYSCENE);
